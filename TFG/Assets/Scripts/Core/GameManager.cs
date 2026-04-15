@@ -1,30 +1,47 @@
 using UnityEngine;
 
 /// <summary>
-/// Gestor central del juego. Singleton persistente entre escenas que almacena
-/// el estado global del jugador durante toda la partida (beta: sin SQLite).
+/// Registro central de la partida. Conserva el estado del comerciante
+/// —tesoro, puerto actual y capacidad de bodega— mientras el jugador
+/// navega entre las distintas pantallas del juego.
+/// En la beta los datos viven en memoria durante la sesión; en la release
+/// se persistirán en la base de datos SQLite de la partida guardada.
 /// </summary>
 public class GameManager : MonoBehaviour
 {
     // ─── Singleton ───────────────────────────────────────────────────────────
 
-    /// <summary>Instancia única accesible desde cualquier script.</summary>
+    /// <summary>
+    /// Punto de acceso global al estado de la partida activa.
+    /// Permite a cualquier pantalla del juego consultar el tesoro
+    /// o el puerto en el que se encuentra el jugador.
+    /// </summary>
     public static GameManager Instance { get; private set; }
 
     // ─── Estado del jugador ──────────────────────────────────────────────────
 
-    /// <summary>Dinero actual del jugador.</summary>
+    /// <summary>
+    /// Monedas de oro en el cofre del comerciante.
+    /// Sube al vender mercancía y baja al comprar en cualquier mercado de la Liga.
+    /// </summary>
     public long Dinero { get; private set; }
 
-    /// <summary>Nombre de la ciudad en la que se encuentra el jugador actualmente.</summary>
+    /// <summary>
+    /// Puerto en el que está atracado el jugador en este momento.
+    /// Vacío mientras el jugador navega por el mapamundi entre ciudades.
+    /// </summary>
     public string CiudadActual { get; private set; }
 
     // ─── Constantes de beta ──────────────────────────────────────────────────
 
-    /// <summary>Dinero inicial para la beta: ilimitado para probar reacción de precios.</summary>
+    /// <summary>Caudal inicial de la beta: suficiente para explorar la reacción de precios sin restricciones económicas.</summary>
     private const long DineroBeta = 999_999_999L;
 
-    /// <summary>Capacidad de almacén en beta: ilimitada.</summary>
+    /// <summary>
+    /// Capacidad de bodega durante la beta: sin límite, para centrar las pruebas
+    /// en la mecánica de precios sin preocuparse por el espacio de carga.
+    /// En la release se sustituirá por la capacidad real del barco.
+    /// </summary>
     public const int CapacidadAlmacen = int.MaxValue;
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -57,11 +74,12 @@ public class GameManager : MonoBehaviour
     // ─── API pública ─────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Añade o resta dinero al saldo del jugador.
-    /// Las compras pasan un valor negativo; las ventas, positivo.
+    /// Registra un movimiento de dinero en el cofre del comerciante.
+    /// Usar valor positivo al cobrar por una venta y negativo al pagar una compra.
+    /// Si el tesoro no cubre el gasto, la operación no se realiza.
     /// </summary>
-    /// <param name="cantidad">Cantidad a sumar (positiva) o restar (negativa).</param>
-    /// <returns><c>true</c> si la operación se completó; <c>false</c> si no hay saldo suficiente.</returns>
+    /// <param name="cantidad">Monedas a ingresar (positivo) o gastar (negativo).</param>
+    /// <returns><c>true</c> si el pago o cobro se realizó; <c>false</c> si el tesoro es insuficiente.</returns>
     public bool ModificarDinero(long cantidad)
     {
         if (Dinero + cantidad < 0)
@@ -76,10 +94,10 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Registra la ciudad en la que se encuentra el jugador.
-    /// Lo llama <see cref="SceneController"/> al hacer la transición al mapa de ciudad.
+    /// Indica al juego en qué puerto ha atracado el jugador.
+    /// Se actualiza automáticamente cada vez que la flota llega a una nueva ciudad.
     /// </summary>
-    /// <param name="nombreCiudad">Nombre exacto de la ciudad destino.</param>
+    /// <param name="nombreCiudad">Nombre del puerto de destino (p.ej. "Lübeck").</param>
     public void SetCiudadActual(string nombreCiudad)
     {
         CiudadActual = nombreCiudad;

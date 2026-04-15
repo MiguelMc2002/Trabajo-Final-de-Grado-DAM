@@ -2,14 +2,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Controlador centralizado de navegación entre escenas.
-/// Expone métodos estáticos para que cualquier botón de la UI pueda
-/// desencadenar una transición sin acoplarse al resto del sistema.
+/// Gestiona todos los cambios de pantalla del juego.
+/// Desde aquí se ordena pasar del mapa al mercado, atracar en una ciudad
+/// o volver al menú principal, manteniendo el flujo de juego coherente.
 /// </summary>
 /// <remarks>
-/// Flujo de escenas (beta):
-/// MenuPrincipal → Mapamundi → Ciudad → Mercado → (vuelta al mapa)
-/// Los nombres de escena deben coincidir exactamente con los de Build Settings.
+/// Flujo de pantallas (beta):
+/// Menú Principal → Mapamundi → Ciudad → Mercado → (vuelta al mapa)
 /// </remarks>
 public class SceneController : MonoBehaviour
 {
@@ -24,8 +23,8 @@ public class SceneController : MonoBehaviour
     // ─── Navegación general ───────────────────────────────────────────────────
 
     /// <summary>
-    /// Carga el Menú Principal y reinicia el estado del <see cref="GameManager"/>.
-    /// Útil para el botón "Nueva partida" o "Volver al menú".
+    /// Lleva al jugador de vuelta al Menú Principal, abandonando la partida en curso.
+    /// Se usa tanto al iniciar una nueva partida como al salir desde la pantalla de pausa.
     /// </summary>
     public static void IrAMenuPrincipal()
     {
@@ -34,7 +33,8 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga el Mapamundi. Punto de retorno tras visitar una ciudad.
+    /// Muestra el mapamundi para que el jugador elija su próximo destino.
+    /// Se invoca al salir de una ciudad o al zarpar desde el puerto.
     /// </summary>
     public static void IrAMapamundi()
     {
@@ -43,10 +43,10 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga la escena de Ciudad y registra en el <see cref="GameManager"/>
-    /// cuál es la ciudad visitada.
+    /// Atraca la flota en el puerto indicado y abre la pantalla de ciudad,
+    /// desde donde el jugador puede acceder al mercado, el astillero o la taberna.
     /// </summary>
-    /// <param name="nombreCiudad">Nombre de la ciudad destino (p.ej. "Lübeck").</param>
+    /// <param name="nombreCiudad">Nombre del puerto de destino (p.ej. "Lübeck").</param>
     public static void IrACiudad(string nombreCiudad)
     {
         if (GameManager.Instance != null)
@@ -57,8 +57,9 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Carga la escena de Mercado de la ciudad actual.
-    /// Requiere que <see cref="GameManager.CiudadActual"/> esté establecido.
+    /// Abre el mercado del puerto en el que está atracado el jugador,
+    /// donde podrá comprar y vender mercancías.
+    /// Solo es válido si el jugador se encuentra dentro de una ciudad.
     /// </summary>
     public static void IrAMercado()
     {
@@ -69,7 +70,8 @@ public class SceneController : MonoBehaviour
     // ─── Utilidad ─────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Recarga la escena activa. Útil para reiniciar estados locales en tests.
+    /// Reinicia la pantalla actual a su estado inicial.
+    /// Permite repetir una situación de juego desde cero sin abandonar la partida.
     /// </summary>
     public static void RecargarEscenaActual()
     {
@@ -79,9 +81,10 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Pausa o reanuda el juego modificando <see cref="Time.timeScale"/>.
+    /// Detiene o reanuda el tiempo del juego, congelando o reactivando
+    /// el movimiento de flotas, la producción y la simulación de mercado.
     /// </summary>
-    /// <param name="pausado"><c>true</c> para pausar; <c>false</c> para reanudar.</param>
+    /// <param name="pausado"><c>true</c> para detener el tiempo; <c>false</c> para reanudarlo.</param>
     public static void SetPausa(bool pausado)
     {
         Time.timeScale = pausado ? 0f : 1f;
@@ -89,7 +92,8 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
-    /// Alterna el estado de pausa respecto al valor actual de <see cref="Time.timeScale"/>.
+    /// Alterna entre pausa y juego activo con una sola llamada.
+    /// Útil para el botón de pausa del HUD o la tecla de teclado asignada.
     /// </summary>
     public static void TogglePausa()
     {
