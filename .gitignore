@@ -97,3 +97,11 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+TFG/Assets/Sprites/Iconos/Bienes/
+TFG/Assets/TextMesh Pro/
+TFG/Assets/Sprites/Iconos/Bienes/
+TFG/Library/
+TFG/Temp/
+TFG/Logs/
+TFG/obj/
+TFG/Build/

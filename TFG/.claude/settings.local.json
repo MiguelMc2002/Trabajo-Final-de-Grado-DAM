@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(powershell:*)",
+      "Bash(dir C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets *)",
+      "Bash(powershell.exe *)",
+      "Bash(mkdir *)"
+    ]
+  }
+}
