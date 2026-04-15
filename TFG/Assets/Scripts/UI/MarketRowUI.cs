@@ -126,6 +126,18 @@ public class MarketRowUI : MonoBehaviour
     /// </summary>
     private void Refrescar()
     {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[MarketRowUI] GameManager.Instance es null; se omite el refresco.");
+            return;
+        }
+
+        if (_textoStockCiudad == null || _textoStockAlmacen == null || _textoPrecio == null)
+        {
+            Debug.LogWarning("[MarketRowUI] Una o más referencias de TextMeshProUGUI no están asignadas en el Inspector.");
+            return;
+        }
+
         int stockCiudad   = _marketManager.GetStockActual(_bien);
         int stockAlmacen  = GameManager.Instance.GetCantidadBien(_bien);
         float precioActual = _marketManager.GetPrecioActual(_bien);
