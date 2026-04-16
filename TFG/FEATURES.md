@@ -160,18 +160,19 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/UI/MarketRowUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Mercado |
-| **Descripción** | Controla una fila de la pantalla de mercado. Muestra el nombre del bien, el stock de la ciudad, el stock en bodega del jugador, el precio actual con indicador de color, y los botones de compra/venta (+1, +10, +100). Reacciona automáticamente a los cambios del mercado suscribiéndose al evento `MarketManager.OnMercadoActualizado`. |
+| **Descripción** | Controla una fila de la pantalla de mercado. Muestra el nombre del bien, el stock de la ciudad, el stock en bodega del jugador, el precio actual con indicador de color, y los botones de compra/venta (+1, +10, +100). Reacciona automáticamente a los cambios del mercado suscribiéndose al evento `MarketManager.OnMercadoActualizado`. Las operaciones de compra/venta se delegan en `OficinaComercial` en lugar de llamar directamente a `MarketManager`. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `Inicializar(BienData bien, MarketManager marketManager)` | `void` | Inicializa la fila con el bien y el gestor de mercado. Registra los listeners de los botones y se suscribe al evento de actualización. Debe llamarse una vez justo después de instanciar el prefab. |
+| `Inicializar(BienData bien, MarketManager marketManager, OficinaComercial oficina)` | `void` | Inicializa la fila con el bien, el gestor de mercado y la oficina comercial. Limpia y registra los listeners de los 6 botones y se suscribe al evento de actualización. Puede llamarse varias veces de forma segura gracias a `RemoveAllListeners()`. |
 
 ### Dependencias
 
 - `BienData` — datos del bien que representa la fila.
-- `MarketManager` — fuente de datos de stock y precio, y destino de las operaciones de compra/venta.
+- `MarketManager` — fuente de datos de stock y precio.
+- `OficinaComercial` — intermediario que valida y ejecuta las operaciones de compra/venta.
 - `GameManager` — para consultar el stock de bodega del jugador.
 - `TextMeshProUGUI` (TMPro) — etiquetas de texto.
 - `UnityEngine.UI.Button` — botones de compra/venta.
@@ -186,15 +187,103 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/UI/MercadoUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Mercado |
-| **Descripción** | Gestiona la pantalla del mercado de una ciudad: instancia una fila `MarketRowUI` por cada bien disponible, muestra la cabecera con el nombre de la ciudad y el estado del almacén (`{usado} / ∞` en beta), y mantiene la interfaz sincronizada con el `MarketManager`. |
+| **Descripción** | Gestiona la pantalla del mercado de una ciudad: instancia una fila `MarketRowUI` por cada bien disponible, muestra la cabecera con el nombre de la ciudad y el estado del almacén (`{usado} / ∞` en beta), y mantiene la interfaz sincronizada con el `MarketManager`. Inicializa la `OficinaComercial` y la inyecta en cada fila al crearla. |
 
 ### API pública
 
-_No expone miembros públicos propios; toda la comunicación se realiza a través de referencias serializadas en el Inspector y del evento `MarketManager.OnMercadoActualizado`._
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `IrACiudad()` | `void` | Cierra el mercado y vuelve a la pantalla de la ciudad actual llamando a `SceneController.IrACiudad()`. |
 
 ### Dependencias
 
 - `MarketManager` — fuente de datos del mercado activo.
+- `OficinaComercial` — intermediario de compra/venta; se inicializa en `Start` y se pasa a cada fila.
 - `MarketRowUI` — prefab que se instancia por cada bien.
 - `GameManager` — para mostrar la capacidad usada del almacén en la cabecera.
+- `SceneController` — para la navegación de vuelta a ciudad.
 - `TextMeshProUGUI` (TMPro) — etiquetas de cabecera.
+
+---
+
+## OficinaComercial
+
+**Ruta:** `Assets/Scripts/Economico/OficinaComercial.cs`
+**Tipo:** `MonoBehaviour`
+**Módulo:** Módulo económico
+
+**Descripción:** Intermediario exclusivo entre la UI del mercado y los sistemas de economía. Centraliza la validación de operaciones de compra y venta, y expone el resultado de la última operación en `UltimoMensaje` para que la UI lo muestre al jugador. Si `GameManager.Instance` es `null` al operar (prueba directa de escena), cancela la operación con un aviso en el log sin lanzar excepción.
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `UltimoMensaje` | `string` (get) | Descripción textual del resultado de la última operación. La UI lo lee tras cada compra o venta para informar al jugador. |
+| `Inicializar(MarketManager mercado)` | `void` | Vincula la oficina al mercado de la ciudad activa. Debe llamarse antes de cualquier compra o venta. |
+| `Comprar(BienData bien, int cantidad)` | `bool` | Valida stock de ciudad y dinero del jugador, y delega la compra en `MarketManager`. Devuelve `false` si alguna validación falla. |
+| `Vender(BienData bien, int cantidad)` | `bool` | Valida unidades en bodega del jugador y delega la venta en `MarketManager`. Devuelve `false` si alguna validación falla. |
+
+### Dependencias
+
+- `MarketManager` — ejecuta la operación tras la validación.
+- `GameManager` — consulta dinero y bodega del jugador.
+- `BienData` — identifica el bien objeto de la operación.
+
+---
+
+## CiudadController
+
+**Ruta:** `Assets/Scripts/Ciudades/CiudadController.cs`
+**Tipo:** `MonoBehaviour`
+**Módulo:** Módulo de ciudades
+
+**Descripción:** Coordinador central de la escena Ciudad. Muestra el nombre del puerto actual en un `TextMeshProUGUI` y recibe los clicks de los edificios del mapa visual para abrir el servicio correspondiente. Si `GameManager.Instance` es `null` al cargar la escena (prueba directa), muestra "Ciudad de prueba" sin lanzar excepción.
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirEdificio(TipoEdificio tipo)` | `void` | Abre el servicio del edificio pulsado. `Mercado` navega a la escena Mercado; `Astillero` y `Taberna` loguean aviso de no disponible en beta. |
+
+### Dependencias
+
+- `GameManager` — para leer `CiudadActual` y mostrar el nombre del puerto.
+- `SceneController` — para navegar a la escena Mercado.
+- `EdificioClickable` — componentes que invocan `AbrirEdificio` al ser pulsados.
+
+---
+
+## TipoEdificio
+
+**Ruta:** `Assets/Scripts/Ciudades/CiudadController.cs`
+**Tipo:** `enum`
+**Módulo:** Módulo de ciudades
+
+**Descripción:** Identifica cada edificio clickable del mapa visual de la ciudad.
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Mercado` | valor | Mercado de la ciudad: permite comprar y vender mercancías. |
+| `Astillero` | valor | Astillero: construcción y reparación de barcos. Disponible tras la beta. |
+| `Taberna` | valor | Taberna: contratación de capitanes y tripulación. Disponible tras la beta. |
+
+---
+
+## EdificioClickable
+
+**Ruta:** `Assets/Scripts/Ciudades/EdificioClickable.cs`
+**Tipo:** `MonoBehaviour`
+**Módulo:** Módulo de ciudades
+
+**Descripción:** Detecta el click del jugador sobre el sprite de un edificio y notifica a `CiudadController` para que abra el servicio correspondiente. La referencia a `CiudadController` se cachea en `Awake` con `FindAnyObjectByType`. Requiere un `Collider2D` en el mismo GameObject para que `OnMouseDown` funcione.
+
+### API pública
+
+_No expone miembros públicos. La interacción se produce íntegramente a través de `OnMouseDown` y la referencia cacheada a `CiudadController`._
+
+### Dependencias
+
+- `CiudadController` — receptor del evento de click.
+- `TipoEdificio` — identifica qué edificio representa este sprite.

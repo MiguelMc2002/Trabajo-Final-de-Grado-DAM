@@ -65,23 +65,40 @@ public class MarketRowUI : MonoBehaviour
     /// <summary>Referencia al gestor del mercado de la ciudad actual.</summary>
     private MarketManager _marketManager;
 
+    /// <summary>
+    /// Intermediario de comercio que valida y ejecuta las operaciones de compra y venta.
+    /// Todas las acciones de los botones pasan por aquí en lugar de llamar al mercado directamente.
+    /// </summary>
+    private OficinaComercial _oficina;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Inicializa la fila con el bien y el gestor de mercado correspondientes.
-    /// Registra los listeners de los botones y se suscribe al evento de actualización
-    /// del mercado para mantener los datos en pantalla sincronizados.
-    /// Debe llamarse una vez justo después de instanciar el prefab.
+    /// Inicializa la fila con el bien, el gestor de mercado y la oficina comercial.
+    /// Limpia y registra los listeners de los 6 botones, y se suscribe al evento de
+    /// actualización del mercado para mantener los datos en pantalla sincronizados.
+    /// Puede llamarse varias veces de forma segura: los listeners previos se eliminan
+    /// antes de añadir los nuevos para evitar duplicados.
     /// </summary>
     /// <param name="bien">Bien que representa esta fila.</param>
     /// <param name="marketManager">Gestor del mercado de la ciudad activa.</param>
-    public void Inicializar(BienData bien, MarketManager marketManager)
+    /// <param name="oficina">Intermediario de comercio que valida y ejecuta las operaciones.</param>
+    public void Inicializar(BienData bien, MarketManager marketManager, OficinaComercial oficina)
     {
         _bien          = bien;
         _marketManager = marketManager;
+        _oficina       = oficina;
 
         // Nombre del bien (estático, no cambia en runtime)
         _textoNombre.text = bien.nombre;
+
+        // Limpiar listeners previos para evitar duplicados si Inicializar se llama más de una vez
+        _btnComprar1.onClick.RemoveAllListeners();
+        _btnComprar10.onClick.RemoveAllListeners();
+        _btnComprar100.onClick.RemoveAllListeners();
+        _btnVender1.onClick.RemoveAllListeners();
+        _btnVender10.onClick.RemoveAllListeners();
+        _btnVender100.onClick.RemoveAllListeners();
 
         // Listeners de compra
         _btnComprar1.onClick.AddListener(() => EjecutarCompra(1));
@@ -172,25 +189,40 @@ public class MarketRowUI : MonoBehaviour
     // ─── Acciones de compra/venta ────────────────────────────────────────────
 
     /// <summary>
-    /// Intenta comprar la cantidad indicada del bien en el mercado actual.
-    /// Si la operación falla (stock insuficiente, dinero insuficiente o bodega llena)
-    /// el mercado y la interfaz permanecen sin cambios.
+    /// Intenta comprar la cantidad indicada del bien a través de la oficina comercial.
+    /// Si la operación falla, la interfaz permanece sin cambios y el motivo queda registrado
+    /// en <see cref="OficinaComercial.UltimoMensaje"/>.
     /// </summary>
     /// <param name="cantidad">Unidades que se desean comprar.</param>
     private void EjecutarCompra(int cantidad)
     {
-        _marketManager.Comprar(_bien, cantidad);
-        // La interfaz se refresca automáticamente vía OnMercadoActualizado
+        if (_oficina == null)
+        {
+            Debug.LogWarning("[MarketRowUI] OficinaComercial no asignada; no se puede ejecutar la compra.");
+            return;
+        }
+
+        _oficina.Comprar(_bien, cantidad);
+        // Refrescar explícitamente para reflejar cambios en almacén y precio aunque
+        // OnMercadoActualizado ya lo haga al modificar el stock de la ciudad.
+        Refrescar();
     }
 
     /// <summary>
-    /// Intenta vender la cantidad indicada del bien en el mercado actual.
-    /// Si el jugador no tiene suficiente stock en bodega, la operación no se realiza.
+    /// Intenta vender la cantidad indicada del bien a través de la oficina comercial.
+    /// Si el jugador no tiene suficiente mercancía en bodega, la operación no se realiza
+    /// y el motivo queda registrado en <see cref="OficinaComercial.UltimoMensaje"/>.
     /// </summary>
     /// <param name="cantidad">Unidades que se desean vender.</param>
     private void EjecutarVenta(int cantidad)
     {
-        _marketManager.Vender(_bien, cantidad);
-        // La interfaz se refresca automáticamente vía OnMercadoActualizado
+        if (_oficina == null)
+        {
+            Debug.LogWarning("[MarketRowUI] OficinaComercial no asignada; no se puede ejecutar la venta.");
+            return;
+        }
+
+        _oficina.Vender(_bien, cantidad);
+        Refrescar();
     }
 }

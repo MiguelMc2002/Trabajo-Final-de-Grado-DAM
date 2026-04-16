@@ -19,6 +19,12 @@ public class MercadoUI : MonoBehaviour
     [Header("Mercado")]
     [SerializeField] private MarketManager _marketManager;
 
+    /// <summary>
+    /// Intermediario de comercio que valida y ejecuta las operaciones de compra y venta.
+    /// Debe asignarse desde el Inspector junto al <see cref="MarketManager"/>.
+    /// </summary>
+    [SerializeField] private OficinaComercial _oficina;
+
     // ─── Prefab y contenedor de filas ────────────────────────────────────────
 
     /// <summary>
@@ -56,6 +62,13 @@ public class MercadoUI : MonoBehaviour
             return;
         }
 
+        if (_oficina == null)
+        {
+            Debug.LogError("[MercadoUI] No hay OficinaComercial asignada. Asígnala desde el Inspector.");
+            return;
+        }
+
+        _oficina.Inicializar(_marketManager);
         InstanciarFilas();
         _marketManager.OnMercadoActualizado += OnMercadoActualizado;
         RefrescarCabecera();
@@ -106,8 +119,18 @@ public class MercadoUI : MonoBehaviour
                 continue;
             }
 
-            rowUI.Inicializar(entrada.bien, _marketManager);
+            rowUI.Inicializar(entrada.bien, _marketManager, _oficina);
         }
+    }
+
+    // ─── Navegación ──────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Cierra el mercado y vuelve a la pantalla de la ciudad actual.
+    /// </summary>
+    public void IrACiudad()
+    {
+        SceneController.IrACiudad();
     }
 
     // ─── Cabecera ────────────────────────────────────────────────────────────

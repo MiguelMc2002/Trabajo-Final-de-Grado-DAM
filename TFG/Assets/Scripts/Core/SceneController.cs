@@ -57,6 +57,16 @@ public class SceneController : MonoBehaviour
     }
 
     /// <summary>
+    /// Carga la pantalla de ciudad sin modificar <see cref="GameManager.CiudadActual"/>.
+    /// Útil para volver a la ciudad desde el mercado cuando la ciudad ya está establecida.
+    /// </summary>
+    public static void IrACiudad()
+    {
+        Debug.Log("[SceneController] Navegando a: Ciudad");
+        SceneManager.LoadScene(EscenaCiudad);
+    }
+
+    /// <summary>
     /// Abre el mercado del puerto en el que está atracado el jugador,
     /// donde podrá comprar y vender mercancías.
     /// Solo es válido si el jugador se encuentra dentro de una ciudad.
