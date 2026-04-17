@@ -1,10 +1,11 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
-/// Gestiona la pantalla del mercado de una ciudad: instancia una fila
-/// (<see cref="MarketRowUI"/>) por cada bien disponible, muestra la cabecera
-/// con el nombre de la ciudad y el estado del almacén, y mantiene la interfaz
+/// Panel de UI del mercado que se muestra sobre la escena Ciudad como un diálogo modal.
+/// Instancia una fila (<see cref="MarketRowUI"/>) por cada bien disponible, muestra la
+/// cabecera con el nombre de la ciudad y el estado del almacén, y mantiene la interfaz
 /// sincronizada con el <see cref="MarketManager"/> suscribiéndose a su evento
 /// <see cref="MarketManager.OnMercadoActualizado"/>.
 /// </summary>
@@ -13,8 +14,7 @@ public class MercadoUI : MonoBehaviour
     // ─── Referencias de escena ───────────────────────────────────────────────
 
     /// <summary>
-    /// Gestor del mercado de la ciudad activa. Debe asignarse desde el Inspector
-    /// o provenir del <see cref="SceneController"/> al abrir la pantalla.
+    /// Gestor del mercado de la ciudad activa. Debe asignarse desde el Inspector.
     /// </summary>
     [Header("Mercado")]
     [SerializeField] private MarketManager _marketManager;
@@ -36,11 +36,11 @@ public class MercadoUI : MonoBehaviour
 
     /// <summary>
     /// Transform contenedor (p. ej. un VerticalLayoutGroup) donde se instancian
-    /// las filas al abrir la pantalla. Se destruyen al cerrarla.
+    /// las filas al activar el panel. Se destruyen al desactivarlo.
     /// </summary>
     [SerializeField] private Transform _contenedorFilas;
 
-    // ─── Cabecera de la pantalla ─────────────────────────────────────────────
+    // ─── Cabecera del panel ──────────────────────────────────────────────────
 
     /// <summary>Muestra el nombre de la ciudad cuyo mercado se está consultando.</summary>
     [Header("Cabecera")]
@@ -52,9 +52,34 @@ public class MercadoUI : MonoBehaviour
     /// </summary>
     [SerializeField] private TextMeshProUGUI _textoCapacidadAlmacen;
 
+    // ─── Botón de cierre ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Botón que cierra el panel del mercado y devuelve la vista a la ciudad.
+    /// Debe asignarse desde el Inspector.
+    /// </summary>
+    public Button BotonCerrar;
+
+    // ─── Referencias cacheadas ───────────────────────────────────────────────
+
+    private CiudadController _ciudadController;
+
     // ─────────────────────────────────────────────────────────────────────────
 
-    private void Start()
+    private void Awake()
+    {
+        _ciudadController = FindAnyObjectByType<CiudadController>();
+
+        if (_ciudadController == null)
+            Debug.LogWarning("[MercadoUI] No se encontró CiudadController en la escena.");
+
+        if (BotonCerrar != null)
+            BotonCerrar.onClick.AddListener(Cerrar);
+        else
+            Debug.LogWarning("[MercadoUI] BotonCerrar no asignado en el Inspector.");
+    }
+
+    private void OnEnable()
     {
         if (_marketManager == null)
         {
@@ -69,16 +94,22 @@ public class MercadoUI : MonoBehaviour
         }
 
         _oficina.Inicializar(_marketManager);
-        InstanciarFilas();
         _marketManager.OnMercadoActualizado += OnMercadoActualizado;
+        ConstruirFilas();
         RefrescarCabecera();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
-        // Desuscribirse para evitar referencias a objetos destruidos
         if (_marketManager != null)
             _marketManager.OnMercadoActualizado -= OnMercadoActualizado;
+
+        // Destruir las filas instanciadas para que no se acumulen al reabrir el panel
+        if (_contenedorFilas != null)
+        {
+            foreach (Transform hijo in _contenedorFilas)
+                Destroy(hijo.gameObject);
+        }
     }
 
     // ─── Construcción de la lista de bienes ──────────────────────────────────
@@ -86,9 +117,9 @@ public class MercadoUI : MonoBehaviour
     /// <summary>
     /// Instancia una fila del mercado por cada bien registrado en el <see cref="MarketManager"/>
     /// y la inicializa llamando a <see cref="MarketRowUI.Inicializar"/>.
-    /// Se ejecuta una vez al abrir la pantalla.
+    /// Se llama automáticamente al activar el panel desde <see cref="OnEnable"/>.
     /// </summary>
-    private void InstanciarFilas()
+    private void ConstruirFilas()
     {
         if (_prefabMarketRow == null)
         {
@@ -104,7 +135,7 @@ public class MercadoUI : MonoBehaviour
 
         foreach (EntradaMercado entrada in _marketManager.GetEntradas())
         {
-            if (entrada.bien == null)
+            if (entrada.Bien == null)
             {
                 Debug.LogWarning("[MercadoUI] Se encontró una entrada sin BienData; se omite.");
                 continue;
@@ -115,22 +146,26 @@ public class MercadoUI : MonoBehaviour
 
             if (rowUI == null)
             {
-                Debug.LogWarning($"[MercadoUI] El prefab MarketRow no tiene componente MarketRowUI; fila de '{entrada.bien.nombre}' ignorada.");
+                Debug.LogWarning($"[MercadoUI] El prefab MarketRow no tiene componente MarketRowUI; fila de '{entrada.Bien.nombre}' ignorada.");
                 continue;
             }
 
-            rowUI.Inicializar(entrada.bien, _marketManager, _oficina);
+            rowUI.Inicializar(entrada.Bien, _marketManager, _oficina);
         }
     }
 
-    // ─── Navegación ──────────────────────────────────────────────────────────
+    // ─── Control del panel ───────────────────────────────────────────────────
 
     /// <summary>
-    /// Cierra el mercado y vuelve a la pantalla de la ciudad actual.
+    /// Cierra el panel del mercado delegando en <see cref="CiudadController.CerrarTodosPaneles"/>.
+    /// Se registra como listener de <see cref="BotonCerrar"/> en <c>Awake</c>.
     /// </summary>
-    public void IrACiudad()
+    public void Cerrar()
     {
-        SceneController.IrACiudad();
+        if (_ciudadController != null)
+            _ciudadController.CerrarTodosPaneles();
+        else
+            gameObject.SetActive(false);
     }
 
     // ─── Cabecera ────────────────────────────────────────────────────────────
