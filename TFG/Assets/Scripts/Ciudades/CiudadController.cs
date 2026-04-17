@@ -6,7 +6,7 @@ using UnityEngine;
 /// Muestra el nombre del puerto en el que está atracado el jugador y actúa como
 /// punto de entrada para los edificios clickables del mapa visual: cada
 /// <see cref="EdificioClickable"/> de la escena llama a <see cref="AbrirEdificio"/>
-/// al ser pulsado, y esta clase gestiona qué panel de UI mostrar u ocultar.
+/// al ser pulsado, y esta clase decide qué pantalla cargar o qué aviso emitir.
 /// </summary>
 public class CiudadController : MonoBehaviour
 {
@@ -14,43 +14,25 @@ public class CiudadController : MonoBehaviour
 
     /// <summary>
     /// Texto donde se muestra el nombre del puerto en el que está atracado el jugador.
+    /// Si <see cref="GameManager.Instance"/> no está disponible al abrir la escena
+    /// (prueba directa sin pasar por el Menú Principal), muestra "Ciudad de prueba".
     /// </summary>
     [SerializeField] private TextMeshProUGUI _textoNombreCiudad;
-
-    // ─── Datos de ciudad ─────────────────────────────────────────────────────
-
-    /// <summary>
-    /// ScriptableObject con la configuración de la ciudad actual.
-    /// Si está asignado, <see cref="Start"/> usa <see cref="CiudadData.NombreCiudad"/>
-    /// para mostrar el nombre en pantalla en lugar de consultar <see cref="GameManager"/>.
-    /// </summary>
-    public CiudadData DatosCiudad;
-
-    // ─── Paneles de edificios ─────────────────────────────────────────────────
-
-    /// <summary>Panel de UI del mercado. Se activa al pulsar el edificio Mercado.</summary>
-    public GameObject PanelMercado;
-
-    /// <summary>Panel de UI del astillero. Se activa al pulsar el edificio Astillero.</summary>
-    public GameObject PanelAstillero;
-
-    /// <summary>Panel de UI de la taberna. Se activa al pulsar el edificio Taberna.</summary>
-    public GameObject PanelTaberna;
 
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
     {
         MostrarNombreCiudad();
-        CerrarTodosPaneles();
     }
 
     // ─── Inicialización ───────────────────────────────────────────────────────
 
     /// <summary>
     /// Escribe el nombre de la ciudad actual en el encabezado de la pantalla.
-    /// Prioridad: <see cref="DatosCiudad.NombreCiudad"/> → <see cref="GameManager.Instance"/>
-    /// → "Ciudad de prueba" como último recurso para pruebas directas desde el editor.
+    /// Si <see cref="GameManager.Instance"/> es <c>null</c> (p. ej. al probar la escena
+    /// Ciudad directamente), muestra "Ciudad de prueba" y registra un aviso en el log
+    /// sin lanzar excepción.
     /// </summary>
     private void MostrarNombreCiudad()
     {
@@ -60,66 +42,40 @@ public class CiudadController : MonoBehaviour
             return;
         }
 
-        if (DatosCiudad != null)
+        if (GameManager.Instance == null)
         {
-            _textoNombreCiudad.text = DatosCiudad.NombreCiudad;
+            Debug.LogWarning("[CiudadController] GameManager.Instance es null. ¿Se está probando la escena directamente? Se muestra 'Ciudad de prueba'.");
+            _textoNombreCiudad.text = "Ciudad de prueba";
             return;
         }
 
-        if (GameManager.Instance != null)
-        {
-            _textoNombreCiudad.text = GameManager.Instance.CiudadActual;
-            return;
-        }
-
-        Debug.LogWarning("[CiudadController] DatosCiudad y GameManager.Instance son null. Se muestra 'Ciudad de prueba'.");
-        _textoNombreCiudad.text = "Ciudad de prueba";
+        _textoNombreCiudad.text = GameManager.Instance.CiudadActual;
     }
 
     // ─── API pública para edificios clickables ────────────────────────────────
 
     /// <summary>
-    /// Cierra todos los paneles de edificios ocultándolos.
-    /// Se llama antes de abrir cualquier panel y al inicializar la escena.
-    /// </summary>
-    public void CerrarTodosPaneles()
-    {
-        if (PanelMercado   != null) PanelMercado.SetActive(false);
-        if (PanelAstillero != null) PanelAstillero.SetActive(false);
-        if (PanelTaberna   != null) PanelTaberna.SetActive(false);
-    }
-
-    /// <summary>
-    /// Cierra todos los paneles y activa el panel correspondiente al edificio pulsado.
+    /// Abre el servicio correspondiente al edificio que el jugador acaba de pulsar.
     /// Los componentes <see cref="EdificioClickable"/> de la escena invocan este método
     /// pasando su tipo como parámetro.
+    /// En la beta solo el mercado navega a una nueva pantalla; astillero y taberna
+    /// emiten un aviso y permanecen pendientes para el Día 4.
     /// </summary>
     /// <param name="tipo">Tipo de edificio pulsado por el jugador.</param>
     public void AbrirEdificio(TipoEdificio tipo)
     {
-        CerrarTodosPaneles();
-
         switch (tipo)
         {
             case TipoEdificio.Mercado:
-                if (PanelMercado != null)
-                    PanelMercado.SetActive(true);
-                else
-                    Debug.LogWarning("[CiudadController] PanelMercado no asignado en el Inspector.");
+                SceneController.IrAMercado();
                 break;
 
             case TipoEdificio.Astillero:
-                if (PanelAstillero != null)
-                    PanelAstillero.SetActive(true);
-                else
-                    Debug.LogWarning("[CiudadController] PanelAstillero no asignado en el Inspector.");
+                Debug.Log("[CiudadController] Astillero no disponible en beta.");
                 break;
 
             case TipoEdificio.Taberna:
-                if (PanelTaberna != null)
-                    PanelTaberna.SetActive(true);
-                else
-                    Debug.LogWarning("[CiudadController] PanelTaberna no asignado en el Inspector.");
+                Debug.Log("[CiudadController] Taberna no disponible en beta.");
                 break;
 
             default:

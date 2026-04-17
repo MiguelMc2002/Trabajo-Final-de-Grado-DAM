@@ -4,9 +4,7 @@
       "Bash(powershell:*)",
       "Bash(dir C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets *)",
       "Bash(powershell.exe *)",
-      "Bash(mkdir *)",
-      "Bash(xargs cat *)",
-      "Bash(grep -v \"m_Name: $\")"
+      "Bash(mkdir *)"
     ]
   }
 }
