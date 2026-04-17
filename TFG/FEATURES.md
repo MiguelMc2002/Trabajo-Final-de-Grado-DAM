@@ -458,6 +458,26 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 
 ---
 
+### Vista isométrica y assets (pendiente — Día 6)
+
+- Cambiar proyección de cámara a isométrica en todas las escenas.
+- Descargar e integrar assets isométricos de Kenney: Isometric Blocks + Isometric City Pack + Isometric Roads.
+- Opcionalmente mezclar con assets de OpenGameArt "Medieval Isometric" para reducir aspecto genérico.
+- Todos los assets deben usar el mismo tamaño de tile (64×64 o 128×64) para que encajen en la cuadrícula.
+- No mezclar Kenney con pixel art o assets hiperrealistas.
+- Ajustar sorting order de sprites para profundidad isométrica correcta.
+
+---
+
+### Documentación técnica de referencia (pendiente — post-beta)
+
+- Generar documentación técnica formal a partir de los XMLDoc existentes en el código.
+- Herramienta recomendada: DocFX (estándar Microsoft para C#) — equivalente a Javadoc en Java; genera un sitio HTML navegable con parámetros, tipos, valores de retorno y sobrecargas.
+- Requisito previo: XMLDoc completo en todas las clases públicas (ya en curso).
+- Output: carpeta `docs/` en la raíz del repositorio, publicable en GitHub Pages.
+
+---
+
 ### Revisión de arquitectura (pendiente — Día 6)
 
 - Análisis estático de dependencias entre clases para detectar acoplamiento excesivo.
