@@ -39,8 +39,16 @@ public class CiudadController : MonoBehaviour
 
     // ─────────────────────────────────────────────────────────────────────────
 
+    /// <summary>
+    /// Inicializa la pantalla de ciudad: sincroniza <see cref="DatosCiudad"/> con el puerto
+    /// registrado en <see cref="GameManager"/> si el jugador llegó desde el mapamundi,
+    /// muestra el nombre en pantalla y cierra todos los paneles de edificios.
+    /// </summary>
     private void Start()
     {
+        if (GameManager.Instance != null && GameManager.Instance.CiudadActual != null)
+            DatosCiudad = GameManager.Instance.CiudadActual;
+
         MostrarNombreCiudad();
         CerrarTodosPaneles();
     }
@@ -68,7 +76,7 @@ public class CiudadController : MonoBehaviour
 
         if (GameManager.Instance != null)
         {
-            _textoNombreCiudad.text = GameManager.Instance.CiudadActual;
+            _textoNombreCiudad.text = GameManager.Instance.CiudadActual?.NombreCiudad ?? string.Empty;
             return;
         }
 
@@ -87,6 +95,27 @@ public class CiudadController : MonoBehaviour
         if (PanelMercado   != null) PanelMercado.SetActive(false);
         if (PanelAstillero != null) PanelAstillero.SetActive(false);
         if (PanelTaberna   != null) PanelTaberna.SetActive(false);
+    }
+
+    /// <summary>
+    /// Cierra los paneles abiertos y regresa al mapamundi.
+    /// También se activa al pulsar la tecla M.
+    /// </summary>
+    public void IrAMapamundi()
+    {
+        CerrarTodosPaneles();
+        SceneController.IrAMapamundi();
+    }
+
+    // ─── Input por teclado ────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Detecta atajos de teclado de la pantalla de ciudad.
+    /// M → vuelve al mapamundi.
+    /// </summary>
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.M)) IrAMapamundi();
     }
 
     /// <summary>

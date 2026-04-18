@@ -12,26 +12,28 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Core/GameManager.cs` |
 | **Tipo** | `MonoBehaviour` (singleton persistente) |
 | **Módulo** | Core — Transversal |
-| **Descripción** | Registro central de la partida. Conserva el estado del comerciante —tesoro, puerto actual y capacidad de bodega— mientras el jugador navega entre las distintas pantallas del juego. En la beta los datos viven en memoria; en la release se persistirán en SQLite. |
+| **Descripción** | Registro central de la partida. Conserva el estado del comerciante —tesoro, ciudad actual, última ciudad visitada y bodega— mientras el jugador navega entre las distintas pantallas del juego. En la beta los datos viven en memoria; en la release se persistirán en SQLite. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `Instance` | `static GameManager` (get) | Punto de acceso global al estado de la partida activa. Permite a cualquier pantalla consultar el tesoro o el puerto del jugador. |
-| `Dinero` | `long` (get) | Monedas de oro en el cofre del comerciante. Sube al vender mercancía y baja al comprar en cualquier mercado de la Liga. |
-| `CiudadActual` | `string` (get) | Puerto en el que está atracado el jugador. Vacío mientras navega por el mapamundi. |
-| `CapacidadAlmacen` | `const int` | Capacidad de bodega en la beta: sin límite. En la release se sustituirá por la capacidad real del barco. |
-| `ModificarDinero(long cantidad)` | `bool` | Registra un movimiento de dinero en el cofre. Valor positivo al cobrar una venta, negativo al pagar una compra. Devuelve `false` si el tesoro no cubre el gasto. |
-| `SetCiudadActual(string nombreCiudad)` | `void` | Indica al juego en qué puerto ha atracado el jugador. Se actualiza cada vez que la flota llega a una nueva ciudad. |
-| `GetCantidadBien(BienData bien)` | `int` | Devuelve las unidades del bien indicado que hay en la bodega del jugador. Retorna 0 si el bien no está en el inventario. |
-| `ModificarCantidadBien(BienData bien, int cantidad)` | `bool` | Modifica la cantidad de un bien en bodega. Positivo al cargar mercancía (compra), negativo al descargarla (venta). Devuelve `false` si el resultado sería negativo o superaría `CapacidadAlmacen`. |
-| `GetTotalUnidadesAlmacen()` | `int` | Devuelve el total de unidades de todas las mercancías almacenadas en bodega. Se usa para comprobar si hay espacio antes de cargar más mercancía. |
-| `GetAlmacen()` | `IReadOnlyDictionary<BienData, int>` | Expone el inventario completo de bodega en modo solo lectura. Útil para que la interfaz del almacén enumere todos los bienes cargados. |
+| `Instance` | `static GameManager` (get) | Punto de acceso global al estado de la partida activa. |
+| `Dinero` | `long` (get) | Monedas de oro en el cofre del comerciante. Sube al vender y baja al comprar. |
+| `CiudadActual` | `CiudadData` (get) | Puerto en el que está atracado el jugador. `null` mientras navega por el mapamundi. |
+| `UltimaCiudad` | `CiudadData` (get) | Puerto visitado antes del destino actual. `null` si el jugador no ha viajado todavía. Útil para ofrecer volver al origen. |
+| `CapacidadAlmacen` | `const int` | Capacidad de bodega en la beta: `int.MaxValue`. En la release se sustituirá por la capacidad real del barco. |
+| `EstablecerCiudadActual(CiudadData ciudad)` | `void` | Registra el puerto de destino. Guarda el valor anterior en `UltimaCiudad` antes de sobrescribir `CiudadActual`. Invocado desde `MapamundiController`. |
+| `ModificarDinero(long cantidad)` | `bool` | Registra un movimiento de dinero. Positivo al cobrar una venta, negativo al pagar una compra. Devuelve `false` si el tesoro no cubre el gasto. |
+| `GetCantidadBien(BienData bien)` | `int` | Devuelve las unidades del bien indicado en bodega. Retorna 0 si no está en el inventario. |
+| `ModificarCantidadBien(BienData bien, int cantidad)` | `bool` | Modifica la cantidad de un bien en bodega. Devuelve `false` si el resultado sería negativo o superaría `CapacidadAlmacen`. |
+| `GetTotalUnidadesAlmacen()` | `int` | Devuelve el total de unidades de todas las mercancías en bodega. |
+| `GetAlmacen()` | `IReadOnlyDictionary<BienData, int>` | Expone el inventario completo de bodega en modo solo lectura. |
 
 ### Dependencias
 
 - `BienData` — clave del diccionario de bodega.
+- `CiudadData` — tipo de `CiudadActual` y `UltimaCiudad`.
 
 ---
 
@@ -42,19 +44,20 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Core/SceneController.cs` |
 | **Tipo** | `MonoBehaviour` (métodos estáticos) |
 | **Módulo** | Core — Interfaz de usuario / Navegación |
-| **Descripción** | Gestiona todos los cambios de pantalla del juego. Desde aquí se ordena pasar del mapa al mercado, atracar en una ciudad o volver al menú principal, manteniendo el flujo de juego coherente. Flujo beta: Menú Principal → Mapamundi → Ciudad → Mercado → (vuelta al mapa). |
+| **Descripción** | Gestiona todos los cambios de pantalla del juego. Centraliza los literales de nombre de escena para evitar typos. Flujo beta: Menú Principal → Mapamundi → Ciudad → Mercado → (vuelta al mapa). |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `IrAMenuPrincipal()` | `static void` | Lleva al jugador al Menú Principal, abandonando la partida en curso. Se usa al iniciar nueva partida o al salir desde la pantalla de pausa. |
-| `IrAMapamundi()` | `static void` | Muestra el mapamundi para que el jugador elija su próximo destino. Se invoca al salir de una ciudad o al zarpar desde el puerto. |
-| `IrACiudad(string nombreCiudad)` | `static void` | Atraca la flota en el puerto indicado y abre la pantalla de ciudad, desde donde se puede acceder al mercado, astillero o taberna. |
+| `IrAMenuPrincipal()` | `static void` | Lleva al jugador al Menú Principal, abandonando la partida en curso. |
+| `IrAMapamundi()` | `static void` | Muestra el mapamundi para que el jugador elija su próximo destino. |
+| `IrACiudad(string nombreCiudad)` | `static void` | Abre la pantalla de ciudad registrando el nombre en el log. La ciudad se establece previamente en `GameManager` desde `MapamundiController`. |
+| `IrACiudad()` | `static void` | Carga la pantalla de ciudad sin modificar `GameManager.CiudadActual`. Sobrecarga usada cuando la ciudad ya está registrada. |
 | `IrAMercado()` | `static void` | Abre el mercado del puerto actual. Solo válido si el jugador está dentro de una ciudad. |
 | `RecargarEscenaActual()` | `static void` | Reinicia la pantalla actual a su estado inicial sin abandonar la partida. |
-| `SetPausa(bool pausado)` | `static void` | Detiene o reanuda el tiempo del juego, congelando o reactivando flotas, producción y simulación de mercado. |
-| `TogglePausa()` | `static void` | Alterna entre pausa y juego activo con una sola llamada. Útil para el botón de pausa del HUD o la tecla asignada. |
+| `SetPausa(bool pausado)` | `static void` | Detiene o reanuda el tiempo del juego. |
+| `TogglePausa()` | `static void` | Alterna entre pausa y juego activo con una sola llamada. |
 
 ---
 
@@ -73,7 +76,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 |---|---|---|
 | `nombre` | `string` | Nombre visible del bien en la interfaz del mercado y del almacén (p. ej. "Grano", "Madera", "Pescado"). |
 | `categoria` | `CategoriaBien` | Clasificación del bien en la cadena productiva: `Primario`, `Intermedio` o `Avanzado`. |
-| `precioBase` | `float` | Precio de referencia en monedas de oro cuando el stock de la ciudad está al máximo. Base de la fórmula dinámica de precios. |
+| `precioBase` | `float` | Precio de referencia cuando el stock está al máximo. Base de la fórmula dinámica de precios. |
 | `stockMaximo` | `int` | Unidades máximas que puede almacenar una ciudad de este bien. Determina el rango dinámico del precio. |
 
 ### Dependencias
@@ -130,7 +133,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Ciudades/CiudadData.cs` |
 | **Tipo** | `[Serializable] class` |
 | **Módulo** | Ciudades — Configuración de mercado |
-| **Descripción** | Agrupa la configuración de un bien dentro del mercado de una ciudad concreta: referencia al bien, stock inicial, stock máximo, tasas diarias de producción y consumo, y precio calculado en tiempo de ejecución. Se serializa en el Inspector para configurar el mercado desde el editor. `MarketManager` realiza una copia profunda de estas entradas al iniciar la partida para no mutar el asset. |
+| **Descripción** | Agrupa la configuración de un bien dentro del mercado de una ciudad concreta: referencia al bien, stock inicial, stock máximo, tasas diarias de producción y consumo, y precio calculado en tiempo de ejecución. Se serializa en el Inspector. `MarketManager` realiza una copia profunda de estas entradas al iniciar la partida para no mutar el asset. |
 
 ### API pública
 
@@ -139,8 +142,8 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | `Bien` | `BienData` | Referencia al `BienData` que define nombre, categoría y precio base del bien. |
 | `StockActual` | `int` | Unidades del bien disponibles actualmente en el mercado. Se reduce al comprar y aumenta al vender. |
 | `StockMax` | `int` | Capacidad máxima de este bien en la ciudad. Límite de acumulación; previsto para renombrarse a `UmbralFlush` en la release. |
-| `ProduccionDiaria` | `int` | Unidades que la ciudad genera de este bien cada día de juego por sus edificios productivos. |
-| `ConsumoDiario` | `int` | Unidades que la ciudad consume de este bien cada día de juego para satisfacer a su población. |
+| `ProduccionDiaria` | `int` | Unidades que la ciudad genera de este bien cada día de juego. |
+| `ConsumoDiario` | `int` | Unidades que la ciudad consume de este bien cada día de juego. |
 | `PrecioActual` | `float` | Precio calculado en tiempo de ejecución según la fórmula de oferta y demanda. Oculto en el Inspector; se inicializa en `MarketManager.Start`. |
 
 ### Dependencias
@@ -164,12 +167,12 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 |---|---|---|
 | `DatosCiudad` | `CiudadData` | Asset con la configuración de la ciudad. Si está asignado, `Start` copia sus entradas de mercado y lee el nombre de ciudad desde aquí. |
 | `OnMercadoActualizado` | `event Action<BienData>` | Se lanza cada vez que el stock o el precio de cualquier bien cambia. La interfaz del mercado se suscribe para refrescar las filas afectadas. |
-| `GetEntradas()` | `IReadOnlyList<EntradaMercado>` | Devuelve la lista completa de entradas del mercado. Útil para que la interfaz construya todas las filas al abrir el panel. |
+| `GetEntradas()` | `IReadOnlyList<EntradaMercado>` | Devuelve la lista completa de entradas del mercado. |
 | `GetNombreCiudad()` | `string` | Devuelve el nombre de la ciudad leído desde `DatosCiudad`. Retorna cadena vacía si no hay asset asignado. |
 | `GetStockActual(BienData bien)` | `int` | Devuelve el stock actual de un bien en este mercado. Retorna 0 si el bien no existe. |
 | `GetPrecioActual(BienData bien)` | `float` | Devuelve el precio actual de un bien calculado con la fórmula de oferta y demanda. Retorna 0 si el bien no existe. |
-| `Comprar(BienData bien, int cantidad)` | `bool` | Ejecuta la compra de un bien: descuenta el coste del tesoro, reduce el stock de la ciudad y carga las unidades en bodega. Devuelve `false` si stock, dinero o espacio de bodega son insuficientes. |
-| `Vender(BienData bien, int cantidad)` | `bool` | Ejecuta la venta de un bien: ingresa el precio en el tesoro, aumenta el stock de la ciudad y retira las unidades de bodega. Devuelve `false` si el jugador no tiene suficiente cantidad. |
+| `Comprar(BienData bien, int cantidad)` | `bool` | Descuenta el coste del tesoro, reduce el stock de la ciudad y carga las unidades en bodega. Devuelve `false` si stock, dinero o espacio son insuficientes. |
+| `Vender(BienData bien, int cantidad)` | `bool` | Ingresa el precio en el tesoro, aumenta el stock de la ciudad y retira las unidades de bodega. Devuelve `false` si el jugador no tiene suficiente cantidad. |
 
 ### Dependencias
 
@@ -187,13 +190,13 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/UI/MarketRowUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Mercado |
-| **Descripción** | Controla una fila del panel de mercado. Muestra el nombre del bien, el stock de la ciudad, el stock en bodega del jugador, el precio actual con indicador de color, y los botones de compra/venta (+1, +10, +100). Reacciona automáticamente a los cambios del mercado suscribiéndose al evento `MarketManager.OnMercadoActualizado`. Las operaciones de compra/venta se delegan en `OficinaComercial` en lugar de llamar directamente a `MarketManager`. |
+| **Descripción** | Controla una fila del panel de mercado. Muestra el nombre del bien, el stock de la ciudad, el stock en bodega del jugador, el precio actual con indicador de color, y los botones de compra/venta (+1, +10, +100). Reacciona automáticamente a los cambios del mercado suscribiéndose al evento `MarketManager.OnMercadoActualizado`. Las operaciones de compra/venta se delegan en `OficinaComercial`. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `Inicializar(BienData bien, MarketManager marketManager, OficinaComercial oficina)` | `void` | Inicializa la fila con el bien, el gestor de mercado y la oficina comercial. Limpia y registra los listeners de los 6 botones y se suscribe al evento de actualización. Puede llamarse varias veces de forma segura gracias a `RemoveAllListeners()`. |
+| `Inicializar(BienData bien, MarketManager marketManager, OficinaComercial oficina)` | `void` | Inicializa la fila con el bien, el gestor de mercado y la oficina comercial. Limpia y registra los listeners de los 6 botones y se suscribe al evento de actualización. Puede llamarse varias veces de forma segura. |
 
 ### Dependencias
 
@@ -248,7 +251,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `UltimoMensaje` | `string` (get) | Descripción textual del resultado de la última operación. La UI lo lee tras cada compra o venta para informar al jugador. |
+| `UltimoMensaje` | `string` (get) | Descripción textual del resultado de la última operación. La UI lo lee tras cada compra o venta. |
 | `Inicializar(MarketManager mercado)` | `void` | Vincula la oficina al mercado de la ciudad activa. Debe llamarse antes de cualquier compra o venta. |
 | `Comprar(BienData bien, int cantidad)` | `bool` | Valida stock de ciudad y dinero del jugador, y delega la compra en `MarketManager`. Devuelve `false` si alguna validación falla. |
 | `Vender(BienData bien, int cantidad)` | `bool` | Valida unidades en bodega del jugador y delega la venta en `MarketManager`. Devuelve `false` si alguna validación falla. |
@@ -268,23 +271,25 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Ciudades/CiudadController.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Ciudades — Coordinación de escena |
-| **Descripción** | Coordinador central de la escena Ciudad. En `Start` muestra el nombre del puerto leyendo `DatosCiudad.NombreCiudad` (con fallback a `GameManager.Instance.CiudadActual` y, en último caso, "Ciudad de prueba") y oculta todos los paneles. Recibe los clicks de los edificios del mapa visual a través de `AbrirEdificio` y gestiona qué panel de UI mostrar u ocultar activando el panel correspondiente y cerrando los demás. |
+| **Descripción** | Coordinador central de la escena Ciudad. En `Start` sincroniza `DatosCiudad` con `GameManager.CiudadActual` si el jugador llegó desde el mapamundi, muestra el nombre del puerto y oculta todos los paneles. Recibe los clicks de los edificios del mapa visual a través de `AbrirEdificio`. La tecla M activa `IrAMapamundi()`. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `DatosCiudad` | `CiudadData` | Asset con el nombre y el mercado de la ciudad actual. Si está asignado, se usa su `NombreCiudad` en lugar de consultar `GameManager`. |
+| `DatosCiudad` | `CiudadData` | Asset con el nombre y el mercado de la ciudad actual. Se sincroniza en `Start` desde `GameManager.CiudadActual` si el jugador llegó desde el mapamundi. |
 | `PanelMercado` | `GameObject` | Panel de UI del mercado. Se activa al pulsar el edificio Mercado. Asignar desde el Inspector. |
 | `PanelAstillero` | `GameObject` | Panel de UI del astillero. Se activa al pulsar el edificio Astillero. Asignar desde el Inspector. |
 | `PanelTaberna` | `GameObject` | Panel de UI de la taberna. Se activa al pulsar el edificio Taberna. Asignar desde el Inspector. |
-| `CerrarTodosPaneles()` | `void` | Oculta los tres paneles de edificio llamando a `SetActive(false)`. Se invoca al iniciar la escena y antes de abrir cualquier panel. |
-| `AbrirEdificio(TipoEdificio tipo)` | `void` | Cierra todos los paneles y activa el que corresponde al edificio pulsado. Los componentes `EdificioClickable` de la escena invocan este método. |
+| `CerrarTodosPaneles()` | `void` | Oculta los tres paneles de edificio. Se invoca al iniciar la escena y antes de abrir cualquier panel. |
+| `AbrirEdificio(TipoEdificio tipo)` | `void` | Cierra todos los paneles y activa el que corresponde al edificio pulsado. Invocado por los componentes `EdificioClickable`. |
+| `IrAMapamundi()` | `void` | Cierra los paneles abiertos y navega al mapamundi. También se activa con la tecla M. |
 
 ### Dependencias
 
 - `CiudadData` — fuente del nombre de ciudad y configuración del mercado.
-- `GameManager` — fallback para leer `CiudadActual` si no hay `DatosCiudad`.
+- `GameManager` — origen de `CiudadActual` al llegar desde el mapamundi.
+- `SceneController` — gestiona la navegación a otras pantallas.
 - `EdificioClickable` — componentes que invocan `AbrirEdificio` al ser pulsados.
 - `TipoEdificio` — enum que identifica el edificio pulsado.
 
@@ -375,6 +380,57 @@ _No expone miembros públicos. La interacción se produce íntegramente a travé
 
 ---
 
+## MapamundiController
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Navegacion/MapamundiController.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Mundo y navegación |
+| **Descripción** | Controla el mapamundi: inicializa los marcadores de ciudad visibles en el mapa y gestiona la navegación del jugador hacia un puerto o al menú principal. En `Start` llama a `Inicializar(this)` en cada `MarcadorCiudad` del array. En la beta el viaje es inmediato; en la release se animará la flota sobre el mapa. La tecla M viaja directamente a la última ciudad visitada si existe. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Ciudades` | `MarcadorCiudad[]` | Marcadores de las ciudades navegables del mapa. Asignar desde el Inspector. |
+| `ViajarACiudad(CiudadData ciudadDestino)` | `void` | Registra la ciudad de destino en `GameManager` y carga la pantalla de ciudad. Incluye guard contra `null`. |
+| `IrAMenuPrincipal()` | `void` | Abandona la partida y regresa al menú principal. |
+
+### Dependencias
+
+- `MarcadorCiudad` — componentes que notifican el click del jugador sobre una ciudad.
+- `CiudadData` — datos del puerto de destino.
+- `GameManager` — registra la ciudad actual y expone `UltimaCiudad` para el atajo de teclado.
+- `SceneController` — gestiona la carga de escenas.
+
+---
+
+## MarcadorCiudad
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Navegacion/MarcadorCiudad.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Mundo y navegación |
+| **Descripción** | Componente que se adjunta al sprite de cada ciudad en el mapamundi. Detecta el click del jugador y delega el viaje en `MapamundiController`. Proporciona feedback visual escalando el sprite al 120 % al pasar el cursor. Requiere un `Collider2D` en el mismo GameObject para que los eventos `OnMouse*` funcionen. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `DatosCiudad` | `CiudadData` | ScriptableObject del puerto representado por este marcador. Asignar desde el Inspector. |
+| `TextoNombre` | `TextMeshPro` | Etiqueta opcional que muestra el nombre de la ciudad sobre el marcador. Si es `null` no se muestra texto. |
+| `Inicializar(MapamundiController controlador)` | `void` | Enlaza el marcador con el controlador del mapa y escribe el nombre de ciudad en `TextoNombre` si está asignado. Llamado por `MapamundiController.Start`. |
+
+### Dependencias
+
+- `MapamundiController` — receptor del evento de click; se recibe en `Inicializar`.
+- `CiudadData` — datos del puerto que representa el marcador.
+- `TextMeshPro` (TMPro) — etiqueta de nombre sobre el marcador.
+
+---
+
 ## CiudadesEditorSetup
 
 | Campo | Valor |
@@ -382,13 +438,13 @@ _No expone miembros públicos. La interacción se produce íntegramente a travé
 | **Ruta** | `Assets/Editor/CiudadesEditorSetup.cs` |
 | **Tipo** | `static class` (editor only, `#if UNITY_EDITOR`) |
 | **Módulo** | Utilidades de editor — Ciudades |
-| **Descripción** | Genera los assets `CiudadData` de las ciudades de la beta con su mercado inicial preconfigurado. Crea la carpeta `Assets/ScriptableObjects/Ciudades/` si no existe usando `AssetDatabase.CreateFolder`. Los `BienData` se cargan con `AssetDatabase.LoadAssetAtPath` desde `Assets/ScriptableObjects/Bienes/`; si alguno falta emite un aviso indicando que hay que ejecutar primero `TFG/Crear Bienes Primarios`. Solo se compila en el editor; no afecta a las builds. |
+| **Descripción** | Genera los assets `CiudadData` de las ciudades de la beta con su mercado inicial preconfigurado. La lógica de creación está centralizada en el método genérico `CrearCiudad`; para añadir una ciudad nueva basta con añadir una llamada más en `CrearAssetsCiudades`. Actualmente genera Lübeck y Barcelona. Los `BienData` se cargan con `AssetDatabase.LoadAssetAtPath`; si alguno falta emite un aviso indicando que hay que ejecutar primero `TFG/Crear Bienes Primarios`. Solo se compila en el editor; no afecta a las builds. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `CrearAssetsCiudades()` | `static void` | Genera o actualiza `Lubeck.asset` en `Assets/ScriptableObjects/Ciudades/` con los cinco bienes del mercado de Lübeck. Acceder desde el menú Unity: **TFG → Crear Assets de Ciudades**. |
+| `CrearAssetsCiudades()` | `static void` | Genera o actualiza los assets de todas las ciudades de la beta en `Assets/ScriptableObjects/Ciudades/`. Acceder desde el menú Unity: **TFG → Crear Assets de Ciudades**. |
 
 ### Dependencias
 
@@ -484,3 +540,13 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 - Verificar que ninguna clase UI accede directamente a `GameManager` o `MarketManager` sin pasar por `OficinaComercial`.
 - Verificar separación correcta entre datos (`ScriptableObjects`) y lógica (Managers).
 - Verificar que no hay referencias circulares entre módulos.
+
+---
+
+### Integración del flujo completo (pendiente — Día 6)
+
+- Flujo jugable completo: Menú Principal → seleccionar ciudad → Ciudad → Mapa funcional.
+- Eliminar `GameManager` temporal de la escena Mapamundi una vez montado el flujo completo (usar el singleton persistente del Menú Principal).
+- Sprites definitivos y mapa de fondo en la escena Mapamundi.
+- Eliminar `IrAMenuPrincipal()` de `MapamundiController`; esta acción pasará a gestionarse exclusivamente desde el menú de pausa.
+- Menú de pausa (tecla Escape) con opciones: Continuar / Menú Principal / Salir.

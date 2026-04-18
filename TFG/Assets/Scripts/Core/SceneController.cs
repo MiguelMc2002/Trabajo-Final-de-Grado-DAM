@@ -49,9 +49,6 @@ public class SceneController : MonoBehaviour
     /// <param name="nombreCiudad">Nombre del puerto de destino (p.ej. "Lübeck").</param>
     public static void IrACiudad(string nombreCiudad)
     {
-        if (GameManager.Instance != null)
-            GameManager.Instance.SetCiudadActual(nombreCiudad);
-
         Debug.Log($"[SceneController] Navegando a Ciudad: {nombreCiudad}");
         SceneManager.LoadScene(EscenaCiudad);
     }
@@ -73,7 +70,7 @@ public class SceneController : MonoBehaviour
     /// </summary>
     public static void IrAMercado()
     {
-        Debug.Log($"[SceneController] Navegando a Mercado ({GameManager.Instance?.CiudadActual})");
+        Debug.Log($"[SceneController] Navegando a Mercado ({GameManager.Instance?.CiudadActual?.NombreCiudad})");
         SceneManager.LoadScene(EscenaMercado);
     }
 
