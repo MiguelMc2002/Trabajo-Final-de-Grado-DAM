@@ -29,9 +29,16 @@ public class GameManager : MonoBehaviour
 
     /// <summary>
     /// Puerto en el que está atracado el jugador en este momento.
-    /// Vacío mientras el jugador navega por el mapamundi entre ciudades.
+    /// <c>null</c> mientras el jugador navega por el mapamundi entre ciudades.
     /// </summary>
-    public string CiudadActual { get; private set; }
+    public CiudadData CiudadActual { get; private set; }
+
+    /// <summary>
+    /// Puerto en el que estuvo atracado el jugador antes del destino actual.
+    /// Útil para ofrecer la opción de volver al puerto de origen tras un viaje.
+    /// <c>null</c> si el jugador no ha visitado ninguna ciudad todavía.
+    /// </summary>
+    public CiudadData UltimaCiudad { get; private set; }
 
     /// <summary>
     /// Inventario de mercancías en la bodega del jugador.
@@ -75,7 +82,6 @@ public class GameManager : MonoBehaviour
     private void InicializarEstado()
     {
         Dinero = DineroBeta;
-        CiudadActual = string.Empty;
         Debug.Log($"[GameManager] Partida iniciada. Dinero: {Dinero:N0}");
     }
 
@@ -102,14 +108,15 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Indica al juego en qué puerto ha atracado el jugador.
-    /// Se actualiza automáticamente cada vez que la flota llega a una nueva ciudad.
+    /// Registra el puerto en el que ha atracado el jugador.
+    /// Invocado desde el mapamundi al hacer clic en un marcador de ciudad.
     /// </summary>
-    /// <param name="nombreCiudad">Nombre del puerto de destino (p.ej. "Lübeck").</param>
-    public void SetCiudadActual(string nombreCiudad)
+    /// <param name="ciudad"><see cref="CiudadData"/> del puerto al que llega el jugador.</param>
+    public void EstablecerCiudadActual(CiudadData ciudad)
     {
-        CiudadActual = nombreCiudad;
-        Debug.Log($"[GameManager] Ciudad actual: {CiudadActual}");
+        UltimaCiudad = CiudadActual;
+        CiudadActual = ciudad;
+        Debug.Log($"[GameManager] Ciudad actual: {ciudad.NombreCiudad}");
     }
 
     // ─── Almacén del jugador ─────────────────────────────────────────────────
