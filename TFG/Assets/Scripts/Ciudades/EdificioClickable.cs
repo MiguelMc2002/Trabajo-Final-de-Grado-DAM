@@ -1,21 +1,20 @@
 using UnityEngine;
 
 /// <summary>
-/// Hace que el sprite de un edificio responda al click del jugador.
+/// Componente de botón UI para edificios en la escena Ciudad.
+/// Conectar el evento OnClick() del Button de Unity UI a <see cref="OnClick"/>.
 /// Al pulsarlo notifica al <see cref="CiudadController"/> de la escena para que
 /// abra el servicio correspondiente (mercado, astillero o taberna).
-/// Añadir este componente a cada GameObject de edificio en la escena Ciudad.
-/// IMPORTANTE: este GameObject necesita un Collider2D para que OnMouseDown funcione.
 /// </summary>
 public class EdificioClickable : MonoBehaviour
 {
     // ─── Configuración ───────────────────────────────────────────────────────
 
     /// <summary>
-    /// Tipo de edificio que representa este sprite.
+    /// Tipo de edificio que representa este botón.
     /// Determina qué acción ejecuta <see cref="CiudadController.AbrirEdificio"/> al pulsarlo.
     /// </summary>
-    [SerializeField] private TipoEdificio _tipo;
+    public TipoEdificio Tipo;
 
     // ─── Referencias ─────────────────────────────────────────────────────────
 
@@ -34,14 +33,18 @@ public class EdificioClickable : MonoBehaviour
 
     // ─── Interacción ─────────────────────────────────────────────────────────
 
-    private void OnMouseDown()
+    /// <summary>
+    /// Abre el panel del edificio correspondiente a <see cref="Tipo"/>.
+    /// Asignar este método al evento OnClick() del componente Button en el Inspector.
+    /// </summary>
+    public void OnClick()
     {
         if (_ciudadController == null)
         {
-            Debug.LogWarning($"[EdificioClickable:{name}] CiudadController no disponible; no se puede abrir '{_tipo}'.");
+            Debug.LogWarning($"[EdificioClickable:{name}] CiudadController no disponible; no se puede abrir '{Tipo}'.");
             return;
         }
 
-        _ciudadController.AbrirEdificio(_tipo);
+        _ciudadController.AbrirEdificio(Tipo);
     }
 }

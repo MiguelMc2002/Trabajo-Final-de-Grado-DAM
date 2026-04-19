@@ -99,6 +99,15 @@ public class CiudadController : MonoBehaviour
 
     // ─── API pública para edificios clickables ────────────────────────────────
 
+    /// <summary>Abre directamente el panel del mercado.</summary>
+    public void AbrirMercado() => AbrirEdificio(TipoEdificio.Mercado);
+
+    /// <summary>Abre directamente el panel del astillero.</summary>
+    public void AbrirAstillero() => AbrirEdificio(TipoEdificio.Astillero);
+
+    /// <summary>Abre directamente el panel de la taberna.</summary>
+    public void AbrirTaberna() => AbrirEdificio(TipoEdificio.Taberna);
+
     /// <summary>
     /// Cierra todos los paneles de edificios ocultándolos.
     /// Se llama antes de abrir cualquier panel y al inicializar la escena.
