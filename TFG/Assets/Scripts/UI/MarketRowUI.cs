@@ -102,13 +102,19 @@ public class MarketRowUI : MonoBehaviour
 
         // Listeners de compra
         _btnComprar1.onClick.AddListener(() => EjecutarCompra(1));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnComprar1 para {_bien?.nombre}");
         _btnComprar10.onClick.AddListener(() => EjecutarCompra(10));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnComprar10 para {_bien?.nombre}");
         _btnComprar100.onClick.AddListener(() => EjecutarCompra(100));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnComprar100 para {_bien?.nombre}");
 
         // Listeners de venta
         _btnVender1.onClick.AddListener(() => EjecutarVenta(1));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnVender1 para {_bien?.nombre}");
         _btnVender10.onClick.AddListener(() => EjecutarVenta(10));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnVender10 para {_bien?.nombre}");
         _btnVender100.onClick.AddListener(() => EjecutarVenta(100));
+        Debug.Log($"[MarketRowUI] Listener registrado: BtnVender100 para {_bien?.nombre}");
 
         // Suscribirse al evento del mercado para actualizar cuando cambie el stock
         _marketManager.OnMercadoActualizado += OnMercadoActualizado;
@@ -143,6 +149,24 @@ public class MarketRowUI : MonoBehaviour
     /// </summary>
     private void Refrescar()
     {
+        if (_bien == null)
+        {
+            Debug.LogWarning("[MarketRowUI] _bien es null; se omite el refresco.");
+            return;
+        }
+
+        if (_marketManager == null)
+        {
+            Debug.LogWarning($"[MarketRowUI] _marketManager es null en fila '{_bien.nombre}'; se omite el refresco.");
+            return;
+        }
+
+        if (_oficina == null)
+        {
+            Debug.LogWarning($"[MarketRowUI] _oficina es null en fila '{_bien.nombre}'; se omite el refresco.");
+            return;
+        }
+
         if (GameManager.Instance == null)
         {
             Debug.LogWarning("[MarketRowUI] GameManager.Instance es null; se omite el refresco.");
@@ -151,39 +175,45 @@ public class MarketRowUI : MonoBehaviour
 
         if (_textoStockCiudad == null || _textoStockAlmacen == null || _textoPrecio == null)
         {
-            Debug.LogWarning("[MarketRowUI] Una o más referencias de TextMeshProUGUI no están asignadas en el Inspector.");
+            Debug.LogWarning($"[MarketRowUI] Una o más referencias de TextMeshProUGUI no están asignadas en fila '{_bien.nombre}'.");
             return;
         }
 
-        int stockCiudad   = _marketManager.GetStockActual(_bien);
-        int stockAlmacen  = GameManager.Instance.GetCantidadBien(_bien);
+        int stockCiudad    = _marketManager.GetStockActual(_bien);
+        int stockAlmacen   = GameManager.Instance.GetCantidadBien(_bien);
         float precioActual = _marketManager.GetPrecioActual(_bien);
+
+        Debug.Log($"[MarketRowUI] Refrescando '{_bien.nombre}': stock={stockCiudad}, precio={precioActual}, almacen={stockAlmacen}");
 
         _textoStockCiudad.text  = stockCiudad.ToString("N0");
         _textoStockAlmacen.text = stockAlmacen.ToString("N0");
-        _textoPrecio.text       = $"{precioActual:N0} ✦";
+        _textoPrecio.text       = $"{precioActual:N0} g";
 
-        ActualizarIndicadorColor(stockCiudad);
+        ActualizarIndicadorColor(precioActual);
     }
 
     /// <summary>
-    /// Cambia el color del indicador según el nivel de stock de la ciudad en relación
-    /// al stock máximo definido en el <see cref="BienData"/>:
-    /// verde si supera el 66 %, rojo si cae por debajo del 33 %, amarillo en el tramo intermedio.
+    /// Cambia el color del indicador comparando el precio actual con el precio base del bien:
+    /// verde si el precio está por debajo del 80 % del base (stock alto, buen momento para vender aquí),
+    /// rojo si supera el 120 % (stock bajo, buen momento para comprar aquí),
+    /// amarillo en el tramo intermedio (precio normal).
     /// </summary>
-    /// <param name="stockActual">Unidades disponibles actualmente en la ciudad.</param>
-    private void ActualizarIndicadorColor(int stockActual)
+    /// <param name="precioActual">Precio de mercado actual del bien.</param>
+    private void ActualizarIndicadorColor(float precioActual)
     {
         if (_indicadorColor == null) return;
 
-        float porcentaje = (float)stockActual / Mathf.Max(_bien.stockMaximo, 1);
+        float precioBase = _bien.precioBase;
 
-        if (porcentaje > 0.66f)
-            _indicadorColor.color = ColorStockAlto;
-        else if (porcentaje < 0.33f)
-            _indicadorColor.color = ColorStockBajo;
+        if (precioActual <= precioBase * 1.0f)
+            // Stock igual o mayor al máximo → precio igual o menor al base → buen momento para vender aquí
+            _indicadorColor.color = Color.green;
+        else if (precioActual <= precioBase * 2.0f)
+            // Stock entre 50% y 100% del máximo → precio normal
+            _indicadorColor.color = Color.yellow;
         else
-            _indicadorColor.color = ColorStockNormal;
+            // Stock por debajo del 50% del máximo → escasez → buen momento para comprar aquí
+            _indicadorColor.color = Color.red;
     }
 
     // ─── Acciones de compra/venta ────────────────────────────────────────────
@@ -196,6 +226,7 @@ public class MarketRowUI : MonoBehaviour
     /// <param name="cantidad">Unidades que se desean comprar.</param>
     private void EjecutarCompra(int cantidad)
     {
+        Debug.Log($"[MarketRowUI] EjecutarCompra({cantidad}) para {_bien?.nombre}");
         if (_oficina == null)
         {
             Debug.LogWarning("[MarketRowUI] OficinaComercial no asignada; no se puede ejecutar la compra.");
@@ -216,6 +247,7 @@ public class MarketRowUI : MonoBehaviour
     /// <param name="cantidad">Unidades que se desean vender.</param>
     private void EjecutarVenta(int cantidad)
     {
+        Debug.Log($"[MarketRowUI] EjecutarVenta({cantidad}) para {_bien?.nombre}");
         if (_oficina == null)
         {
             Debug.LogWarning("[MarketRowUI] OficinaComercial no asignada; no se puede ejecutar la venta.");
