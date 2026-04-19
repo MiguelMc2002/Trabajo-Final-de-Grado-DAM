@@ -37,7 +37,13 @@ public class CiudadController : MonoBehaviour
     /// <summary>Panel de UI de la taberna. Se activa al pulsar el edificio Taberna.</summary>
     public GameObject PanelTaberna;
 
+    /// <summary>Botón que regresa al mapamundi. Se oculta mientras hay un panel abierto.</summary>
+    public GameObject BotonMapa;
+
     // ─────────────────────────────────────────────────────────────────────────
+
+    // Momento en que se cargó la escena, para bloquear input accidental al inicio
+    private float _tiempoCargaEscena;
 
     /// <summary>
     /// Inicializa la pantalla de ciudad: sincroniza <see cref="DatosCiudad"/> con el puerto
@@ -49,8 +55,15 @@ public class CiudadController : MonoBehaviour
         if (GameManager.Instance != null && GameManager.Instance.CiudadActual != null)
             DatosCiudad = GameManager.Instance.CiudadActual;
 
+        // Forzar la inicialización del mercado con la ciudad correcta antes de que
+        // cualquier panel la consulte — evita la race condition con MarketManager.Start()
+        MarketManager mercado = GetComponentInChildren<MarketManager>();
+        if (mercado != null)
+            mercado.InicializarConCiudad(DatosCiudad);
+
         MostrarNombreCiudad();
         CerrarTodosPaneles();
+        _tiempoCargaEscena = Time.time;
     }
 
     // ─── Inicialización ───────────────────────────────────────────────────────
@@ -95,6 +108,7 @@ public class CiudadController : MonoBehaviour
         if (PanelMercado   != null) PanelMercado.SetActive(false);
         if (PanelAstillero != null) PanelAstillero.SetActive(false);
         if (PanelTaberna   != null) PanelTaberna.SetActive(false);
+        if (BotonMapa      != null) BotonMapa.SetActive(true);
     }
 
     /// <summary>
@@ -103,6 +117,8 @@ public class CiudadController : MonoBehaviour
     /// </summary>
     public void IrAMapamundi()
     {
+        Debug.Log("[CiudadController] IrAMapamundi() llamado desde: " +
+                  new System.Diagnostics.StackTrace().ToString());
         CerrarTodosPaneles();
         SceneController.IrAMapamundi();
     }
@@ -115,6 +131,9 @@ public class CiudadController : MonoBehaviour
     /// </summary>
     private void Update()
     {
+        // Prevenir input accidental durante la carga de escena
+        if (Time.time - _tiempoCargaEscena < 0.5f) return;
+
         if (Input.GetKeyDown(KeyCode.M)) IrAMapamundi();
     }
 
@@ -127,6 +146,7 @@ public class CiudadController : MonoBehaviour
     public void AbrirEdificio(TipoEdificio tipo)
     {
         CerrarTodosPaneles();
+        if (BotonMapa != null) BotonMapa.SetActive(false);
 
         switch (tipo)
         {

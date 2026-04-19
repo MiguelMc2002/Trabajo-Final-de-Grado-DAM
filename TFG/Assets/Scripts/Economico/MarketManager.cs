@@ -32,6 +32,13 @@ public class MarketManager : MonoBehaviour
     [Header("Bienes del mercado")]
     [SerializeField] private List<EntradaMercado> _entradas = new List<EntradaMercado>();
 
+    // ─── Límites de precio ───────────────────────────────────────────────────
+
+    // Precio mínimo: 50% del precio base (mercado saturado)
+    private const float MultiplicadorPrecioMinimo = 0.5f;
+    // Precio máximo: 500% del precio base (escasez extrema)
+    private const float MultiplicadorPrecioMaximo = 5.0f;
+
     // ─── Índice interno ──────────────────────────────────────────────────────
 
     /// <summary>
@@ -51,22 +58,36 @@ public class MarketManager : MonoBehaviour
 
     // ─────────────────────────────────────────────────────────────────────────
 
+    // Fallback: si nadie llama a InicializarConCiudad antes, se inicializa con el asset del Inspector
     private void Start()
     {
-        // Si hay un ScriptableObject asignado, copiar sus entradas (copia profunda
-        // para no mutar el asset durante la partida)
-        if (DatosCiudad != null)
+        InicializarConCiudad(DatosCiudad);
+    }
+
+    /// <summary>
+    /// Inicializa el mercado con los datos de la ciudad indicada.
+    /// Debe llamarse desde <see cref="CiudadController"/> después de que este haya
+    /// resuelto qué ciudad corresponde a la sesión actual, para evitar que el orden
+    /// de ejecución de <c>Start()</c> entre MonoBehaviours cargue la ciudad incorrecta.
+    /// Si se llama con <c>null</c>, opera con las entradas ya configuradas en el Inspector.
+    /// </summary>
+    /// <param name="datosCiudad">ScriptableObject de la ciudad cuyo mercado se debe cargar.</param>
+    public void InicializarConCiudad(CiudadData datosCiudad)
+    {
+        // Sobreescribir referencia y copiar entradas si se proporcionan datos nuevos
+        if (datosCiudad != null)
         {
-            _entradas = new List<EntradaMercado>(DatosCiudad.Mercado.Count);
-            foreach (EntradaMercado origen in DatosCiudad.Mercado)
+            DatosCiudad = datosCiudad;
+            _entradas = new List<EntradaMercado>(datosCiudad.Mercado.Count);
+            foreach (EntradaMercado origen in datosCiudad.Mercado)
             {
                 _entradas.Add(new EntradaMercado
                 {
-                    Bien            = origen.Bien,
-                    StockActual     = origen.StockActual,
-                    StockMax        = origen.StockMax,
+                    Bien             = origen.Bien,
+                    StockActual      = origen.StockActual,
+                    StockMax         = origen.StockMax,
                     ProduccionDiaria = origen.ProduccionDiaria,
-                    ConsumoDiario   = origen.ConsumoDiario
+                    ConsumoDiario    = origen.ConsumoDiario
                 });
             }
         }
@@ -238,7 +259,8 @@ public class MarketManager : MonoBehaviour
     /// <returns>Precio en monedas de oro.</returns>
     private float CalcularPrecio(BienData bien, int stockActual)
     {
-        return bien.precioBase * ((float)bien.stockMaximo / Mathf.Max(stockActual, 1));
+        float precio = bien.precioBase * ((float)bien.stockMaximo / Mathf.Max(stockActual, 1));
+        return Mathf.Clamp(precio, bien.precioBase * MultiplicadorPrecioMinimo, bien.precioBase * MultiplicadorPrecioMaximo);
     }
 
     /// <summary>

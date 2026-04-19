@@ -74,6 +74,7 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         InicializarEstado();
+        Debug.Log($"[GameManager] Inicializado como singleton persistente. Dinero: {Dinero:N0}");
     }
 
     /// <summary>

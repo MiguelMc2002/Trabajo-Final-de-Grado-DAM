@@ -15,31 +15,31 @@ MonoBehaviour:
   NombreCiudad: "L\xFCbeck"
   Mercado:
   - Bien: {fileID: 11400000, guid: 489c86f507539f44d994f99e9fde56dc, type: 2}
-    StockActual: 250
+    StockActual: 500
     StockMax: 500
     ProduccionDiaria: 10
     ConsumoDiario: 8
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 0958af29e3469ca41964ec15617d1ebf, type: 2}
-    StockActual: 200
+    StockActual: 350
     StockMax: 400
     ProduccionDiaria: 8
     ConsumoDiario: 6
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 15b6cb82c6fc54d429f54747db2ae0d1, type: 2}
-    StockActual: 225
+    StockActual: 175
     StockMax: 450
     ProduccionDiaria: 9
     ConsumoDiario: 7
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 89dfd2d6b0d14b6499cdd9f21679f362, type: 2}
-    StockActual: 175
+    StockActual: 100
     StockMax: 350
     ProduccionDiaria: 7
     ConsumoDiario: 5
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: c291b4d24c3b3474f9db5ffc01902bb0, type: 2}
-    StockActual: 150
+    StockActual: 80
     StockMax: 300
     ProduccionDiaria: 6
     ConsumoDiario: 4

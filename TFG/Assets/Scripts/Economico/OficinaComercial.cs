@@ -85,17 +85,14 @@ public class OficinaComercial : MonoBehaviour
             return false;
         }
 
-        // Validación de stock en la ciudad
+        // Ajustar al máximo comprable: mínimo entre lo pedido y el stock disponible
         int stockDisponible = _mercado.GetStockActual(bien);
-        if (stockDisponible < cantidad)
-        {
-            UltimoMensaje = $"Stock insuficiente de {bien.nombre}: disponibles {stockDisponible}, solicitadas {cantidad}.";
-            Debug.LogWarning($"[OficinaComercial] {UltimoMensaje}");
+        int cantidadReal = Mathf.Min(cantidad, stockDisponible);
+        if (cantidadReal <= 0)
             return false;
-        }
 
         // Validación de dinero del jugador
-        long costeTotal = (long)(Mathf.Ceil(_mercado.GetPrecioActual(bien) * cantidad));
+        long costeTotal = (long)(Mathf.Ceil(_mercado.GetPrecioActual(bien) * cantidadReal));
         if (GameManager.Instance.Dinero < costeTotal)
         {
             UltimoMensaje = $"Fondos insuficientes: la compra cuesta {costeTotal:N0} monedas y el tesoro solo tiene {GameManager.Instance.Dinero:N0}.";
@@ -104,10 +101,10 @@ public class OficinaComercial : MonoBehaviour
         }
 
         // Delegar al mercado, que actualiza stock y bodega
-        bool exito = _mercado.Comprar(bien, cantidad);
+        bool exito = _mercado.Comprar(bien, cantidadReal);
 
         UltimoMensaje = exito
-            ? $"Compradas {cantidad} unidades de {bien.nombre} por {costeTotal:N0} monedas."
+            ? $"Compradas {cantidadReal} unidades de {bien.nombre} por {costeTotal:N0} monedas."
             : $"No se pudo completar la compra de {bien.nombre}. Comprueba la bodega.";
 
         return exito;
@@ -145,21 +142,18 @@ public class OficinaComercial : MonoBehaviour
             return false;
         }
 
-        // Validación de unidades en la bodega del jugador
+        // Ajustar al máximo vendible: mínimo entre lo pedido y lo que hay en bodega
         int enBodega = GameManager.Instance.GetCantidadBien(bien);
-        if (enBodega < cantidad)
-        {
-            UltimoMensaje = $"Mercancía insuficiente en bodega: tienes {enBodega} unidades de {bien.nombre}, intentas vender {cantidad}.";
-            Debug.LogWarning($"[OficinaComercial] {UltimoMensaje}");
+        int cantidadReal = Mathf.Min(cantidad, enBodega);
+        if (cantidadReal <= 0)
             return false;
-        }
 
         // Delegar al mercado, que actualiza stock y tesoro
-        long precioEstimado = (long)(Mathf.Floor(_mercado.GetPrecioActual(bien) * cantidad));
-        bool exito = _mercado.Vender(bien, cantidad);
+        long precioEstimado = (long)(Mathf.Floor(_mercado.GetPrecioActual(bien) * cantidadReal));
+        bool exito = _mercado.Vender(bien, cantidadReal);
 
         UltimoMensaje = exito
-            ? $"Vendidas {cantidad} unidades de {bien.nombre} por {precioEstimado:N0} monedas."
+            ? $"Vendidas {cantidadReal} unidades de {bien.nombre} por {precioEstimado:N0} monedas."
             : $"No se pudo completar la venta de {bien.nombre}.";
 
         return exito;
