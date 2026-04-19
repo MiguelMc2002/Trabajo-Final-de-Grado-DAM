@@ -550,3 +550,187 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 - Sprites definitivos y mapa de fondo en la escena Mapamundi.
 - Eliminar `IrAMenuPrincipal()` de `MapamundiController`; esta acción pasará a gestionarse exclusivamente desde el menú de pausa.
 - Menú de pausa (tecla Escape) con opciones: Continuar / Menú Principal / Salir.
+
+---
+
+## DÍA 6 — Integración completa del PMV y pulido visual
+
+### Flujo completo implementado
+
+- MenuPrincipal con fondo de atardecer marítimo, botones medievales y tipografía Cinzel.
+- Panel de selección de ciudad inicial con fondo mar/cielo.
+- Flujo completo: MenuPrincipal → Selección ciudad → Ciudad → Mercado → Mapamundi → Ciudad.
+- Fix race condition: mercado de Barcelona ya no muestra datos de Lübeck.
+- Fix click fantasma al entrar a ciudad desde mapamundi (delay 0.5 s en `CiudadController`).
+- Fix botón cerrar mercado que navegaba al mapamundi en lugar de cerrar el panel.
+- Botón Mapa se oculta al abrir paneles de edificios.
+
+### Mercado
+
+- UI con columnas: Producto / Stock Ciudad / Comprar / Indicador / Precio / Vender / Stock Almacén.
+- Compra/venta inteligente: si no hay stock suficiente, opera hasta el máximo disponible sin fallar.
+- Precios reactivos con límite mínimo (0.5× precio base) y máximo (5× precio base).
+- Indicador de color basado en precio vs precio base:
+  - Verde: precio ≤ 1.0× base (stock alto, buen momento para vender).
+  - Amarillo: precio entre 1.0× y 2.0× base (precio normal).
+  - Rojo: precio > 2.0× base (stock bajo, buen momento para comprar).
+- Panel mercado con fondo pergamino, marco decorativo medieval y tipografía Cinzel.
+
+### Menú de pausa
+
+- Hotkey Escape activa/desactiva el panel de pausa en Ciudad y Mapamundi.
+- `Time.timeScale = 0` al pausar, `1` al reanudar.
+- Botones: Continuar / Menú Principal / Salir al escritorio.
+- `MenuPausaEditorSetup.cs` genera el menú de pausa con un click desde **TFG → Generar Menú de Pausa**. Compatible con escenas sin Canvas (crea Canvas automáticamente).
+
+### Visual y UI
+
+- Canvas Scaler 1920×1080 configurado en todas las escenas.
+- Fondo MenuPrincipal: atardecer marítimo con barco.
+- Fondo PanelSeleccionCiudad: cielo/mar con gradiente.
+- Fondo Ciudad: ilustración medieval isométrica (placeholder).
+- Fondo Mapamundi: mapa de Europa medieval estilo pergamino (crédito: senior_lavash, Reddit).
+- Marcadores de ciudad reposicionados geográficamente sobre el mapa real.
+- Edificios clickables implementados como botones UI dentro del Canvas.
+- `UIGradiente.cs`: aplica gradiente vertical a componentes `Image`.
+
+### Scripts de editor creados en el Día 6
+
+| Menú Unity | Script | Función |
+|---|---|---|
+| TFG → Generar Menú de Pausa | `MenuPausaEditorSetup.cs` | Genera el panel de pausa con botones en la escena activa. |
+| TFG → Regenerar Prefab MarketRow | `MarketRowEditorSetup.cs` | Regenera el prefab de fila de mercado. |
+
+---
+
+## MenuPrincipalUI
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/UI/MenuPrincipalUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Interfaz de usuario — Menú Principal |
+| **Descripción** | Controla la lógica del Menú Principal: mostrar el panel de selección de ciudad al iniciar nueva partida, cerrarlo con Escape o con el botón Atrás, y salir de la aplicación. El botón Cargar Partida es un stub pendiente de la release. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `panelSeleccionCiudad` | `GameObject` | Panel con los botones de ciudad para comenzar una nueva partida. Se asigna desde el Inspector. |
+| `IniciarNuevaPartida()` | `void` | Activa el panel de selección de ciudad. Llamado por el botón "Nueva Partida". |
+| `CerrarPanelSeleccion()` | `void` | Oculta el panel de selección. Llamado por el botón "Atrás" y por la tecla Escape. |
+| `CargarPartida()` | `void` | Stub pendiente post-beta. Llamado por el botón "Cargar Partida". |
+| `Salir()` | `void` | Cierra la aplicación con `Application.Quit()`. |
+
+### Dependencias
+
+- `SceneController` — navegación entre pantallas (uso indirecto vía `SeleccionCiudadUI`).
+
+---
+
+## SeleccionCiudadUI
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/UI/SeleccionCiudadUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Interfaz de usuario — Menú Principal |
+| **Descripción** | Componente adjunto a cada botón de ciudad en el panel de selección. Al pulsarlo, registra la ciudad en `GameManager` y carga la escena de ciudad. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `datosCiudad` | `CiudadData` | Ciudad asociada a este botón. Asignar desde el Inspector. |
+| `SeleccionarCiudad()` | `void` | Establece `GameManager.CiudadActual` y llama a `SceneController.IrACiudad()`. Asignar al evento `OnClick` del botón. |
+
+### Dependencias
+
+- `CiudadData` — datos del puerto que representa el botón.
+- `GameManager` — registra la ciudad seleccionada.
+- `SceneController` — carga la escena Ciudad.
+
+---
+
+## MenuPausa
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/UI/MenuPausa.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Interfaz de usuario — Pausa |
+| **Descripción** | Gestiona el menú de pausa en las escenas jugables (Ciudad, Mapamundi). La tecla Escape alterna la visibilidad del panel y congela/reanuda `Time.timeScale`. Añadir a un GameObject persistente en cada escena jugable y asignar el panel desde el Inspector. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Continuar()` | `void` | Oculta el panel y reanuda el tiempo (`timeScale = 1`). Asignar al botón "Continuar". |
+| `IrAMenuPrincipal()` | `void` | Reanuda el tiempo y carga el Menú Principal abandonando la partida. Asignar al botón "Menú Principal". |
+| `SalirAlEscritorio()` | `void` | Reanuda el tiempo y cierra la aplicación. En el editor detiene el modo Play. Asignar al botón "Salir". |
+
+### Dependencias
+
+- `SceneController` — carga el Menú Principal en `IrAMenuPrincipal()`.
+
+---
+
+## TO-DO POST-BETA
+
+### Alta prioridad
+
+#### Refactorizar selección de ciudad como escena separada
+
+- **Módulo:** UI
+- **Descripción:** Actualmente es un panel dialog sobre MenuPrincipal. Convertir en escena separada `SeleccionCiudad.unity` siguiendo el patrón de Patrician III/IV.
+- **Impacto:** Crear escena, mover contenido del panel, actualizar `SceneController`.
+
+#### MapamundiCamara — zoom y scroll por bordes
+
+- **Módulo:** Navegación
+- **Descripción:** Script de cámara para el mapamundi cuando el mapa sea más grande que la pantalla. Zoom con rueda del ratón (`orthographicSize` min: 3, max: 15) y movimiento llevando el ratón a los bordes.
+- **Prioridad:** Alta para release.
+
+#### Mapa de Europa medieval propio
+
+- **Módulo:** Visual
+- **Descripción:** Crear o encargar un mapa 2D estilizado de Europa medieval específico para el juego. El placeholder actual es de senior_lavash (Reddit).
+
+#### Fondo de ciudad específico por ciudad
+
+- **Módulo:** Visual
+- **Descripción:** Actualmente Lübeck y Barcelona usan el mismo placeholder. Crear ilustraciones específicas para cada una de las 6 ciudades.
+
+### Media prioridad
+
+#### Flush diario de excedente de stock
+
+- **Módulo:** Económico
+- **Descripción:** Al cambio de día, cada `EntradaMercado` descarta unidades que superen el umbral configurable. `StockMax` se renombrará a `UmbralFlush` en la release. Ver sección "Decisiones de diseño pendientes" para la fórmula completa.
+
+#### Icono de moneda en TextoPrecio del mercado
+
+- **Módulo:** UI / Mercado
+- **Descripción:** Reemplazar el texto `"g"` junto al precio por un sprite de moneda de oro. Requiere `Image` hijo en el prefab `MarketRow` con sprite de moneda asignado.
+
+#### Indicador de color del mercado como círculo
+
+- **Módulo:** UI / Mercado
+- **Descripción:** El indicador actual es un rectángulo. Cambiar a círculo pequeño usando el sprite "Knob" de Unity.
+
+#### Revisión de arquitectura
+
+- **Módulo:** Core
+- **Descripción:** Análisis estático de dependencias. Verificar que la UI no accede directamente a `GameManager` o `MarketManager` sin pasar por `OficinaComercial`. Verificar separación datos/lógica y ausencia de referencias circulares.
+
+### Baja prioridad
+
+#### Generación de soldados en abordaje
+
+- **Módulo:** Combate
+- **Descripción:** Cada 5 tripulantes → 1 soldado completo. Resto no múltiplo de 5 → 1 soldado extra con vida proporcional. Sistema de bajas por tramos de 20 %. Ver sección "Decisiones de diseño pendientes" para la fórmula completa.
+
+#### Animaciones en pantalla de ciudad
+
+- **Módulo:** Visual
+- **Descripción:** Partículas Unity para simular movimiento sobre fondo estático: agua ondulante, humo de chimeneas, gaviotas.
