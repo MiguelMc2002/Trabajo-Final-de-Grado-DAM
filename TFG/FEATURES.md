@@ -818,3 +818,23 @@ El GameObject que contiene `HUDTiempo` debe crearse en **una sola escena** (reco
 
 - **Módulo:** Visual
 - **Descripción:** Partículas Unity para simular movimiento sobre fondo estático: agua ondulante, humo de chimeneas, gaviotas.
+
+---
+
+### Día 7 — Pendientes identificados
+
+#### Consumo diario selectivo por tipo de bien
+
+- **Módulo:** Módulo económico
+- **Descripción:** Actualmente `AplicarTickDiario()` reduce el stock de todos los bienes cada día. En release avanzada, solo los bienes clasificados como alimentos o materias primas de edificios activos de la ciudad deben consumir stock diariamente. Los bienes comerciales puros (no son alimento ni materia prima de ningún edificio activo en esa ciudad) solo pierden stock por compras del jugador o al superar `StockMax`.
+- **Requisitos previos:** Campo de categoría en `BienData` (alimento, materia prima, bien de lujo) + módulo de edificios de ciudad implementado.
+
+#### Integración de pausa con combate PVE manual
+
+- **Módulo:** Módulo de combate naval
+- **Descripción:** Al entrar en combate PVE manual llamar a `SimulacionTiempo.Instance.PausarPorMenu()` y ocultar `HUDTiempo.Instance` (`HUDTiempo.Instance.gameObject.SetActive(false)`). Al salir del combate, llamar a `ReanudarDesdMenu()` y reactivar el HUD. El combate automático no pausa el tiempo — se resuelve como popup sobre la escena activa.
+
+#### Añadir ciudades nuevas al Mapamundi
+
+- **Módulo:** Módulo de mundo y navegación
+- **Descripción:** Los assets ScriptableObject de Génova, Venecia, Ruan y Brujas están creados pero los marcadores en la escena Mapamundi.unity hay que añadirlos manualmente con sus posiciones geográficas correctas, siguiendo el mismo patrón que Lübeck y Barcelona (SpriteRenderer + BoxCollider2D + MarcadorCiudad + TextoNombre).
