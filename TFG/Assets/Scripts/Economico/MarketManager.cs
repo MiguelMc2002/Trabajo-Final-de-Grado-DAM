@@ -64,6 +64,39 @@ public class MarketManager : MonoBehaviour
         InicializarConCiudad(DatosCiudad);
     }
 
+    private void OnEnable()
+    {
+        SimulacionTiempo.OnNuevoDia += AplicarTickDiario;
+    }
+
+    private void OnDisable()
+    {
+        SimulacionTiempo.OnNuevoDia -= AplicarTickDiario;
+    }
+
+    /// <summary>
+    /// Aplica la producción y el consumo diarios a cada bien del mercado.
+    /// Se invoca automáticamente mediante el evento <see cref="SimulacionTiempo.OnNuevoDia"/>.
+    /// Si el stock supera el <c>StockMax</c> de la entrada, se trunca a ese valor.
+    /// </summary>
+    private void AplicarTickDiario()
+    {
+        if (_entradas == null || _entradas.Count == 0) return;
+
+        foreach (EntradaMercado entrada in _entradas)
+        {
+            entrada.StockActual += entrada.ProduccionDiaria;
+            entrada.StockActual -= entrada.ConsumoDiario;
+            entrada.StockActual  = Mathf.Max(0, entrada.StockActual);
+            entrada.StockActual  = Mathf.Min(entrada.StockActual, entrada.StockMax);
+
+            if (entrada.Bien != null)
+                ActualizarPrecio(entrada.Bien, entrada);
+        }
+
+        OnMercadoActualizado?.Invoke(null);
+    }
+
     /// <summary>
     /// Inicializa el mercado con los datos de la ciudad indicada.
     /// Debe llamarse desde <see cref="CiudadController"/> después de que este haya
