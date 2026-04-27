@@ -4,7 +4,10 @@ using UnityEngine;
 /// Gestiona el menú de pausa del juego.
 /// Añadir este componente a un GameObject persistente en cada escena jugable
 /// y asignar el panel de pausa en el Inspector.
-/// La tecla Escape alterna la visibilidad del panel y congela/reanuda el tiempo.
+/// La tecla Escape alterna la visibilidad del panel. La gestión del tiempo
+/// se delega en <see cref="SimulacionTiempo"/> (si existe en la escena) mediante
+/// <see cref="SimulacionTiempo.PausarPorMenu"/> y <see cref="SimulacionTiempo.ReanudarDesdMenu"/>.
+/// En escenas sin simulación (p. ej. Menú Principal) el panel abre y cierra sin tocar el tiempo.
 /// </summary>
 public class MenuPausa : MonoBehaviour
 {
@@ -44,13 +47,13 @@ public class MenuPausa : MonoBehaviour
     private void Pausar()
     {
         _panelPausa.SetActive(true);
-        Time.timeScale = 0f;
+        SimulacionTiempo.Instance?.PausarPorMenu();
     }
 
     // ─── API pública para botones del panel ───────────────────────────────────
 
     /// <summary>
-    /// Oculta el panel de pausa y reanuda el tiempo del juego.
+    /// Oculta el panel de pausa y reanuda la simulación de tiempo.
     /// Asignar al botón "Continuar" del panel de pausa.
     /// </summary>
     public void Continuar()
@@ -58,27 +61,27 @@ public class MenuPausa : MonoBehaviour
         if (_panelPausa == null) return;
 
         _panelPausa.SetActive(false);
-        Time.timeScale = 1f;
+        SimulacionTiempo.Instance?.ReanudarDesdMenu();
     }
 
     /// <summary>
-    /// Reanuda el tiempo y carga el Menú Principal, abandonando la partida en curso.
+    /// Reanuda la simulación y carga el Menú Principal, abandonando la partida en curso.
     /// Asignar al botón "Menú Principal" del panel de pausa.
     /// </summary>
     public void IrAMenuPrincipal()
     {
-        Time.timeScale = 1f;
+        SimulacionTiempo.Instance?.ReanudarDesdMenu();
         SceneController.IrAMenuPrincipal();
     }
 
     /// <summary>
-    /// Reanuda el tiempo y cierra la aplicación.
+    /// Reanuda la simulación y cierra la aplicación.
     /// Asignar al botón "Salir" del panel de pausa.
     /// En el editor detiene el modo Play en lugar de cerrar.
     /// </summary>
     public void SalirAlEscritorio()
     {
-        Time.timeScale = 1f;
+        SimulacionTiempo.Instance?.ReanudarDesdMenu();
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

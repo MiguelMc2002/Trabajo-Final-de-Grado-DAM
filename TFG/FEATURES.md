@@ -173,6 +173,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | `GetPrecioActual(BienData bien)` | `float` | Devuelve el precio actual de un bien calculado con la fórmula de oferta y demanda. Retorna 0 si el bien no existe. |
 | `Comprar(BienData bien, int cantidad)` | `bool` | Descuenta el coste del tesoro, reduce el stock de la ciudad y carga las unidades en bodega. Devuelve `false` si stock, dinero o espacio son insuficientes. |
 | `Vender(BienData bien, int cantidad)` | `bool` | Ingresa el precio en el tesoro, aumenta el stock de la ciudad y retira las unidades de bodega. Devuelve `false` si el jugador no tiene suficiente cantidad. |
+| `AplicarTickDiario()` | `private void` | Aplica producción y consumo diarios a cada bien. Se invoca automáticamente al recibir `SimulacionTiempo.OnNuevoDia`. Trunca el stock al `UmbralFlush` (1 000 u.) si lo supera. |
 
 ### Dependencias
 
@@ -180,6 +181,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 - `EntradaMercado` — estado dinámico de cada bien en tiempo de partida.
 - `BienData` — referencia a los datos estáticos de cada bien.
 - `GameManager` — para modificar dinero y bodega del jugador.
+- `SimulacionTiempo` — suscripción al evento `OnNuevoDia` para el tick diario.
 
 ---
 
@@ -659,19 +661,101 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | **Ruta** | `Assets/Scripts/UI/MenuPausa.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Pausa |
-| **Descripción** | Gestiona el menú de pausa en las escenas jugables (Ciudad, Mapamundi). La tecla Escape alterna la visibilidad del panel y congela/reanuda `Time.timeScale`. Añadir a un GameObject persistente en cada escena jugable y asignar el panel desde el Inspector. |
+| **Descripción** | Gestiona el menú de pausa en las escenas jugables (Ciudad, Mapamundi). La tecla Escape alterna la visibilidad del panel. La gestión del tiempo se delega en `SimulacionTiempo` (si existe en la escena). En escenas sin simulación (Menú Principal) el panel abre y cierra sin tocar el tiempo. `Time.timeScale` permanece siempre a 1; la pausa del juego la controla `SimulacionTiempo` internamente. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `Continuar()` | `void` | Oculta el panel y reanuda el tiempo (`timeScale = 1`). Asignar al botón "Continuar". |
-| `IrAMenuPrincipal()` | `void` | Reanuda el tiempo y carga el Menú Principal abandonando la partida. Asignar al botón "Menú Principal". |
-| `SalirAlEscritorio()` | `void` | Reanuda el tiempo y cierra la aplicación. En el editor detiene el modo Play. Asignar al botón "Salir". |
+| `Continuar()` | `void` | Oculta el panel y llama a `SimulacionTiempo.ReanudarDesdMenu()`. Asignar al botón "Continuar". |
+| `IrAMenuPrincipal()` | `void` | Llama a `ReanudarDesdMenu()` y carga el Menú Principal abandonando la partida. Asignar al botón "Menú Principal". |
+| `SalirAlEscritorio()` | `void` | Llama a `ReanudarDesdMenu()` y cierra la aplicación. En el editor detiene el modo Play. Asignar al botón "Salir". |
 
 ### Dependencias
 
 - `SceneController` — carga el Menú Principal en `IrAMenuPrincipal()`.
+- `SimulacionTiempo` — delega la pausa/reanudación del tiempo de juego (null-safe).
+
+---
+
+---
+
+## SimulacionTiempo
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Core/SimulacionTiempo.cs` |
+| **Tipo** | `MonoBehaviour` (singleton ligero) |
+| **Módulo** | Tiempo y simulación |
+| **Descripción** | Gestiona el tiempo interno del juego: fecha, velocidad de simulación y avance diario. Se añade manualmente al GameObject GameManager. No modifica `Time.timeScale`; la velocidad se aplica multiplicando por `VelocidadActual` en el acumulador interno, lo que permite que el menú de pausa y las animaciones de UI sigan activos aunque el tiempo de juego esté pausado. El input de teclado (Espacio, +, −) vive aquí para centralizar toda la lógica de tiempo en un único componente. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static SimulacionTiempo` (get) | Punto de acceso global. Puede ser `null` en escenas sin simulación. |
+| `DiaActual` | `int` (get) | Día actual del calendario de juego (1-30). |
+| `MesActual` | `int` (get) | Mes actual del calendario de juego (1-12). |
+| `AñoActual` | `int` (get) | Año actual del calendario de juego. |
+| `VelocidadActual` | `float` (get) | Velocidad de simulación activa. 0 si está pausado. |
+| `EstaPausado` | `bool` (get) | `true` si `VelocidadActual == 0`. |
+| `OnNuevoDia` | `static event Action` | Se dispara cada vez que avanza un día de juego. |
+| `OnNuevoMes` | `static event Action` | Se dispara cada vez que avanza un mes de juego. |
+| `OnVelocidadCambiada` | `static event Action` | Se dispara cada vez que cambia la velocidad o el estado de pausa. |
+| `SubirVelocidad()` | `void` | Incrementa la velocidad al siguiente nivel. Salta el índice 0 (pausa). Dispara `OnVelocidadCambiada`. |
+| `BajarVelocidad()` | `void` | Reduce la velocidad al nivel anterior. Nunca llega a pausa. Dispara `OnVelocidadCambiada`. |
+| `TogglePausa()` | `void` | Alterna entre pausa y la última velocidad activa guardada. Dispara `OnVelocidadCambiada`. |
+| `PausarPorMenu()` | `void` | Pone velocidad a 0 sin modificar el estado guardado. Llamado por `MenuPausa` al abrir el panel. |
+| `ReanudarDesdMenu()` | `void` | Restaura la velocidad previa al abrir el menú. Llamado por `MenuPausa` al cerrar el panel. |
+| `GetFechaFormateada()` | `string` | Devuelve la fecha en formato "1 de Marzo de 1350". |
+| `GetVelocidadFormateada()` | `string` | Devuelve "\|\|", "0.25x", "1x", "2x" o "10x" según la velocidad actual. |
+| `OnDestroy()` | `private void` | Limpia `Instance` si este objeto era la instancia activa, evitando referencias colgantes al destruir la escena. |
+
+### Dependencias
+
+- `MenuPausa` — llama a `PausarPorMenu` y `ReanudarDesdMenu`.
+- `MarketManager` — se suscribe a `OnNuevoDia` para el tick diario.
+- `HUDTiempo` — se suscribe a `OnNuevoDia` y `OnVelocidadCambiada`.
+
+### Decisión de diseño
+
+SimulacionTiempo usa eventos estáticos para que `MarketManager` se suscriba sin acoplamiento directo. El input de teclado vive en `SimulacionTiempo` para centralizar toda la lógica de tiempo en un único componente.
+
+---
+
+## HUDTiempo
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/UI/HUDTiempo.cs` |
+| **Tipo** | `MonoBehaviour` (singleton persistente) |
+| **Módulo** | Interfaz de usuario — HUD |
+| **Descripción** | Panel de HUD que muestra la fecha y la velocidad de simulación actuales. Persiste entre escenas mediante `DontDestroyOnLoad`; si se detecta un duplicado al cargar una escena, la instancia nueva se auto-destruye. Se oculta automáticamente en escenas no jugables suscribiéndose a `SceneManager.sceneLoaded`; las escenas visibles se configuran en `_escenasVisibles` desde el Inspector (por defecto: "Ciudad", "Mapamundi"). Se suscribe a `SimulacionTiempo.OnNuevoDia` y `OnVelocidadCambiada` para refrescar la interfaz solo cuando hay cambios. Los botones son un acceso alternativo vía ratón; el input de teclado lo gestiona `SimulacionTiempo`. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static HUDTiempo` (get) | Punto de acceso global al HUD persistente. |
+| `ActualizarUI()` | `void` | Actualiza textos y estado interactable de botones. Se llama en `Start` y en cada evento de `SimulacionTiempo`. Incluye guard nulo contra `_simulacion`. Los listeners de los botones también tienen guard nulo: si `_simulacion` es `null` se limpian pero no se registran. |
+
+### Campos SerializeField
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `_escenasVisibles` | `string[]` | Nombres exactos de las escenas donde el HUD es visible. Por defecto: `{ "Ciudad", "Mapamundi" }`. En el resto de escenas `_panelVisible` se desactiva automáticamente al cargar. |
+| `_panelVisible` | `GameObject` | GameObject hijo que contiene todo el contenido visual del HUD. Solo este hijo se activa/desactiva según la escena; el GameObject raíz permanece siempre activo para que la suscripción a `SceneManager.sceneLoaded` no se pierda. |
+
+### Dependencias
+
+- `SimulacionTiempo` — fuente de datos de fecha y velocidad.
+- `TextMeshProUGUI` (TMPro) — etiquetas de fecha y velocidad.
+- `UnityEngine.UI.Button` — botones de subir/bajar velocidad.
+- `UnityEngine.SceneManagement.SceneManager` — suscripción a `sceneLoaded` para control de visibilidad.
+
+### Setup
+
+El GameObject que contiene `HUDTiempo` debe crearse en **una sola escena** (recomendado: la primera escena jugable que cargue). El componente se marca `DontDestroyOnLoad` y se auto-destruye si detecta un duplicado al cambiar de escena. **No añadir `HUDTiempo` en el Canvas de cada escena individual.** La visibilidad en cada escena se controla exclusivamente mediante `_escenasVisibles`.
 
 ---
 

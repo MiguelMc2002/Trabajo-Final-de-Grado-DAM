@@ -44,6 +44,42 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",  100, 200,  3,  6),
         });
 
+        CrearCiudad("Genova", "Génova", new[]
+        {
+            ("Grano",              200, 400, 3, 5),
+            ("Madera",             150, 300, 2, 3),
+            ("Pescado",            400, 800, 8, 4),
+            ("Lana",               250, 500, 4, 6),
+            ("Mineral de hierro",  100, 200, 1, 3),
+        });
+
+        CrearCiudad("Venecia", "Venecia", new[]
+        {
+            ("Grano",              180, 360, 2, 6),
+            ("Madera",             120, 240, 1, 4),
+            ("Pescado",            350, 700, 6, 5),
+            ("Lana",               300, 600, 5, 7),
+            ("Mineral de hierro",   80, 160, 1, 4),
+        });
+
+        CrearCiudad("Ruan", "Ruan", new[]
+        {
+            ("Grano",              450, 900, 10, 8),
+            ("Madera",             380, 760,  8, 5),
+            ("Pescado",            200, 400,  3, 7),
+            ("Lana",               500,1000, 12, 6),
+            ("Mineral de hierro",  150, 300,  3, 4),
+        });
+
+        CrearCiudad("Brujas", "Brujas", new[]
+        {
+            ("Grano",              350, 700,  7, 7),
+            ("Madera",             280, 560,  5, 5),
+            ("Pescado",            300, 600,  6, 6),
+            ("Lana",               600,1000, 15, 8),
+            ("Mineral de hierro",  200, 400,  4, 5),
+        });
+
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("[CiudadesEditorSetup] Assets de ciudades generados correctamente.");
