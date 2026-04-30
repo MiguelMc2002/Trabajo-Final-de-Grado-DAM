@@ -13,9 +13,15 @@ public class CiudadData : ScriptableObject
     // ─── Identificación ──────────────────────────────────────────────────────
 
     /// <summary>
-    /// Nombre de la ciudad que se mostrará en la interfaz (p. ej. "Lübeck", "Brujas").
+    /// Identificador numérico único de la ciudad. Debe coincidir con el id_ciudad
+    /// de la tabla Ciudad en SQLite (1=Lübeck, 2=Barcelona, 3=Génova, 4=Venecia, 5=Ruan, 6=Brujas).
     /// </summary>
     [Header("Identificación")]
+    [SerializeField] public int IdCiudad;
+
+    /// <summary>
+    /// Nombre de la ciudad que se mostrará en la interfaz (p. ej. "Lübeck", "Brujas").
+    /// </summary>
     public string NombreCiudad;
 
     // ─── Mercado ─────────────────────────────────────────────────────────────
