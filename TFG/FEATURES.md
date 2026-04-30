@@ -117,6 +117,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
+| `IdCiudad` | `int` | Identificador numérico único de la ciudad. Debe coincidir con el `id_ciudad` de la tabla Ciudad en SQLite (1=Lübeck, 2=Barcelona, 3=Génova, 4=Venecia, 5=Ruan, 6=Brujas). Asignar manualmente en el Inspector de cada asset. |
 | `NombreCiudad` | `string` | Nombre de la ciudad que se mostrará en la interfaz (p. ej. "Lübeck", "Brujas"). |
 | `Mercado` | `List<EntradaMercado>` | Lista de bienes disponibles en el mercado de esta ciudad, con su stock inicial y cadencias diarias. |
 
@@ -759,6 +760,45 @@ El GameObject que contiene `HUDTiempo` debe crearse en **una sola escena** (reco
 
 ---
 
+---
+
+## Módulo de Guardado y Carga (SQLite)
+
+Conjunto de clases que persisten y restauran el estado completo de una partida en un fichero `.db` por slot. Todos los DAOs reciben `DatabaseManager` por constructor y reutilizan su `Conexion` sin abrir conexiones propias.
+
+### Estado de implementación
+
+| Estado | Clase | Descripción |
+|---|---|---|
+| ✅ | `DatabaseManager` | Singleton `MonoBehaviour` con `DontDestroyOnLoad`. Abre o crea el fichero `slot_N.db` en `Application.persistentDataPath` y garantiza que las 15 tablas existen con `CREATE TABLE IF NOT EXISTS` antes de que cualquier DAO opere. |
+| ✅ | `EstadoJuegoDAO` | Guarda y carga la fila única de `estadoJuego` (día, mes, año, velocidad del tiempo, fecha de guardado UTC). Usa `INSERT OR REPLACE` con `id_estado = 1`. |
+| ✅ | `CiudadDAO` | Inserta las 6 ciudades iniciales con IDs fijos (`InsertarCiudadesIniciales`) y lee todas las ciudades. Expone `CiudadDto` para no colisionar con el `ScriptableObject` `CiudadData` del Inspector. |
+| ✅ | `BienDAO` | Inserta los 19 bienes con precios base (`InsertarBienesIniciales`), lee por id y lista completa. Expone `BienDto` para no colisionar con el `ScriptableObject` `BienData`. |
+| ✅ | `EstadoMercadoCiudadDAO` | Guarda y carga el estado completo del mercado de cada ciudad: stock, precio, producción y consumo por bien. `GuardarTodoElMercado` conecta con `MarketManager` y `CiudadData.IdCiudad`. Busca el `idBien` por nombre en BD mediante `ObtenerIdBienPorNombre`. |
+| ✅ | `EdificiosCiudadDAO` | Inserta los tipos de edificio en `TipoEdificio` e inserta los 6 edificios base por ciudad en `EdificiosCiudad`. Lee los edificios de una ciudad con JOIN a `TipoEdificio`. |
+| ✅ | `FlotaDAO` | Inserta, actualiza posición y estado, obtiene por tipo de propietario y elimina flotas. Los campos `id_ciudad_actual`, `id_capitan` e `id_ciudad_destino` son nullable; se mapean con el patrón `(object)valor ?? DBNull.Value` y se leen con `reader.IsDBNull`. |
+| ✅ | `BarcoDAO` | Inserta los 3 tipos de casco base (Cog, Hulk, Carraca) en `TipoCasco`. Gestiona barcos por flota: inserta, actualiza vida/tripulación/flota y elimina. Booleano `es_barco_combate` almacenado como `1`/`0`. |
+| ✅ | `CargaBarcoDAO` | Guarda y carga la mercancía en bodega de cada barco. `GuardarCargaCompleta` limpia la carga anterior con `EliminarCargaDeBarco` antes de reinsertar, garantizando atomicidad. `ObtenerCargaDeBarco` usa JOIN a `Bien` para traer el nombre sin segunda consulta. |
+| ❌ | `MemoriaComercialPNJDAO` | Guardará y cargará el conocimiento de precios de los PNJs comerciantes con retraso de 7 días. Pendiente para el módulo de PNJs (semana 3). |
+| ❌ | `SaveManager` | Orquestará el guardado completo: llamará a todos los DAOs en el orden correcto garantizando integridad referencial. |
+| ❌ | `LoadManager` | Orquestará la carga completa: reconstruirá el estado del mundo desde SQLite inicializando todos los sistemas en el orden inverso al guardado. |
+| ❌ | Pantalla de slots | UI con 5 slots (guardar / cargar / sobrescribir). Mostrará nombre de partida, fecha de guardado y tiempo de juego por slot. |
+
+### DTOs del módulo
+
+| DTO | Archivo | Campos |
+|---|---|---|
+| `EstadoJuegoData` | `EstadoJuegoDAO.cs` | `DiaJuego`, `MesJuego`, `AñoJuego`, `VelocidadTiempo`, `FechaGuardado` |
+| `CiudadDto` | `CiudadDAO.cs` | `IdCiudad`, `Nombre` |
+| `BienDto` | `BienDAO.cs` | `IdBien`, `Nombre`, `Categoria`, `PrecioBase` |
+| `EstadoMercadoDto` | `EstadoMercadoCiudadDAO.cs` | `IdCiudad`, `IdBien`, `Stock`, `Produccion`, `Consumo`, `PrecioActual` |
+| `EdificiosCiudadDto` | `EdificiosCiudadDAO.cs` | `IdCiudad`, `IdTipoEdificio`, `NombreTipoEdificio`, `Cantidad` |
+| `FlotaDto` | `FlotaDAO.cs` | `IdFlota`, `TipoPropietario`, `IdCiudadActual`(?), `PosicionX`, `PosicionY`, `IdCapitan`(?), `EstadoActual`, `IdCiudadDestino`(?) |
+| `BarcoDto` | `BarcoDAO.cs` | `IdBarco`, `IdTipoCasco`, `NombreBarco`, `EsBarcosCombate`, `VidaActual`, `TripulacionActual`, `CapacidadTripulacion`, `IdFlota`(?) |
+| `CargaBarcoDto` | `CargaBarcoDAO.cs` | `IdBarco`, `IdBien`, `NombreBien`, `Cantidad` |
+
+---
+
 ## TO-DO POST-BETA
 
 ### Alta prioridad
@@ -838,3 +878,11 @@ El GameObject que contiene `HUDTiempo` debe crearse en **una sola escena** (reco
 
 - **Módulo:** Módulo de mundo y navegación
 - **Descripción:** Los assets ScriptableObject de Génova, Venecia, Ruan y Brujas están creados pero los marcadores en la escena Mapamundi.unity hay que añadirlos manualmente con sus posiciones geográficas correctas, siguiendo el mismo patrón que Lübeck y Barcelona (SpriteRenderer + BoxCollider2D + MarcadorCiudad + TextoNombre).
+
+---
+
+## TO-DO Día 9
+
+- [ ] Asignar `IdCiudad` en el Inspector de cada ScriptableObject de ciudad (1=Lübeck, 2=Barcelona, 3=Génova, 4=Venecia, 5=Ruan, 6=Brujas) — HECHO
+- [ ] Verificar que `GuardarTodoElMercado` encuentra los bienes por nombre correctamente cuando se integre con `SaveManager`
+- [ ] `MemoriaComercialPNJDAO` pendiente para cuando se implemente el módulo de PNJs (semana 3)

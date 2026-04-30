@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1fae689ddb0ccf4b9b0fd88b47f9839, type: 3}
   m_Name: Brujas
   m_EditorClassIdentifier: Assembly-CSharp::CiudadData
+  IdCiudad: 6
   NombreCiudad: Brujas
   Mercado:
   - Bien: {fileID: 11400000, guid: 489c86f507539f44d994f99e9fde56dc, type: 2}
