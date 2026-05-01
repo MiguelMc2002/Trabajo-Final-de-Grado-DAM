@@ -196,6 +196,39 @@ public class SimulacionTiempo : MonoBehaviour
         OnVelocidadCambiada?.Invoke();
     }
 
+    /// <summary>
+    /// Sobrescribe la fecha y la velocidad de la simulación con los valores leídos desde
+    /// la base de datos al cargar una partida guardada. Si la velocidad indicada no coincide
+    /// con ninguno de los valores válidos se usa 1x como fallback.
+    /// </summary>
+    /// <param name="dia">Día del calendario de juego a restaurar (1-30).</param>
+    /// <param name="mes">Mes del calendario de juego a restaurar (1-12).</param>
+    /// <param name="anio">Año del calendario de juego a restaurar.</param>
+    /// <param name="velocidad">Multiplicador de velocidad guardado (0.25, 1, 2 ó 10).</param>
+    public void SetEstado(int dia, int mes, int anio, float velocidad)
+    {
+        _diaActual = dia;
+        _mesActual = mes;
+        _añoActual = anio;
+
+        // Buscar el índice correspondiente a la velocidad guardada
+        int indiceEncontrado = 2; // fallback: 1x
+        for (int i = 0; i < _velocidadesValidas.Length; i++)
+        {
+            if (Mathf.Approximately(_velocidadesValidas[i], velocidad))
+            {
+                indiceEncontrado = i;
+                break;
+            }
+        }
+
+        _indiceVelocidad    = indiceEncontrado;
+        _ultimoIndiceNoZero = indiceEncontrado > 0 ? indiceEncontrado : 2;
+        OnVelocidadCambiada?.Invoke();
+
+        Debug.Log($"[SimulacionTiempo] Estado restaurado: {_diaActual}/{_mesActual}/{_añoActual} vel={VelocidadActual}x");
+    }
+
     private void OnDestroy()
     {
         if (Instance == this) Instance = null;

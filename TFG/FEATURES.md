@@ -710,6 +710,7 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | `ReanudarDesdMenu()` | `void` | Restaura la velocidad previa al abrir el menú. Llamado por `MenuPausa` al cerrar el panel. |
 | `GetFechaFormateada()` | `string` | Devuelve la fecha en formato "1 de Marzo de 1350". |
 | `GetVelocidadFormateada()` | `string` | Devuelve "\|\|", "0.25x", "1x", "2x" o "10x" según la velocidad actual. |
+| `SetEstado(int dia, int mes, int anio, float velocidad)` | `void` | Sobrescribe la fecha y la velocidad con los valores leídos desde SQLite al cargar una partida. Busca el índice correcto en `_velocidadesValidas` con `Mathf.Approximately`; si no hay coincidencia, usa 1x como fallback. Dispara `OnVelocidadCambiada` para refrescar el HUD. Añadido en Día 10 para uso de `LoadManager`. |
 | `OnDestroy()` | `private void` | Limpia `Instance` si este objeto era la instancia activa, evitando referencias colgantes al destruir la escena. |
 
 ### Dependencias
@@ -779,10 +780,10 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | ✅ | `FlotaDAO` | Inserta, actualiza posición y estado, obtiene por tipo de propietario y elimina flotas. Los campos `id_ciudad_actual`, `id_capitan` e `id_ciudad_destino` son nullable; se mapean con el patrón `(object)valor ?? DBNull.Value` y se leen con `reader.IsDBNull`. |
 | ✅ | `BarcoDAO` | Inserta los 3 tipos de casco base (Cog, Hulk, Carraca) en `TipoCasco`. Gestiona barcos por flota: inserta, actualiza vida/tripulación/flota y elimina. Booleano `es_barco_combate` almacenado como `1`/`0`. |
 | ✅ | `CargaBarcoDAO` | Guarda y carga la mercancía en bodega de cada barco. `GuardarCargaCompleta` limpia la carga anterior con `EliminarCargaDeBarco` antes de reinsertar, garantizando atomicidad. `ObtenerCargaDeBarco` usa JOIN a `Bien` para traer el nombre sin segunda consulta. |
-| ❌ | `MemoriaComercialPNJDAO` | Guardará y cargará el conocimiento de precios de los PNJs comerciantes con retraso de 7 días. Pendiente para el módulo de PNJs (semana 3). |
-| ❌ | `SaveManager` | Orquestará el guardado completo: llamará a todos los DAOs en el orden correcto garantizando integridad referencial. |
-| ❌ | `LoadManager` | Orquestará la carga completa: reconstruirá el estado del mundo desde SQLite inicializando todos los sistemas en el orden inverso al guardado. |
-| ❌ | Pantalla de slots | UI con 5 slots (guardar / cargar / sobrescribir). Mostrará nombre de partida, fecha de guardado y tiempo de juego por slot. |
+| ✅ | `MemoriaComercialPNJDAO` | Guarda y carga el conocimiento de precios de los PNJs comerciantes con caducidad de 7 días. `ObtenerPrecioConocido` devuelve `null` si el dato supera ese umbral. |
+| ✅ | `SaveManager` | Singleton `MonoBehaviour` que orquesta el guardado completo en 7 pasos respetando integridad referencial: estadoJuego → catálogos (Ciudad, Bien, TipoEdificio, TipoCasco) → EstadoMercadoCiudad → EdificiosCiudad. Solo guarda el mercado de la ciudad activa en escena. |
+| ✅ | `LoadManager` | Singleton `MonoBehaviour` que orquesta la carga completa: abre slot → restaura `SimulacionTiempo` → limpia almacén del jugador → restaura mercado activo en escena. Empareja bienes por nombre entre `BienData` y `BienDto`. |
+| ✅ | Pantalla de slots | UI con 5 slots implementada en `SlotData` + `SlotUI` + `PantallaSlotsUI`. Muestra nombre de partida, fecha de guardado y días jugados. Soporta modos Guardar y Cargar con confirmación antes de sobrescribir o borrar. |
 
 ### DTOs del módulo
 
@@ -796,6 +797,8 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | `FlotaDto` | `FlotaDAO.cs` | `IdFlota`, `TipoPropietario`, `IdCiudadActual`(?), `PosicionX`, `PosicionY`, `IdCapitan`(?), `EstadoActual`, `IdCiudadDestino`(?) |
 | `BarcoDto` | `BarcoDAO.cs` | `IdBarco`, `IdTipoCasco`, `NombreBarco`, `EsBarcosCombate`, `VidaActual`, `TripulacionActual`, `CapacidadTripulacion`, `IdFlota`(?) |
 | `CargaBarcoDto` | `CargaBarcoDAO.cs` | `IdBarco`, `IdBien`, `NombreBien`, `Cantidad` |
+| `MemoriaComercialPNJDto` | `MemoriaComercialPNJDAO.cs` | `IdFlota`, `IdBien`, `PrecioConocido`, `DiaJuegoConocido` |
+| `SlotData` | `SlotData.cs` | `NumeroSlot`, `EstaOcupado`, `NombrePartida`, `FechaGuardado`, `DiasJugados` |
 
 ---
 
@@ -884,5 +887,214 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 ## TO-DO Día 9
 
 - [ ] Asignar `IdCiudad` en el Inspector de cada ScriptableObject de ciudad (1=Lübeck, 2=Barcelona, 3=Génova, 4=Venecia, 5=Ruan, 6=Brujas) — HECHO
-- [ ] Verificar que `GuardarTodoElMercado` encuentra los bienes por nombre correctamente cuando se integre con `SaveManager`
-- [ ] `MemoriaComercialPNJDAO` pendiente para cuando se implemente el módulo de PNJs (semana 3)
+- [ ] Verificar que `GuardarTodoElMercado` encuentra los bienes por nombre correctamente cuando se integre con `SaveManager` — HECHO (revisión de integración Día 10, bug corregido en `SaveManager.GuardarEstadoEconomico`)
+- [ ] `MemoriaComercialPNJDAO` pendiente para cuando se implemente el módulo de PNJs (semana 3) — HECHO (Día 10)
+
+---
+
+## DÍA 10 — Módulo de guardado/carga completo + Tests + Corrección de plugins SQLite
+
+### Clases implementadas
+
+---
+
+## MemoriaComercialPNJDAO
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/MemoriaComercialPNJDAO.cs` |
+| **Tipo** | `class` (no MonoBehaviour) |
+| **Módulo** | Guardado y carga — PNJs |
+| **Descripción** | DAO que gestiona la tabla `MemoriaComercialPNJ`. Representa el conocimiento de mercado acumulado por los PNJs comerciantes: cada flota recuerda el último precio observado para cada bien, pero ese dato caduca a los 7 días de juego, obligando a los PNJs a visitar ciudades con regularidad para mantener información fiable. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarMemoria(int idFlota, int idBien, double precioConocido, int diaJuegoActual)` | `void` | Registra o actualiza el precio observado por una flota para un bien. `INSERT OR REPLACE`, idempotente. |
+| `ObtenerMemoriaDeFlota(int idFlota)` | `List<MemoriaComercialPNJDto>` | Devuelve toda la memoria de una flota sin filtrar por antigüedad. Útil para serializar el estado de un PNJ. |
+| `ObtenerPrecioConocido(int idFlota, int idBien, int diaActual)` | `double?` | Devuelve el precio memorizado si `diaActual - diaJuegoConocido < 7`; `null` si el dato ha caducado o no existe. |
+| `EliminarMemoriaDeFlota(int idFlota)` | `void` | Borra toda la memoria de una flota. Se llama al disolver un PNJ para evitar filas huérfanas. |
+
+### Dependencias
+
+- `DatabaseManager` — proporciona la `SqliteConnection` activa.
+- `MemoriaComercialPNJDto` — DTO interno definido en el mismo fichero.
+
+---
+
+## SaveManager
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/SaveManager.cs` |
+| **Tipo** | `MonoBehaviour` (singleton persistente) |
+| **Módulo** | Guardado y carga |
+| **Descripción** | Orquesta el guardado completo de una partida en SQLite invocando los DAOs en el orden correcto para respetar la integridad referencial: estadoJuego (sin FKs) → catálogos Ciudad, Bien, TipoEdificio, TipoCasco → EstadoMercadoCiudad de la ciudad activa → EdificiosCiudad. Si no hay `MarketManager` en escena, omite el paso de mercado con un aviso. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static SaveManager` (get) | Punto de acceso global al gestor de guardado. |
+| `GuardarPartida(int slotIndex)` | `void` | Ejecuta el guardado completo en el slot indicado (1 a 5). Abre o crea el fichero `slot_N.db`, instancia los DAOs y los invoca en orden. Loguea cada paso con `Debug.Log`. |
+
+### Dependencias
+
+- `DatabaseManager` — abre el slot antes del guardado.
+- `SimulacionTiempo` — fuente de fecha y velocidad actual.
+- `MarketManager` — fuente del estado del mercado activo; buscado con `FindAnyObjectByType`.
+- `EstadoJuegoDAO`, `CiudadDAO`, `BienDAO`, `EdificiosCiudadDAO`, `BarcoDAO`, `EstadoMercadoCiudadDAO` — ejecutan las escrituras.
+
+---
+
+## LoadManager
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/LoadManager.cs` |
+| **Tipo** | `MonoBehaviour` (singleton persistente) |
+| **Módulo** | Guardado y carga |
+| **Descripción** | Orquesta la carga completa de una partida desde SQLite en tres pasos: restaura la fecha y velocidad en `SimulacionTiempo`, vacía el almacén del jugador y restaura el estado del mercado activo en escena. Los bienes se emparejan por nombre entre `BienData` y `BienDto` para evitar dependencias de IDs entre el Inspector y la BD. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static LoadManager` (get) | Punto de acceso global al gestor de carga. |
+| `CargarPartida(int slotIndex)` | `void` | Carga la partida del slot indicado (1 a 5). Abre el fichero `slot_N.db`, restaura `SimulacionTiempo`, limpia el almacén del jugador y restaura el mercado activo. Si algún sistema no está disponible en escena, el paso se omite con un aviso. |
+
+### Dependencias
+
+- `DatabaseManager` — abre el slot antes de la carga.
+- `SimulacionTiempo` — receptor de la fecha y velocidad restauradas vía `SetEstado`.
+- `GameManager` — limpia y restaura el almacén del jugador.
+- `MarketManager` — receptor del estado del mercado; buscado con `FindAnyObjectByType`.
+- `EstadoJuegoDAO`, `BienDAO`, `EstadoMercadoCiudadDAO` — ejecutan las lecturas.
+
+---
+
+## SlotData
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/SlotData.cs` |
+| **Tipo** | `class` (no MonoBehaviour) |
+| **Módulo** | Guardado y carga — UI |
+| **Descripción** | POCO con los metadatos de un slot de guardado. Instanciado por `PantallaSlotsUI` al escanear los archivos en disco; pasado a `SlotUI.Inicializar` para rellenar la fila visual. No tiene lógica propia. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `NumeroSlot` | `int` | Número de slot (1 a 5). Determina el nombre del archivo `slot_N.db`. |
+| `EstaOcupado` | `bool` | `true` si el archivo `slot_N.db` existe y contiene una partida guardada. |
+| `NombrePartida` | `string` | Nombre visible del slot. Por defecto `"Partida N"`. |
+| `FechaGuardado` | `string` | Fecha y hora del último guardado formateada como `"dd/MM/yyyy HH:mm"`. Vacío si el slot no está ocupado. |
+| `DiasJugados` | `int` | Días de juego transcurridos leídos desde `estadoJuego`. Cero si el slot está vacío. |
+
+---
+
+## SlotUI
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/SlotUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Guardado y carga — UI |
+| **Descripción** | Componente adjunto al prefab de cada fila de slot. Recibe los metadatos con `Inicializar`, rellena los textos y activa o desactiva los botones según si el slot está ocupado. Llama siempre a `RemoveAllListeners` antes de registrar los listeners para evitar duplicados al reutilizar el prefab. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Datos` | `SlotData` (get) | Metadatos del slot que esta fila representa. Accesible desde `PantallaSlotsUI` para identificar sobre qué slot actuar. |
+| `Inicializar(SlotData datos, PantallaSlotsUI pantalla)` | `void` | Rellena textos y configura botones. Slot vacío: solo Guardar activo. Slot ocupado: los tres activos. Los listeners delegan en `pantalla.OnGuardar/OnCargar/OnBorrar`. |
+
+### Dependencias
+
+- `SlotData` — metadatos que rellena la fila.
+- `PantallaSlotsUI` — receptor de las acciones de los botones.
+- `TextMeshProUGUI` (TMPro) — etiquetas de nombre, fecha y días.
+- `UnityEngine.UI.Button` — botones Guardar, Cargar y Borrar.
+
+---
+
+## PantallaSlotsUI
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/PantallaSlotsUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Guardado y carga — UI |
+| **Descripción** | Panel completo de selección de slots. Al abrirse escanea los cinco archivos `slot_N.db` con una conexión SQLite temporal de solo lectura, lee los metadatos de `estadoJuego` y rellena cada `SlotUI`. Delega el guardado en `SaveManager`, la carga en `LoadManager` y la navegación en `SceneController`. Incluye panel de confirmación reutilizable para sobrescribir o borrar. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Abrir(SlotModo modo)` | `void` | Activa el panel, establece el modo (Guardar / Cargar) y refresca los cinco slots leyendo el disco. |
+| `OnGuardar(SlotUI slotUI)` | `void` | Guarda en el slot. Si está ocupado, pide confirmación antes de sobrescribir. |
+| `OnCargar(SlotUI slotUI)` | `void` | Carga la partida del slot y navega al mapamundi. Solo opera si el slot está ocupado. |
+| `OnBorrar(SlotUI slotUI)` | `void` | Pide confirmación y elimina el archivo `.db`. Refresca la UI tras el borrado. |
+
+### Dependencias
+
+- `SlotUI` — filas visuales de cada slot; se inicializan en `Abrir`.
+- `SlotData` — metadatos que se construyen al escanear el disco.
+- `SaveManager` — ejecuta el guardado.
+- `LoadManager` — ejecuta la carga.
+- `SceneController` — navega al mapamundi tras cargar.
+- `TextMeshProUGUI` (TMPro) — texto del panel de confirmación.
+- `UnityEngine.UI.Button` — botón Cerrar y botones Sí/No del panel de confirmación.
+- `Mono.Data.Sqlite` — conexión temporal de solo lectura para leer metadatos.
+- `System.IO` — `File.Exists`, `File.Delete`, `Path.Combine`.
+
+### Setup en Inspector
+
+Asignar: array de 5 `SlotUI`, `_botonCerrar`, `_panelConfirmacion` (GameObject), `_textoConfirmacion` (TextMeshProUGUI), `_botonConfirmarSi` y `_botonConfirmarNo`.
+
+---
+
+## SlotModo
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/PantallaSlotsUI.cs` |
+| **Tipo** | `enum` |
+| **Módulo** | Guardado y carga — UI |
+| **Descripción** | Determina si el panel de slots se abrió para guardar o para cargar una partida. |
+
+### Valores
+
+| Valor | Descripción |
+|---|---|
+| `Guardar` | El jugador quiere guardar la partida actual en un slot. |
+| `Cargar` | El jugador quiere cargar una partida guardada anteriormente. |
+
+---
+
+### Tests creados
+
+| Archivo | Modo | Tests | Estado |
+|---|---|---|---|
+| `Assets/Tests/EditMode/SlotDataTests.cs` | Edit Mode | 2 (SlotData vacío por defecto, nombre contiene número de slot) | ✅ pasan |
+| `Assets/Tests/PlayMode/MemoriaComercialPNJDAOTests.cs` | Play Mode | 6 (inserción, sobrescritura, precio válido <7 días, precio caducado ≥7 días, registro inexistente, eliminación de flota) | ✅ pasan |
+
+Todos los tests son autónomos: usan clases locales (`SlotDataLocal`, `TestableMemoriaDAO`) y una base de datos temporal en disco con `Path.GetTempPath()` + `Guid.NewGuid()`. No dependen de ningún `MonoBehaviour` ni del proyecto principal.
+
+### Correcciones de infraestructura
+
+- `sqlite3.dll` reemplazado: binario de mayo 2015 → **SQLite 3.53.0** (abril 2026, 3.2 MB).
+- `Mono.Data.Sqlite.dll` `.meta` corregido: CPU `AnyCPU`, Editor + Win64 habilitados.
+- `sqlite3.dll` `.meta` corregido: `isPreloaded: 1`, CPU `x86_64`, Editor + Win64 habilitados.
+- `MemoriaComercialPNJDAO` refactorizado: almacena `SqliteConnection` directamente en lugar de `DatabaseManager`; constructor público secundario añadido para facilitar los tests sin dependencia de `MonoBehaviour`.
+
+---
+
+## Pendiente — Día 11
+
+- [ ] Montaje UI slots en Unity: crear prefab de fila de slot, montar panel en Canvas del Menú Principal.
+- [ ] Asignar referencias del Inspector en `PantallaSlotsUI` (5 `SlotUI`, botón Cerrar, panel de confirmación con texto y dos botones).
+- [ ] Conectar botones Guardar/Cargar del `MenuPrincipalUI` con `PantallaSlotsUI.Abrir()`.
+- [ ] Prueba de integración completa: guardar partida → cerrar juego → cargar → verificar estado restaurado.
