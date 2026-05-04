@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// Gestiona el menú de pausa del juego.
@@ -16,6 +17,10 @@ public class MenuPausa : MonoBehaviour
     /// <summary>Panel de UI que contiene los botones del menú de pausa.</summary>
     [SerializeField] private GameObject _panelPausa;
 
+    [SerializeField] private Button _botonGuardar;
+    [SerializeField] private Button _botonCargar;
+    [SerializeField] private PantallaSlotsUI _pantallaSlotsUI;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
@@ -25,6 +30,12 @@ public class MenuPausa : MonoBehaviour
             Debug.LogWarning("[MenuPausa] _panelPausa no asignado en el Inspector.");
             return;
         }
+
+        if (_botonGuardar != null)
+            _botonGuardar.onClick.AddListener(AbrirGuardar);
+
+        if (_botonCargar != null)
+            _botonCargar.onClick.AddListener(AbrirCargar);
 
         // Asegurar que el panel empiece oculto al cargar la escena
         _panelPausa.SetActive(false);
@@ -72,6 +83,36 @@ public class MenuPausa : MonoBehaviour
     {
         SimulacionTiempo.Instance?.ReanudarDesdMenu();
         SceneController.IrAMenuPrincipal();
+    }
+
+    /// <summary>
+    /// Abre el panel de slots en modo Guardar sin cerrar el menú de pausa.
+    /// </summary>
+    private void AbrirGuardar()
+    {
+        if (_pantallaSlotsUI == null)
+        {
+            Debug.LogWarning("[MenuPausa] _pantallaSlotsUI no asignado en el Inspector.");
+            return;
+        }
+
+        _pantallaSlotsUI.Abrir(SlotModo.Guardar);
+    }
+
+    /// <summary>
+    /// Abre el panel de slots en modo Cargar sin cerrar el menú de pausa.
+    /// Si el jugador confirma la carga, SceneController gestiona la navegación.
+    /// Si cierra el popup sin cargar, el menú de pausa sigue activo.
+    /// </summary>
+    private void AbrirCargar()
+    {
+        if (_pantallaSlotsUI == null)
+        {
+            Debug.LogWarning("[MenuPausa] _pantallaSlotsUI no asignado en el Inspector.");
+            return;
+        }
+
+        _pantallaSlotsUI.Abrir(SlotModo.Cargar);
     }
 
     /// <summary>
