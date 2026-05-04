@@ -144,6 +144,8 @@ public class LoadManager : MonoBehaviour
     /// </summary>
     private void RestaurarMercados()
     {
+        Debug.Log($"[LoadManager] Restaurando mercado. MarketManager null: {FindAnyObjectByType<MarketManager>() == null}");
+
         MarketManager market = FindAnyObjectByType<MarketManager>();
         if (market == null)
         {
@@ -192,9 +194,11 @@ public class LoadManager : MonoBehaviour
             entrada.ProduccionDiaria = estado.Produccion;
             entrada.ConsumoDiario    = estado.Consumo;
             entrada.PrecioActual     = (float)estado.PrecioActual;
+            Debug.Log($"[LoadManager] Restaurando {entrada.Bien.nombre}: stock={estado.Stock}, precio={estado.PrecioActual}");
             restaurados++;
         }
 
         Debug.Log($"[LoadManager] Mercado de '{ciudad.NombreCiudad}' restaurado: {restaurados}/{entradas.Count} bienes actualizados.");
+        Debug.Log("[LoadManager] Mercado restaurado completo. Llamando a refresco UI...");
     }
 }

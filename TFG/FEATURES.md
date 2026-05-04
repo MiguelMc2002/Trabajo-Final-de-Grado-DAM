@@ -613,7 +613,7 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | **Ruta** | `Assets/Scripts/UI/MenuPrincipalUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Menú Principal |
-| **Descripción** | Controla la lógica del Menú Principal: mostrar el panel de selección de ciudad al iniciar nueva partida, cerrarlo con Escape o con el botón Atrás, y salir de la aplicación. El botón Cargar Partida es un stub pendiente de la release. |
+| **Descripción** | Controla la lógica del Menú Principal: mostrar el panel de selección de ciudad al iniciar nueva partida, cerrarlo con Escape o con el botón Atrás, abrir el panel de slots en modo Cargar, y salir de la aplicación. |
 
 ### API pública
 
@@ -622,11 +622,20 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | `panelSeleccionCiudad` | `GameObject` | Panel con los botones de ciudad para comenzar una nueva partida. Se asigna desde el Inspector. |
 | `IniciarNuevaPartida()` | `void` | Activa el panel de selección de ciudad. Llamado por el botón "Nueva Partida". |
 | `CerrarPanelSeleccion()` | `void` | Oculta el panel de selección. Llamado por el botón "Atrás" y por la tecla Escape. |
-| `CargarPartida()` | `void` | Stub pendiente post-beta. Llamado por el botón "Cargar Partida". |
+| `CargarPartida()` | `void` | Abre `PantallaSlotsUI` en modo `Cargar`. Requiere `_pantallaSlotsUI` asignado en el Inspector. |
+| `MostrarMenuPrincipal()` | `void` | Desactiva el panel de slots y reactiva el panel raíz del menú. Llamado por `PantallaSlotsUI.CerrarPanel()` al volver. |
 | `Salir()` | `void` | Cierra la aplicación con `Application.Quit()`. |
+
+### Campos SerializeField (Día 11)
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `_pantallaSlotsUI` | `PantallaSlotsUI` | Referencia al panel de slots. Asignar en el Inspector. |
+| `_panelMenuPrincipal` | `GameObject` | Panel raíz con los botones del menú. Se reactiva al cerrar el panel de slots. |
 
 ### Dependencias
 
+- `PantallaSlotsUI` — panel de guardado/carga que se abre en modo Cargar.
 - `SceneController` — navegación entre pantallas (uso indirecto vía `SeleccionCiudadUI`).
 
 ---
@@ -662,7 +671,7 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | **Ruta** | `Assets/Scripts/UI/MenuPausa.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Pausa |
-| **Descripción** | Gestiona el menú de pausa en las escenas jugables (Ciudad, Mapamundi). La tecla Escape alterna la visibilidad del panel. La gestión del tiempo se delega en `SimulacionTiempo` (si existe en la escena). En escenas sin simulación (Menú Principal) el panel abre y cierra sin tocar el tiempo. `Time.timeScale` permanece siempre a 1; la pausa del juego la controla `SimulacionTiempo` internamente. |
+| **Descripción** | Gestiona el menú de pausa en las escenas jugables (Ciudad, Mapamundi). La tecla Escape alterna la visibilidad del panel. La gestión del tiempo se delega en `SimulacionTiempo` (si existe en la escena). En escenas sin simulación (Menú Principal) el panel abre y cierra sin tocar el tiempo. Desde el Día 11 incluye botones Guardar y Cargar que abren `PantallaSlotsUI` como popup sin cerrar el menú ni reanudar el tiempo. |
 
 ### API pública
 
@@ -672,8 +681,17 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | `IrAMenuPrincipal()` | `void` | Llama a `ReanudarDesdMenu()` y carga el Menú Principal abandonando la partida. Asignar al botón "Menú Principal". |
 | `SalirAlEscritorio()` | `void` | Llama a `ReanudarDesdMenu()` y cierra la aplicación. En el editor detiene el modo Play. Asignar al botón "Salir". |
 
+### Campos SerializeField (Día 11)
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `_botonGuardar` | `Button` | Botón "Guardar" del panel de pausa. Su listener se registra en `Start`. |
+| `_botonCargar` | `Button` | Botón "Cargar" del panel de pausa. Su listener se registra en `Start`. |
+| `_pantallaSlotsUI` | `PantallaSlotsUI` | Panel de slots. Se abre como popup sin cerrar el menú ni reanudar el tiempo. Dejar `_menuPrincipalUI` vacío en este contexto. |
+
 ### Dependencias
 
+- `PantallaSlotsUI` — popup de guardado/carga; se abre sin cerrar el menú de pausa.
 - `SceneController` — carga el Menú Principal en `IrAMenuPrincipal()`.
 - `SimulacionTiempo` — delega la pausa/reanudación del tiempo de juego (null-safe).
 
@@ -1002,18 +1020,28 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | **Ruta** | `Assets/Scripts/Database/SlotUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Guardado y carga — UI |
-| **Descripción** | Componente adjunto al prefab de cada fila de slot. Recibe los metadatos con `Inicializar`, rellena los textos y activa o desactiva los botones según si el slot está ocupado. Llama siempre a `RemoveAllListeners` antes de registrar los listeners para evitar duplicados al reutilizar el prefab. |
+| **Descripción** | Componente adjunto a cada fila de slot. Recibe los metadatos y el modo del panel con `Inicializar`, rellena los textos con colores medievales y muestra solo los botones pertinentes según el modo. Activa explícitamente su propio `gameObject` y el padre `BotonesSlot` al inicializarse para garantizar visibilidad aunque estuvieran desactivados en escena. Llama siempre a `RemoveAllListeners` antes de registrar listeners para evitar duplicados. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `Datos` | `SlotData` (get) | Metadatos del slot que esta fila representa. Accesible desde `PantallaSlotsUI` para identificar sobre qué slot actuar. |
-| `Inicializar(SlotData datos, PantallaSlotsUI pantalla)` | `void` | Rellena textos y configura botones. Slot vacío: solo Guardar activo. Slot ocupado: los tres activos. Los listeners delegan en `pantalla.OnGuardar/OnCargar/OnBorrar`. |
+| `Datos` | `SlotData` (get) | Metadatos del slot que esta fila representa. Accesible desde `PantallaSlotsUI`. |
+| `Inicializar(SlotData datos, SlotModo modo, PantallaSlotsUI pantalla)` | `void` | Rellena textos, aplica colores y configura visibilidad de botones según modo: `Guardar` muestra solo BotonGuardar; `Cargar` muestra BotonCargar y BotonBorrar (solo si el slot está ocupado). Slot vacío muestra "— Vacío —" en gris. |
+
+### Colores de texto (Día 11)
+
+| Elemento | Color | Condición |
+|---|---|---|
+| `TextoNombre` | Dorado `#C8A84B` | Slot ocupado |
+| `TextoNombre` | Gris `#888888` | Slot vacío |
+| `TextoFecha` | Gris `#AAAAAA` | Siempre |
+| `TextoDias` | Gris `#AAAAAA` | Siempre |
 
 ### Dependencias
 
 - `SlotData` — metadatos que rellena la fila.
+- `SlotModo` — controla qué botones son visibles.
 - `PantallaSlotsUI` — receptor de las acciones de los botones.
 - `TextMeshProUGUI` (TMPro) — etiquetas de nombre, fecha y días.
 - `UnityEngine.UI.Button` — botones Guardar, Cargar y Borrar.
@@ -1027,21 +1055,33 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | **Ruta** | `Assets/Scripts/Database/PantallaSlotsUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Guardado y carga — UI |
-| **Descripción** | Panel completo de selección de slots. Al abrirse escanea los cinco archivos `slot_N.db` con una conexión SQLite temporal de solo lectura, lee los metadatos de `estadoJuego` y rellena cada `SlotUI`. Delega el guardado en `SaveManager`, la carga en `LoadManager` y la navegación en `SceneController`. Incluye panel de confirmación reutilizable para sobrescribir o borrar. |
+| **Descripción** | Panel completo de selección de slots. Al abrirse escanea los cinco archivos `slot_N.db` con una conexión SQLite temporal de solo lectura, lee los metadatos de `estadoJuego` y rellena cada `SlotUI`. Delega el guardado en `SaveManager`, la carga en `LoadManager` y la navegación en `SceneController`. Incluye panel de confirmación reutilizable para sobrescribir o borrar. Funciona en dos contextos: pantalla completa en el Menú Principal (con `_menuPrincipalUI` asignado) o popup en el menú de pausa (con `_menuPrincipalUI` null). |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
 | `Abrir(SlotModo modo)` | `void` | Activa el panel, establece el modo (Guardar / Cargar) y refresca los cinco slots leyendo el disco. |
+| `CerrarPanel()` | `void` | Cierra el panel y notifica a `_menuPrincipalUI` para que reactive los botones del menú. Si `_menuPrincipalUI` es null (popup de pausa), solo desactiva el panel. |
 | `OnGuardar(SlotUI slotUI)` | `void` | Guarda en el slot. Si está ocupado, pide confirmación antes de sobrescribir. |
 | `OnCargar(SlotUI slotUI)` | `void` | Carga la partida del slot y navega al mapamundi. Solo opera si el slot está ocupado. |
 | `OnBorrar(SlotUI slotUI)` | `void` | Pide confirmación y elimina el archivo `.db`. Refresca la UI tras el borrado. |
+
+### Campos SerializeField (Día 11)
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `_menuPrincipalUI` | `MenuPrincipalUI` | Opcional. Asignar solo en la escena Menú Principal. Si es null, el panel actúa como popup. |
+
+### Comportamiento Escape (Día 11)
+
+`Update()` detecta `KeyCode.Escape`: si el panel de confirmación está abierto lo cierra primero; si no, llama a `CerrarPanel()`.
 
 ### Dependencias
 
 - `SlotUI` — filas visuales de cada slot; se inicializan en `Abrir`.
 - `SlotData` — metadatos que se construyen al escanear el disco.
+- `MenuPrincipalUI` — notificada al cerrar el panel (opcional; null en modo popup).
 - `SaveManager` — ejecuta el guardado.
 - `LoadManager` — ejecuta la carga.
 - `SceneController` — navega al mapamundi tras cargar.
@@ -1052,7 +1092,7 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 
 ### Setup en Inspector
 
-Asignar: array de 5 `SlotUI`, `_botonCerrar`, `_panelConfirmacion` (GameObject), `_textoConfirmacion` (TextMeshProUGUI), `_botonConfirmarSi` y `_botonConfirmarNo`.
+Asignar: array de 5 `SlotUI`, `_botonCerrar`, `_panelConfirmacion` (GameObject), `_textoConfirmacion` (TextMeshProUGUI), `_botonConfirmarSi`, `_botonConfirmarNo`. En el Menú Principal: asignar también `_menuPrincipalUI`.
 
 ---
 
@@ -1092,9 +1132,46 @@ Todos los tests son autónomos: usan clases locales (`SlotDataLocal`, `TestableM
 
 ---
 
-## Pendiente — Día 11
+---
 
-- [ ] Montaje UI slots en Unity: crear prefab de fila de slot, montar panel en Canvas del Menú Principal.
-- [ ] Asignar referencias del Inspector en `PantallaSlotsUI` (5 `SlotUI`, botón Cerrar, panel de confirmación con texto y dos botones).
-- [ ] Conectar botones Guardar/Cargar del `MenuPrincipalUI` con `PantallaSlotsUI.Abrir()`.
-- [ ] Prueba de integración completa: guardar partida → cerrar juego → cargar → verificar estado restaurado.
+## DÍA 11 — Integración UI de guardado/carga en el flujo del juego
+
+Sesión dedicada a conectar `PantallaSlotsUI` al flujo completo del juego: Menú Principal y menú de pausa de Ciudad/Mapamundi. Se han creado scripts de editor para automatizar el montaje del panel y reparar estados incorrectos en escena. Se ha identificado un bug crítico de scope (solo se persiste la ciudad activa en escena al guardar/cargar) que se difiere al Día 12.
+
+### Cambios en scripts existentes
+
+| Script | Cambios |
+|---|---|
+| `MenuPrincipalUI` | `CargarPartida()` ya no es stub: abre `PantallaSlotsUI` en modo Cargar. Nuevo método `MostrarMenuPrincipal()`. Nuevos campos `_pantallaSlotsUI` y `_panelMenuPrincipal`. |
+| `MenuPausa` | Botones Guardar y Cargar abren el popup de slots sin cerrar el menú ni reanudar el tiempo. Nuevos campos `_botonGuardar`, `_botonCargar`, `_pantallaSlotsUI`. |
+| `PantallaSlotsUI` | Nuevo método público `CerrarPanel()` que notifica a `MenuPrincipalUI` si está asignado. Nuevo campo `_menuPrincipalUI` (opcional). `Update()` cierra con Escape: primero el panel de confirmación si está abierto, luego el panel completo. |
+| `SlotUI` | `Inicializar()` recibe nuevo parámetro `SlotModo modo`. Visibilidad de botones según modo. Colores aplicados con `Color32`. Texto "— Vacío —" en gris para slots vacíos. Activación explícita de `gameObject` y `BotonesSlot` al inicio. |
+
+### Scripts de editor creados
+
+| Menú Unity | Script | Función |
+|---|---|---|
+| TFG → Generar Panel de Slots (Pantalla Completa) | `PantallaSlotsEditorSetup.cs` | Genera la jerarquía completa del panel (700×520) en modo pantalla completa con overlay oscuro. Cablea todos los `[SerializeField]` de `PantallaSlotsUI` y `SlotUI` via reflexión. |
+| TFG → Generar Panel de Slots (Popup) | `PantallaSlotsEditorSetup.cs` | Igual que el anterior pero con `PanelContenedor` de 600×460 para uso como popup en el menú de pausa. |
+| TFG → Reparar → Activar BotonesSlot en escena activa | `ActivarBotonesSlot.cs` | Busca todos los GameObjects "BotonesSlot" en la escena activa y los activa junto con sus hijos directos. Ejecutar en cada escena afectada. |
+| TFG → Reparar → Colorear todos los textos del PanelSlots | `RepararColoresSlots.cs` | Aplica colores medievales (dorado, gris, blanco) a todos los `TMP_Text` dentro de los paneles de slots según el nombre del GameObject. |
+
+### Bug identificado — Día 12 (CRÍTICO)
+
+`LoadManager.RestaurarMercados()` busca `MarketManager` en escena en el momento de la carga, antes de que `SceneController.IrAMapamundi()` cambie de escena. Si no hay `MarketManager` en la escena actual, la restauración del mercado se omite silenciosamente. Ver sección "Día 12 — Refactor de persistencia multi-ciudad" en TO-DO.
+
+---
+
+## TO-DO Día 12 — Refactor de persistencia multi-ciudad (CRÍTICO)
+
+### Problema
+
+`SaveManager` y `LoadManager` solo persisten el mercado de la ciudad activa en escena en el momento de guardar o cargar. Las ciudades que el jugador no haya visitado recientemente no se guardan ni se restauran correctamente.
+
+### Solución planificada
+
+- Modificar `MarketManager` para mantener un `Dictionary<int, Dictionary<int, EstadoMercado>>` en memoria con el estado de todos los mercados de todas las ciudades.
+- Al cambiar de ciudad, volcar el estado del mercado de la ciudad actual al diccionario antes de cargar la nueva escena.
+- Al entrar a una ciudad, leer el estado del diccionario en lugar de los valores por defecto del `ScriptableObject`.
+- `SaveManager` iterará el diccionario completo al guardar, no solo el mercado activo.
+- `LoadManager` rellenará el diccionario al cargar, y `RestaurarMercados()` se invocará desde el `Start()` del `MarketManager` de cada ciudad al entrar en ella (suscripción a `SceneManager.sceneLoaded`).

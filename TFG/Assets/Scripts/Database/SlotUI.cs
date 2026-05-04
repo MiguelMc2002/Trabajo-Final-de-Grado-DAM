@@ -22,6 +22,9 @@ public class SlotUI : MonoBehaviour
 
     // ─── Botones ──────────────────────────────────────────────────────────────
 
+    /// <summary>GameObject padre que agrupa los tres botones de acción del slot (BotonesSlot).</summary>
+    [SerializeField] private GameObject _contenedorBotones;
+
     /// <summary>Botón para guardar la partida actual en este slot.</summary>
     [SerializeField] private Button _botonGuardar;
 
@@ -42,36 +45,51 @@ public class SlotUI : MonoBehaviour
     // ─── API pública ──────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Inicializa la fila con los metadatos del slot y la referencia al panel padre.
-    /// Rellena los textos y configura qué botones están activos:
-    /// slot vacío → solo Guardar; slot ocupado → los tres botones.
-    /// Los listeners de los botones delegan en <paramref name="pantalla"/> para
-    /// mantener toda la lógica de guardado/carga centralizada.
+    /// Inicializa la fila con los metadatos del slot, el modo del panel y la referencia al panel padre.
+    /// Rellena los textos, aplica colores y configura qué botones están activos según el modo:
+    /// modo Guardar → solo botón Guardar visible;
+    /// modo Cargar → botones Cargar y Borrar visibles (solo si el slot está ocupado).
+    /// Los listeners delegan en <paramref name="pantalla"/> para centralizar la lógica.
     /// </summary>
     /// <param name="datos">Metadatos del slot leídos al abrir el panel.</param>
+    /// <param name="modo">Modo actual del panel (Guardar o Cargar).</param>
     /// <param name="pantalla">Panel padre que gestiona las acciones de guardado y carga.</param>
-    public void Inicializar(SlotData datos, PantallaSlotsUI pantalla)
+    public void Inicializar(SlotData datos, SlotModo modo, PantallaSlotsUI pantalla)
     {
+        gameObject.SetActive(true);
+        if (_botonGuardar.transform.parent != null)
+            _botonGuardar.transform.parent.gameObject.SetActive(true);
+
         Datos = datos;
 
-        // Rellenar textos
-        _textoNombre.text = datos.NombrePartida;
+        // Rellenar textos y colores según estado del slot
+        _textoFecha.color = new Color32(0xAA, 0xAA, 0xAA, 0xFF);
+        _textoDias.color  = new Color32(0xAA, 0xAA, 0xAA, 0xFF);
 
         if (datos.EstaOcupado)
         {
-            _textoFecha.text = datos.FechaGuardado;
-            _textoDias.text  = $"{datos.DiasJugados} días jugados";
+            _textoNombre.text  = datos.NombrePartida;
+            _textoNombre.color = new Color32(0xC8, 0xA8, 0x4B, 0xFF);
+            _textoFecha.text   = datos.FechaGuardado;
+            _textoDias.text    = $"{datos.DiasJugados} días jugados";
         }
         else
         {
-            _textoFecha.text = string.Empty;
-            _textoDias.text  = string.Empty;
+            _textoNombre.text  = "— Vacío —";
+            _textoNombre.color = new Color32(0x88, 0x88, 0x88, 0xFF);
+            _textoFecha.text   = "";
+            _textoDias.text    = "";
         }
 
-        // Activar / desactivar botones según estado del slot
-        _botonGuardar.gameObject.SetActive(true);
-        _botonCargar.gameObject.SetActive(datos.EstaOcupado);
-        _botonBorrar.gameObject.SetActive(datos.EstaOcupado);
+        // Activar / desactivar botones según modo y estado del slot
+        // BotonesSlot puede estar inactivo en escena: activarlo primero para que los hijos sean visibles
+        if (_contenedorBotones != null)
+            _contenedorBotones.SetActive(true);
+
+        bool ocupado = datos.EstaOcupado;
+        _botonGuardar.gameObject.SetActive(modo == SlotModo.Guardar);
+        _botonCargar.gameObject.SetActive( modo == SlotModo.Cargar && ocupado);
+        _botonBorrar.gameObject.SetActive( modo == SlotModo.Cargar && ocupado);
 
         // Registrar listeners (limpiar antes para evitar duplicados al reutilizar el prefab)
         _botonGuardar.onClick.RemoveAllListeners();

@@ -37,6 +37,13 @@ public class PantallaSlotsUI : MonoBehaviour
     /// <summary>Botón que cierra el panel sin realizar ninguna acción.</summary>
     [SerializeField] private Button _botonCerrar;
 
+    /// <summary>
+    /// Referencia opcional al <see cref="MenuPrincipalUI"/>.
+    /// Solo se asigna cuando el panel actúa como pantalla completa en el Menú Principal;
+    /// en el Menú de Pausa se deja en null.
+    /// </summary>
+    [SerializeField] private MenuPrincipalUI _menuPrincipalUI;
+
     // ─── Panel de confirmación de sobrescritura ───────────────────────────────
 
     /// <summary>Panel secundario que pregunta "¿Sobrescribir partida?".</summary>
@@ -60,9 +67,27 @@ public class PantallaSlotsUI : MonoBehaviour
 
     private void Awake()
     {
-        _botonCerrar.onClick.AddListener(Cerrar);
+        _botonCerrar.onClick.AddListener(CerrarPanel);
         _botonConfirmarNo.onClick.AddListener(() => _panelConfirmacion.SetActive(false));
         _panelConfirmacion.SetActive(false);
+    }
+
+    /// <summary>
+    /// Gestiona el cierre del panel con la tecla Escape.
+    /// Si el panel de confirmación está abierto lo cierra primero;
+    /// si no, cierra el panel completo y notifica al menú principal si procede.
+    /// </summary>
+    private void Update()
+    {
+        if (!Input.GetKeyDown(KeyCode.Escape)) return;
+
+        if (_panelConfirmacion != null && _panelConfirmacion.activeSelf)
+        {
+            _panelConfirmacion.SetActive(false);
+            return;
+        }
+
+        CerrarPanel();
     }
 
     // ─── API pública ──────────────────────────────────────────────────────────
@@ -145,7 +170,21 @@ public class PantallaSlotsUI : MonoBehaviour
     // ─── Privados ─────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Desactiva el panel de slots y oculta el de confirmación.
+    /// Cierra el panel de slots y notifica al menú principal para que se muestre de nuevo.
+    /// Solo aplica cuando el panel actúa como pantalla completa en el Menú Principal.
+    /// </summary>
+    public void CerrarPanel()
+    {
+        _panelConfirmacion.SetActive(false);
+        gameObject.SetActive(false);
+
+        if (_menuPrincipalUI != null)
+            _menuPrincipalUI.MostrarMenuPrincipal();
+    }
+
+    /// <summary>
+    /// Desactiva el panel de slots y oculta el de confirmación sin notificar al menú principal.
+    /// Usar internamente cuando la escena va a cambiar (por ejemplo, tras cargar una partida).
     /// </summary>
     private void Cerrar()
     {
@@ -163,7 +202,7 @@ public class PantallaSlotsUI : MonoBehaviour
         {
             int numeroSlot = i + 1;
             SlotData datos = LeerMetadatosSlot(numeroSlot);
-            _slots[i].Inicializar(datos, this);
+            _slots[i].Inicializar(datos, _modoActual, this);
         }
     }
 

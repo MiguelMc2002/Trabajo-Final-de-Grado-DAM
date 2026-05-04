@@ -9,6 +9,9 @@ public class MenuPrincipalUI : MonoBehaviour
     /// <summary>Panel con los botones de ciudad para comenzar una nueva partida.</summary>
     public GameObject panelSeleccionCiudad;
 
+    [SerializeField] private PantallaSlotsUI _pantallaSlotsUI;
+    [SerializeField] private GameObject _panelMenuPrincipal;
+
     private void Start()
     {
         // Ocultar el panel de selección hasta que el jugador pulse "Nueva Partida"
@@ -56,12 +59,30 @@ public class MenuPrincipalUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Reservado para la funcionalidad de carga de partida guardada (post-beta).
+    /// Abre el panel de slots en modo Cargar para que el jugador elija una partida guardada.
     /// Llamado por el botón "Cargar Partida".
     /// </summary>
     public void CargarPartida()
     {
-        Debug.Log("[MenuPrincipalUI] Funcionalidad de carga pendiente post-beta");
+        if (_pantallaSlotsUI == null)
+        {
+            Debug.LogWarning("[MenuPrincipalUI] _pantallaSlotsUI no asignado en el Inspector.");
+            return;
+        }
+
+        _pantallaSlotsUI.Abrir(SlotModo.Cargar);
+    }
+
+    /// <summary>
+    /// Llamado por PantallaSlotsUI al cerrar el panel, para volver a mostrar el menú principal.
+    /// </summary>
+    public void MostrarMenuPrincipal()
+    {
+        if (_pantallaSlotsUI != null)
+            _pantallaSlotsUI.gameObject.SetActive(false);
+
+        if (_panelMenuPrincipal != null)
+            _panelMenuPrincipal.SetActive(true);
     }
 
     /// <summary>
