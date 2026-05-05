@@ -136,69 +136,85 @@ public class LoadManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Restaura el estado del mercado de la ciudad activa en escena con los datos
-    /// leídos desde <c>EstadoMercadoCiudad</c>. Si no hay ningún
-    /// <see cref="MarketManager"/> en escena (p. ej. estamos en el mapamundi) el paso
-    /// se omite con un aviso. Los bienes se emparejan por nombre entre el
-    /// <see cref="BienData"/> en memoria y los registros de la base de datos.
+    /// Restaura el estado de mercado de todas las ciudades guardadas en la BD dentro de
+    /// <see cref="GameManager.MercadosPorCiudad"/>. El proceso es:
+    /// 1) limpia el diccionario de GameManager, 2) obtiene los IDs de ciudad con datos
+    /// guardados, 3) por cada ciudad convierte los <see cref="EstadoMercadoDto"/> en
+    /// <see cref="EntradaMercado"/> resolviendo el <see cref="BienData"/> por nombre
+    /// entre los assets en memoria, 4) registra la lista en GameManager.
+    /// Cuando MarketManager entre en escena leerá el estado ya restaurado sin sobreescribirlo.
     /// </summary>
     private void RestaurarMercados()
     {
-        Debug.Log($"[LoadManager] Restaurando mercado. MarketManager null: {FindAnyObjectByType<MarketManager>() == null}");
-
-        MarketManager market = FindAnyObjectByType<MarketManager>();
-        if (market == null)
+        if (GameManager.Instance == null)
         {
-            Debug.LogWarning("[LoadManager] MarketManager no encontrado en escena; se omite la restauración del mercado.");
+            Debug.LogWarning("[LoadManager] GameManager.Instance es null; se omite la restauración de mercados.");
             return;
         }
 
-        CiudadData ciudad = market.DatosCiudad;
-        if (ciudad == null)
+        // Construir mapa nombre → BienData a partir de los assets en memoria
+        BienData[] todosLosBienes = Resources.FindObjectsOfTypeAll<BienData>();
+        var bienPorNombre = new Dictionary<string, BienData>(todosLosBienes.Length);
+        foreach (BienData bien in todosLosBienes)
         {
-            Debug.LogWarning("[LoadManager] El MarketManager en escena no tiene CiudadData asignada; se omite la restauración del mercado.");
-            return;
+            if (bien != null && !string.IsNullOrEmpty(bien.nombre))
+                bienPorNombre[bien.nombre] = bien;
         }
 
-        // Leer el estado guardado de esta ciudad
-        List<EstadoMercadoDto> estadoGuardado = _mercadoDAO.CargarEstadoMercado(ciudad.IdCiudad);
-        if (estadoGuardado == null || estadoGuardado.Count == 0)
-        {
-            Debug.LogWarning($"[LoadManager] No hay datos de mercado guardados para '{ciudad.NombreCiudad}'; se omite.");
-            return;
-        }
-
-        // Construir mapa id_bien → dto para acceso rápido
-        var estadoPorId = new Dictionary<int, EstadoMercadoDto>(estadoGuardado.Count);
-        foreach (EstadoMercadoDto dto in estadoGuardado)
-            estadoPorId[dto.IdBien] = dto;
-
-        // Construir mapa nombre_bien → id_bien usando los registros de la tabla Bien
+        // Construir mapa id_bien → nombre usando la tabla Bien de la BD
         List<BienDto> bienDtos = _bienDAO.ObtenerTodosLosBienes();
-        var idPorNombreBien = new Dictionary<string, int>(bienDtos.Count);
+        var nombrePorIdBien = new Dictionary<int, string>(bienDtos.Count);
         foreach (BienDto dto in bienDtos)
-            idPorNombreBien[dto.Nombre] = dto.IdBien;
+            nombrePorIdBien[dto.IdBien] = dto.Nombre;
 
-        // Actualizar cada entrada del mercado en memoria con los valores guardados
-        IReadOnlyList<EntradaMercado> entradas = market.GetEntradas();
-        int restaurados = 0;
+        // Vaciar el diccionario central antes de repoblarlo
+        GameManager.Instance.LimpiarMercados();
 
-        foreach (EntradaMercado entrada in entradas)
+        List<int> idsCiudades = _mercadoDAO.ObtenerIdsCiudadesConMercado();
+        if (idsCiudades.Count == 0)
         {
-            if (entrada.Bien == null) continue;
-
-            if (!idPorNombreBien.TryGetValue(entrada.Bien.nombre, out int idBien)) continue;
-            if (!estadoPorId.TryGetValue(idBien, out EstadoMercadoDto estado)) continue;
-
-            entrada.StockActual      = estado.Stock;
-            entrada.ProduccionDiaria = estado.Produccion;
-            entrada.ConsumoDiario    = estado.Consumo;
-            entrada.PrecioActual     = (float)estado.PrecioActual;
-            Debug.Log($"[LoadManager] Restaurando {entrada.Bien.nombre}: stock={estado.Stock}, precio={estado.PrecioActual}");
-            restaurados++;
+            Debug.LogWarning("[LoadManager] No hay mercados guardados en la BD; se omite la restauración.");
+            return;
         }
 
-        Debug.Log($"[LoadManager] Mercado de '{ciudad.NombreCiudad}' restaurado: {restaurados}/{entradas.Count} bienes actualizados.");
-        Debug.Log("[LoadManager] Mercado restaurado completo. Llamando a refresco UI...");
+        int ciudadesRestauradas = 0;
+
+        foreach (int idCiudad in idsCiudades)
+        {
+            List<EstadoMercadoDto> dtos = _mercadoDAO.CargarEstadoMercado(idCiudad);
+            if (dtos == null || dtos.Count == 0) continue;
+
+            var entradas = new List<EntradaMercado>(dtos.Count);
+
+            foreach (EstadoMercadoDto dto in dtos)
+            {
+                if (!nombrePorIdBien.TryGetValue(dto.IdBien, out string nombreBien))
+                {
+                    Debug.LogWarning($"[LoadManager] No se encontró nombre para id_bien={dto.IdBien} en ciudad {idCiudad}; se omite.");
+                    continue;
+                }
+
+                if (!bienPorNombre.TryGetValue(nombreBien, out BienData bienData))
+                {
+                    Debug.LogWarning($"[LoadManager] No se encontró BienData para '{nombreBien}' en ciudad {idCiudad}; se omite.");
+                    continue;
+                }
+
+                entradas.Add(new EntradaMercado
+                {
+                    Bien             = bienData,
+                    StockActual      = dto.Stock,
+                    StockMax         = bienData.stockMaximo,
+                    ProduccionDiaria = dto.Produccion,
+                    ConsumoDiario    = dto.Consumo,
+                    PrecioActual     = (float)dto.PrecioActual
+                });
+            }
+
+            GameManager.Instance.RegistrarMercadoCiudad(idCiudad, entradas);
+            ciudadesRestauradas++;
+        }
+
+        Debug.Log($"[LoadManager] Restaurados {ciudadesRestauradas} mercados en GameManager.MercadosPorCiudad.");
     }
 }

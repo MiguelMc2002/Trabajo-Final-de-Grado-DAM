@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Mono.Data.Sqlite;
 using UnityEngine;
 
@@ -138,29 +139,33 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Paso 6: persiste el estado del mercado de la ciudad actualmente cargada en escena.
-    /// Solo hay un <see cref="MarketManager"/> activo a la vez, por lo que únicamente se
-    /// guarda el mercado de su ciudad asignada. Si no hay MarketManager o no tiene
-    /// <see cref="CiudadData"/>, omite el paso con un aviso.
+    /// Paso 6: persiste el estado del mercado de todas las ciudades registradas en
+    /// <see cref="GameManager.MercadosPorCiudad"/>. Si GameManager no está disponible
+    /// o el diccionario está vacío, omite el paso con un aviso.
     /// </summary>
     private void GuardarEstadoEconomico()
     {
-        MarketManager market = FindAnyObjectByType<MarketManager>();
-        if (market == null)
+        if (GameManager.Instance == null)
         {
-            Debug.LogWarning("[SaveManager] MarketManager no encontrado en escena; se omite el guardado del mercado.");
+            Debug.LogWarning("[SaveManager] GameManager.Instance es null; se omite el guardado de mercados.");
             return;
         }
 
-        CiudadData ciudad = market.DatosCiudad;
-        if (ciudad == null)
+        IReadOnlyDictionary<int, List<EntradaMercado>> mercados = GameManager.Instance.MercadosPorCiudad;
+        if (mercados == null || mercados.Count == 0)
         {
-            Debug.LogWarning("[SaveManager] El MarketManager en escena no tiene CiudadData asignada; se omite el guardado del mercado.");
+            Debug.LogWarning("[SaveManager] No hay mercados registrados en GameManager; se omite el paso de mercados.");
             return;
         }
 
-        _mercadoDAO.GuardarTodoElMercado(ciudad, market);
-        Debug.Log($"[SaveManager] Mercado de '{ciudad.NombreCiudad}' guardado.");
+        int ciudadesGuardadas = 0;
+        foreach (KeyValuePair<int, List<EntradaMercado>> kv in mercados)
+        {
+            _mercadoDAO.GuardarTodoElMercado(kv.Key, kv.Value);
+            ciudadesGuardadas++;
+        }
+
+        Debug.Log($"[SaveManager] Guardados {ciudadesGuardadas} mercados en EstadoMercadoCiudad.");
     }
 
     /// <summary>

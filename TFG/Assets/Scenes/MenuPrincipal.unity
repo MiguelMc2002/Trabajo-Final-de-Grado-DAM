@@ -4767,6 +4767,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d04a68bad3002d64782a15b6b01e7efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  _ciudadesDisponibles:
+  - {fileID: 11400000, guid: 45f064b17c2fff04cbc74215bfe86adf, type: 2}
+  - {fileID: 11400000, guid: 468a578ad8d180b4796463ed3020f685, type: 2}
 --- !u!4 &920890528
 Transform:
   m_ObjectHideFlags: 0

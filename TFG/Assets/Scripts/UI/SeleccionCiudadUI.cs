@@ -21,6 +21,9 @@ public class SeleccionCiudadUI : MonoBehaviour
             return;
         }
 
+        if (GameManager.Instance != null && GameManager.Instance.CiudadesDisponibles != null)
+            GameManager.Instance.InicializarMercadosDesdeAssets(GameManager.Instance.CiudadesDisponibles);
+
         GameManager.Instance.EstablecerCiudadActual(datosCiudad);
         SceneController.IrACiudad();
     }
