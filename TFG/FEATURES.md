@@ -12,7 +12,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Core/GameManager.cs` |
 | **Tipo** | `MonoBehaviour` (singleton persistente) |
 | **Módulo** | Core — Transversal |
-| **Descripción** | Registro central de la partida. Conserva el estado del comerciante —tesoro, ciudad actual, última ciudad visitada y bodega— mientras el jugador navega entre las distintas pantallas del juego. En la beta los datos viven en memoria; en la release se persistirán en SQLite. |
+| **Descripción** | Registro central de la partida. Conserva el estado del comerciante —tesoro, ciudad actual, última ciudad visitada y bodega— y desde el Día 12 es el dueño exclusivo del estado vivo de todos los mercados del mundo (via `EstadoPartida`). `MarketManager` ya no posee el estado: lo lee y escribe a través de `GameManager`. |
 
 ### API pública
 
@@ -23,17 +23,28 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | `CiudadActual` | `CiudadData` (get) | Puerto en el que está atracado el jugador. `null` mientras navega por el mapamundi. |
 | `UltimaCiudad` | `CiudadData` (get) | Puerto visitado antes del destino actual. `null` si el jugador no ha viajado todavía. Útil para ofrecer volver al origen. |
 | `CapacidadAlmacen` | `const int` | Capacidad de bodega en la beta: `int.MaxValue`. En la release se sustituirá por la capacidad real del barco. |
+| `CiudadesDisponibles` | `IReadOnlyList<CiudadData>` (get) | Catálogo de todas las ciudades del juego registradas en `EstadoPartida`. Lo puebla `InicializarMercadosDesdeAssets`. |
+| `MercadosPorCiudad` | `IReadOnlyDictionary<int, List<EntradaMercado>>` (get) | Estado vivo de los mercados de todas las ciudades, indexado por `IdCiudad`. Propiedad de `EstadoPartida`; `MarketManager` opera sobre él. |
 | `EstablecerCiudadActual(CiudadData ciudad)` | `void` | Registra el puerto de destino. Guarda el valor anterior en `UltimaCiudad` antes de sobrescribir `CiudadActual`. Invocado desde `MapamundiController`. |
 | `ModificarDinero(long cantidad)` | `bool` | Registra un movimiento de dinero. Positivo al cobrar una venta, negativo al pagar una compra. Devuelve `false` si el tesoro no cubre el gasto. |
 | `GetCantidadBien(BienData bien)` | `int` | Devuelve las unidades del bien indicado en bodega. Retorna 0 si no está en el inventario. |
 | `ModificarCantidadBien(BienData bien, int cantidad)` | `bool` | Modifica la cantidad de un bien en bodega. Devuelve `false` si el resultado sería negativo o superaría `CapacidadAlmacen`. |
 | `GetTotalUnidadesAlmacen()` | `int` | Devuelve el total de unidades de todas las mercancías en bodega. |
 | `GetAlmacen()` | `IReadOnlyDictionary<BienData, int>` | Expone el inventario completo de bodega en modo solo lectura. |
+| `TieneMercado(int idCiudad)` | `bool` | Devuelve `true` si `MercadosPorCiudad` contiene una entrada para la ciudad indicada. |
+| `GetEntradasMercado(int idCiudad)` | `List<EntradaMercado>` | Devuelve la lista de entradas del mercado de la ciudad. Lanza excepción si la ciudad no está registrada; usar `TieneMercado` antes. |
+| `RegistrarMercadoCiudad(int idCiudad, List<EntradaMercado> entradas)` | `void` | Añade o sobrescribe el mercado de una ciudad en el diccionario. Invocado por `LoadManager` al restaurar partida y por `InicializarMercadosDesdeAssets` al arrancar. |
+| `LimpiarMercados()` | `void` | Vacía `MercadosPorCiudad` completamente. Invocado por `LoadManager` antes de repoblar desde BD. |
+| `InicializarMercadosDesdeAssets(IEnumerable<CiudadData> ciudades)` | `void` | Recorre el catálogo de ciudades, hace una copia profunda de cada `EntradaMercado` y la registra en el diccionario. Garantiza que todas las ciudades estén en memoria antes de entrar en partida. Invocado desde `SeleccionCiudadUI.SeleccionarCiudad()`. |
+| `NotificarMercadoActualizado(int idCiudad, BienData bien = null)` | `void` | Dispara `OnMercadoCiudadActualizado` con la ciudad y el bien afectados. `MarketManager` lo llama tras cada compra, venta o tick diario. |
+| `OnMercadoCiudadActualizado` | `event Action<int, BienData>` | Se lanza cuando cualquier mercado del mundo cambia. `MarketManager` se suscribe para refrescar su vista de la ciudad activa. |
 
 ### Dependencias
 
 - `BienData` — clave del diccionario de bodega.
-- `CiudadData` — tipo de `CiudadActual` y `UltimaCiudad`.
+- `CiudadData` — tipo de `CiudadActual`, `UltimaCiudad` y catálogo de ciudades.
+- `EstadoPartida` — POCO que agrupa todos los diccionarios del estado vivo del mundo.
+- `EntradaMercado` — estado dinámico de cada bien en cada ciudad.
 
 ---
 
@@ -160,28 +171,28 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | **Ruta** | `Assets/Scripts/Economico/MarketManager.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Económico — Bienes y mercado |
-| **Descripción** | Representa el estado del mercado de una ciudad concreta de la Liga Hanseática. En `Start`, si `DatosCiudad` está asignado, inicializa la lista de entradas con una copia profunda del asset para no mutar sus datos en partida. Gestiona el stock disponible de cada bien, calcula precios dinámicos según la fórmula `precio = precioBase × (stockMaximo / max(stock, 1))`, y ejecuta las operaciones de compra y venta del jugador. |
+| **Descripción** | **Vista** del mercado de la ciudad activa. Desde el Día 12 ya no posee el estado: lee y escribe las entradas del mercado directamente sobre `GameManager.MercadosPorCiudad`. En `Start`, si `DatosCiudad` está asignado, lee las entradas del diccionario de `GameManager` (que `SeleccionCiudadUI` ha inicializado de forma eager antes de cargar la escena). Calcula precios dinámicos con la fórmula `precio = precioBase × (stockMaximo / max(stock, 1))` y ejecuta las operaciones de compra y venta del jugador. La API pública no ha cambiado: `OficinaComercial`, `MercadoUI` y `MarketRowUI` no requieren modificaciones. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `DatosCiudad` | `CiudadData` | Asset con la configuración de la ciudad. Si está asignado, `Start` copia sus entradas de mercado y lee el nombre de ciudad desde aquí. |
+| `DatosCiudad` | `CiudadData` | Asset con la configuración de la ciudad activa. `Start` lo usa para obtener `IdCiudad` y recuperar las entradas de `GameManager`. |
 | `OnMercadoActualizado` | `event Action<BienData>` | Se lanza cada vez que el stock o el precio de cualquier bien cambia. La interfaz del mercado se suscribe para refrescar las filas afectadas. |
-| `GetEntradas()` | `IReadOnlyList<EntradaMercado>` | Devuelve la lista completa de entradas del mercado. |
+| `GetEntradas()` | `IReadOnlyList<EntradaMercado>` | Devuelve la lista de entradas del mercado de la ciudad activa, leída desde `GameManager.MercadosPorCiudad`. |
 | `GetNombreCiudad()` | `string` | Devuelve el nombre de la ciudad leído desde `DatosCiudad`. Retorna cadena vacía si no hay asset asignado. |
 | `GetStockActual(BienData bien)` | `int` | Devuelve el stock actual de un bien en este mercado. Retorna 0 si el bien no existe. |
 | `GetPrecioActual(BienData bien)` | `float` | Devuelve el precio actual de un bien calculado con la fórmula de oferta y demanda. Retorna 0 si el bien no existe. |
 | `Comprar(BienData bien, int cantidad)` | `bool` | Descuenta el coste del tesoro, reduce el stock de la ciudad y carga las unidades en bodega. Devuelve `false` si stock, dinero o espacio son insuficientes. |
 | `Vender(BienData bien, int cantidad)` | `bool` | Ingresa el precio en el tesoro, aumenta el stock de la ciudad y retira las unidades de bodega. Devuelve `false` si el jugador no tiene suficiente cantidad. |
-| `AplicarTickDiario()` | `private void` | Aplica producción y consumo diarios a cada bien. Se invoca automáticamente al recibir `SimulacionTiempo.OnNuevoDia`. Trunca el stock al `UmbralFlush` (1 000 u.) si lo supera. |
+| `AplicarTickDiario()` | `private void` | Aplica producción y consumo diarios a cada bien del mercado activo. Se invoca automáticamente al recibir `SimulacionTiempo.OnNuevoDia`. Trunca el stock al `UmbralFlush` (1 000 u.) si lo supera. |
 
 ### Dependencias
 
-- `CiudadData` — fuente de configuración del mercado; se lee en `Start`.
+- `CiudadData` — fuente del `IdCiudad` para recuperar entradas del diccionario global.
+- `GameManager` — dueño del estado; `MarketManager` lee y escribe sobre `MercadosPorCiudad` y llama a `NotificarMercadoActualizado`.
 - `EntradaMercado` — estado dinámico de cada bien en tiempo de partida.
 - `BienData` — referencia a los datos estáticos de cada bien.
-- `GameManager` — para modificar dinero y bodega del jugador.
 - `SimulacionTiempo` — suscripción al evento `OnNuevoDia` para el tick diario.
 
 ---
@@ -556,6 +567,31 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 
 ---
 
+## EstadoPartida
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Core/EstadoPartida.cs` |
+| **Tipo** | `[Serializable] class` (no MonoBehaviour) |
+| **Módulo** | Core — Estado de partida |
+| **Descripción** | POCO contenedor con todos los diccionarios del estado vivo del mundo. Es propiedad exclusiva de `GameManager`; ningún otro sistema instancia ni modifica esta clase directamente. Centraliza en un único objeto todo el estado que debe persistirse en SQLite al guardar y restaurarse al cargar. |
+
+### API pública (campos)
+
+| Campo | Tipo | Estado | Descripción |
+|---|---|---|---|
+| `MercadosPorCiudad` | `Dictionary<int, List<EntradaMercado>>` | ✅ Activo | Estado vivo de los mercados de todas las ciudades, indexado por `IdCiudad`. Poblado en Día 12. |
+| `FlotasPorId` | `Dictionary<int, object>` | ⏳ Semana 3 | Estado de las flotas PNJ activas. Se rellena al implementar el módulo de PNJs comerciantes. |
+| `BarcosPorId` | `Dictionary<int, object>` | ⏳ Semana 3 | Estado de los barcos activos por flota. Se rellena junto con `FlotasPorId`. |
+| `EdificiosPorCiudad` | `Dictionary<int, object>` | ⏳ Semana 4 | Edificios activos por ciudad. Se rellena al implementar el módulo de producción y cadenas. |
+| `MemoriaComercialPorFlota` | `Dictionary<int, object>` | ⏳ Semana 5 | Memoria de precios de los PNJs. Se rellena al implementar el comportamiento de PNJs. |
+
+### Dependencias
+
+- `EntradaMercado` — tipo de los valores en `MercadosPorCiudad`.
+
+---
+
 ## DÍA 6 — Integración completa del PMV y pulido visual
 
 ### Flujo completo implementado
@@ -647,19 +683,19 @@ Los detalles exactos se pulirán en la release; la lógica general queda fijada 
 | **Ruta** | `Assets/Scripts/UI/SeleccionCiudadUI.cs` |
 | **Tipo** | `MonoBehaviour` |
 | **Módulo** | Interfaz de usuario — Menú Principal |
-| **Descripción** | Componente adjunto a cada botón de ciudad en el panel de selección. Al pulsarlo, registra la ciudad en `GameManager` y carga la escena de ciudad. |
+| **Descripción** | Componente adjunto a cada botón de ciudad en el panel de selección. Al pulsarlo, inicializa los mercados de todas las ciudades del catálogo en `GameManager` (inicialización eager), registra la ciudad elegida como ciudad actual y carga la escena de ciudad. La inicialización eager garantiza que `GameManager.MercadosPorCiudad` contiene todas las ciudades antes de que ningún `MarketManager` arranque. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
 | `datosCiudad` | `CiudadData` | Ciudad asociada a este botón. Asignar desde el Inspector. |
-| `SeleccionarCiudad()` | `void` | Establece `GameManager.CiudadActual` y llama a `SceneController.IrACiudad()`. Asignar al evento `OnClick` del botón. |
+| `SeleccionarCiudad()` | `void` | Llama a `GameManager.InicializarMercadosDesdeAssets(todasLasCiudades)`, establece `GameManager.CiudadActual` y llama a `SceneController.IrACiudad()`. Asignar al evento `OnClick` del botón. |
 
 ### Dependencias
 
-- `CiudadData` — datos del puerto que representa el botón.
-- `GameManager` — registra la ciudad seleccionada.
+- `CiudadData` — datos del puerto que representa el botón y fuente del catálogo de ciudades.
+- `GameManager` — inicializa mercados de todas las ciudades y registra la ciudad seleccionada.
 - `SceneController` — carga la escena Ciudad.
 
 ---
@@ -793,14 +829,14 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | ✅ | `EstadoJuegoDAO` | Guarda y carga la fila única de `estadoJuego` (día, mes, año, velocidad del tiempo, fecha de guardado UTC). Usa `INSERT OR REPLACE` con `id_estado = 1`. |
 | ✅ | `CiudadDAO` | Inserta las 6 ciudades iniciales con IDs fijos (`InsertarCiudadesIniciales`) y lee todas las ciudades. Expone `CiudadDto` para no colisionar con el `ScriptableObject` `CiudadData` del Inspector. |
 | ✅ | `BienDAO` | Inserta los 19 bienes con precios base (`InsertarBienesIniciales`), lee por id y lista completa. Expone `BienDto` para no colisionar con el `ScriptableObject` `BienData`. |
-| ✅ | `EstadoMercadoCiudadDAO` | Guarda y carga el estado completo del mercado de cada ciudad: stock, precio, producción y consumo por bien. `GuardarTodoElMercado` conecta con `MarketManager` y `CiudadData.IdCiudad`. Busca el `idBien` por nombre en BD mediante `ObtenerIdBienPorNombre`. |
+| ✅ | `EstadoMercadoCiudadDAO` | Guarda y carga el estado completo del mercado de cada ciudad: stock, precio, producción y consumo por bien. Desde el Día 12, `GuardarTodoElMercado` recibe `(int idCiudad, IReadOnlyList<EntradaMercado> entradas)` en lugar de `(CiudadData, MarketManager)`. Nuevo método `ObtenerIdsCiudadesConMercado()` devuelve `List<int>` con los IDs de ciudades persistidas, usado por `LoadManager` para repoblar todas las ciudades. |
 | ✅ | `EdificiosCiudadDAO` | Inserta los tipos de edificio en `TipoEdificio` e inserta los 6 edificios base por ciudad en `EdificiosCiudad`. Lee los edificios de una ciudad con JOIN a `TipoEdificio`. |
 | ✅ | `FlotaDAO` | Inserta, actualiza posición y estado, obtiene por tipo de propietario y elimina flotas. Los campos `id_ciudad_actual`, `id_capitan` e `id_ciudad_destino` son nullable; se mapean con el patrón `(object)valor ?? DBNull.Value` y se leen con `reader.IsDBNull`. |
 | ✅ | `BarcoDAO` | Inserta los 3 tipos de casco base (Cog, Hulk, Carraca) en `TipoCasco`. Gestiona barcos por flota: inserta, actualiza vida/tripulación/flota y elimina. Booleano `es_barco_combate` almacenado como `1`/`0`. |
 | ✅ | `CargaBarcoDAO` | Guarda y carga la mercancía en bodega de cada barco. `GuardarCargaCompleta` limpia la carga anterior con `EliminarCargaDeBarco` antes de reinsertar, garantizando atomicidad. `ObtenerCargaDeBarco` usa JOIN a `Bien` para traer el nombre sin segunda consulta. |
 | ✅ | `MemoriaComercialPNJDAO` | Guarda y carga el conocimiento de precios de los PNJs comerciantes con caducidad de 7 días. `ObtenerPrecioConocido` devuelve `null` si el dato supera ese umbral. |
-| ✅ | `SaveManager` | Singleton `MonoBehaviour` que orquesta el guardado completo en 7 pasos respetando integridad referencial: estadoJuego → catálogos (Ciudad, Bien, TipoEdificio, TipoCasco) → EstadoMercadoCiudad → EdificiosCiudad. Solo guarda el mercado de la ciudad activa en escena. |
-| ✅ | `LoadManager` | Singleton `MonoBehaviour` que orquesta la carga completa: abre slot → restaura `SimulacionTiempo` → limpia almacén del jugador → restaura mercado activo en escena. Empareja bienes por nombre entre `BienData` y `BienDto`. |
+| ✅ | `SaveManager` | Singleton `MonoBehaviour` que orquesta el guardado completo respetando integridad referencial: estadoJuego → catálogos (Ciudad, Bien, TipoEdificio, TipoCasco) → EstadoMercadoCiudad → EdificiosCiudad. Desde el Día 12 itera `GameManager.MercadosPorCiudad` y guarda **todas las ciudades**, no solo la activa. ✅ Bug persistencia multi-ciudad resuelto (Día 12). |
+| ✅ | `LoadManager` | Singleton `MonoBehaviour` que orquesta la carga completa: abre slot → restaura `SimulacionTiempo` → limpia almacén del jugador → limpia `GameManager.MercadosPorCiudad` → repuebla el diccionario con **todas las ciudades** guardadas en BD. Empareja bienes por nombre entre `BienData` y `BienDto`. ✅ Bug persistencia multi-ciudad resuelto (Día 12). |
 | ✅ | Pantalla de slots | UI con 5 slots implementada en `SlotData` + `SlotUI` + `PantallaSlotsUI`. Muestra nombre de partida, fecha de guardado y días jugados. Soporta modos Guardar y Cargar con confirmación antes de sobrescribir o borrar. |
 
 ### DTOs del módulo
@@ -948,7 +984,7 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | **Ruta** | `Assets/Scripts/Database/SaveManager.cs` |
 | **Tipo** | `MonoBehaviour` (singleton persistente) |
 | **Módulo** | Guardado y carga |
-| **Descripción** | Orquesta el guardado completo de una partida en SQLite invocando los DAOs en el orden correcto para respetar la integridad referencial: estadoJuego (sin FKs) → catálogos Ciudad, Bien, TipoEdificio, TipoCasco → EstadoMercadoCiudad de la ciudad activa → EdificiosCiudad. Si no hay `MarketManager` en escena, omite el paso de mercado con un aviso. |
+| **Descripción** | Orquesta el guardado completo de una partida en SQLite invocando los DAOs en el orden correcto para respetar la integridad referencial: estadoJuego (sin FKs) → catálogos Ciudad, Bien, TipoEdificio, TipoCasco → EstadoMercadoCiudad de **todas las ciudades** → EdificiosCiudad. Desde el Día 12 ya no busca `MarketManager` con `FindAnyObjectByType`. Itera `GameManager.Instance.MercadosPorCiudad` y persiste el mercado de cada ciudad registrada en memoria, independientemente de cuál esté activa en escena. |
 
 ### API pública
 
@@ -961,7 +997,7 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 
 - `DatabaseManager` — abre el slot antes del guardado.
 - `SimulacionTiempo` — fuente de fecha y velocidad actual.
-- `MarketManager` — fuente del estado del mercado activo; buscado con `FindAnyObjectByType`.
+- `GameManager` — fuente de `MercadosPorCiudad`; se itera para guardar todas las ciudades.
 - `EstadoJuegoDAO`, `CiudadDAO`, `BienDAO`, `EdificiosCiudadDAO`, `BarcoDAO`, `EstadoMercadoCiudadDAO` — ejecutan las escrituras.
 
 ---
@@ -973,21 +1009,20 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | **Ruta** | `Assets/Scripts/Database/LoadManager.cs` |
 | **Tipo** | `MonoBehaviour` (singleton persistente) |
 | **Módulo** | Guardado y carga |
-| **Descripción** | Orquesta la carga completa de una partida desde SQLite en tres pasos: restaura la fecha y velocidad en `SimulacionTiempo`, vacía el almacén del jugador y restaura el estado del mercado activo en escena. Los bienes se emparejan por nombre entre `BienData` y `BienDto` para evitar dependencias de IDs entre el Inspector y la BD. |
+| **Descripción** | Orquesta la carga completa de una partida desde SQLite. Desde el Día 12 ya no busca `MarketManager` con `FindAnyObjectByType`. Limpia `GameManager.MercadosPorCiudad` y lo repuebla iterando todas las ciudades que devuelve `EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado()`. Los bienes se emparejan por nombre entre `BienData` y `BienDto` para evitar dependencias de IDs entre el Inspector y la BD. Cuando el jugador entra en una ciudad, su `MarketManager` lee el estado ya restaurado desde `GameManager`. |
 
 ### API pública
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
 | `Instance` | `static LoadManager` (get) | Punto de acceso global al gestor de carga. |
-| `CargarPartida(int slotIndex)` | `void` | Carga la partida del slot indicado (1 a 5). Abre el fichero `slot_N.db`, restaura `SimulacionTiempo`, limpia el almacén del jugador y restaura el mercado activo. Si algún sistema no está disponible en escena, el paso se omite con un aviso. |
+| `CargarPartida(int slotIndex)` | `void` | Carga la partida del slot indicado (1 a 5). Abre el fichero `slot_N.db`, restaura `SimulacionTiempo`, limpia el almacén del jugador y repuebla `GameManager.MercadosPorCiudad` con el mercado de todas las ciudades guardadas. |
 
 ### Dependencias
 
 - `DatabaseManager` — abre el slot antes de la carga.
 - `SimulacionTiempo` — receptor de la fecha y velocidad restauradas vía `SetEstado`.
-- `GameManager` — limpia y restaura el almacén del jugador.
-- `MarketManager` — receptor del estado del mercado; buscado con `FindAnyObjectByType`.
+- `GameManager` — limpia y restaura el almacén del jugador; receptor del diccionario de mercados restaurado.
 - `EstadoJuegoDAO`, `BienDAO`, `EstadoMercadoCiudadDAO` — ejecutan las lecturas.
 
 ---
@@ -1156,22 +1191,53 @@ Sesión dedicada a conectar `PantallaSlotsUI` al flujo completo del juego: Menú
 | TFG → Reparar → Activar BotonesSlot en escena activa | `ActivarBotonesSlot.cs` | Busca todos los GameObjects "BotonesSlot" en la escena activa y los activa junto con sus hijos directos. Ejecutar en cada escena afectada. |
 | TFG → Reparar → Colorear todos los textos del PanelSlots | `RepararColoresSlots.cs` | Aplica colores medievales (dorado, gris, blanco) a todos los `TMP_Text` dentro de los paneles de slots según el nombre del GameObject. |
 
-### Bug identificado — Día 12 (CRÍTICO)
+### Bug identificado en Día 11 — ✅ Resuelto en Día 12
 
-`LoadManager.RestaurarMercados()` busca `MarketManager` en escena en el momento de la carga, antes de que `SceneController.IrAMapamundi()` cambie de escena. Si no hay `MarketManager` en la escena actual, la restauración del mercado se omite silenciosamente. Ver sección "Día 12 — Refactor de persistencia multi-ciudad" en TO-DO.
+`LoadManager.RestaurarMercados()` buscaba `MarketManager` en escena en el momento de la carga, antes de cambiar de escena. Si no había `MarketManager` activo, la restauración se omitía silenciosamente. Resuelto en el Día 12 mediante el refactor de persistencia multi-ciudad: `LoadManager` ya no depende de `MarketManager`; restaura `GameManager.MercadosPorCiudad` directamente.
 
 ---
 
-## TO-DO Día 12 — Refactor de persistencia multi-ciudad (CRÍTICO)
+## DÍA 12 — Refactor de persistencia multi-ciudad (bug crítico resuelto)
 
-### Problema
+Bug identificado al final del Día 11: `SaveManager` y `LoadManager` solo persistían el mercado de la ciudad activa en escena. El estado del resto de ciudades se perdía al guardar o cargar.
 
-`SaveManager` y `LoadManager` solo persisten el mercado de la ciudad activa en escena en el momento de guardar o cargar. Las ciudades que el jugador no haya visitado recientemente no se guardan ni se restauran correctamente.
+### Cambios implementados
 
-### Solución planificada
+- **`EstadoPartida`** — nuevo POCO `[Serializable]` que agrupa todos los diccionarios del estado vivo del mundo. Propiedad exclusiva de `GameManager`.
+- **`GameManager`** — nuevo dueño del estado de todos los mercados. Expone `MercadosPorCiudad`, `InicializarMercadosDesdeAssets`, `RegistrarMercadoCiudad`, `LimpiarMercados`, `NotificarMercadoActualizado` y el evento `OnMercadoCiudadActualizado`.
+- **`MarketManager`** — refactorizado a "vista" de la ciudad activa. Ya no posee el estado; lee y escribe contra `GameManager.MercadosPorCiudad`. API pública conservada al 100 % (sin cambios en `OficinaComercial`, `MercadoUI` ni `MarketRowUI`).
+- **`SeleccionCiudadUI`** — llama a `GameManager.InicializarMercadosDesdeAssets` antes de cargar la escena, garantizando inicialización eager de todas las ciudades.
+- **`SaveManager`** — itera `GameManager.MercadosPorCiudad` y guarda todas las ciudades. Eliminada la dependencia de `FindAnyObjectByType<MarketManager>`.
+- **`LoadManager`** — llama a `GameManager.LimpiarMercados()` y repuebla el diccionario con todas las ciudades de la BD. Eliminada la dependencia de `FindAnyObjectByType<MarketManager>`.
+- **`EstadoMercadoCiudadDAO`** — firma de `GuardarTodoElMercado` actualizada a `(int idCiudad, IReadOnlyList<EntradaMercado> entradas)`. Nuevo método `ObtenerIdsCiudadesConMercado()` → `List<int>`.
+- **Fix del tick diario** — el refresco en directo de la UI del mercado ahora funciona correctamente al operar contra el diccionario global.
 
-- Modificar `MarketManager` para mantener un `Dictionary<int, Dictionary<int, EstadoMercado>>` en memoria con el estado de todos los mercados de todas las ciudades.
-- Al cambiar de ciudad, volcar el estado del mercado de la ciudad actual al diccionario antes de cargar la nueva escena.
-- Al entrar a una ciudad, leer el estado del diccionario en lugar de los valores por defecto del `ScriptableObject`.
-- `SaveManager` iterará el diccionario completo al guardar, no solo el mercado activo.
-- `LoadManager` rellenará el diccionario al cargar, y `RestaurarMercados()` se invocará desde el `Start()` del `MarketManager` de cada ciudad al entrar en ella (suscripción a `SceneManager.sceneLoaded`).
+---
+
+## TO-DO Día 13
+
+### Tests automatizados de persistencia multi-ciudad
+
+- [ ] `Assets/Tests/PlayMode/SaveLoadMultiCiudadTests.cs` — registrar 2 mercados en `GameManager`, modificar stocks, guardar en slot temporal, vaciar el diccionario, cargar, comprobar que ambos mercados se restauran correctamente.
+- [ ] Test del tick diario con dos ciudades en memoria: verificar que producción/consumo de cada ciudad opera sobre su propio diccionario sin contaminar a la otra.
+
+### Mejoras menores de UI de slots (heredado del Día 11)
+
+- [ ] Reemplazar el carácter `✕` del botón cerrar por un sprite o símbolo soportado por LiberationSans (warning persistente en Console).
+- [ ] Corregir `PantallaSlotsEditorSetup` para que busque el Canvas en la escena activa, no en DontDestroyOnLoad.
+- [ ] Renombrar `BotonGuardar`/`BotonCargar` de los slots como `BotonGuardarSlot`/`BotonCargarSlot` y los del menú de pausa como `BotonGuardarPausa`/`BotonCargarPausa` para evitar ambigüedad en la jerarquía.
+
+### Refactor de MenuPrincipalUI
+
+- [ ] Encapsular la lógica de mostrar/ocultar paneles en un único método `MostrarPanel(...)` para eliminar el patrón de `SetActive` distribuido.
+
+### Revisión técnica del LoadManager
+
+- [ ] Sustituir `Resources.FindObjectsOfTypeAll<BienData>()` por una vía determinista (`Resources.LoadAll<BienData>(...)` o catálogo serializado en `GameManager`). El método actual funciona pero puede devolver assets en estados raros del editor.
+
+### Inicio Semana 3 — PNJs comerciantes
+
+- [ ] Definir `FlotaPNJData` real (promover el DTO existente a clase de runtime).
+- [ ] Rellenar `EstadoPartida.FlotasPorId` al cargar partida o al spawnear PNJs.
+- [ ] Crear `FlotaManager` o equivalente como vista de las flotas activas en el mapamundi.
+- [ ] Implementar la máquina de estados de comerciantes (EnPuerto, Viajando, Comerciando, Huyendo) según `sesion_planificacion_release.md`.
