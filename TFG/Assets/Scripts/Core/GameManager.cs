@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -40,12 +41,48 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public CiudadData UltimaCiudad { get; private set; }
 
+    // ─── Catálogo de ciudades ────────────────────────────────────────────────
+
+    /// <summary>
+    /// Lista de todas las ciudades del mundo de juego disponibles en esta versión.
+    /// Asignar desde el Inspector con todos los <see cref="CiudadData"/> de la beta
+    /// (Lübeck y Barcelona en la beta; las seis ciudades completas en la release).
+    /// GameManager la usa en <see cref="InicializarMercadosDesdeAssets"/> para
+    /// pre-registrar el mercado de cada ciudad al inicio de la partida.
+    /// </summary>
+    [Header("Catálogo de ciudades")]
+    [SerializeField] private CiudadData[] _ciudadesDisponibles;
+
+    /// <summary>
+    /// Vista de solo lectura del catálogo de ciudades del juego.
+    /// Permite a otros sistemas (p. ej. <c>SeleccionCiudadUI</c>) iterar todas las
+    /// ciudades sin poder modificar el array subyacente.
+    /// </summary>
+    public IReadOnlyList<CiudadData> CiudadesDisponibles => _ciudadesDisponibles;
+
     /// <summary>
     /// Inventario de mercancías en la bodega del jugador.
     /// La clave es el <see cref="BienData"/> del bien; el valor, las unidades almacenadas.
     /// En la beta la capacidad es ilimitada (<see cref="CapacidadAlmacen"/> = <c>int.MaxValue</c>).
     /// </summary>
     private readonly Dictionary<BienData, int> _almacen = new Dictionary<BienData, int>();
+
+    // ─── Estado de partida ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Contenedor con el estado completo de la partida en curso.
+    /// Es la fuente de verdad de todos los datos dinámicos del mundo.
+    /// </summary>
+    private EstadoPartida _estadoPartida = new();
+
+    /// <summary>
+    /// Se dispara cuando el mercado de una ciudad cambia (compra, venta o tick diario).
+    /// El primer parámetro es el <c>IdCiudad</c> de la ciudad afectada.
+    /// El segundo parámetro es el bien concreto que cambió, o <c>null</c> si cambiaron todos
+    /// los bienes a la vez (tick diario). MarketManager se suscribe para propagar el evento
+    /// a la interfaz del mercado con la misma granularidad.
+    /// </summary>
+    public event Action<int, BienData> OnMercadoCiudadActualizado;
 
     // ─── Constantes de beta ──────────────────────────────────────────────────
 
@@ -190,5 +227,127 @@ public class GameManager : MonoBehaviour
     public IReadOnlyDictionary<BienData, int> GetAlmacen()
     {
         return _almacen;
+    }
+
+    // ─── API de mercados ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Vista de solo lectura de todos los mercados activos indexados por <c>IdCiudad</c>.
+    /// Permite a herramientas externas (SaveManager, depuración) enumerar el estado
+    /// completo sin poder modificarlo directamente.
+    /// </summary>
+    public IReadOnlyDictionary<int, List<EntradaMercado>> MercadosPorCiudad
+        => _estadoPartida.MercadosPorCiudad;
+
+    /// <summary>
+    /// Indica si el mercado de la ciudad indicada ya está registrado en el estado de partida.
+    /// Útil para que MarketManager decida si debe inicializar el mercado desde los assets
+    /// o simplemente reutilizar el estado ya existente.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad (campo <c>IdCiudad</c> de <see cref="CiudadData"/>).</param>
+    /// <returns><c>true</c> si el mercado de esa ciudad ya está registrado; <c>false</c> en caso contrario.</returns>
+    public bool TieneMercado(int idCiudad)
+    {
+        return _estadoPartida.MercadosPorCiudad.ContainsKey(idCiudad);
+    }
+
+    /// <summary>
+    /// Devuelve la lista de entradas del mercado de la ciudad indicada en modo de solo lectura.
+    /// Retorna <c>null</c> si la ciudad no tiene mercado registrado todavía.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad.</param>
+    /// <returns>Lista de entradas del mercado, o <c>null</c> si no existe.</returns>
+    public IReadOnlyList<EntradaMercado> GetEntradasMercado(int idCiudad)
+    {
+        return _estadoPartida.MercadosPorCiudad.TryGetValue(idCiudad, out List<EntradaMercado> entradas)
+            ? entradas
+            : null;
+    }
+
+    /// <summary>
+    /// Registra o sobreescribe el mercado de una ciudad en el estado de partida.
+    /// Si ya existía un mercado para esa ciudad, lo reemplaza completamente.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad. Debe ser mayor que 0.</param>
+    /// <param name="entradas">Lista de entradas del mercado. No puede ser <c>null</c>.</param>
+    public void RegistrarMercadoCiudad(int idCiudad, List<EntradaMercado> entradas)
+    {
+        if (idCiudad <= 0)
+        {
+            Debug.LogError($"[GameManager] RegistrarMercadoCiudad: idCiudad inválido ({idCiudad}).");
+            return;
+        }
+
+        if (entradas == null)
+        {
+            Debug.LogError($"[GameManager] RegistrarMercadoCiudad: entradas null para ciudad {idCiudad}.");
+            return;
+        }
+
+        _estadoPartida.MercadosPorCiudad[idCiudad] = entradas;
+        Debug.Log($"[GameManager] Mercado registrado para ciudad {idCiudad} con {entradas.Count} bienes.");
+    }
+
+    /// <summary>
+    /// Vacía por completo el diccionario de mercados del estado de partida.
+    /// Lo invoca LoadManager antes de repoblar los mercados desde la base de datos.
+    /// </summary>
+    public void LimpiarMercados()
+    {
+        _estadoPartida.MercadosPorCiudad.Clear();
+        Debug.Log("[GameManager] Mercados limpiados.");
+    }
+
+    /// <summary>
+    /// Inicializa los mercados de todas las ciudades indicadas copiando en profundidad
+    /// las entradas de sus <c>ScriptableObject</c> y calculando el precio inicial.
+    /// Solo registra ciudades cuyo mercado no esté ya presente (no sobreescribe).
+    /// Llamar desde el inicio de partida nueva antes de cargar cualquier escena de ciudad.
+    /// </summary>
+    /// <param name="ciudades">Colección de <see cref="CiudadData"/> que se deben inicializar.</param>
+    public void InicializarMercadosDesdeAssets(IEnumerable<CiudadData> ciudades)
+    {
+        if (ciudades == null)
+        {
+            Debug.LogError("[GameManager] InicializarMercadosDesdeAssets: colección de ciudades null.");
+            return;
+        }
+
+        foreach (CiudadData ciudad in ciudades)
+        {
+            if (ciudad == null) continue;
+            if (TieneMercado(ciudad.IdCiudad)) continue;
+
+            List<EntradaMercado> copia = new List<EntradaMercado>(ciudad.Mercado.Count);
+            foreach (EntradaMercado origen in ciudad.Mercado)
+            {
+                float precio = origen.Bien != null
+                    ? origen.Bien.precioBase * ((float)origen.Bien.stockMaximo / Mathf.Max(origen.StockActual, 1))
+                    : 0f;
+
+                copia.Add(new EntradaMercado
+                {
+                    Bien             = origen.Bien,
+                    StockActual      = origen.StockActual,
+                    StockMax         = origen.StockMax,
+                    ProduccionDiaria = origen.ProduccionDiaria,
+                    ConsumoDiario    = origen.ConsumoDiario,
+                    PrecioActual     = precio
+                });
+            }
+
+            RegistrarMercadoCiudad(ciudad.IdCiudad, copia);
+        }
+    }
+
+    /// <summary>
+    /// Notifica a todos los suscriptores que el mercado de la ciudad indicada ha cambiado.
+    /// Lo invoca MarketManager tras cada compra, venta o tick diario.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad cuyo mercado ha cambiado.</param>
+    /// <param name="bien">Bien concreto que cambió, o <c>null</c> si cambiaron todos (tick diario).</param>
+    public void NotificarMercadoActualizado(int idCiudad, BienData bien = null)
+    {
+        OnMercadoCiudadActualizado?.Invoke(idCiudad, bien);
     }
 }

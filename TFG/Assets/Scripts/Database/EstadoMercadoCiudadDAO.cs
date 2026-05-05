@@ -85,28 +85,27 @@ public class EstadoMercadoCiudadDAO
     }
 
     /// <summary>
-    /// Guarda el estado completo del mercado de una ciudad iterando todas las entradas
-    /// del <see cref="MarketManager"/>. Por cada bien busca su id en la tabla Bien
-    /// usando el nombre del <see cref="BienData"/> asociado.
-    /// Las entradas cuyo bien no se encuentre en la BD se omiten con un aviso en consola.
+    /// Guarda el estado completo del mercado de una ciudad iterando la lista de entradas
+    /// procedente de <see cref="GameManager.MercadosPorCiudad"/>. Por cada bien busca su id
+    /// en la tabla Bien usando el nombre del <see cref="BienData"/> asociado.
+    /// Las entradas cuyo bien no se encuentre en la BD o no tengan <see cref="BienData"/> asignado
+    /// se omiten con un aviso en consola.
     /// </summary>
-    /// <param name="ciudad">ScriptableObject de la ciudad cuyo mercado se persiste.</param>
-    /// <param name="marketManager">Componente que gestiona el mercado en tiempo de ejecución.</param>
-    public void GuardarTodoElMercado(CiudadData ciudad, MarketManager marketManager)
+    /// <param name="idCiudad">Identificador de la ciudad cuyo mercado se persiste. Debe ser mayor que 0.</param>
+    /// <param name="entradas">Lista de entradas del mercado obtenida del estado central de la partida.</param>
+    public void GuardarTodoElMercado(int idCiudad, IReadOnlyList<EntradaMercado> entradas)
     {
-        if (ciudad == null)
+        if (entradas == null || entradas.Count == 0)
         {
-            Debug.LogError("[EstadoMercadoCiudadDAO] GuardarTodoElMercado: el parámetro 'ciudad' es null.");
+            Debug.LogWarning($"[EstadoMercadoCiudadDAO] GuardarTodoElMercado: lista de entradas vacía o null para ciudad {idCiudad}; se omite.");
             return;
         }
 
-        if (marketManager == null)
+        if (idCiudad <= 0)
         {
-            Debug.LogError("[EstadoMercadoCiudadDAO] GuardarTodoElMercado: el parámetro 'marketManager' es null.");
+            Debug.LogError($"[EstadoMercadoCiudadDAO] GuardarTodoElMercado: idCiudad inválido ({idCiudad}).");
             return;
         }
-
-        IReadOnlyList<EntradaMercado> entradas = marketManager.GetEntradas();
 
         foreach (EntradaMercado entrada in entradas)
         {
@@ -124,7 +123,7 @@ public class EstadoMercadoCiudadDAO
             }
 
             GuardarEstadoMercado(
-                ciudad.IdCiudad,
+                idCiudad,
                 idBien,
                 entrada.StockActual,
                 entrada.ProduccionDiaria,
@@ -177,6 +176,38 @@ public class EstadoMercadoCiudadDAO
         catch (Exception ex)
         {
             Debug.LogError($"[EstadoMercadoCiudadDAO] Error al cargar el mercado de la ciudad id={idCiudad}: {ex}");
+        }
+
+        return resultado;
+    }
+
+    /// <summary>
+    /// Devuelve los identificadores de todas las ciudades que tienen al menos una fila
+    /// en la tabla EstadoMercadoCiudad. Lo usa <see cref="LoadManager"/> para iterar
+    /// todos los mercados guardados sin depender de ningún sistema en escena.
+    /// Nunca devuelve <c>null</c>; devuelve lista vacía si la tabla está vacía.
+    /// </summary>
+    /// <returns>Lista de <c>id_ciudad</c> distintos ordenados de forma ascendente.</returns>
+    public List<int> ObtenerIdsCiudadesConMercado()
+    {
+        var resultado = new List<int>();
+        const string sql = "SELECT DISTINCT id_ciudad FROM EstadoMercadoCiudad ORDER BY id_ciudad;";
+
+        try
+        {
+            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            {
+                cmd.CommandText = sql;
+                using (SqliteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                        resultado.Add(reader.GetInt32(0));
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[EstadoMercadoCiudadDAO] Error al obtener IDs de ciudades con mercado: {ex}");
         }
 
         return resultado;

@@ -68,8 +68,8 @@ MonoBehaviour:
     y: 0
     width: 785
     height: 595
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 201, y: 226}
+  m_MaxSize: {x: 4001, y: 4026}
   m_ActualView: {fileID: 16}
   m_Panes:
   - {fileID: 16}
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 43
+    y: 0
     width: 1920
     height: 36
   m_SerializedDataModeController:
@@ -735,7 +735,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 674
+    y: 619
     width: 1920
     height: 320
   m_SerializedDataModeController:
@@ -786,26 +786,25 @@ MonoBehaviour:
       m_Data: 61272
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 60560
-    - m_Data: 60562
-    - m_Data: 60564
-    - m_Data: 60566
-    - m_Data: 60568
-    - m_Data: 60570
-    - m_Data: 60572
-    - m_Data: 60574
-    - m_Data: 60576
-    - m_Data: 60578
-    - m_Data: 60580
-    - m_Data: 60582
-    - m_Data: 60584
-    - m_Data: 60586
-    - m_Data: 60588
-    - m_Data: 60590
-    - m_Data: 60592
-    - m_Data: 60594
-    - m_Data: 61274
-    - m_Data: 1000000000
+    - m_Data: 61112
+    - m_Data: 61114
+    - m_Data: 61116
+    - m_Data: 61118
+    - m_Data: 61120
+    - m_Data: 61122
+    - m_Data: 61124
+    - m_Data: 61126
+    - m_Data: 61128
+    - m_Data: 61130
+    - m_Data: 61132
+    - m_Data: 61134
+    - m_Data: 61136
+    - m_Data: 61138
+    - m_Data: 61140
+    - m_Data: 61142
+    - m_Data: 61144
+    - m_Data: 61146
+    - m_Data: 61148
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -839,25 +838,25 @@ MonoBehaviour:
       m_Data: 0
     m_ExpandedIDs:
     - m_Data: 0
-    - m_Data: 60560
-    - m_Data: 60562
-    - m_Data: 60564
-    - m_Data: 60566
-    - m_Data: 60568
-    - m_Data: 60570
-    - m_Data: 60572
-    - m_Data: 60574
-    - m_Data: 60576
-    - m_Data: 60578
-    - m_Data: 60580
-    - m_Data: 60582
-    - m_Data: 60584
-    - m_Data: 60586
-    - m_Data: 60588
-    - m_Data: 60590
-    - m_Data: 60592
-    - m_Data: 60594
-    - m_Data: 60596
+    - m_Data: 61112
+    - m_Data: 61114
+    - m_Data: 61116
+    - m_Data: 61118
+    - m_Data: 61120
+    - m_Data: 61122
+    - m_Data: 61124
+    - m_Data: 61126
+    - m_Data: 61128
+    - m_Data: 61130
+    - m_Data: 61132
+    - m_Data: 61134
+    - m_Data: 61136
+    - m_Data: 61138
+    - m_Data: 61140
+    - m_Data: 61142
+    - m_Data: 61144
+    - m_Data: 61146
+    - m_Data: 61148
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -958,7 +957,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 79
+    y: 24
     width: 784
     height: 569
   m_SerializedDataModeController:
@@ -1111,8 +1110,8 @@ MonoBehaviour:
       - m_Data: 171160
       m_RenameOverlay:
         m_UserAcceptedRename: 0
-        m_Name: MenuPrincipalUi
-        m_OriginalName: MenuPrincipalUi
+        m_Name: 
+        m_OriginalName: 
         m_EditFieldRect:
           serializedVersion: 2
           x: 0
@@ -1120,10 +1119,10 @@ MonoBehaviour:
           width: 0
           height: 0
         m_UserData:
-          m_Data: 147434
+          m_Data: 0
         m_IsWaitingForDelay: 0
         m_IsRenaming: 0
-        m_OriginalEventType: 0
+        m_OriginalEventType: 11
         m_IsRenamingFilename: 0
         m_TrimLeadingAndTrailingWhitespace: 0
         m_ClientGUIView: {fileID: 3}
@@ -1156,8 +1155,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Scene\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 785
-    y: 79
+    x: 786
+    y: 24
     width: 1134
     height: 569
   m_SerializedDataModeController:

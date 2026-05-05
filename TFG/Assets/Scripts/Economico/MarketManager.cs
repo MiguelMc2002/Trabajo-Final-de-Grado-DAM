@@ -3,9 +3,10 @@ using System;
 using UnityEngine;
 
 /// <summary>
-/// Representa el estado del mercado de una ciudad concreta de la Liga Hanseática.
-/// Gestiona el stock disponible de cada bien, calcula precios dinámicos según la
-/// fórmula de oferta y demanda, y ejecuta las operaciones de compra y venta del jugador.
+/// Fachada de escena que conecta la interfaz del mercado con el estado persistente
+/// almacenado en <see cref="GameManager"/>. No guarda la lista de entradas internamente:
+/// lee y escribe siempre sobre el diccionario <c>MercadosPorCiudad</c> del singleton,
+/// lo que garantiza que el mercado de la ciudad sobrevive a los cambios de escena.
 /// </summary>
 /// <remarks>
 /// Fórmula de precio:
@@ -17,20 +18,11 @@ public class MarketManager : MonoBehaviour
     // ─── Configuración ───────────────────────────────────────────────────────
 
     /// <summary>
-    /// ScriptableObject con el nombre de la ciudad y la lista de bienes del mercado.
-    /// Si está asignado, <c>Start</c> inicializa el mercado desde aquí en lugar del array
-    /// configurado manualmente en el Inspector.
+    /// ScriptableObject con el nombre de la ciudad y la lista inicial de bienes del mercado.
+    /// Se usa solo si el mercado de esta ciudad todavía no está registrado en GameManager.
     /// </summary>
     [Header("Datos de ciudad")]
     public CiudadData DatosCiudad;
-
-    /// <summary>
-    /// Lista de entradas del mercado: un registro por cada bien que se comercia en esta ciudad.
-    /// Se puede configurar manualmente desde el Inspector o se sobreescribe desde
-    /// <see cref="DatosCiudad"/> al inicio.
-    /// </summary>
-    [Header("Bienes del mercado")]
-    [SerializeField] private List<EntradaMercado> _entradas = new List<EntradaMercado>();
 
     // ─── Límites de precio ───────────────────────────────────────────────────
 
@@ -39,29 +31,56 @@ public class MarketManager : MonoBehaviour
     // Precio máximo: 500% del precio base (escasez extrema)
     private const float MultiplicadorPrecioMaximo = 5.0f;
 
-    // ─── Índice interno ──────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Mapa de acceso rápido para consultar el estado de cada bien sin recorrer la lista completa.
-    /// Se construye al inicio a partir de <see cref="_entradas"/>.
-    /// </summary>
-    private Dictionary<BienData, EntradaMercado> _indice;
-
     // ─── Eventos ─────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Se lanza cada vez que el stock o el precio de cualquier bien cambia.
+    /// Se lanza cada vez que el stock o el precio de cualquier bien cambia en esta ciudad.
     /// La interfaz del mercado se suscribe a este evento para refrescar las filas afectadas.
-    /// El parámetro es el bien cuyo estado ha cambiado.
+    /// El parámetro es el bien cuyo estado ha cambiado, o <c>null</c> si cambiaron todos.
     /// </summary>
     public event Action<BienData> OnMercadoActualizado;
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    // Fallback: si nadie llama a InicializarConCiudad antes, se inicializa con el asset del Inspector
     private void Start()
     {
-        InicializarConCiudad(DatosCiudad);
+        if (DatosCiudad == null)
+        {
+            Debug.LogWarning("[MarketManager] DatosCiudad no asignado; el mercado no se inicializará.");
+            return;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            Debug.LogError("[MarketManager] GameManager.Instance es null en Start. Asegúrate de que existe en la escena inicial.");
+            return;
+        }
+
+        // Si el mercado de esta ciudad aún no está en GameManager, lo inicializamos desde el asset
+        if (!GameManager.Instance.TieneMercado(DatosCiudad.IdCiudad))
+        {
+            List<EntradaMercado> copia = new List<EntradaMercado>(DatosCiudad.Mercado.Count);
+            foreach (EntradaMercado origen in DatosCiudad.Mercado)
+            {
+                float precio = origen.Bien != null
+                    ? origen.Bien.precioBase * ((float)origen.Bien.stockMaximo / Mathf.Max(origen.StockActual, 1))
+                    : 0f;
+
+                copia.Add(new EntradaMercado
+                {
+                    Bien             = origen.Bien,
+                    StockActual      = origen.StockActual,
+                    StockMax         = origen.StockMax,
+                    ProduccionDiaria = origen.ProduccionDiaria,
+                    ConsumoDiario    = origen.ConsumoDiario,
+                    PrecioActual     = precio
+                });
+            }
+
+            GameManager.Instance.RegistrarMercadoCiudad(DatosCiudad.IdCiudad, copia);
+        }
+
+        GameManager.Instance.OnMercadoCiudadActualizado += OnGameManagerMercadoActualizado;
     }
 
     private void OnEnable()
@@ -74,16 +93,46 @@ public class MarketManager : MonoBehaviour
         SimulacionTiempo.OnNuevoDia -= AplicarTickDiario;
     }
 
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnMercadoCiudadActualizado -= OnGameManagerMercadoActualizado;
+    }
+
+    // Reenvía el evento de GameManager como OnMercadoActualizado(BienData) para los
+    // suscriptores de la UI, filtrando por la ciudad de este MarketManager.
+    // Si bien == null (tick diario), dispara el evento una vez por cada bien para que
+    // MarketRowUI —que filtra por identidad de BienData— refresque todas sus filas.
+    private void OnGameManagerMercadoActualizado(int idCiudad, BienData bien)
+    {
+        if (DatosCiudad == null || idCiudad != DatosCiudad.IdCiudad) return;
+
+        if (bien != null)
+        {
+            OnMercadoActualizado?.Invoke(bien);
+        }
+        else
+        {
+            IReadOnlyList<EntradaMercado> entradas = GetEntradas();
+            foreach (EntradaMercado entrada in entradas)
+                OnMercadoActualizado?.Invoke(entrada.Bien);
+        }
+    }
+
+    // ─── Tick diario ─────────────────────────────────────────────────────────
+
     /// <summary>
-    /// Aplica la producción y el consumo diarios a cada bien del mercado.
+    /// Aplica la producción y el consumo diarios a cada bien del mercado de esta ciudad.
     /// Se invoca automáticamente mediante el evento <see cref="SimulacionTiempo.OnNuevoDia"/>.
-    /// Si el stock supera el <c>StockMax</c> de la entrada, se trunca a ese valor.
     /// </summary>
     private void AplicarTickDiario()
     {
-        if (_entradas == null || _entradas.Count == 0) return;
+        if (DatosCiudad == null || GameManager.Instance == null) return;
 
-        foreach (EntradaMercado entrada in _entradas)
+        List<EntradaMercado> entradas = ObtenerListaEditable();
+        if (entradas == null || entradas.Count == 0) return;
+
+        foreach (EntradaMercado entrada in entradas)
         {
             entrada.StockActual += entrada.ProduccionDiaria;
             entrada.StockActual -= entrada.ConsumoDiario;
@@ -91,76 +140,92 @@ public class MarketManager : MonoBehaviour
             entrada.StockActual  = Mathf.Min(entrada.StockActual, entrada.StockMax);
 
             if (entrada.Bien != null)
-                ActualizarPrecio(entrada.Bien, entrada);
+                entrada.PrecioActual = CalcularPrecio(entrada.Bien, entrada.StockActual);
         }
 
-        OnMercadoActualizado?.Invoke(null);
+        GameManager.Instance.NotificarMercadoActualizado(DatosCiudad.IdCiudad);
     }
+
+    // ─── Inicialización externa (compatibilidad con CiudadController) ────────
 
     /// <summary>
     /// Inicializa el mercado con los datos de la ciudad indicada.
-    /// Debe llamarse desde <see cref="CiudadController"/> después de que este haya
-    /// resuelto qué ciudad corresponde a la sesión actual, para evitar que el orden
-    /// de ejecución de <c>Start()</c> entre MonoBehaviours cargue la ciudad incorrecta.
-    /// Si se llama con <c>null</c>, opera con las entradas ya configuradas en el Inspector.
+    /// Si el mercado ya está registrado en GameManager, solo actualiza la referencia
+    /// local <c>DatosCiudad</c>. Si no está registrado, lo crea copiando los assets.
     /// </summary>
     /// <param name="datosCiudad">ScriptableObject de la ciudad cuyo mercado se debe cargar.</param>
     public void InicializarConCiudad(CiudadData datosCiudad)
     {
-        // Sobreescribir referencia y copiar entradas si se proporcionan datos nuevos
-        if (datosCiudad != null)
+        if (datosCiudad == null) return;
+
+        // Desuscribir del evento anterior si cambiamos de ciudad
+        if (GameManager.Instance != null)
+            GameManager.Instance.OnMercadoCiudadActualizado -= OnGameManagerMercadoActualizado;
+
+        DatosCiudad = datosCiudad;
+
+        if (GameManager.Instance == null)
         {
-            DatosCiudad = datosCiudad;
-            _entradas = new List<EntradaMercado>(datosCiudad.Mercado.Count);
-            foreach (EntradaMercado origen in datosCiudad.Mercado)
+            Debug.LogError("[MarketManager] GameManager.Instance es null en InicializarConCiudad.");
+            return;
+        }
+
+        if (!GameManager.Instance.TieneMercado(DatosCiudad.IdCiudad))
+        {
+            List<EntradaMercado> copia = new List<EntradaMercado>(DatosCiudad.Mercado.Count);
+            string nombreCiudad = DatosCiudad.NombreCiudad;
+            Dictionary<BienData, bool> vistos = new Dictionary<BienData, bool>();
+
+            foreach (EntradaMercado origen in DatosCiudad.Mercado)
             {
-                _entradas.Add(new EntradaMercado
+                if (origen.Bien == null)
+                {
+                    Debug.LogWarning($"[MarketManager:{nombreCiudad}] Entrada sin BienData asignado; se ignora.");
+                    continue;
+                }
+
+                if (vistos.ContainsKey(origen.Bien))
+                {
+                    Debug.LogWarning($"[MarketManager:{nombreCiudad}] Bien duplicado '{origen.Bien.nombre}'; se usa la primera entrada.");
+                    continue;
+                }
+
+                vistos[origen.Bien] = true;
+                float precio = origen.Bien.precioBase * ((float)origen.Bien.stockMaximo / Mathf.Max(origen.StockActual, 1));
+
+                copia.Add(new EntradaMercado
                 {
                     Bien             = origen.Bien,
                     StockActual      = origen.StockActual,
                     StockMax         = origen.StockMax,
                     ProduccionDiaria = origen.ProduccionDiaria,
-                    ConsumoDiario    = origen.ConsumoDiario
+                    ConsumoDiario    = origen.ConsumoDiario,
+                    PrecioActual     = precio
                 });
             }
+
+            GameManager.Instance.RegistrarMercadoCiudad(DatosCiudad.IdCiudad, copia);
+            Debug.Log($"[MarketManager] Mercado de {nombreCiudad} creado con {copia.Count} bienes.");
         }
-
-        // Construir índice para acceso O(1)
-        string nombreCiudad = DatosCiudad != null ? DatosCiudad.NombreCiudad : "?";
-        _indice = new Dictionary<BienData, EntradaMercado>(_entradas.Count);
-
-        foreach (EntradaMercado entrada in _entradas)
+        else
         {
-            if (entrada.Bien == null)
-            {
-                Debug.LogWarning($"[MarketManager:{nombreCiudad}] Entrada sin BienData asignado; se ignora.");
-                continue;
-            }
-
-            if (_indice.ContainsKey(entrada.Bien))
-            {
-                Debug.LogWarning($"[MarketManager:{nombreCiudad}] Bien duplicado '{entrada.Bien.nombre}'; se usa la primera entrada.");
-                continue;
-            }
-
-            // Inicializar precio actual según stock de partida
-            entrada.PrecioActual = CalcularPrecio(entrada.Bien, entrada.StockActual);
-            _indice[entrada.Bien] = entrada;
+            Debug.Log($"[MarketManager] Mercado de {DatosCiudad.NombreCiudad} ya existía en GameManager; reutilizando.");
         }
 
-        Debug.Log($"[MarketManager] Mercado de {nombreCiudad} listo con {_indice.Count} bienes.");
+        GameManager.Instance.OnMercadoCiudadActualizado += OnGameManagerMercadoActualizado;
     }
 
     // ─── Consulta ────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Devuelve la lista completa de entradas del mercado.
+    /// Devuelve la lista completa de entradas del mercado de esta ciudad.
     /// Útil para que la interfaz construya todas las filas al abrir la pantalla de mercado.
     /// </summary>
-    /// <returns>Lista de entradas del mercado (solo lectura).</returns>
+    /// <returns>Lista de entradas del mercado (solo lectura), o lista vacía si no hay datos.</returns>
     public IReadOnlyList<EntradaMercado> GetEntradas()
     {
-        return _entradas;
+        if (DatosCiudad == null || GameManager.Instance == null) return new List<EntradaMercado>();
+        return GameManager.Instance.GetEntradasMercado(DatosCiudad.IdCiudad) ?? new List<EntradaMercado>();
     }
 
     /// <summary>
@@ -179,19 +244,19 @@ public class MarketManager : MonoBehaviour
     /// <returns>Unidades disponibles en la ciudad, o 0 si el bien no existe en este mercado.</returns>
     public int GetStockActual(BienData bien)
     {
-        return _indice.TryGetValue(bien, out EntradaMercado entrada) ? entrada.StockActual : 0;
+        EntradaMercado entrada = BuscarEntrada(bien);
+        return entrada?.StockActual ?? 0;
     }
 
     /// <summary>
     /// Devuelve el precio actual de un bien aplicando la fórmula de oferta y demanda.
-    /// El precio está precalculado en <see cref="EntradaMercado.PrecioActual"/> y se actualiza
-    /// cada vez que el stock cambia.
     /// </summary>
     /// <param name="bien">Bien cuyo precio se consulta.</param>
     /// <returns>Precio en monedas de oro, o 0 si el bien no existe en este mercado.</returns>
     public float GetPrecioActual(BienData bien)
     {
-        return _indice.TryGetValue(bien, out EntradaMercado entrada) ? entrada.PrecioActual : 0f;
+        EntradaMercado entrada = BuscarEntrada(bien);
+        return entrada?.PrecioActual ?? 0f;
     }
 
     // ─── Operaciones de comercio ─────────────────────────────────────────────
@@ -200,8 +265,6 @@ public class MarketManager : MonoBehaviour
     /// Ejecuta la compra de un bien por parte del jugador en este mercado.
     /// Descuenta el coste del tesoro del jugador, reduce el stock de la ciudad
     /// y carga las unidades en la bodega del jugador.
-    /// La operación falla si la ciudad no tiene stock suficiente o el jugador
-    /// no tiene dinero ni espacio en bodega.
     /// </summary>
     /// <param name="bien">Bien que se quiere comprar.</param>
     /// <param name="cantidad">Unidades a comprar (debe ser mayor que 0).</param>
@@ -216,7 +279,8 @@ public class MarketManager : MonoBehaviour
             return false;
         }
 
-        if (!_indice.TryGetValue(bien, out EntradaMercado entrada))
+        EntradaMercado entrada = BuscarEntrada(bien);
+        if (entrada == null)
         {
             Debug.LogWarning($"[MarketManager:{nombreCiudad}] El bien '{bien.nombre}' no está disponible en este mercado.");
             return false;
@@ -239,8 +303,10 @@ public class MarketManager : MonoBehaviour
         }
 
         entrada.StockActual -= cantidad;
-        ActualizarPrecio(bien, entrada);
+        entrada.PrecioActual = CalcularPrecio(bien, entrada.StockActual);
         Debug.Log($"[MarketManager:{nombreCiudad}] Compra: {cantidad}× '{bien.nombre}' por {costeTotal} monedas.");
+
+        GameManager.Instance.NotificarMercadoActualizado(DatosCiudad.IdCiudad, bien);
         return true;
     }
 
@@ -248,7 +314,6 @@ public class MarketManager : MonoBehaviour
     /// Ejecuta la venta de un bien del jugador en este mercado.
     /// Ingresa el precio en el tesoro del jugador, aumenta el stock de la ciudad
     /// y retira las unidades de la bodega del jugador.
-    /// La operación falla si el jugador no tiene suficiente cantidad del bien en bodega.
     /// </summary>
     /// <param name="bien">Bien que se quiere vender.</param>
     /// <param name="cantidad">Unidades a vender (debe ser mayor que 0).</param>
@@ -263,7 +328,8 @@ public class MarketManager : MonoBehaviour
             return false;
         }
 
-        if (!_indice.TryGetValue(bien, out EntradaMercado entrada))
+        EntradaMercado entrada = BuscarEntrada(bien);
+        if (entrada == null)
         {
             Debug.LogWarning($"[MarketManager:{nombreCiudad}] El bien '{bien.nombre}' no se puede vender en este mercado.");
             return false;
@@ -276,35 +342,41 @@ public class MarketManager : MonoBehaviour
         GameManager.Instance.ModificarDinero(ingresoTotal);
 
         entrada.StockActual = Mathf.Min(entrada.StockActual + cantidad, bien.stockMaximo);
-        ActualizarPrecio(bien, entrada);
+        entrada.PrecioActual = CalcularPrecio(bien, entrada.StockActual);
         Debug.Log($"[MarketManager:{nombreCiudad}] Venta: {cantidad}× '{bien.nombre}' por {ingresoTotal} monedas.");
+
+        GameManager.Instance.NotificarMercadoActualizado(DatosCiudad.IdCiudad, bien);
         return true;
+    }
+
+    // ─── Helpers privados ────────────────────────────────────────────────────
+
+    // Devuelve la lista editable (no IReadOnly) del estado de GameManager para esta ciudad.
+    private List<EntradaMercado> ObtenerListaEditable()
+    {
+        if (DatosCiudad == null || GameManager.Instance == null) return null;
+        GameManager.Instance.MercadosPorCiudad.TryGetValue(DatosCiudad.IdCiudad, out List<EntradaMercado> lista);
+        return lista;
+    }
+
+    // Busca la EntradaMercado de un bien concreto en el estado de GameManager.
+    private EntradaMercado BuscarEntrada(BienData bien)
+    {
+        List<EntradaMercado> entradas = ObtenerListaEditable();
+        if (entradas == null) return null;
+
+        foreach (EntradaMercado entrada in entradas)
+        {
+            if (entrada.Bien == bien) return entrada;
+        }
+        return null;
     }
 
     // ─── Precio ──────────────────────────────────────────────────────────────
 
-    /// <summary>
-    /// Calcula el precio de un bien en función de su stock actual usando la fórmula
-    /// <c>precio = precioBase × (stockMaximo / max(stockActual, 1))</c>.
-    /// </summary>
-    /// <param name="bien">Datos estáticos del bien (precio base y stock máximo).</param>
-    /// <param name="stockActual">Unidades disponibles en la ciudad en este momento.</param>
-    /// <returns>Precio en monedas de oro.</returns>
     private float CalcularPrecio(BienData bien, int stockActual)
     {
         float precio = bien.precioBase * ((float)bien.stockMaximo / Mathf.Max(stockActual, 1));
         return Mathf.Clamp(precio, bien.precioBase * MultiplicadorPrecioMinimo, bien.precioBase * MultiplicadorPrecioMaximo);
-    }
-
-    /// <summary>
-    /// Recalcula el precio de la entrada indicada y notifica a los suscriptores del evento
-    /// <see cref="OnMercadoActualizado"/> para que la interfaz refresque la fila correspondiente.
-    /// </summary>
-    /// <param name="bien">Bien cuyo precio debe actualizarse.</param>
-    /// <param name="entrada">Entrada del mercado que contiene el stock actual del bien.</param>
-    private void ActualizarPrecio(BienData bien, EntradaMercado entrada)
-    {
-        entrada.PrecioActual = CalcularPrecio(bien, entrada.StockActual);
-        OnMercadoActualizado?.Invoke(bien);
     }
 }
