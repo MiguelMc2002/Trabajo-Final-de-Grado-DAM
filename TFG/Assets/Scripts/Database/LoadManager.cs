@@ -19,6 +19,7 @@ public class LoadManager : MonoBehaviour
     private EstadoJuegoDAO         _estadoJuegoDAO;
     private BienDAO                _bienDAO;
     private EstadoMercadoCiudadDAO _mercadoDAO;
+    private AlmacenJugadorDAO      _almacenJugadorDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -66,10 +67,17 @@ public class LoadManager : MonoBehaviour
         else
             Debug.LogWarning("[LoadManager] No se encontró estado de juego guardado; se mantiene la fecha por defecto.");
 
-        // Paso 2 — Inventario del jugador
+        // Paso 2 — Dinero del jugador
+        if (estadoJuego != null)
+            RestaurarDineroJugador(estadoJuego.DineroJugador);
+
+        // Paso 3 — Limpiar almacén antes de repoblarlo
         LimpiarAlmacenJugador();
 
-        // Paso 3 — Mercado activo en escena
+        // Paso 4 — Restaurar almacén del jugador desde BD
+        RestaurarAlmacenJugador();
+
+        // Paso 5 — Mercado activo en escena
         RestaurarMercados();
 
         Debug.Log($"[LoadManager] Carga desde slot {slotIndex} completada.");
@@ -84,9 +92,10 @@ public class LoadManager : MonoBehaviour
     /// <param name="db">Gestor de base de datos activo.</param>
     private void InicializarDAOs(DatabaseManager db)
     {
-        _estadoJuegoDAO = new EstadoJuegoDAO(db);
-        _bienDAO        = new BienDAO(db);
-        _mercadoDAO     = new EstadoMercadoCiudadDAO(db);
+        _estadoJuegoDAO    = new EstadoJuegoDAO(db);
+        _bienDAO           = new BienDAO(db);
+        _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
+        _almacenJugadorDAO = new AlmacenJugadorDAO(db);
     }
 
     /// <summary>
@@ -136,6 +145,69 @@ public class LoadManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Asigna el dinero guardado al jugador usando <see cref="GameManager.SetDinero"/>.
+    /// </summary>
+    /// <param name="dinero">Monedas de oro leídas desde la tabla estadoJuego.</param>
+    private void RestaurarDineroJugador(long dinero)
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[LoadManager] GameManager.Instance es null; no se restaura el dinero.");
+            return;
+        }
+
+        GameManager.Instance.SetDinero(dinero);
+        Debug.Log($"[LoadManager] Dinero del jugador restaurado: {dinero:N0}");
+    }
+
+    /// <summary>
+    /// Repuebla el almacén del jugador con los datos guardados en AlmacenJugador.
+    /// Para cada entrada resuelve el <see cref="BienData"/> a través de
+    /// <see cref="GameManager.GetBienPorNombre"/> y aplica la cantidad con
+    /// <see cref="GameManager.ModificarCantidadBien"/>. Las entradas sin BienData
+    /// reconocible se omiten con un aviso.
+    /// </summary>
+    private void RestaurarAlmacenJugador()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[LoadManager] GameManager.Instance es null; se omite la restauración del almacén.");
+            return;
+        }
+
+        Dictionary<int, int> almacenBD = _almacenJugadorDAO.ObtenerAlmacen();
+        if (almacenBD.Count == 0)
+        {
+            Debug.Log("[LoadManager] AlmacenJugador vacío en BD; el almacén queda sin repoblar.");
+            return;
+        }
+
+        int restauradas = 0;
+
+        foreach (KeyValuePair<int, int> par in almacenBD)
+        {
+            BienDto dto = _bienDAO.ObtenerBienPorId(par.Key);
+            if (dto == null)
+            {
+                Debug.LogWarning($"[LoadManager] BienDTO null para id_bien={par.Key}; se omite.");
+                continue;
+            }
+
+            BienData bienData = GameManager.Instance.GetBienPorNombre(dto.Nombre);
+            if (bienData == null)
+            {
+                Debug.LogWarning($"[LoadManager] BienData null para '{dto.Nombre}'; se omite.");
+                continue;
+            }
+
+            GameManager.Instance.ModificarCantidadBien(bienData, par.Value);
+            restauradas++;
+        }
+
+        Debug.Log($"[LoadManager] Restauradas {restauradas} entradas en el almacén del jugador.");
+    }
+
+    /// <summary>
     /// Restaura el estado de mercado de todas las ciudades guardadas en la BD dentro de
     /// <see cref="GameManager.MercadosPorCiudad"/>. El proceso es:
     /// 1) limpia el diccionario de GameManager, 2) obtiene los IDs de ciudad con datos
@@ -150,15 +222,6 @@ public class LoadManager : MonoBehaviour
         {
             Debug.LogWarning("[LoadManager] GameManager.Instance es null; se omite la restauración de mercados.");
             return;
-        }
-
-        // Construir mapa nombre → BienData a partir de los assets en memoria
-        BienData[] todosLosBienes = Resources.FindObjectsOfTypeAll<BienData>();
-        var bienPorNombre = new Dictionary<string, BienData>(todosLosBienes.Length);
-        foreach (BienData bien in todosLosBienes)
-        {
-            if (bien != null && !string.IsNullOrEmpty(bien.nombre))
-                bienPorNombre[bien.nombre] = bien;
         }
 
         // Construir mapa id_bien → nombre usando la tabla Bien de la BD
@@ -194,9 +257,10 @@ public class LoadManager : MonoBehaviour
                     continue;
                 }
 
-                if (!bienPorNombre.TryGetValue(nombreBien, out BienData bienData))
+                BienData bienData = GameManager.Instance.GetBienPorNombre(nombreBien);
+                if (bienData == null)
                 {
-                    Debug.LogWarning($"[LoadManager] No se encontró BienData para '{nombreBien}' en ciudad {idCiudad}; se omite.");
+                    Debug.LogError($"[LoadManager] GameManager.GetBienPorNombre devolvió null para '{nombreBien}' en ciudad {idCiudad}; se omite la entrada.");
                     continue;
                 }
 

@@ -23,6 +23,7 @@ public class SaveManager : MonoBehaviour
     private EdificiosCiudadDAO      _edificiosDAO;
     private BarcoDAO                _barcoDAO;
     private EstadoMercadoCiudadDAO  _mercadoDAO;
+    private AlmacenJugadorDAO       _almacenJugadorDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -69,10 +70,13 @@ public class SaveManager : MonoBehaviour
         // Pasos 2-5 — Catálogos (INSERT OR IGNORE / INSERT OR REPLACE seguros)
         GuardarCatalogos();
 
-        // Paso 6 — Estado económico del mercado de cada ciudad
+        // Paso 6 — Almacén del jugador (FK a Bien, debe ir después de catálogos)
+        GuardarAlmacenJugador();
+
+        // Paso 7 — Estado económico del mercado de cada ciudad
         GuardarEstadoEconomico();
 
-        // Paso 7 — Edificios de cada ciudad
+        // Paso 8 — Edificios de cada ciudad
         GuardarEdificios();
 
         Debug.Log($"[SaveManager] Guardado en slot {slotIndex} completado.");
@@ -87,12 +91,13 @@ public class SaveManager : MonoBehaviour
     /// <param name="db">Gestor de base de datos activo tras llamar a InicializarSlot.</param>
     private void InicializarDAOs(DatabaseManager db)
     {
-        _estadoJuegoDAO = new EstadoJuegoDAO(db);
-        _ciudadDAO      = new CiudadDAO(db);
-        _bienDAO        = new BienDAO(db);
-        _edificiosDAO   = new EdificiosCiudadDAO(db);
-        _barcoDAO       = new BarcoDAO(db);
-        _mercadoDAO     = new EstadoMercadoCiudadDAO(db);
+        _estadoJuegoDAO    = new EstadoJuegoDAO(db);
+        _ciudadDAO         = new CiudadDAO(db);
+        _bienDAO           = new BienDAO(db);
+        _edificiosDAO      = new EdificiosCiudadDAO(db);
+        _barcoDAO          = new BarcoDAO(db);
+        _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
+        _almacenJugadorDAO = new AlmacenJugadorDAO(db);
     }
 
     /// <summary>
@@ -104,14 +109,16 @@ public class SaveManager : MonoBehaviour
         SimulacionTiempo sim = SimulacionTiempo.Instance;
         if (sim == null)
         {
+            long dineroPorDefecto = GameManager.Instance != null ? GameManager.Instance.Dinero : 999_999_999L;
             Debug.LogWarning("[SaveManager] SimulacionTiempo no encontrado; se guarda estado de juego con valores por defecto.");
-            _estadoJuegoDAO.Guardar(1, 1, 1290, 1);
+            _estadoJuegoDAO.Guardar(1, 1, 1290, 1, dineroPorDefecto);
             return;
         }
 
-        int velocidadEntero = Mathf.RoundToInt(sim.VelocidadActual * 100f);
-        _estadoJuegoDAO.Guardar(sim.DiaActual, sim.MesActual, sim.AñoActual, velocidadEntero);
-        Debug.Log($"[SaveManager] EstadoJuego guardado — {sim.DiaActual}/{sim.MesActual}/{sim.AñoActual} vel={sim.VelocidadActual}x");
+        int  velocidadEntero = Mathf.RoundToInt(sim.VelocidadActual * 100f);
+        long dinero          = GameManager.Instance != null ? GameManager.Instance.Dinero : 999_999_999L;
+        _estadoJuegoDAO.Guardar(sim.DiaActual, sim.MesActual, sim.AñoActual, velocidadEntero, dinero);
+        Debug.Log($"[SaveManager] EstadoJuego guardado — {sim.DiaActual}/{sim.MesActual}/{sim.AñoActual} vel={sim.VelocidadActual}x dinero={dinero:N0}");
     }
 
     /// <summary>
@@ -139,7 +146,47 @@ public class SaveManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Paso 6: persiste el estado del mercado de todas las ciudades registradas en
+    /// Paso 6: persiste el inventario del jugador en AlmacenJugador.
+    /// Itera GameManager.GetAlmacen(), resuelve el id_bien de cada BienData
+    /// usando el catálogo en memoria de BienDAO y delega en AlmacenJugadorDAO.
+    /// Si GameManager no está disponible, omite el paso con un aviso.
+    /// </summary>
+    private void GuardarAlmacenJugador()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[SaveManager] GameManager.Instance es null; se omite el guardado del almacén.");
+            return;
+        }
+
+        // Construir mapa nombre → id_bien a partir de los bienes ya insertados en BD
+        List<BienDto> bienDtos = _bienDAO.ObtenerTodosLosBienes();
+        var idPorNombre = new Dictionary<string, int>(bienDtos.Count);
+        foreach (BienDto dto in bienDtos)
+            idPorNombre[dto.Nombre] = dto.IdBien;
+
+        IReadOnlyDictionary<BienData, int> almacen = GameManager.Instance.GetAlmacen();
+        var almacenPorId = new Dictionary<int, int>(almacen.Count);
+
+        foreach (KeyValuePair<BienData, int> par in almacen)
+        {
+            if (par.Key == null || par.Value <= 0) continue;
+
+            if (!idPorNombre.TryGetValue(par.Key.nombre, out int idBien))
+            {
+                Debug.LogWarning($"[SaveManager] Bien '{par.Key.nombre}' no encontrado en BD; se omite del almacén guardado.");
+                continue;
+            }
+
+            almacenPorId[idBien] = par.Value;
+        }
+
+        _almacenJugadorDAO.GuardarAlmacen(almacenPorId);
+        Debug.Log($"[SaveManager] Guardadas {almacenPorId.Count} entradas en AlmacenJugador.");
+    }
+
+    /// <summary>
+    /// Paso 7: persiste el estado del mercado de todas las ciudades registradas en
     /// <see cref="GameManager.MercadosPorCiudad"/>. Si GameManager no está disponible
     /// o el diccionario está vacío, omite el paso con un aviso.
     /// </summary>

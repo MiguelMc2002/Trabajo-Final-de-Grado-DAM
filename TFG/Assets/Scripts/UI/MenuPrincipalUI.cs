@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Controla la lógica del menú principal: iniciar partida, cargar y salir.
-/// Gestiona la visibilidad del panel de selección de ciudad de inicio.
+/// Gestiona la visibilidad de los paneles excluyentes mediante un enum centralizado.
 /// </summary>
 public class MenuPrincipalUI : MonoBehaviour
 {
@@ -12,24 +12,65 @@ public class MenuPrincipalUI : MonoBehaviour
     [SerializeField] private PantallaSlotsUI _pantallaSlotsUI;
     [SerializeField] private GameObject _panelMenuPrincipal;
 
+    /// <summary>Identifica cada panel excluyente del menú principal.</summary>
+    private enum PanelMenuPrincipal
+    {
+        /// <summary>Panel con los botones Nueva Partida, Cargar Partida y Salir.</summary>
+        MenuPrincipal,
+        /// <summary>Panel de slots de guardado/carga en modo pantalla completa.</summary>
+        PantallaSlots
+    }
+
     private void Start()
     {
-        // Ocultar el panel de selección hasta que el jugador pulse "Nueva Partida"
         if (panelSeleccionCiudad != null)
             panelSeleccionCiudad.SetActive(false);
+
+        MostrarPanel(PanelMenuPrincipal.MenuPrincipal);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape) && panelSeleccionCiudad != null && panelSeleccionCiudad.activeSelf)
+            CerrarPanelSeleccion();
+    }
+
+    /// <summary>
+    /// Activa únicamente el panel indicado y desactiva el resto.
+    /// Es null-safe: omite la operación si algún panel no está asignado en el Inspector.
+    /// </summary>
+    /// <param name="panel">Panel que debe quedar visible.</param>
+    private void MostrarPanel(PanelMenuPrincipal panel)
+    {
+        if (_panelMenuPrincipal == null)
+        {
+            Debug.LogWarning("[MenuPrincipalUI] _panelMenuPrincipal no asignado en el Inspector.");
+            return;
+        }
+
+        if (_pantallaSlotsUI == null)
+        {
+            Debug.LogWarning("[MenuPrincipalUI] _pantallaSlotsUI no asignado en el Inspector.");
+            return;
+        }
+
+        switch (panel)
+        {
+            case PanelMenuPrincipal.MenuPrincipal:
+                _panelMenuPrincipal.SetActive(true);
+                _pantallaSlotsUI.gameObject.SetActive(false);
+                break;
+            case PanelMenuPrincipal.PantallaSlots:
+                _panelMenuPrincipal.SetActive(false);
+                _pantallaSlotsUI.gameObject.SetActive(true);
+                break;
+        }
     }
 
     /// <summary>
     /// Muestra el panel de selección de ciudad para comenzar una nueva partida.
     /// Llamado por el botón "Nueva Partida".
     /// </summary>
-    private void Update()
-    {
-        // Cerrar el panel de selección al pulsar Escape, igual que el botón "Atrás"
-        if (Input.GetKeyDown(KeyCode.Escape) && panelSeleccionCiudad != null && panelSeleccionCiudad.activeSelf)
-            CerrarPanelSeleccion();
-    }
-
     public void IniciarNuevaPartida()
     {
         if (panelSeleccionCiudad == null)
@@ -70,6 +111,7 @@ public class MenuPrincipalUI : MonoBehaviour
             return;
         }
 
+        MostrarPanel(PanelMenuPrincipal.PantallaSlots);
         _pantallaSlotsUI.Abrir(SlotModo.Cargar);
     }
 
@@ -78,11 +120,7 @@ public class MenuPrincipalUI : MonoBehaviour
     /// </summary>
     public void MostrarMenuPrincipal()
     {
-        if (_pantallaSlotsUI != null)
-            _pantallaSlotsUI.gameObject.SetActive(false);
-
-        if (_panelMenuPrincipal != null)
-            _panelMenuPrincipal.SetActive(true);
+        MostrarPanel(PanelMenuPrincipal.MenuPrincipal);
     }
 
     /// <summary>
