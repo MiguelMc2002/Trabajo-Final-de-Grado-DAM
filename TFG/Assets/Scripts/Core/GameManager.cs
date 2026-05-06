@@ -54,11 +54,27 @@ public class GameManager : MonoBehaviour
     [SerializeField] private CiudadData[] _ciudadesDisponibles;
 
     /// <summary>
+    /// Lista canónica de todos los <see cref="BienData"/> del juego.
+    /// Asignar manualmente en el Inspector.
+    /// Usado por <see cref="LoadManager"/> y futuros sistemas de PNJs y producción.
+    /// </summary>
+    [Header("Catálogo de bienes")]
+    [Tooltip("Lista canónica de todos los BienData del juego. Asignar manualmente en el Inspector. Usado por LoadManager y futuros sistemas de PNJs y producción.")]
+    [SerializeField] private List<BienData> _catalogoBienes;
+
+    /// <summary>
     /// Vista de solo lectura del catálogo de ciudades del juego.
     /// Permite a otros sistemas (p. ej. <c>SeleccionCiudadUI</c>) iterar todas las
     /// ciudades sin poder modificar el array subyacente.
     /// </summary>
     public IReadOnlyList<CiudadData> CiudadesDisponibles => _ciudadesDisponibles;
+
+    /// <summary>
+    /// Vista de solo lectura del catálogo canónico de bienes del juego.
+    /// Permite a <see cref="LoadManager"/> y otros sistemas resolver un <see cref="BienData"/>
+    /// por nombre sin recurrir a <c>Resources.FindObjectsOfTypeAll</c>.
+    /// </summary>
+    public IReadOnlyList<BienData> CatalogoBienes => _catalogoBienes ?? new List<BienData>();
 
     /// <summary>
     /// Inventario de mercancías en la bodega del jugador.
@@ -110,6 +126,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
+        if (_catalogoBienes == null || _catalogoBienes.Count == 0)
+            Debug.LogWarning("[GameManager] _catalogoBienes está vacío. Asignarlo en el Inspector antes de cargar una partida.");
+
         InicializarEstado();
         Debug.Log($"[GameManager] Inicializado como singleton persistente. Dinero: {Dinero:N0}");
     }
@@ -123,7 +142,53 @@ public class GameManager : MonoBehaviour
         Debug.Log($"[GameManager] Partida iniciada. Dinero: {Dinero:N0}");
     }
 
+    // ─── Catálogo de bienes ──────────────────────────────────────────────────
+
+    /// <summary>
+    /// Busca un <see cref="BienData"/> en el catálogo canónico por su nombre.
+    /// La comparación es insensible a mayúsculas y minúsculas.
+    /// </summary>
+    /// <param name="nombre">Nombre del bien tal como aparece en el campo <c>nombre</c> del ScriptableObject.</param>
+    /// <returns>
+    /// El <see cref="BienData"/> cuyo nombre coincide, o <c>null</c> si el catálogo está vacío
+    /// o no se encuentra ninguna coincidencia. No lanza excepciones.
+    /// </returns>
+    /// <remarks>
+    /// Devuelve <c>null</c> en lugar de lanzar una excepción para que los sistemas de carga
+    /// puedan omitir entradas no reconocidas sin interrumpir la restauración completa de la partida.
+    /// </remarks>
+    public BienData GetBienPorNombre(string nombre)
+    {
+        if (_catalogoBienes == null || _catalogoBienes.Count == 0)
+        {
+            Debug.LogWarning("[GameManager] GetBienPorNombre: el catálogo de bienes está vacío.");
+            return null;
+        }
+
+        foreach (BienData bien in _catalogoBienes)
+        {
+            if (bien != null && string.Equals(bien.nombre, nombre, StringComparison.OrdinalIgnoreCase))
+                return bien;
+        }
+
+        Debug.LogWarning($"[GameManager] GetBienPorNombre: no se encontró BienData con nombre '{nombre}'.");
+        return null;
+    }
+
     // ─── API pública ─────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Establece directamente el tesoro del jugador al valor indicado.
+    /// Solo debe invocarlo <see cref="LoadManager"/> al restaurar una partida guardada;
+    /// el resto del código debe usar <see cref="ModificarDinero"/> para mantener el
+    /// historial de operaciones económicas.
+    /// </summary>
+    /// <param name="valor">Monedas de oro a asignar (debe ser ≥ 0).</param>
+    public void SetDinero(long valor)
+    {
+        Dinero = valor >= 0 ? valor : 0;
+        Debug.Log($"[GameManager] Dinero establecido directamente a {Dinero:N0}");
+    }
 
     /// <summary>
     /// Registra un movimiento de dinero en el cofre del comerciante.

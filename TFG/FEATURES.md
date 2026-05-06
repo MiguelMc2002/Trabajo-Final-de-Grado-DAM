@@ -835,15 +835,16 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | ✅ | `BarcoDAO` | Inserta los 3 tipos de casco base (Cog, Hulk, Carraca) en `TipoCasco`. Gestiona barcos por flota: inserta, actualiza vida/tripulación/flota y elimina. Booleano `es_barco_combate` almacenado como `1`/`0`. |
 | ✅ | `CargaBarcoDAO` | Guarda y carga la mercancía en bodega de cada barco. `GuardarCargaCompleta` limpia la carga anterior con `EliminarCargaDeBarco` antes de reinsertar, garantizando atomicidad. `ObtenerCargaDeBarco` usa JOIN a `Bien` para traer el nombre sin segunda consulta. |
 | ✅ | `MemoriaComercialPNJDAO` | Guarda y carga el conocimiento de precios de los PNJs comerciantes con caducidad de 7 días. `ObtenerPrecioConocido` devuelve `null` si el dato supera ese umbral. |
-| ✅ | `SaveManager` | Singleton `MonoBehaviour` que orquesta el guardado completo respetando integridad referencial: estadoJuego → catálogos (Ciudad, Bien, TipoEdificio, TipoCasco) → EstadoMercadoCiudad → EdificiosCiudad. Desde el Día 12 itera `GameManager.MercadosPorCiudad` y guarda **todas las ciudades**, no solo la activa. ✅ Bug persistencia multi-ciudad resuelto (Día 12). |
-| ✅ | `LoadManager` | Singleton `MonoBehaviour` que orquesta la carga completa: abre slot → restaura `SimulacionTiempo` → limpia almacén del jugador → limpia `GameManager.MercadosPorCiudad` → repuebla el diccionario con **todas las ciudades** guardadas en BD. Empareja bienes por nombre entre `BienData` y `BienDto`. ✅ Bug persistencia multi-ciudad resuelto (Día 12). |
+| ✅ | `AlmacenJugadorDAO` | DAO que gestiona la tabla `AlmacenJugador`. Persiste y restaura el inventario personal del jugador (bienes en bodega) entre sesiones. Sigue el patrón atómico borrar-e-insertar de `CargaBarcoDAO`. Añadido en Día 13. |
+| ✅ | `SaveManager` | Singleton `MonoBehaviour` que orquesta el guardado completo respetando integridad referencial: estadoJuego (con `dinero_jugador`) → catálogos (Ciudad, Bien, TipoEdificio, TipoCasco) → **AlmacenJugador** → EstadoMercadoCiudad → EdificiosCiudad. Desde el Día 13 también persiste `GameManager.Dinero` y el inventario completo del jugador. ✅ Bug persistencia multi-ciudad resuelto (Día 12). ✅ Bug persistencia dinero y almacén resuelto (Día 13). |
+| ✅ | `LoadManager` | Singleton `MonoBehaviour` que orquesta la carga completa: abre slot → restaura `SimulacionTiempo` → **restaura dinero del jugador** → limpia almacén → **restaura AlmacenJugador** → limpia `GameManager.MercadosPorCiudad` → repuebla con **todas las ciudades** guardadas en BD. Desde el Día 13 usa `GameManager.GetBienPorNombre` (catálogo canónico) en lugar de `Resources.FindObjectsOfTypeAll`. ✅ Bug persistencia multi-ciudad resuelto (Día 12). ✅ Bug persistencia dinero y almacén resuelto (Día 13). |
 | ✅ | Pantalla de slots | UI con 5 slots implementada en `SlotData` + `SlotUI` + `PantallaSlotsUI`. Muestra nombre de partida, fecha de guardado y días jugados. Soporta modos Guardar y Cargar con confirmación antes de sobrescribir o borrar. |
 
 ### DTOs del módulo
 
 | DTO | Archivo | Campos |
 |---|---|---|
-| `EstadoJuegoData` | `EstadoJuegoDAO.cs` | `DiaJuego`, `MesJuego`, `AñoJuego`, `VelocidadTiempo`, `FechaGuardado` |
+| `EstadoJuegoData` | `EstadoJuegoDAO.cs` | `DiaJuego`, `MesJuego`, `AñoJuego`, `VelocidadTiempo`, `FechaGuardado`, **`DineroJugador`** (añadido Día 13) |
 | `CiudadDto` | `CiudadDAO.cs` | `IdCiudad`, `Nombre` |
 | `BienDto` | `BienDAO.cs` | `IdBien`, `Nombre`, `Categoria`, `PrecioBase` |
 | `EstadoMercadoDto` | `EstadoMercadoCiudadDAO.cs` | `IdCiudad`, `IdBien`, `Stock`, `Produccion`, `Consumo`, `PrecioActual` |
@@ -984,7 +985,7 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | **Ruta** | `Assets/Scripts/Database/SaveManager.cs` |
 | **Tipo** | `MonoBehaviour` (singleton persistente) |
 | **Módulo** | Guardado y carga |
-| **Descripción** | Orquesta el guardado completo de una partida en SQLite invocando los DAOs en el orden correcto para respetar la integridad referencial: estadoJuego (sin FKs) → catálogos Ciudad, Bien, TipoEdificio, TipoCasco → EstadoMercadoCiudad de **todas las ciudades** → EdificiosCiudad. Desde el Día 12 ya no busca `MarketManager` con `FindAnyObjectByType`. Itera `GameManager.Instance.MercadosPorCiudad` y persiste el mercado de cada ciudad registrada en memoria, independientemente de cuál esté activa en escena. |
+| **Descripción** | Orquesta el guardado completo de una partida en SQLite invocando los DAOs en el orden correcto para respetar la integridad referencial: estadoJuego (con `dinero_jugador`) → catálogos Ciudad, Bien, TipoEdificio, TipoCasco → **AlmacenJugador** → EstadoMercadoCiudad de **todas las ciudades** → EdificiosCiudad. Desde el Día 12 ya no busca `MarketManager` con `FindAnyObjectByType`. Desde el Día 13 también persiste `GameManager.Dinero` y el inventario completo del jugador. |
 
 ### API pública
 

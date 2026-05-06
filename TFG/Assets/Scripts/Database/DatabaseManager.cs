@@ -71,6 +71,7 @@ public class DatabaseManager : MonoBehaviour
             Conexion = new SqliteConnection(cadenaConexion);
             Conexion.Open();
             CrearTablasSiNoExisten();
+            MigrarColumnaDineroJugador();
         }
         catch (Exception ex)
         {
@@ -79,6 +80,28 @@ public class DatabaseManager : MonoBehaviour
     }
 
     // ─── Privados ─────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Añade la columna dinero_jugador a estadoJuego en bases de datos creadas antes
+    /// de esta versión. SQLite no soporta ADD COLUMN IF NOT EXISTS, por lo que se
+    /// intenta el ALTER y se atrapa la excepción si la columna ya existe.
+    /// </summary>
+    private void MigrarColumnaDineroJugador()
+    {
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = "ALTER TABLE estadoJuego ADD COLUMN dinero_jugador INTEGER NOT NULL DEFAULT 999999999;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception)
+        {
+            // La columna ya existe en esta BD; comportamiento esperado en bases de datos nuevas
+            Debug.Log("[DatabaseManager] Columna dinero_jugador ya existe (BD nueva).");
+        }
+    }
 
     /// <summary>
     /// Ejecuta el bloque DDL completo con CREATE TABLE IF NOT EXISTS para las
@@ -96,7 +119,8 @@ public class DatabaseManager : MonoBehaviour
                 mes_juego        INTEGER NOT NULL,
                 año_juego        INTEGER NOT NULL,
                 velocidad_tiempo INTEGER NOT NULL,
-                fecha_guardado   TIMESTAMP NOT NULL
+                fecha_guardado   TIMESTAMP NOT NULL,
+                dinero_jugador   INTEGER NOT NULL DEFAULT 999999999
             );
 
             CREATE TABLE IF NOT EXISTS Ciudad (
@@ -109,6 +133,12 @@ public class DatabaseManager : MonoBehaviour
                 nombre      TEXT NOT NULL,
                 categoria   TEXT NOT NULL,
                 precio_base DECIMAL NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS AlmacenJugador (
+                id_bien  INTEGER NOT NULL REFERENCES Bien(id_bien),
+                cantidad INTEGER NOT NULL,
+                PRIMARY KEY (id_bien)
             );
 
             CREATE TABLE IF NOT EXISTS RecetaProduccion (
