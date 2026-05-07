@@ -378,8 +378,8 @@ MonoBehaviour:
     m_TextWithWhitespace: "Inspector\u200B"
   m_Pos:
     serializedVersion: 2
-    x: 544
-    y: 24
+    x: 543
+    y: 79
     width: 1376
     height: 696
   m_SerializedDataModeController:
@@ -431,7 +431,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 0
+    y: 43
     width: 1920
     height: 36
   m_SerializedDataModeController:
@@ -958,7 +958,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 24
+    y: 79
     width: 542
     height: 696
   m_SerializedDataModeController:
@@ -981,8 +981,6 @@ MonoBehaviour:
       m_LastClickedID:
         m_Data: 0
       m_ExpandedIDs:
-      - m_Data: -2158
-      - m_Data: -2094
       - m_Data: -1382
       m_RenameOverlay:
         m_UserAcceptedRename: 0
@@ -1716,7 +1714,7 @@ MonoBehaviour:
   m_Pos:
     serializedVersion: 2
     x: 0
-    y: 746
+    y: 801
     width: 1920
     height: 193
   m_SerializedDataModeController:
