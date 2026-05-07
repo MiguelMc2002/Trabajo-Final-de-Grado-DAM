@@ -18,6 +18,10 @@ public class FlotaManager : MonoBehaviour
     private Dictionary<int, FlotaRuntimeData> FlotasPorId
         => GameManager.Instance.EstadoPartida.FlotasPorId;
 
+    // ─── Controladores de comportamiento ─────────────────────────────────────
+
+    private readonly Dictionary<int, ComerciantePNJController> _controladores = new();
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -30,6 +34,9 @@ public class FlotaManager : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+
+        SimulacionTiempo.OnNuevoDia += TickTodosLosControladores;
+
         Debug.Log("[FlotaManager] Inicializado como singleton persistente.");
     }
 
@@ -49,6 +56,10 @@ public class FlotaManager : MonoBehaviour
         }
 
         FlotasPorId[flota.Id] = flota;
+
+        // Crear y registrar el controlador de comportamiento para esta flota
+        _controladores[flota.Id] = new ComerciantePNJController(flota, this);
+
         Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}");
     }
 
@@ -72,6 +83,52 @@ public class FlotaManager : MonoBehaviour
     public IReadOnlyCollection<FlotaRuntimeData> ObtenerTodasLasFlotas()
     {
         return FlotasPorId.Values;
+    }
+
+    /// <summary>
+    /// Avanza un día de simulación en todos los controladores de comportamiento PNJ registrados.
+    /// Suscrito a <see cref="SimulacionTiempo.OnNuevoDia"/> en <c>Awake</c>.
+    /// </summary>
+    public void TickTodosLosControladores()
+    {
+        foreach (ComerciantePNJController controlador in _controladores.Values)
+            controlador.Tick();
+    }
+
+    /// <summary>
+    /// Crea y registra las flotas PNJ iniciales de prueba al comenzar una partida nueva.
+    /// Genera exactamente 2 comerciantes: Hans (id 1001) y Klaus (id 1002),
+    /// asignando sus ciudades de origen a partir del catálogo recibido.
+    /// </summary>
+    /// <param name="ciudades">
+    /// Lista de ciudades disponibles en la partida.
+    /// Se usa la primera y la segunda ciudad (o la primera para ambas si solo hay una).
+    /// </param>
+    public void SpawnFlotasPNJIniciales(IReadOnlyList<CiudadData> ciudades)
+    {
+        if (ciudades == null || ciudades.Count == 0)
+        {
+            Debug.LogWarning("[FlotaManager] SpawnFlotasPNJIniciales: lista de ciudades vacía, no se crean flotas.");
+            return;
+        }
+
+        int ciudadHansId  = ciudades[0].IdCiudad;
+        int ciudadKlausId = ciudades.Count >= 2 ? ciudades[1].IdCiudad : ciudades[0].IdCiudad;
+
+        FlotaRuntimeData hans = new FlotaRuntimeData(1001, "Comerciante Hans");
+        hans.CiudadOrigenId = ciudadHansId;
+        RegistrarFlota(hans);
+
+        FlotaRuntimeData klaus = new FlotaRuntimeData(1002, "Comerciante Klaus");
+        klaus.CiudadOrigenId = ciudadKlausId;
+        RegistrarFlota(klaus);
+
+        Debug.Log($"[FlotaManager] Flotas PNJ iniciales creadas: Hans (ciudad {ciudadHansId}), Klaus (ciudad {ciudadKlausId}).");
+    }
+
+    private void OnDestroy()
+    {
+        SimulacionTiempo.OnNuevoDia -= TickTodosLosControladores;
     }
 
     /// <summary>

@@ -406,6 +406,12 @@ public class GameManager : MonoBehaviour
 
             RegistrarMercadoCiudad(ciudad.IdCiudad, copia);
         }
+
+        // Spawn de flotas PNJ de prueba al iniciar partida nueva
+        if (FlotaManager.Instance != null)
+            FlotaManager.Instance.SpawnFlotasPNJIniciales(_ciudadesDisponibles);
+        else
+            Debug.LogWarning("[GameManager] InicializarMercadosDesdeAssets: FlotaManager.Instance es null, flotas PNJ no creadas.");
     }
 
     /// <summary>
