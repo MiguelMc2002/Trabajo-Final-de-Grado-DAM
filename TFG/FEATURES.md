@@ -1241,4 +1241,113 @@ Bug identificado al final del Día 11: `SaveManager` y `LoadManager` solo persis
 - [ ] Definir `FlotaPNJData` real (promover el DTO existente a clase de runtime).
 - [ ] Rellenar `EstadoPartida.FlotasPorId` al cargar partida o al spawnear PNJs.
 - [ ] Crear `FlotaManager` o equivalente como vista de las flotas activas en el mapamundi.
+
+---
+
+## DÍA 14 — Comportamiento de PNJs: infraestructura base
+
+Inicio de la Semana 3. Se implanta toda la infraestructura necesaria para que las flotas PNJ comerciantes existan en el mundo y avancen su lógica día a día, aunque sus estados internos son aún esqueleto (sin lógica real de compra/venta).
+
+### Scripts nuevos
+
+#### `EstadoFlotaPNJ` — `Assets/Scripts/PNJ/EstadoFlotaPNJ.cs`
+
+Enum que define los tres estados posibles de la máquina de estados de una flota PNJ comerciante.
+
+| Valor | Significado |
+|---|---|
+| `EnPuerto` | La flota está atracada en una ciudad, lista para comerciar o elegir destino. |
+| `Viajando` | La flota navega hacia una ciudad destino. |
+| `Comerciando` | La flota está ejecutando una operación de compra o venta en puerto. |
+
+---
+
+#### `FlotaRuntimeData` — `Assets/Scripts/PNJ/FlotaRuntimeData.cs`
+
+POCO de runtime que representa el estado vivo de una flota PNJ durante la simulación. No hereda de `MonoBehaviour`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Id` | `int` (get) | Identificador único de la flota. |
+| `NombrePropietario` | `string` (get) | Nombre del PNJ dueño de la flota (ej. "Comerciante Hans"). |
+| `CiudadOrigenId` | `int` | Ciudad de partida de la flota en la sesión actual. |
+| `CiudadDestinoId` | `int` | Ciudad hacia la que viaja la flota. `-1` si no hay destino asignado. |
+| `EstadoActual` | `EstadoFlotaPNJ` | Estado activo en la máquina de estados. Modificable por `FlotaManager.CambiarEstado`. |
+| `RutaActual` | `List<int>` | Secuencia de `IdCiudad` que describe el itinerario planificado. |
+| `Carga` | `Dictionary<int, int>` | Inventario de la bodega: clave `id_bien`, valor unidades. |
+| `FlotaRuntimeData(int id, string nombrePropietario)` | Constructor | Inicializa la flota con id y nombre; estado inicial `EnPuerto`, sin destino ni carga. |
+| `TieneCarga()` | `bool` | Devuelve `true` si la bodega contiene al menos un bien con cantidad > 0. |
+
+---
+
+#### `FlotaManager` — `Assets/Scripts/PNJ/FlotaManager.cs`
+
+| Campo | Valor |
+|---|---|
+| **Tipo** | `MonoBehaviour` (singleton persistente) |
+| **Módulo** | PNJs — Comportamiento |
+| **Descripción** | Gestor singleton de flotas PNJ activas en el mundo. Es la única puerta de entrada para registrar, consultar y cambiar el estado de las flotas comerciantes. Se suscribe a `SimulacionTiempo.OnNuevoDia` para avanzar un tick de comportamiento en todos los controladores registrados. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static FlotaManager` (get) | Punto de acceso global al gestor. |
+| `RegistrarFlota(FlotaRuntimeData flota)` | `void` | Añade una flota al estado de partida y crea su `ComerciantePNJController`. Si ya existe una flota con el mismo `Id`, la sobreescribe. |
+| `ObtenerFlota(int id)` | `FlotaRuntimeData` | Devuelve los datos de runtime de la flota indicada, o `null` si no existe. |
+| `ObtenerTodasLasFlotas()` | `IReadOnlyCollection<FlotaRuntimeData>` | Devuelve todas las flotas PNJ activas en el mundo. |
+| `CambiarEstado(int flotaId, EstadoFlotaPNJ nuevoEstado)` | `void` | Realiza una transición de estado en la flota indicada. No actúa si la flota no existe. |
+| `TickTodosLosControladores()` | `void` | Avanza un día de simulación en todos los controladores de comportamiento registrados. Suscrito a `SimulacionTiempo.OnNuevoDia`. |
+| `SpawnFlotasPNJIniciales(IReadOnlyList<CiudadData> ciudades)` | `void` | Crea y registra exactamente 2 comerciantes de prueba (Hans id 1001, Klaus id 1002) usando las dos primeras ciudades del catálogo. |
+
+**Dependencias:** `GameManager.EstadoPartida`, `SimulacionTiempo.OnNuevoDia`, `ComerciantePNJController`, `FlotaRuntimeData`.
+
+---
+
+#### `ComerciantePNJController` — `Assets/Scripts/PNJ/ComerciantePNJController.cs`
+
+| Campo | Valor |
+|---|---|
+| **Tipo** | Clase pura C# (no `MonoBehaviour`) |
+| **Módulo** | PNJs — Comportamiento |
+| **Descripción** | Controlador de comportamiento de una flota PNJ comerciante. Instanciado por `FlotaManager` al registrar cada flota. Avanza un paso de la máquina de estados por cada llamada a `Tick`. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `ComerciantePNJController(FlotaRuntimeData flota, FlotaManager manager)` | Constructor | Vincula el controlador a su flota y al gestor central. |
+| `Tick()` | `void` | Avanza la lógica de comportamiento un día de juego delegando en el método privado del estado activo. Llamado por `FlotaManager.TickTodosLosControladores`. |
+
+**Estados internos (esqueleto — lógica real pendiente Día 15):**
+
+| Método privado | Estado | Comportamiento actual |
+|---|---|---|
+| `TickEnPuerto()` | `EnPuerto` | Log de traza. Día 15: consultar `MemoriaComercialPNJDAO` con retraso de 7 días, elegir bien rentable, comprar simulado y decidir ciudad destino → transición a `Viajando`. |
+| `TickViajando()` | `Viajando` | Log de traza. Día 15: decrementar días de viaje; al llegar → transición a `Comerciando`. |
+| `TickComerciando()` | `Comerciando` | Log de traza. Día 15: vender carga si es rentable → transición a `EnPuerto`. |
+| `CambiarEstado(EstadoFlotaPNJ)` | — | Delega en `FlotaManager.CambiarEstado` para centralizar el log de transiciones. |
+
+---
+
+### Scripts modificados
+
+#### `EstadoPartida` — `Assets/Scripts/Core/EstadoPartida.cs`
+
+- Añadido `FlotasPorId` (`Dictionary<int, FlotaRuntimeData>`): diccionario de todas las flotas PNJ activas en el mundo, indexado por `Id`. `FlotaManager` opera sobre él a través de `GameManager.EstadoPartida`.
+
+#### `GameManager` — `Assets/Scripts/Core/GameManager.cs`
+
+- Añadida propiedad pública `EstadoPartida` (`EstadoPartida`, get): expone el estado de partida para que `FlotaManager` pueda leer y escribir `FlotasPorId` sin duplicar el diccionario.
+- `InicializarMercadosDesdeAssets` llama a `FlotaManager.Instance.SpawnFlotasPNJIniciales(_ciudadesDisponibles)` al finalizar la inicialización de mercados, arrancando las flotas PNJ al inicio de cada partida nueva.
+
+### Fixes de infraestructura
+
+- Añadidas `Mono.Data.Sqlite.dll` y `System.Data.dll` a `Assets/Plugins/` para resolver errores de compilación tras formateo del equipo de desarrollo (las DLLs no estaban en el repositorio).
+
+---
+
+## TO-DO Día 15
+
+- [ ] **`TickEnPuerto` real** — consultar `MemoriaComercialPNJDAO` con retraso de 7 días, elegir el bien más rentable, simular compra y asignar ciudad destino → transición `EnPuerto → Viajando`.
+- [ ] **`TickComerciando` real** — vender carga si el precio actual supera el precio de compra conocido → transición `Comerciando → EnPuerto`.
+- [ ] **`TickViajando` real** — decrementar contador de días de viaje; al llegar a destino → transición `Viajando → Comerciando`.
+- [ ] **SpawnerInicial configurable** — decidir cuántas flotas PNJ se crean en función del número de ciudades disponibles (no hardcodeado a 2).
+- [ ] **Persistencia de flotas PNJ en SQLite** — diferido a Día 19; hasta entonces las flotas se recrean desde `SpawnFlotasPNJIniciales` al iniciar partida.
 - [ ] Implementar la máquina de estados de comerciantes (EnPuerto, Viajando, Comerciando, Huyendo) según `sesion_planificacion_release.md`.
