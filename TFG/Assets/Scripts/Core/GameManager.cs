@@ -91,6 +91,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private EstadoPartida _estadoPartida = new();
 
+    /// <summary>Expone el estado de partida para sistemas externos como FlotaManager.</summary>
+    public EstadoPartida EstadoPartida => _estadoPartida;
+
     /// <summary>
     /// Se dispara cuando el mercado de una ciudad cambia (compra, venta o tick diario).
     /// El primer parámetro es el <c>IdCiudad</c> de la ciudad afectada.
