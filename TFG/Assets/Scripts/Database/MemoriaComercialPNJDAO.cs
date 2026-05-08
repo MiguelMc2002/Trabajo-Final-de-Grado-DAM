@@ -21,6 +21,9 @@ public class MemoriaComercialPNJDto
 
     /// <summary>Día de juego en que se registró el precio.</summary>
     public int DiaJuegoConocido { get; set; }
+
+    /// <summary>Identificador de la ciudad en la que se observó el precio.</summary>
+    public int IdCiudad { get; set; }
 }
 
 /// <summary>
@@ -54,20 +57,21 @@ public class MemoriaComercialPNJDAO
     }
 
     /// <summary>
-    /// Registra o actualiza el precio que una flota PNJ ha observado para un bien.
-    /// Si ya existía un registro previo para la misma flota y bien, se sobreescribe.
+    /// Registra o actualiza el precio que una flota PNJ ha observado para un bien en una ciudad concreta.
+    /// Si ya existía un registro previo para la misma combinación de flota, bien y ciudad, se sobreescribe.
     /// </summary>
-    /// <param name="idFlota">Identificador de la flota que anota el precio.</param>
-    /// <param name="idBien">Identificador del bien observado.</param>
+    /// <param name="idFlota">Identificador de la flota que anota el precio. Usar 0 para el snapshot global.</param>
+    /// <param name="idBien">Índice del bien en el catálogo de <see cref="GameManager.CatalogoBienes"/>.</param>
+    /// <param name="idCiudad">Identificador de la ciudad donde se observó el precio.</param>
     /// <param name="precioConocido">Precio de mercado observado en la visita.</param>
     /// <param name="diaJuegoActual">Día de juego actual en el momento de la observación.</param>
-    public void GuardarMemoria(int idFlota, int idBien, double precioConocido, int diaJuegoActual)
+    public void GuardarMemoria(int idFlota, int idBien, int idCiudad, double precioConocido, int diaJuegoActual)
     {
         const string sql = @"
             INSERT OR REPLACE INTO MemoriaComercialPNJ
-                (id_flota, id_bien, precio_conocido, dia_juego_conocido)
+                (id_flota, id_bien, id_ciudad, precio_conocido, dia_juego_conocido)
             VALUES
-                (@idFlota, @idBien, @precioConocido, @diaJuegoActual);";
+                (@idFlota, @idBien, @idCiudad, @precioConocido, @diaJuegoActual);";
 
         try
         {
@@ -76,6 +80,7 @@ public class MemoriaComercialPNJDAO
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@idFlota",        idFlota);
                 cmd.Parameters.AddWithValue("@idBien",         idBien);
+                cmd.Parameters.AddWithValue("@idCiudad",       idCiudad);
                 cmd.Parameters.AddWithValue("@precioConocido", precioConocido);
                 cmd.Parameters.AddWithValue("@diaJuegoActual", diaJuegoActual);
                 cmd.ExecuteNonQuery();
@@ -83,25 +88,26 @@ public class MemoriaComercialPNJDAO
         }
         catch (Exception ex)
         {
-            Debug.LogError($"[MemoriaComercialPNJDAO] Error al guardar memoria de la flota id={idFlota} para bien id={idBien}: {ex}");
+            Debug.LogError($"[MemoriaComercialPNJDAO] Error al guardar memoria de la flota id={idFlota} para bien id={idBien} en ciudad id={idCiudad}: {ex}");
         }
     }
 
     /// <summary>
     /// Devuelve toda la memoria comercial registrada para una flota, sin filtrar
-    /// por antigüedad. Útil para inspeccionar o serializar el estado completo de
-    /// un PNJ comerciante.
+    /// por antigüedad. Incluye la ciudad donde se observó cada precio.
+    /// Útil para inspeccionar o serializar el estado completo de un PNJ comerciante,
+    /// y para obtener el snapshot global usando <c>idFlota = 0</c>.
     /// </summary>
-    /// <param name="idFlota">Identificador de la flota a consultar.</param>
+    /// <param name="idFlota">Identificador de la flota a consultar. Usar 0 para el snapshot global.</param>
     /// <returns>
-    /// Lista de <see cref="MemoriaComercialPNJDto"/> con un registro por bien conocido.
+    /// Lista de <see cref="MemoriaComercialPNJDto"/> con un registro por combinación bien-ciudad conocida.
     /// Vacía si la flota no tiene memoria guardada o si ocurre un error.
     /// </returns>
     public List<MemoriaComercialPNJDto> ObtenerMemoriaDeFlota(int idFlota)
     {
         var resultado = new List<MemoriaComercialPNJDto>();
         const string sql = @"
-            SELECT id_flota, id_bien, precio_conocido, dia_juego_conocido
+            SELECT id_flota, id_bien, id_ciudad, precio_conocido, dia_juego_conocido
             FROM MemoriaComercialPNJ
             WHERE id_flota = @idFlota;";
 
@@ -120,8 +126,9 @@ public class MemoriaComercialPNJDAO
                         {
                             IdFlota          = reader.GetInt32(0),
                             IdBien           = reader.GetInt32(1),
-                            PrecioConocido   = reader.GetDouble(2),
-                            DiaJuegoConocido = reader.GetInt32(3)
+                            IdCiudad         = reader.GetInt32(2),
+                            PrecioConocido   = reader.GetDouble(3),
+                            DiaJuegoConocido = reader.GetInt32(4)
                         });
                     }
                 }

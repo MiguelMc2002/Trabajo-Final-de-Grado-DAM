@@ -1351,3 +1351,71 @@ POCO de runtime que representa el estado vivo de una flota PNJ durante la simula
 - [ ] **SpawnerInicial configurable** — decidir cuántas flotas PNJ se crean en función del número de ciudades disponibles (no hardcodeado a 2).
 - [ ] **Persistencia de flotas PNJ en SQLite** — diferido a Día 19; hasta entonces las flotas se recrean desde `SpawnFlotasPNJIniciales` al iniciar partida.
 - [ ] Implementar la máquina de estados de comerciantes (EnPuerto, Viajando, Comerciando, Huyendo) según `sesion_planificacion_release.md`.
+
+---
+
+## DÍA 15 — PNJs comerciantes: tick diario y memoria comercial global
+
+Lógica completa de los tres estados de la máquina de estados de los PNJs comerciantes. Se implementa el snapshot global de precios (idFlota=0) que sirve como fuente de verdad con retraso de 7 días para las decisiones de compra.
+
+### Scripts modificados
+
+#### `ComerciantePNJController` — `Assets/Scripts/PNJ/ComerciantePNJController.cs`
+
+| Miembro | Cambio |
+|---|---|
+| `TickEnPuerto()` | Lógica completa: consulta snapshot global, selecciona bien con mayor margen, compra simulada afectando `StockActual`, inicia viaje. Sin ruta rentable → viaje en vacío a ciudad aleatoria. |
+| `TickViajando()` | Decrementa `_diasRestantesViaje` cada tick; al llegar actualiza `CiudadOrigenId` y transiciona a `Comerciando`. |
+| `TickComerciando()` | Vende siempre al llegar (con o sin pérdidas) para liberar bodega. Modifica `StockActual` directamente y notifica via `NotificarMercadoActualizado`. |
+| `IniciarViaje()` | Método público para arrancar viaje desde `TickEnPuerto`, registra precios de compra. |
+| `ObtenerSnapshotGlobal()` | Helper privado — devuelve memoria global (idFlota=0). |
+| `ObtenerEntrada()` | Helper privado — busca `EntradaMercado` por ciudad y bien sin pasar por MarketManager. |
+| Constructor | Acepta `MemoriaComercialPNJDAO memoriaDAO` como tercer parámetro. |
+
+#### `FlotaManager` — `Assets/Scripts/PNJ/FlotaManager.cs`
+
+| Miembro | Cambio |
+|---|---|
+| `RefreshMemoriaGlobal()` | Nuevo método privado — recorre `MercadosPorCiudad` y guarda snapshot global con `idFlota=0` cada 7 días. |
+| `ObtenerMemoriaDAO()` | Helper privado lazy — crea `MemoriaComercialPNJDAO` la primera vez que se necesita, garantizando conexión SQLite abierta. |
+| `TickTodosLosControladores()` | Incrementa `_diasDesdeUltimoRefresh`; llama `RefreshMemoriaGlobal()` cada 7 días. |
+| `SpawnFlotasPNJIniciales()` | Llama `RefreshMemoriaGlobal()` al finalizar para garantizar snapshot desde el día 1. |
+
+#### `MemoriaComercialPNJDAO` — `Assets/Scripts/Database/MemoriaComercialPNJDAO.cs`
+
+| Miembro | Cambio |
+|---|---|
+| `GuardarMemoria()` | Añadido parámetro `int idCiudad` — persiste la ciudad donde se observó el precio. |
+| `ObtenerMemoriaDeFlota()` | SELECT incluye `id_ciudad`, se hidrata en `dto.IdCiudad`. |
+
+#### `MemoriaComercialPNJDto`
+
+- Añadida propiedad `public int IdCiudad { get; set; }`.
+
+#### `DatabaseManager` — `Assets/Scripts/Database/DatabaseManager.cs`
+
+- Tabla `MemoriaComercialPNJ` redefinida sin FK a `Flota` ni `Bien`, con `id_ciudad INTEGER NOT NULL DEFAULT 0` y PK `(id_flota, id_bien, id_ciudad)`.
+
+#### `EstadoPartida` — `Assets/Scripts/Core/EstadoPartida.cs`
+
+- Añadido `public int DiaJuego = 1` — día actual de simulación usado por el sistema PNJ.
+
+#### `SeleccionCiudadUI` — `Assets/Scripts/UI/SeleccionCiudadUI.cs`
+
+- Llama a `DatabaseManager.Instance.InicializarSlot(0)` antes de `InicializarMercadosDesdeAssets` para garantizar conexión SQLite en partida nueva. Slot 0 = partida temporal en curso.
+
+---
+
+## TO-DO Día 16
+
+- [ ] Tilemap hexagonal del mapamundi — crear grid hex navegable con tiles tipados (mar, tierra, peligro).
+- [ ] Marcadores visuales de ciudades sobre el tilemap.
+- [ ] Cámara del mapamundi con zoom y desplazamiento por bordes.
+
+---
+
+## Deuda técnica registrada (Día 15)
+
+- [ ] **`BienData` sin ID numérico propio** — el índice de array se usa como `idBien` en `MemoriaComercialPNJ`. Es frágil si se reordenan assets en el Inspector. Solución: añadir campo `int idBien` serializado a `BienData` y actualizar DAOs. Pendiente antes del freeze (Día 32).
+- [ ] **Persistencia de flotas PNJ entre guardado y carga** — diferida al Día 19. Hasta entonces las flotas se recrean desde `SpawnFlotasPNJIniciales` al iniciar partida nueva; los guardados anteriores al Día 15 no tienen flotas PNJ.
+- [ ] **Viaje en vacío a ciudad aleatoria** — cuando no hay ruta rentable el comerciante elige destino al azar. En post-TFG mejorar a selección por cercanía geográfica usando pathfinding A* del Día 17.

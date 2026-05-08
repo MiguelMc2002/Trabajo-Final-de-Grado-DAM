@@ -15,6 +15,9 @@ public class EstadoPartida
     /// Esta es la fuente de verdad del mercado: <see cref="MarketManager"/> lee y
     /// escribe aquí en lugar de mantener su propia lista interna.
     /// </summary>
+    /// <summary>Día actual de la simulación de juego. Se incrementa cada tick diario.</summary>
+    public int DiaJuego = 1;
+
     public Dictionary<int, List<EntradaMercado>> MercadosPorCiudad = new();
 
     // Pendiente: tipo concreto se define en Semana 3 - ver sesion_planificacion_release.md
