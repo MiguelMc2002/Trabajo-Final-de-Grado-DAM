@@ -10,8 +10,9 @@ public class SeleccionCiudadUI : MonoBehaviour
     public CiudadData datosCiudad;
 
     /// <summary>
-    /// Establece la ciudad actual en el GameManager y carga la escena de ciudad.
-    /// Llamado por el evento OnClick del botón.
+    /// Abre la base de datos de la partida en curso, inicializa los mercados y
+    /// navega a la pantalla de ciudad seleccionada.
+    /// Llamado por el evento OnClick del botón de ciudad en el menú principal.
     /// </summary>
     public void SeleccionarCiudad()
     {
@@ -20,6 +21,11 @@ public class SeleccionCiudadUI : MonoBehaviour
             Debug.LogWarning("[SeleccionCiudadUI] datosCiudad no asignado en el Inspector.");
             return;
         }
+
+        // Slot 0: base de datos temporal de la partida en curso.
+        // Si el jugador guarda en un slot concreto (1-5), SaveManager
+        // llamará a InicializarSlot con el número correcto y lo sobreescribirá.
+        DatabaseManager.Instance.InicializarSlot(0);
 
         if (GameManager.Instance != null && GameManager.Instance.CiudadesDisponibles != null)
             GameManager.Instance.InicializarMercadosDesdeAssets(GameManager.Instance.CiudadesDisponibles);

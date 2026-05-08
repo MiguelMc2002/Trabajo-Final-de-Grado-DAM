@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -21,6 +22,10 @@ public class FlotaManager : MonoBehaviour
     // ─── Controladores de comportamiento ─────────────────────────────────────
 
     private readonly Dictionary<int, ComerciantePNJController> _controladores = new();
+
+    private int _diasDesdeUltimoRefresh = 0;
+
+    private MemoriaComercialPNJDAO _memoriaDAO;
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -58,7 +63,7 @@ public class FlotaManager : MonoBehaviour
         FlotasPorId[flota.Id] = flota;
 
         // Crear y registrar el controlador de comportamiento para esta flota
-        _controladores[flota.Id] = new ComerciantePNJController(flota, this);
+        _controladores[flota.Id] = new ComerciantePNJController(flota, this, ObtenerMemoriaDAO());
 
         Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}");
     }
@@ -88,11 +93,38 @@ public class FlotaManager : MonoBehaviour
     /// <summary>
     /// Avanza un día de simulación en todos los controladores de comportamiento PNJ registrados.
     /// Suscrito a <see cref="SimulacionTiempo.OnNuevoDia"/> en <c>Awake</c>.
+    /// Cada 7 días realiza un snapshot global de precios de mercado antes de ejecutar los ticks.
     /// </summary>
     public void TickTodosLosControladores()
     {
+        _diasDesdeUltimoRefresh++;
+        if (_diasDesdeUltimoRefresh >= 7)
+        {
+            RefreshMemoriaGlobal();
+            _diasDesdeUltimoRefresh = 0;
+        }
+
         foreach (ComerciantePNJController controlador in _controladores.Values)
             controlador.Tick();
+    }
+
+    private void RefreshMemoriaGlobal()
+    {
+        int diaJuego = GameManager.Instance.EstadoPartida.DiaJuego;
+
+        foreach (var kvp in GameManager.Instance.MercadosPorCiudad)
+        {
+            int idCiudad = kvp.Key;
+            foreach (EntradaMercado entrada in kvp.Value)
+            {
+                int idBien = GameManager.Instance.CatalogoBienes.ToList().IndexOf(entrada.Bien);
+                if (idBien == -1) continue;
+
+                ObtenerMemoriaDAO().GuardarMemoria(0, idBien, idCiudad, entrada.PrecioActual, diaJuego);
+            }
+        }
+
+        Debug.Log($"[PNJ] Snapshot global actualizado. Día {diaJuego}.");
     }
 
     /// <summary>
@@ -124,6 +156,23 @@ public class FlotaManager : MonoBehaviour
         RegistrarFlota(klaus);
 
         Debug.Log($"[FlotaManager] Flotas PNJ iniciales creadas: Hans (ciudad {ciudadHansId}), Klaus (ciudad {ciudadKlausId}).");
+
+        RefreshMemoriaGlobal();
+    }
+
+    // ─── Helpers privados ─────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Devuelve el DAO de memoria comercial, creándolo si aún no existe.
+    /// Se inicializa de forma lazy para garantizar que <see cref="DatabaseManager"/>
+    /// ya tiene una conexión SQLite abierta cuando se accede por primera vez.
+    /// </summary>
+    /// <returns>Instancia del DAO de memoria comercial PNJ lista para su uso.</returns>
+    private MemoriaComercialPNJDAO ObtenerMemoriaDAO()
+    {
+        if (_memoriaDAO == null)
+            _memoriaDAO = new MemoriaComercialPNJDAO(DatabaseManager.Instance);
+        return _memoriaDAO;
     }
 
     private void OnDestroy()

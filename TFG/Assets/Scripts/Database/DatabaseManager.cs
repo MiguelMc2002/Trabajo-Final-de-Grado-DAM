@@ -231,11 +231,12 @@ public class DatabaseManager : MonoBehaviour
             );
 
             CREATE TABLE IF NOT EXISTS MemoriaComercialPNJ (
-                id_flota           INTEGER NOT NULL REFERENCES Flota(id_flota),
-                id_bien            INTEGER NOT NULL REFERENCES Bien(id_bien),
+                id_flota           INTEGER NOT NULL,
+                id_bien            INTEGER NOT NULL,
+                id_ciudad          INTEGER NOT NULL DEFAULT 0,
                 precio_conocido    DECIMAL NOT NULL,
                 dia_juego_conocido INTEGER NOT NULL,
-                PRIMARY KEY (id_flota, id_bien)
+                PRIMARY KEY (id_flota, id_bien, id_ciudad)
             );
         ";
 
