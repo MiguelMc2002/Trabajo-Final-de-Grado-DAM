@@ -14,6 +14,9 @@ public class CiudadDto
 
     /// <summary>Nombre de la ciudad tal como aparece en la interfaz.</summary>
     public string Nombre { get; set; }
+
+    public int CasillaX { get; set; }
+    public int CasillaY { get; set; }
 }
 
 /// <summary>
@@ -39,9 +42,9 @@ public class CiudadDAO
     /// </summary>
     /// <param name="idCiudad">Identificador fijo de la ciudad.</param>
     /// <param name="nombre">Nombre de la ciudad.</param>
-    public void InsertarCiudad(int idCiudad, string nombre)
+    public void InsertarCiudad(int idCiudad, string nombre, int casillaX, int casillaY)
     {
-        const string sql = "INSERT OR IGNORE INTO Ciudad (id_ciudad, nombre) VALUES (@id, @nombre);";
+        const string sql = "INSERT OR IGNORE INTO Ciudad (id_ciudad, nombre, casilla_x, casilla_y) VALUES (@id, @nombre, @cx, @cy);";
 
         try
         {
@@ -50,6 +53,8 @@ public class CiudadDAO
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@id",     idCiudad);
                 cmd.Parameters.AddWithValue("@nombre", nombre);
+                cmd.Parameters.AddWithValue("@cx",     casillaX);
+                cmd.Parameters.AddWithValue("@cy",     casillaY);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -65,12 +70,12 @@ public class CiudadDAO
     /// </summary>
     public void InsertarCiudadesIniciales()
     {
-        InsertarCiudad(1, "Lübeck");
-        InsertarCiudad(2, "Barcelona");
-        InsertarCiudad(3, "Génova");
-        InsertarCiudad(4, "Venecia");
-        InsertarCiudad(5, "Ruan");
-        InsertarCiudad(6, "Brujas");
+        InsertarCiudad(1, "Lübeck",    -4,   0);
+        InsertarCiudad(2, "Barcelona", -16, -16);
+        InsertarCiudad(3, "Génova",    -8,  -13);
+        InsertarCiudad(4, "Venecia",   -5,  -12);
+        InsertarCiudad(5, "Ruan",      -17,  -6);
+        InsertarCiudad(6, "Brujas",    -13,  -3);
     }
 
     /// <summary>
@@ -83,7 +88,7 @@ public class CiudadDAO
     public List<CiudadDto> ObtenerTodasLasCiudades()
     {
         var ciudades = new List<CiudadDto>();
-        const string sql = "SELECT id_ciudad, nombre FROM Ciudad;";
+        const string sql = "SELECT id_ciudad, nombre, casilla_x, casilla_y FROM Ciudad;";
 
         try
         {
@@ -98,7 +103,9 @@ public class CiudadDAO
                         ciudades.Add(new CiudadDto
                         {
                             IdCiudad = reader.GetInt32(0),
-                            Nombre   = reader.GetString(1)
+                            Nombre   = reader.GetString(1),
+                            CasillaX = reader.GetInt32(2),
+                            CasillaY = reader.GetInt32(3)
                         });
                     }
                 }
@@ -110,5 +117,29 @@ public class CiudadDAO
         }
 
         return ciudades;
+    }
+
+    /// <summary>
+    /// Migración: añade las columnas casilla_x y casilla_y a la tabla Ciudad si no existen.
+    /// Seguro de llamar varias veces — usa try/catch por columna.
+    /// </summary>
+    public void MigrarColumnasCasilla()
+    {
+        foreach (string col in new[] { "casilla_x", "casilla_y" })
+        {
+            try
+            {
+                using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+                {
+                    cmd.CommandText = $"ALTER TABLE Ciudad ADD COLUMN {col} INTEGER NOT NULL DEFAULT 0;";
+                    cmd.ExecuteNonQuery();
+                    Debug.Log($"[CiudadDAO] Columna '{col}' añadida correctamente.");
+                }
+            }
+            catch (Exception)
+            {
+                // Columna ya existe — normal en partidas guardadas anteriores
+            }
+        }
     }
 }

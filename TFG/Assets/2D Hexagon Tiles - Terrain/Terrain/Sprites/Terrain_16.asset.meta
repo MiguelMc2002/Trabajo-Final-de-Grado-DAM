@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bc0b3ea18c16ec9459735c8f1a603831
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 196912
+  packageName: 2D Hexagon Tiles - Environment
+  packageVersion: 1.0
+  assetPath: Assets/2D Hexagon Tiles - Terrain/Terrain/Sprites/Terrain_16.asset
+  uploadId: 437527
