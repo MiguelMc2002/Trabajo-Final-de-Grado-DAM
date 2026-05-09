@@ -131,6 +131,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | `IdCiudad` | `int` | Identificador numérico único de la ciudad. Debe coincidir con el `id_ciudad` de la tabla Ciudad en SQLite (1=Lübeck, 2=Barcelona, 3=Génova, 4=Venecia, 5=Ruan, 6=Brujas). Asignar manualmente en el Inspector de cada asset. |
 | `NombreCiudad` | `string` | Nombre de la ciudad que se mostrará en la interfaz (p. ej. "Lübeck", "Brujas"). |
 | `Mercado` | `List<EntradaMercado>` | Lista de bienes disponibles en el mercado de esta ciudad, con su stock inicial y cadencias diarias. |
+| `CasillaMapamundi` | `Vector3Int` | Casilla hexagonal del tilemap donde está ubicada esta ciudad. Z siempre 0. Usado por el pathfinding A* del Día 17. |
 
 ### Dependencias
 
@@ -845,7 +846,7 @@ Conjunto de clases que persisten y restauran el estado completo de una partida e
 | DTO | Archivo | Campos |
 |---|---|---|
 | `EstadoJuegoData` | `EstadoJuegoDAO.cs` | `DiaJuego`, `MesJuego`, `AñoJuego`, `VelocidadTiempo`, `FechaGuardado`, **`DineroJugador`** (añadido Día 13) |
-| `CiudadDto` | `CiudadDAO.cs` | `IdCiudad`, `Nombre` |
+| `CiudadDto` | `CiudadDAO.cs` | `IdCiudad`, `Nombre`, `CasillaX`, `CasillaY` |
 | `BienDto` | `BienDAO.cs` | `IdBien`, `Nombre`, `Categoria`, `PrecioBase` |
 | `EstadoMercadoDto` | `EstadoMercadoCiudadDAO.cs` | `IdCiudad`, `IdBien`, `Stock`, `Produccion`, `Consumo`, `PrecioActual` |
 | `EdificiosCiudadDto` | `EdificiosCiudadDAO.cs` | `IdCiudad`, `IdTipoEdificio`, `NombreTipoEdificio`, `Cantidad` |
@@ -1408,9 +1409,47 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 
 ## TO-DO Día 16
 
-- [ ] Tilemap hexagonal del mapamundi — crear grid hex navegable con tiles tipados (mar, tierra, peligro).
-- [ ] Marcadores visuales de ciudades sobre el tilemap.
-- [ ] Cámara del mapamundi con zoom y desplazamiento por bordes.
+- [x] Tilemap hexagonal del mapamundi — crear grid hex navegable con tiles tipados (mar, tierra, peligro).
+- [x] Marcadores visuales de ciudades sobre el tilemap. (PARCIAL — GameObjects creados, sin sprite visual todavía)
+- [x] Cámara del mapamundi con zoom y desplazamiento por bordes.
+
+---
+
+## TO-DO Día 17
+
+- [ ] A* hexagonal (`RutaCalculadorTilemap.cs`) con coordenadas cube, heurística hex y cola de prioridad
+- [ ] Tests unitarios del A* (ruta Lübeck→Barcelona, hexágono inalcanzable, adyacentes en mar)
+- [ ] `FlotaPNJData` ampliado con `PosicionActual`, `CasillaDestino`, `RutaActual`, `IndiceWaypointActual`
+- [ ] Migración BD flotas con columnas de posición continua (`posicion_actual_x`, `posicion_actual_y`)
+- [ ] `FlotaIconoMapamundi.cs` — movimiento continuo con `Vector3.MoveTowards`
+- [ ] Adaptar `MarcadorCiudad` a trigger de casilla (`OnTriggerEnter2D`)
+- [ ] Marcadores visuales de ciudad (sprite distintivo + TextMeshPro + animación hover)
+
+---
+
+## MapamundiCamara
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Mapamundi/MapamundiCamara.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Mundo y navegación |
+| **Descripción** | Controla la cámara del mapamundi. Zoom con rueda del ratón con límite dinámico basado en orthographicSize para no mostrar área fuera del mapa. Desplazamiento con WASD/flechas, arrastre con clic izquierdo (respeta colisiones de ciudades y flotas) o clic medio, y scroll por bordes de pantalla. ClampPosicion() centralizado aplica límites a todos los métodos de movimiento. Adjuntar a la Main Camera de la escena Mapamundi. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MinZoom` | `float` | Tamaño ortográfico mínimo (más zoom). Default: 3. |
+| `MaxZoom` | `float` | Tamaño ortográfico máximo (menos zoom). Default: 15. |
+| `VelocidadZoom` | `float` | Velocidad de zoom al girar la rueda. Default: 2. |
+| `ZonaBorde` | `float` | Píxeles desde el borde que activan el scroll. Default: 50. |
+| `VelocidadScroll` | `float` | Velocidad de desplazamiento por bordes. Default: 5. |
+| `VelocidadWASD` | `float` | Velocidad de desplazamiento con teclado. Default: 8. |
+| `LimiteIzquierdo` | `float` | Límite izquierdo del mapa en world space. |
+| `LimiteDerecho` | `float` | Límite derecho del mapa en world space. |
+| `LimiteInferior` | `float` | Límite inferior del mapa en world space. |
+| `LimiteSuperior` | `float` | Límite superior del mapa en world space. |
 
 ---
 
@@ -1419,3 +1458,7 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 - [ ] **`BienData` sin ID numérico propio** — el índice de array se usa como `idBien` en `MemoriaComercialPNJ`. Es frágil si se reordenan assets en el Inspector. Solución: añadir campo `int idBien` serializado a `BienData` y actualizar DAOs. Pendiente antes del freeze (Día 32).
 - [ ] **Persistencia de flotas PNJ entre guardado y carga** — diferida al Día 19. Hasta entonces las flotas se recrean desde `SpawnFlotasPNJIniciales` al iniciar partida nueva; los guardados anteriores al Día 15 no tienen flotas PNJ.
 - [ ] **Viaje en vacío a ciudad aleatoria** — cuando no hay ruta rentable el comerciante elige destino al azar. En post-TFG mejorar a selección por cercanía geográfica usando pathfinding A* del Día 17.
+- [ ] **`TileNavegable.cs` sin uso efectivo** — el pathfinding usa `GetSprite()` por nombre en lugar del campo `costeMovimiento`. Evaluar si se elimina o adapta antes del freeze (Día 32).
+- [ ] **Scripts de debug de editor** (`DebugCasillaHex.cs`, `DebugTilemapBounds.cs`) — eliminar antes del freeze (Día 32).
+- [ ] **Marcadores visuales de ciudad** — GameObjects creados pero sin sprite ni feedback visual. Diferido al Día 17.
+- [ ] **ZonaPeligro sin tile visual** — diferido al Día 21 (piratas).
