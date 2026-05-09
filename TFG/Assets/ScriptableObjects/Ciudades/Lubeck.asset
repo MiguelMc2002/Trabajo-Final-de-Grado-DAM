@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CiudadData
   IdCiudad: 1
   NombreCiudad: "L\xFCbeck"
+  CasillaMapamundi: {x: -4, y: 0, z: 0}
   Mercado:
   - Bien: {fileID: 11400000, guid: 489c86f507539f44d994f99e9fde56dc, type: 2}
     StockActual: 250

@@ -2,7 +2,7 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!78 &1
 TagManager:
-  serializedVersion: 2
+  serializedVersion: 3
   tags: []
   layers:
   - Default
@@ -41,3 +41,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Mar
+    uniqueID: 3954410273
+    locked: 0
+  - name: Tierra
+    uniqueID: 2400349409
+    locked: 0
+  - name: Zona Peligro
+    uniqueID: 328184979
+    locked: 0
+  - name: Indicador Ciudad
+    uniqueID: 1918513105
+    locked: 0
+  m_RenderingLayers:
+  - Default
+  m_MigratedRenderPipelines: []

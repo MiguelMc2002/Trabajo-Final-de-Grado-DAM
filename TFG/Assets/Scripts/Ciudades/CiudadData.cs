@@ -24,6 +24,13 @@ public class CiudadData : ScriptableObject
     /// </summary>
     public string NombreCiudad;
 
+    /// <summary>
+    /// Casilla hexagonal del tilemap del mapamundi donde está ubicada esta ciudad.
+    /// Coordenadas en grid space (Vector3Int). Z siempre 0.
+    /// Usado por el pathfinding A* del Día 17 como origen/destino de rutas.
+    /// </summary>
+    public Vector3Int CasillaMapamundi;
+
     // ─── Mercado ─────────────────────────────────────────────────────────────
 
     /// <summary>
