@@ -56,6 +56,20 @@ public class FlotaRuntimeData
         Carga            = new Dictionary<int, int>();
     }
 
+    // Posición y ruta en el mapamundi
+
+    /// <summary>Posición actual de la flota en coordenadas de mundo del mapamundi.</summary>
+    public UnityEngine.Vector2 PosicionActual;
+
+    /// <summary>Casilla de destino en coordenadas offset del Tilemap.</summary>
+    public UnityEngine.Vector3Int CasillaDestino;
+
+    /// <summary>Secuencia de casillas offset que componen la ruta en el mapamundi. Se recalcula al cargar.</summary>
+    [System.NonSerialized] public List<UnityEngine.Vector3Int> RutaActualTilemap = new List<UnityEngine.Vector3Int>();
+
+    /// <summary>Índice del siguiente waypoint dentro de <see cref="RutaActual"/>. Se recalcula al cargar.</summary>
+    [System.NonSerialized] public int IndiceWaypointActual;
+
     /// <summary>
     /// Indica si la bodega de la flota contiene al menos un bien con cantidad mayor que cero.
     /// </summary>

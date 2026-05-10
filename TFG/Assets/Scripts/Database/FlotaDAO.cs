@@ -48,6 +48,18 @@ public class FlotaDto
     /// destino activo (está en puerto o a la espera).
     /// </summary>
     public int? IdCiudadDestino { get; set; }
+
+    /// <summary>Coordenada X de la posición actual de la flota en el tilemap.</summary>
+    public float PosicionActualX { get; set; }
+
+    /// <summary>Coordenada Y de la posición actual de la flota en el tilemap.</summary>
+    public float PosicionActualY { get; set; }
+
+    /// <summary>Columna X de la casilla de destino en coordenadas offset del tilemap.</summary>
+    public int CasillaDestinoX { get; set; }
+
+    /// <summary>Columna Y de la casilla de destino en coordenadas offset del tilemap.</summary>
+    public int CasillaDestinoY { get; set; }
 }
 
 /// <summary>
@@ -84,29 +96,37 @@ public class FlotaDAO
     /// <param name="idCiudadDestino">Ciudad de destino si está navegando, o <c>null</c> si no tiene destino activo.</param>
     public void InsertarFlota(int idFlota, string tipoPropietario, int? idCiudadActual,
                               float posX, float posY, int? idCapitan,
-                              string estadoActual, int? idCiudadDestino)
+                              string estadoActual, int? idCiudadDestino,
+                              float posActualX = 0f, float posActualY = 0f,
+                              int casillaDestinoX = 0, int casillaDestinoY = 0)
     {
         const string sql = @"
             INSERT OR REPLACE INTO Flota
                 (id_flota, tipo_propietario, id_ciudad_actual, posicion_x, posicion_y,
-                 id_capitan, estado_actual, id_ciudad_destino)
+                 id_capitan, estado_actual, id_ciudad_destino,
+                 posicion_actual_x, posicion_actual_y, casilla_destino_x, casilla_destino_y)
             VALUES
                 (@idFlota, @tipo, @ciudadActual, @posX, @posY,
-                 @capitan, @estado, @ciudadDestino);";
+                 @capitan, @estado, @ciudadDestino,
+                 @posActualX, @posActualY, @casillaDestinoX, @casillaDestinoY);";
 
         try
         {
             using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
-                cmd.Parameters.AddWithValue("@idFlota",       idFlota);
-                cmd.Parameters.AddWithValue("@tipo",          tipoPropietario);
-                cmd.Parameters.AddWithValue("@ciudadActual",  (object)idCiudadActual  ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@posX",          posX);
-                cmd.Parameters.AddWithValue("@posY",          posY);
-                cmd.Parameters.AddWithValue("@capitan",       (object)idCapitan       ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("@estado",        estadoActual);
-                cmd.Parameters.AddWithValue("@ciudadDestino", (object)idCiudadDestino ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@idFlota",         idFlota);
+                cmd.Parameters.AddWithValue("@tipo",            tipoPropietario);
+                cmd.Parameters.AddWithValue("@ciudadActual",    (object)idCiudadActual  ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@posX",            posX);
+                cmd.Parameters.AddWithValue("@posY",            posY);
+                cmd.Parameters.AddWithValue("@capitan",         (object)idCapitan       ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@estado",          estadoActual);
+                cmd.Parameters.AddWithValue("@ciudadDestino",   (object)idCiudadDestino ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("@posActualX",      posActualX);
+                cmd.Parameters.AddWithValue("@posActualY",      posActualY);
+                cmd.Parameters.AddWithValue("@casillaDestinoX", casillaDestinoX);
+                cmd.Parameters.AddWithValue("@casillaDestinoY", casillaDestinoY);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -172,7 +192,8 @@ public class FlotaDAO
         var flotas = new List<FlotaDto>();
         const string sql = @"
             SELECT id_flota, tipo_propietario, id_ciudad_actual, posicion_x, posicion_y,
-                   id_capitan, estado_actual, id_ciudad_destino
+                   id_capitan, estado_actual, id_ciudad_destino,
+                   posicion_actual_x, posicion_actual_y, casilla_destino_x, casilla_destino_y
             FROM Flota;";
 
         try
@@ -209,7 +230,8 @@ public class FlotaDAO
         var flotas = new List<FlotaDto>();
         const string sql = @"
             SELECT id_flota, tipo_propietario, id_ciudad_actual, posicion_x, posicion_y,
-                   id_capitan, estado_actual, id_ciudad_destino
+                   id_capitan, estado_actual, id_ciudad_destino,
+                   posicion_actual_x, posicion_actual_y, casilla_destino_x, casilla_destino_y
             FROM Flota
             WHERE tipo_propietario = @tipo;";
 
@@ -259,6 +281,39 @@ public class FlotaDAO
         }
     }
 
+    /// <summary>
+    /// Migración: añade las 4 columnas de posición en tilemap a la tabla Flota si no existen.
+    /// Seguro de llamar varias veces — usa try/catch por columna.
+    /// </summary>
+    public void MigrarColumnasMapamundi()
+    {
+        var columnas = new[]
+        {
+            "posicion_actual_x REAL NOT NULL DEFAULT 0",
+            "posicion_actual_y REAL NOT NULL DEFAULT 0",
+            "casilla_destino_x INTEGER NOT NULL DEFAULT 0",
+            "casilla_destino_y INTEGER NOT NULL DEFAULT 0",
+        };
+
+        foreach (string definicion in columnas)
+        {
+            string nombreCol = definicion.Split(' ')[0];
+            try
+            {
+                using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+                {
+                    cmd.CommandText = $"ALTER TABLE Flota ADD COLUMN {definicion};";
+                    cmd.ExecuteNonQuery();
+                    Debug.Log($"[FlotaDAO] Columna '{nombreCol}' añadida correctamente.");
+                }
+            }
+            catch (Exception)
+            {
+                // Columna ya existe — normal en partidas guardadas anteriores
+            }
+        }
+    }
+
     // ─── Auxiliares privados ──────────────────────────────────────────────────
 
     /// <summary>
@@ -278,7 +333,11 @@ public class FlotaDAO
             PosicionY        = reader.GetFloat(4),
             IdCapitan        = reader.IsDBNull(5) ? (int?)null : reader.GetInt32(5),
             EstadoActual     = reader.GetString(6),
-            IdCiudadDestino  = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7)
+            IdCiudadDestino  = reader.IsDBNull(7) ? (int?)null : reader.GetInt32(7),
+            PosicionActualX  = reader.GetFloat(8),
+            PosicionActualY  = reader.GetFloat(9),
+            CasillaDestinoX  = reader.GetInt32(10),
+            CasillaDestinoY  = reader.GetInt32(11)
         };
     }
 }

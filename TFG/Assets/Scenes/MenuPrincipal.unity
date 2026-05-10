@@ -4770,6 +4770,10 @@ MonoBehaviour:
   _ciudadesDisponibles:
   - {fileID: 11400000, guid: 45f064b17c2fff04cbc74215bfe86adf, type: 2}
   - {fileID: 11400000, guid: 468a578ad8d180b4796463ed3020f685, type: 2}
+  - {fileID: 11400000, guid: 15dbe7d368e9a3b41b36a3dbf55bc8c2, type: 2}
+  - {fileID: 11400000, guid: c1d590a166bfd074f82c7d70d1bb4873, type: 2}
+  - {fileID: 11400000, guid: a7bfd33f006739b4481e9de79a18cd2c, type: 2}
+  - {fileID: 11400000, guid: 35c28e32b14e0fe41abdbec29b362b77, type: 2}
   _catalogoBienes:
   - {fileID: 11400000, guid: 489c86f507539f44d994f99e9fde56dc, type: 2}
   - {fileID: 11400000, guid: 89dfd2d6b0d14b6499cdd9f21679f362, type: 2}

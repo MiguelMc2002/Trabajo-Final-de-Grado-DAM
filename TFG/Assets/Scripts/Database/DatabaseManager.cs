@@ -73,6 +73,7 @@ public class DatabaseManager : MonoBehaviour
             CrearTablasSiNoExisten();
             MigrarColumnaDineroJugador();
             new CiudadDAO(this).MigrarColumnasCasilla();
+            new FlotaDAO(this).MigrarColumnasMapamundi();
         }
         catch (Exception ex)
         {

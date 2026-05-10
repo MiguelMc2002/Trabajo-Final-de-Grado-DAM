@@ -1417,13 +1417,65 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 
 ## TO-DO Día 17
 
-- [ ] A* hexagonal (`RutaCalculadorTilemap.cs`) con coordenadas cube, heurística hex y cola de prioridad
-- [ ] Tests unitarios del A* (ruta Lübeck→Barcelona, hexágono inalcanzable, adyacentes en mar)
-- [ ] `FlotaPNJData` ampliado con `PosicionActual`, `CasillaDestino`, `RutaActual`, `IndiceWaypointActual`
-- [ ] Migración BD flotas con columnas de posición continua (`posicion_actual_x`, `posicion_actual_y`)
-- [ ] `FlotaIconoMapamundi.cs` — movimiento continuo con `Vector3.MoveTowards`
-- [ ] Adaptar `MarcadorCiudad` a trigger de casilla (`OnTriggerEnter2D`)
-- [ ] Marcadores visuales de ciudad (sprite distintivo + TextMeshPro + animación hover)
+- [x] A* hexagonal (`RutaCalculadorTilemap.cs`) con coordenadas cube, heurística hex y cola de prioridad (MinHeap propio — PriorityQueue no disponible en .NET Standard 2.1)
+- [x] Tests de conectividad entre las 15 pares de ciudades — todas PASS
+- [x] `FlotaRuntimeData` ampliado con `PosicionActual`, `CasillaDestino`, `RutaActualTilemap`, `IndiceWaypointActual`
+- [x] Migración BD flotas con columnas `posicion_actual_x`, `posicion_actual_y`, `casilla_destino_x`, `casilla_destino_y`
+- [x] `FlotaIconoMapamundi.cs` — movimiento continuo con `Vector3.MoveTowards`, flip de sprite, respeta pausa y `VelocidadActual`
+- [x] Coordenadas reales de las 6 ciudades corregidas en `CiudadDAO` y `CiudadesEditorSetup`
+- [x] `SpawnIconosFlotas()` en `MapamundiController` — crea iconos de flota al cargar mapamundi
+- [x] Ciclo completo PNJ funcional: comprar → viajar por mar → llegar → vender → repetir
+
+---
+
+## TO-DO Día 18
+
+- [ ] Refactor almacén (según calendario semana 4)
+
+---
+
+## TO-DO Días 23-24 (fin de semana 16-17 mayo)
+
+- [ ] Día 23 — Vista de ciudad: tilemap 2D con pack de assets hexagonal (mismo que mapamundi) + edificios en capa superior (puerto, taberna, astillero, mercado como GameObjects clicables). Una plantilla base completa para una ciudad.
+- [ ] Día 24 — Adaptar plantilla a las otras 5 ciudades cambiando tiles según geografía (Lübeck más verde/agua, Barcelona más árido/mediterráneo, etc.)
+
+---
+
+## RutaCalculadorTilemap
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Mapamundi/RutaCalculadorTilemap.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Mundo y navegación |
+| **Descripción** | Calcula rutas A* hexagonales sobre el tilemap Pointy Top del mapamundi. Adjuntar al GameObject `RutaCalculador` en la escena Mapamundi y asignar el Tilemap en el Inspector. Usa coordenadas cube internamente con conversión offset↔cube para Pointy Top odd-r. Sprites transitables: `loonapix_17783290501031121577` (mar abierto, coste 1.0), `Costa` (aguas costeras, coste 1.2), `medieval_openCastle_0` (ciudad, coste 1.0). Cualquier otro sprite es intransitable. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CalcularRuta(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | Devuelve la lista de casillas offset desde origen hasta destino (ambos incluidos). Lista vacía si no hay ruta; lista con un elemento si origen == destino. |
+| `GetVecinosDebug(Vector3Int pos)` | `List<Vector3Int>` | **Temporal de debug** — devuelve los vecinos transitables de una casilla y loguea sprite y transitable por cada uno de los 6 vecinos. Eliminar antes del freeze (Día 32). |
+
+---
+
+## FlotaIconoMapamundi
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Mapamundi/FlotaIconoMapamundi.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Mundo y navegación |
+| **Descripción** | Representa visualmente una flota PNJ en el mapamundi. Se adjunta a un GameObject creado por código en `SpawnIconosFlotas()`. Mueve el sprite con `Vector3.MoveTowards` siguiendo los waypoints de `FlotaRuntimeData.RutaActualTilemap`. Respeta la pausa y `VelocidadActual` de `SimulacionTiempo`. Aplica `flipX` al `SpriteRenderer` según la dirección X del movimiento. Al llegar al destino fuerza la transición a `Comerciando` en `FlotaRuntimeData`. Si la flota está en estado `Viajando` pero sin ruta, la recalcula desde la posición actual. |
+
+### API pública
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Flota` | `FlotaRuntimeData` | La flota que representa este icono. Asignar antes de llamar a `InicializarIcono`. |
+| `Inicializar(Tilemap t, RutaCalculadorTilemap r)` | `void` | Asigna dependencias de tilemap y calculador cuando el icono se crea por código en lugar de desde el Inspector. |
+| `InicializarIcono()` | `void` | Inicializa el `SpriteRenderer` y resetea el índice de waypoint. Llamar desde `MapamundiController` tras asignar ruta y posición. |
+| `CasillaOrigenDesdeFlota()` | `Vector3Int` | Devuelve la casilla offset de la ciudad origen de la flota consultando `GameManager.CiudadesDisponibles`. Devuelve `Vector3Int.zero` si no se encuentra. |
 
 ---
 
