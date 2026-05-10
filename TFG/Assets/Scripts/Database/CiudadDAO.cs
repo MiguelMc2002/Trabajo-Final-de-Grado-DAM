@@ -71,11 +71,11 @@ public class CiudadDAO
     public void InsertarCiudadesIniciales()
     {
         InsertarCiudad(1, "Lübeck",    -4,   0);
-        InsertarCiudad(2, "Barcelona", -16, -16);
-        InsertarCiudad(3, "Génova",    -8,  -13);
-        InsertarCiudad(4, "Venecia",   -5,  -12);
-        InsertarCiudad(5, "Ruan",      -17,  -6);
-        InsertarCiudad(6, "Brujas",    -13,  -3);
+        InsertarCiudad(2, "Barcelona", -16, -21);
+        InsertarCiudad(3, "Génova",    -8,  -16);
+        InsertarCiudad(4, "Venecia",   -5,  -15);
+        InsertarCiudad(5, "Ruan",      -16,  -8);
+        InsertarCiudad(6, "Brujas",    -12,  -4);
     }
 
     /// <summary>

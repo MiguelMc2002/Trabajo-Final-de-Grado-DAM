@@ -26,7 +26,7 @@ public static class CiudadesEditorSetup
     {
         AsegurarCarpeta();
 
-        CrearCiudad("Lubeck", "Lübeck", new[]
+        CrearCiudad("Lubeck", "Lübeck", new Vector3Int(-4, 0, 0), new[]
         {
             ("Grano",              250, 500, 10, 8),
             ("Madera",             200, 400,  8, 6),
@@ -35,7 +35,7 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",  150, 300,  6, 4),
         });
 
-        CrearCiudad("Barcelona", "Barcelona", new[]
+        CrearCiudad("Barcelona", "Barcelona", new Vector3Int(-16, -21, 0), new[]
         {
             ("Grano",              300, 600, 15, 10),
             ("Madera",             200, 400,  8,  5),
@@ -44,7 +44,7 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",  100, 200,  3,  6),
         });
 
-        CrearCiudad("Genova", "Génova", new[]
+        CrearCiudad("Genova", "Génova", new Vector3Int(-8, -16, 0), new[]
         {
             ("Grano",              200, 400, 3, 5),
             ("Madera",             150, 300, 2, 3),
@@ -53,7 +53,7 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",  100, 200, 1, 3),
         });
 
-        CrearCiudad("Venecia", "Venecia", new[]
+        CrearCiudad("Venecia", "Venecia", new Vector3Int(-5, -15, 0), new[]
         {
             ("Grano",              180, 360, 2, 6),
             ("Madera",             120, 240, 1, 4),
@@ -62,7 +62,7 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",   80, 160, 1, 4),
         });
 
-        CrearCiudad("Ruan", "Ruan", new[]
+        CrearCiudad("Ruan", "Ruan", new Vector3Int(-16, -8, 0), new[]
         {
             ("Grano",              450, 900, 10, 8),
             ("Madera",             380, 760,  8, 5),
@@ -71,7 +71,7 @@ public static class CiudadesEditorSetup
             ("Mineral de hierro",  150, 300,  3, 4),
         });
 
-        CrearCiudad("Brujas", "Brujas", new[]
+        CrearCiudad("Brujas", "Brujas", new Vector3Int(-12, -4, 0), new[]
         {
             ("Grano",              350, 700,  7, 7),
             ("Madera",             280, 560,  5, 5),
@@ -100,6 +100,7 @@ public static class CiudadesEditorSetup
     private static void CrearCiudad(
         string nombreFichero,
         string nombreMostrar,
+        Vector3Int casillaMapamundi,
         (string fichero, int stockActual, int stockMax, int produccion, int consumo)[] entradas)
     {
         string ruta = $"{RutaCiudades}/{nombreFichero}.asset";
@@ -111,7 +112,8 @@ public static class CiudadesEditorSetup
             AssetDatabase.CreateAsset(asset, ruta);
         }
 
-        asset.NombreCiudad = nombreMostrar;
+        asset.NombreCiudad      = nombreMostrar;
+        asset.CasillaMapamundi  = casillaMapamundi;
         asset.Mercado.Clear();
 
         foreach (var (fichero, stockActual, stockMax, produccion, consumo) in entradas)

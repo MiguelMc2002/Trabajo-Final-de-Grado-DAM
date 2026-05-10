@@ -125,7 +125,20 @@ public class ComerciantePNJController
 
             var destino = ciudadesAlternativas[UnityEngine.Random.Range(0, ciudadesAlternativas.Count)];
             Debug.Log($"[PNJ] {_flota.NombrePropietario} sin ruta rentable en ciudad {_flota.CiudadOrigenId}, viajando en vacío a ciudad {destino.IdCiudad}.");
-            IniciarViaje(destino.IdCiudad, new Dictionary<int, double>(), diasViaje: 3);
+
+            {
+                RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
+                CiudadData ciudadOrigen1 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
+                CiudadData ciudadDestino1 = destino;
+                int diasViaje1 = 3;
+                if (calculador != null && ciudadOrigen1 != null && ciudadDestino1 != null)
+                {
+                    List<Vector3Int> ruta = calculador.CalcularRuta(ciudadOrigen1.CasillaMapamundi, ciudadDestino1.CasillaMapamundi);
+                    _flota.RutaActualTilemap = ruta;
+                    diasViaje1 = ruta.Count > 0 ? Mathf.Max(1, ruta.Count / 5) : 3;
+                }
+                IniciarViaje(destino.IdCiudad, new Dictionary<int, double>(), diasViaje: diasViaje1);
+            }
             return;
         }
 
@@ -175,11 +188,23 @@ public class ComerciantePNJController
 
         Debug.Log($"[PNJ] {_flota.NombrePropietario} partirá hacia ciudad {ciudadDestinoId}.");
 
-        IniciarViaje(
-            ciudadDestinoId,
-            new Dictionary<int, double> { { idBienSeleccionado, (double)entrada.PrecioActual } },
-            diasViaje: 3
-        );
+        {
+            RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
+            CiudadData ciudadOrigen2 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
+            CiudadData ciudadDestino2 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == ciudadDestinoId);
+            int diasViaje2 = 3;
+            if (calculador != null && ciudadOrigen2 != null && ciudadDestino2 != null)
+            {
+                List<Vector3Int> ruta = calculador.CalcularRuta(ciudadOrigen2.CasillaMapamundi, ciudadDestino2.CasillaMapamundi);
+                _flota.RutaActualTilemap = ruta;
+                diasViaje2 = ruta.Count > 0 ? Mathf.Max(1, ruta.Count / 5) : 3;
+            }
+            IniciarViaje(
+                ciudadDestinoId,
+                new Dictionary<int, double> { { idBienSeleccionado, (double)entrada.PrecioActual } },
+                diasViaje: diasViaje2
+            );
+        }
     }
 
     private void TickViajando()
@@ -265,8 +290,8 @@ public class ComerciantePNJController
     /// <param name="diasViaje">Duración del trayecto en días de juego (por defecto 3).</param>
     public void IniciarViaje(int ciudadDestinoId, Dictionary<int, double> preciosCompra, int diasViaje = 3)
     {
-        _flota.CiudadDestinoId = ciudadDestinoId;
-        _diasRestantesViaje    = diasViaje;
+        _flota.CiudadDestinoId  = ciudadDestinoId;
+        _diasRestantesViaje     = diasViaje;
 
         _precioCompra.Clear();
         foreach (var kvp in preciosCompra)
