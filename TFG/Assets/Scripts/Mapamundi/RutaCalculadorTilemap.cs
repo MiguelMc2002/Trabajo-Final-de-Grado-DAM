@@ -124,16 +124,19 @@ public class RutaCalculadorTilemap : MonoBehaviour
 
     /// <summary>
     /// Heurística A*: distancia hexagonal en coordenadas cube.
+    /// Con <paramref name="conRuido"/> aplica un factor aleatorio entre 1.0 y 1.15
+    /// para que las rutas de PNJs no sean siempre idénticas.
     /// </summary>
-    private float Heuristica(Vector3Int a, Vector3Int b)
+    private float Heuristica(Vector3Int a, Vector3Int b, bool conRuido = false)
     {
         Vector3Int ca = OffsetACube(a);
         Vector3Int cb = OffsetACube(b);
-        return Mathf.Max(
+        float baseH = Mathf.Max(
             Mathf.Abs(ca.x - cb.x),
             Mathf.Abs(ca.y - cb.y),
             Mathf.Abs(ca.z - cb.z)
         );
+        return conRuido ? baseH * Random.Range(1.0f, 1.15f) : baseH;
     }
 
     /// <summary>
@@ -206,6 +209,23 @@ public class RutaCalculadorTilemap : MonoBehaviour
     /// o lista vacía si no existe ruta.
     /// </returns>
     public List<Vector3Int> CalcularRuta(Vector3Int origen, Vector3Int destino)
+        => CalcularRutaInterna(origen, destino, conRuido: false);
+
+    /// <summary>
+    /// Igual que <see cref="CalcularRuta"/> pero aplica un factor de ruido a la heurística
+    /// para que las rutas de flotas PNJ no sean siempre idénticas entre sí.
+    /// Usar desde <c>ComerciantePNJController</c> en lugar de <see cref="CalcularRuta"/>.
+    /// </summary>
+    /// <param name="origen">Casilla de inicio en coordenadas offset del Tilemap.</param>
+    /// <param name="destino">Casilla de destino en coordenadas offset del Tilemap.</param>
+    /// <returns>
+    /// Lista de casillas en coordenadas offset con ruta levemente aleatorizada,
+    /// o lista vacía si no existe ruta.
+    /// </returns>
+    public List<Vector3Int> CalcularRutaConRuido(Vector3Int origen, Vector3Int destino)
+        => CalcularRutaInterna(origen, destino, conRuido: true);
+
+    private List<Vector3Int> CalcularRutaInterna(Vector3Int origen, Vector3Int destino, bool conRuido)
     {
         if (origen == destino)
             return new List<Vector3Int> { origen };
@@ -213,8 +233,8 @@ public class RutaCalculadorTilemap : MonoBehaviour
         if (!EsTransitable(destino))
             return new List<Vector3Int>();
 
-        var cola      = new MinHeap();
-        var cameFrom  = new Dictionary<Vector3Int, Vector3Int>();
+        var cola       = new MinHeap();
+        var cameFrom   = new Dictionary<Vector3Int, Vector3Int>();
         var costeSoFar = new Dictionary<Vector3Int, float>();
 
         costeSoFar[origen] = 0f;
@@ -235,7 +255,7 @@ public class RutaCalculadorTilemap : MonoBehaviour
                 {
                     costeSoFar[vecino] = nuevoCosto;
                     cameFrom[vecino]   = actual;
-                    float prioridad    = nuevoCosto + Heuristica(vecino, destino) * 0f;
+                    float prioridad    = nuevoCosto + Heuristica(vecino, destino, conRuido);
                     cola.Enqueue(vecino, prioridad);
                 }
             }

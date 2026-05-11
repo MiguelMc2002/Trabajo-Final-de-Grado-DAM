@@ -74,6 +74,7 @@ public class DatabaseManager : MonoBehaviour
             MigrarColumnaDineroJugador();
             new CiudadDAO(this).MigrarColumnasCasilla();
             new FlotaDAO(this).MigrarColumnasMapamundi();
+            MigrarTablaAlmacenCiudad();
         }
         catch (Exception ex)
         {
@@ -102,6 +103,35 @@ public class DatabaseManager : MonoBehaviour
         {
             // La columna ya existe en esta BD; comportamiento esperado en bases de datos nuevas
             Debug.Log("[DatabaseManager] Columna dinero_jugador ya existe (BD nueva).");
+        }
+    }
+
+    /// <summary>
+    /// Crea la tabla AlmacenCiudadJugador en bases de datos guardadas antes del Día 18,
+    /// cuando dicha tabla aún no existía. La instrucción IF NOT EXISTS hace que sea
+    /// seguro ejecutarla siempre, sin riesgo de perder datos existentes.
+    /// </summary>
+    private void MigrarTablaAlmacenCiudad()
+    {
+        const string sql = @"
+            CREATE TABLE IF NOT EXISTS AlmacenCiudadJugador (
+                id_ciudad INTEGER NOT NULL,
+                id_bien   INTEGER NOT NULL,
+                cantidad  INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (id_ciudad, id_bien)
+            );";
+
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = sql;
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[DatabaseManager] Error al migrar tabla AlmacenCiudadJugador: {ex}");
         }
     }
 
@@ -239,6 +269,13 @@ public class DatabaseManager : MonoBehaviour
                 precio_conocido    DECIMAL NOT NULL,
                 dia_juego_conocido INTEGER NOT NULL,
                 PRIMARY KEY (id_flota, id_bien, id_ciudad)
+            );
+
+            CREATE TABLE IF NOT EXISTS AlmacenCiudadJugador (
+                id_ciudad INTEGER NOT NULL,
+                id_bien   INTEGER NOT NULL,
+                cantidad  INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (id_ciudad, id_bien)
             );
         ";
 

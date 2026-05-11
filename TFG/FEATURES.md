@@ -1430,7 +1430,112 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 
 ## TO-DO Día 18
 
-- [ ] Refactor almacén (según calendario semana 4)
+- [x] Almacén ciudad del jugador — tabla BD, DAO, integración GameManager/LoadManager/SaveManager
+- [x] Transferencias internas Mercado ↔ Almacén Ciudad ↔ Bodega Barco en MarketRowUI
+- [x] A* activado con heurística real + `CalcularRutaConRuido` para PNJs
+- [x] Refactor completo ComerciantePNJController: eliminar snapshot/MemoriaComercialPNJDAO, nuevo `EstimarPrecioMercado` con `InteligenciaComercial`, historial últimas 2 ciudades, límite 2 flotas por ruta
+- [x] FlotaManager ampliado a 18 comerciantes, eliminado `RefreshMemoriaGlobal`
+- [x] `FlotaRuntimeData.InteligenciaComercial` añadido
+- [x] BienesEditorSetup ampliado a 12 bienes
+
+---
+
+## DÍA 18 — Almacén ciudad, refactor PNJ comercial e IA por inteligencia
+
+### Resumen
+Día dedicado a tres bloques: (1) implementación del almacén de ciudad del jugador como capa de persistencia independiente de la bodega del barco; (2) mejora de la UI del mercado para soportar transferencias internas entre tres orígenes; (3) refactorización profunda del sistema de PNJs comerciantes para eliminar la dependencia del snapshot SQLite y reemplazarlo por lectura directa del mercado en memoria con ruido proporcional a la inteligencia individual de cada comerciante.
+
+### Clases nuevas
+
+#### AlmacenCiudadDAO
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/AlmacenCiudadDAO.cs` |
+| **Tipo** | `class` (DAO puro) |
+| **Módulo** | Guardado y carga |
+| **Descripción** | Gestiona la tabla `AlmacenCiudadJugador` en SQLite. Opera con `@param` nombrados para evitar inyección. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GetCantidad(int idCiudad, int idBien)` | `int` | Devuelve las unidades almacenadas de un bien en una ciudad. |
+| `SetCantidad(int idCiudad, int idBien, int cantidad)` | `void` | Establece (INSERT OR REPLACE) la cantidad exacta. |
+| `Incrementar(int idCiudad, int idBien, int delta)` | `void` | Suma `delta` al stock. Lanza `InvalidOperationException` si el resultado sería negativo. |
+| `GetTodosPorCiudad(int idCiudad)` | `Dictionary<int,int>` | Devuelve todos los bienes almacenados en una ciudad como mapa idBien→cantidad. |
+| `LimpiarCiudad(int idCiudad)` | `void` | Elimina todas las filas de la ciudad indicada. |
+
+### Clases modificadas
+
+#### GameManager (Día 18)
+Añadidos para el almacén de ciudad del jugador:
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `InyectarAlmacenCiudadDAO(AlmacenCiudadDAO dao)` | `void` | Inyecta el DAO desde `LoadManager` durante la inicialización. |
+| `GetCantidadAlmacenCiudad(int idCiudad, int idBien)` | `int` | Lee del diccionario en memoria. Devuelve 0 si no existe entrada. |
+| `SetCantidadAlmacenCiudad(int idCiudad, int idBien, int cantidad)` | `void` | Escribe en el diccionario en memoria sin persistir. |
+| `ModificarAlmacenCiudad(int idCiudad, int idBien, int delta)` | `void` | Valida que el resultado no sea negativo y persiste inmediatamente via DAO. |
+| `GetAlmacenCiudad(int idCiudad)` | `Dictionary<int,int>` | Devuelve el mapa idBien→cantidad del almacén de esa ciudad. |
+| `LimpiarAlmacenCiudades()` | `void` | Vacía el diccionario en memoria. Llamado por `LoadManager` antes de cargar. |
+| `CargarAlmacenCiudadesDesdeDAO()` | `void` | Repuebla el diccionario en memoria desde `AlmacenCiudadDAO`. |
+| `InicializarMercadosCiudades(IEnumerable<CiudadData>)` | `void` | Método extraído de `InicializarMercadosDesdeAssets` para inicializar mercados sin disparar el spawn de PNJs (evita recursión). |
+
+#### OficinaComercial (Día 18)
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `OrigenDestino` | `enum` | `Mercado`, `AlmacenCiudad`, `BodegaBarco`. |
+| `Transferir(BienData bien, int cantidad, OrigenDestino origen, OrigenDestino destino)` | `void` | Mueve unidades entre almacén ciudad y bodega sin transacción de dinero. `Mercado` no es origen ni destino válido. |
+
+#### MarketRowUI (Día 18)
+Reescritura completa para soportar columnas ciclables:
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_textoEtiquetaIzq / Der` | `TMP_Text` | Etiquetas de cabecera de cada columna. |
+| `_btnCiclarIzq / Der` | `Button` | Botones de flecha para ciclar el origen/destino de cada columna. |
+| `CiclarColumnaIzq()` | `void` | Cicla la columna izquierda entre los tres orígenes. |
+| `CiclarColumnaDer()` | `void` | Cicla la columna derecha entre los tres orígenes. |
+| `Refrescar()` | `void` | Actualiza stocks y estado `interactable` de botones según columnas activas. |
+
+#### MercadoUI (Día 18)
+`RefrescarCabecera()` actualizado: muestra `"Bodega: X / Almacén: Y"` en lugar de un único valor.
+
+#### RutaCalculadorTilemap (Día 18)
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CalcularRuta(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | A* determinista. Heurística real activada (multiplicador `1f`). |
+| `CalcularRutaConRuido(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | A* con factor aleatorio ±15% en la heurística para que las rutas PNJ no sean idénticas. |
+
+#### ComerciantePNJController (Día 18)
+Refactorización profunda — eliminados `_memoriaDAO`, `ObtenerSnapshotGlobal`, `EstimarPrecio(MemoriaComercialPNJDto)`. Nuevo comportamiento:
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_historialCiudades` | `Queue<int>` | Últimas 2 ciudades visitadas. Evita ciclos A→B→A→B. |
+| `EstimarPrecioMercado(int idCiudad, int idBien)` | `float` (privado) | Lee el precio real del mercado en memoria y aplica ruido con `Lerp(0.40, 0.05, InteligenciaComercial)`. |
+| PASO 1 | — | Itera directamente sobre el catálogo (`for idBien = 1..N`) y todas las ciudades. Filtra: ciudad ya visitada (historial), ≥ 2 flotas en ruta. Selecciona el destino con mayor margen. |
+
+#### FlotaManager (Día 18)
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `ContarFlotasEnRutaHacia(int idCiudad, int idBien)` | `int` | Cuenta flotas en estado `Viajando` con ese destino y ese bien cargado. |
+| `SpawnFlotasPNJIniciales` | — | Ampliado a 18 comerciantes (IDs 1001–1018), 3 por ciudad. Elimina la llamada a `RefreshMemoriaGlobal`. |
+| Eliminados | — | `RefreshMemoriaGlobal`, `_diasDesdeUltimoRefresh`, `_memoriaDAO`, `ObtenerMemoriaDAO`. |
+
+#### FlotaRuntimeData (Día 18)
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `InteligenciaComercial` | `float` (get) | Nivel de habilidad comercial entre 0.1 y 1.0, asignado aleatoriamente en el constructor. Controla la precisión de `EstimarPrecioMercado`. |
+
+#### BienesEditorSetup (Día 18)
+Ampliado de 5 a 12 bienes: añadidos Sal, Cera (primarios), Tela, Herramientas, Cerveza (intermedios), Especias, Seda (avanzados). Informa en consola cuántos se crearon vs. ya existían.
+
+### TO-DOs abiertos tras el Día 18
+- Persistencia de flotas PNJ entre guardado y carga (diferida al Día 19).
+- `MarcadorCiudad`: detección de llegada de flota del jugador + cambio de sprite (diferido a cuando existan flotas del jugador).
+- Sistema de producción del jugador: edificios que consumen materias primas y producen manufacturados (Días 23-24).
+- Barcos reales con capacidad de carga y velocidad variable conectados a flotas PNJ.
+- `MemoriaComercialPNJDAO` queda en el proyecto pero ya no la usa `ComerciantePNJController` — evaluar si mantener para estadísticas o eliminar.
+- `FindFirstObjectByType` deprecado en Unity 6 — reemplazar por `FindAnyObjectByType` en `ComerciantePNJController` (3 llamadas) y `DebugCasillaHex`.
 
 ---
 
@@ -1454,7 +1559,8 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
-| `CalcularRuta(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | Devuelve la lista de casillas offset desde origen hasta destino (ambos incluidos). Lista vacía si no hay ruta; lista con un elemento si origen == destino. |
+| `CalcularRuta(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | A* determinista. Devuelve la lista de casillas offset desde origen hasta destino (ambos incluidos). Lista vacía si no hay ruta; lista con un elemento si origen == destino. |
+| `CalcularRutaConRuido(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | A* con factor aleatorio ±15% en la heurística. Usar desde `ComerciantePNJController` para que las rutas PNJ no sean idénticas entre sí. |
 | `GetVecinosDebug(Vector3Int pos)` | `List<Vector3Int>` | **Temporal de debug** — devuelve los vecinos transitables de una casilla y loguea sprite y transitable por cada uno de los 6 vecinos. Eliminar antes del freeze (Día 32). |
 
 ---
@@ -1512,5 +1618,7 @@ Lógica completa de los tres estados de la máquina de estados de los PNJs comer
 - [ ] **Viaje en vacío a ciudad aleatoria** — cuando no hay ruta rentable el comerciante elige destino al azar. En post-TFG mejorar a selección por cercanía geográfica usando pathfinding A* del Día 17.
 - [ ] **`TileNavegable.cs` sin uso efectivo** — el pathfinding usa `GetSprite()` por nombre en lugar del campo `costeMovimiento`. Evaluar si se elimina o adapta antes del freeze (Día 32).
 - [ ] **Scripts de debug de editor** (`DebugCasillaHex.cs`, `DebugTilemapBounds.cs`) — eliminar antes del freeze (Día 32).
+- [ ] **`FindFirstObjectByType` deprecado en Unity 6** — reemplazar por `FindAnyObjectByType` en `ComerciantePNJController` (3 llamadas) y `DebugCasillaHex`. Registrado en Día 18.
+- [ ] **`MemoriaComercialPNJDAO` sin uso** — `ComerciantePNJController` ya no la usa tras el refactor del Día 18. Evaluar si mantener para estadísticas o eliminar antes del freeze (Día 32).
 - [ ] **Marcadores visuales de ciudad** — GameObjects creados pero sin sprite ni feedback visual. Diferido al Día 17.
 - [ ] **ZonaPeligro sin tile visual** — diferido al Día 21 (piratas).

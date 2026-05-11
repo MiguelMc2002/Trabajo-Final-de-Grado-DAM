@@ -83,6 +83,11 @@ public class GameManager : MonoBehaviour
     /// </summary>
     private readonly Dictionary<BienData, int> _almacen = new Dictionary<BienData, int>();
 
+    // clave exterior: IdCiudad, clave interior: id_bien (int), valor: cantidad
+    private readonly Dictionary<int, Dictionary<int, int>> _almacenCiudad = new Dictionary<int, Dictionary<int, int>>();
+
+    private AlmacenCiudadDAO _almacenCiudadDAO;
+
     // ─── Estado de partida ───────────────────────────────────────────────────
 
     /// <summary>
@@ -367,17 +372,34 @@ public class GameManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Inicializa los mercados de todas las ciudades indicadas copiando en profundidad
-    /// las entradas de sus <c>ScriptableObject</c> y calculando el precio inicial.
+    /// Inicializa los mercados de todas las ciudades indicadas y lanza el spawn de flotas PNJ.
     /// Solo registra ciudades cuyo mercado no esté ya presente (no sobreescribe).
     /// Llamar desde el inicio de partida nueva antes de cargar cualquier escena de ciudad.
     /// </summary>
     /// <param name="ciudades">Colección de <see cref="CiudadData"/> que se deben inicializar.</param>
     public void InicializarMercadosDesdeAssets(IEnumerable<CiudadData> ciudades)
     {
+        InicializarMercadosCiudades(ciudades);
+
+        // Spawn de flotas PNJ al iniciar partida nueva
+        if (FlotaManager.Instance != null)
+            FlotaManager.Instance.SpawnFlotasPNJIniciales(_ciudadesDisponibles);
+        else
+            Debug.LogWarning("[GameManager] InicializarMercadosDesdeAssets: FlotaManager.Instance es null, flotas PNJ no creadas.");
+    }
+
+    /// <summary>
+    /// Registra los mercados de las ciudades indicadas copiando en profundidad las entradas
+    /// de sus <c>ScriptableObject</c> y calculando el precio inicial.
+    /// No lanza el spawn de flotas PNJ — usar este método cuando solo se necesita poblar
+    /// <see cref="MercadosPorCiudad"/> sin riesgo de recursión.
+    /// </summary>
+    /// <param name="ciudades">Colección de <see cref="CiudadData"/> que se deben inicializar.</param>
+    public void InicializarMercadosCiudades(IEnumerable<CiudadData> ciudades)
+    {
         if (ciudades == null)
         {
-            Debug.LogError("[GameManager] InicializarMercadosDesdeAssets: colección de ciudades null.");
+            Debug.LogError("[GameManager] InicializarMercadosCiudades: colección de ciudades null.");
             return;
         }
 
@@ -406,12 +428,121 @@ public class GameManager : MonoBehaviour
 
             RegistrarMercadoCiudad(ciudad.IdCiudad, copia);
         }
+    }
 
-        // Spawn de flotas PNJ de prueba al iniciar partida nueva
-        if (FlotaManager.Instance != null)
-            FlotaManager.Instance.SpawnFlotasPNJIniciales(_ciudadesDisponibles);
+    // ─── Almacén de ciudad ───────────────────────────────────────────────────
+
+    /// <summary>
+    /// Inyecta el DAO de almacén de ciudad. Llamar desde DatabaseManager o SaveManager tras InicializarSlot.
+    /// </summary>
+    /// <param name="dao">DAO que gestiona la tabla AlmacenCiudadJugador.</param>
+    public void InyectarAlmacenCiudadDAO(AlmacenCiudadDAO dao) => _almacenCiudadDAO = dao;
+
+    /// <summary>
+    /// Devuelve las unidades del bien indicado almacenadas en el almacén de la ciudad indicada.
+    /// Consulta primero <c>_almacenCiudad</c> en memoria; retorna 0 si no existe la entrada.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad.</param>
+    /// <param name="idBien">Identificador del bien.</param>
+    /// <returns>Cantidad almacenada en esa ciudad, o 0 si no hay registro.</returns>
+    public int GetCantidadAlmacenCiudad(int idCiudad, int idBien)
+    {
+        if (_almacenCiudad.TryGetValue(idCiudad, out Dictionary<int, int> ciudad))
+            return ciudad.TryGetValue(idBien, out int cantidad) ? cantidad : 0;
+        return 0;
+    }
+
+    /// <summary>
+    /// Establece la cantidad de un bien en el almacén en memoria de la ciudad indicada.
+    /// Si la cantidad es 0 o menor, elimina la entrada para mantener el diccionario limpio.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad.</param>
+    /// <param name="idBien">Identificador del bien.</param>
+    /// <param name="cantidad">Cantidad a almacenar (0 elimina la entrada).</param>
+    public void SetCantidadAlmacenCiudad(int idCiudad, int idBien, int cantidad)
+    {
+        if (!_almacenCiudad.ContainsKey(idCiudad))
+            _almacenCiudad[idCiudad] = new Dictionary<int, int>();
+
+        if (cantidad <= 0)
+            _almacenCiudad[idCiudad].Remove(idBien);
         else
-            Debug.LogWarning("[GameManager] InicializarMercadosDesdeAssets: FlotaManager.Instance es null, flotas PNJ no creadas.");
+            _almacenCiudad[idCiudad][idBien] = cantidad;
+    }
+
+    /// <summary>
+    /// Modifica la cantidad de un bien en el almacén de la ciudad.
+    /// Actualiza <c>_almacenCiudad</c> en memoria y persiste via <c>_almacenCiudadDAO</c> si está disponible.
+    /// Devuelve <c>false</c> si el resultado sería negativo.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad.</param>
+    /// <param name="idBien">Identificador del bien.</param>
+    /// <param name="delta">Unidades a añadir (positivo) o retirar (negativo).</param>
+    /// <returns><c>true</c> si la operación se realizó; <c>false</c> si el stock resultante sería negativo.</returns>
+    public bool ModificarAlmacenCiudad(int idCiudad, int idBien, int delta)
+    {
+        int actual = GetCantidadAlmacenCiudad(idCiudad, idBien);
+        int nuevo  = actual + delta;
+
+        if (nuevo < 0)
+        {
+            Debug.LogWarning($"[GameManager] Stock insuficiente en almacén ciudad={idCiudad}, bien={idBien}: actual={actual}, delta={delta}.");
+            return false;
+        }
+
+        SetCantidadAlmacenCiudad(idCiudad, idBien, nuevo);
+        _almacenCiudadDAO?.SetCantidad(idCiudad, idBien, nuevo);
+        return true;
+    }
+
+    /// <summary>
+    /// Devuelve el almacén completo de una ciudad como diccionario mutable.
+    /// Devuelve un diccionario vacío si la ciudad no tiene entradas registradas; nunca devuelve <c>null</c>.
+    /// </summary>
+    /// <param name="idCiudad">Identificador de la ciudad.</param>
+    /// <returns>Diccionario <c>id_bien → cantidad</c>; vacío si no hay stock.</returns>
+    public Dictionary<int, int> GetAlmacenCiudad(int idCiudad)
+    {
+        return _almacenCiudad.TryGetValue(idCiudad, out Dictionary<int, int> ciudad)
+            ? ciudad
+            : new Dictionary<int, int>();
+    }
+
+    /// <summary>
+    /// Vacía <c>_almacenCiudad</c> en memoria. Llamar desde LoadManager antes de <see cref="CargarAlmacenCiudadesDesdeDAO"/>.
+    /// </summary>
+    public void LimpiarAlmacenCiudades()
+    {
+        _almacenCiudad.Clear();
+        Debug.Log("[GameManager] Almacenes de ciudad limpiados.");
+    }
+
+    /// <summary>
+    /// Carga todos los almacenes de ciudad desde BD y los vuelca en <c>_almacenCiudad</c>.
+    /// Llamar desde LoadManager tras restaurar el resto del estado.
+    /// Requiere que <c>_almacenCiudadDAO</c> esté inyectado y que <see cref="CiudadesDisponibles"/> esté poblado.
+    /// </summary>
+    public void CargarAlmacenCiudadesDesdeDAO()
+    {
+        if (_almacenCiudadDAO == null)
+        {
+            Debug.LogWarning("[GameManager] CargarAlmacenCiudadesDesdeDAO: DAO no inyectado.");
+            return;
+        }
+
+        if (_ciudadesDisponibles == null) return;
+
+        foreach (CiudadData ciudad in _ciudadesDisponibles)
+        {
+            if (ciudad == null) continue;
+
+            Dictionary<int, int> entradas = _almacenCiudadDAO.GetTodosPorCiudad(ciudad.IdCiudad);
+            if (entradas.Count == 0) continue;
+
+            _almacenCiudad[ciudad.IdCiudad] = entradas;
+        }
+
+        Debug.Log("[GameManager] Almacenes de ciudad cargados desde DAO.");
     }
 
     /// <summary>

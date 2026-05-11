@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -16,6 +17,16 @@ using UnityEngine;
 /// </remarks>
 public class OficinaComercial : MonoBehaviour
 {
+    // ─── Tipos ───────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Indica el almacén de origen o destino de una operación comercial.
+    /// <see cref="Mercado"/> representa el mercado de la ciudad activa;
+    /// <see cref="AlmacenCiudad"/> el depósito del jugador en la ciudad;
+    /// <see cref="BodegaBarco"/> el inventario a bordo del barco.
+    /// </summary>
+    public enum OrigenDestino { Mercado, AlmacenCiudad, BodegaBarco }
+
     // ─── Estado interno ──────────────────────────────────────────────────────
 
     /// <summary>Referencia al mercado de la ciudad activa, asignada en <see cref="Inicializar"/>.</summary>
@@ -157,6 +168,97 @@ public class OficinaComercial : MonoBehaviour
             : $"No se pudo completar la venta de {bien.nombre}.";
 
         return exito;
+    }
+
+    // ─── Transferencia interna ───────────────────────────────────────────────
+
+    /// <summary>
+    /// Transfiere unidades de un bien entre almacén ciudad y bodega barco sin pasar por el
+    /// mercado y sin movimiento de dinero. Ajusta automáticamente la cantidad al máximo
+    /// disponible en el origen si se pide más de lo que hay.
+    /// </summary>
+    /// <param name="bien">Bien a transferir.</param>
+    /// <param name="cantidad">Unidades deseadas. Debe ser mayor que 0.</param>
+    /// <param name="origen">Almacén de origen. No puede ser <see cref="OrigenDestino.Mercado"/>.</param>
+    /// <param name="destino">Almacén de destino. No puede ser <see cref="OrigenDestino.Mercado"/>.</param>
+    /// <returns>
+    /// <c>true</c> si la transferencia se realizó (aunque fuera parcial);
+    /// <c>false</c> si alguna validación falló (consultar <see cref="UltimoMensaje"/>).
+    /// </returns>
+    public bool Transferir(BienData bien, int cantidad, OrigenDestino origen, OrigenDestino destino)
+    {
+        if (origen == OrigenDestino.Mercado || destino == OrigenDestino.Mercado)
+        {
+            UltimoMensaje = "Usar Comprar/Vender para operaciones con el mercado.";
+            return false;
+        }
+
+        if (bien == null)
+        {
+            UltimoMensaje = "No se ha especificado ningún bien para transferir.";
+            return false;
+        }
+
+        if (cantidad <= 0)
+        {
+            UltimoMensaje = "La cantidad debe ser mayor que cero.";
+            return false;
+        }
+
+        if (GameManager.Instance == null)
+        {
+            UltimoMensaje = "El sistema de juego no está disponible.";
+            return false;
+        }
+
+        int idCiudad = GameManager.Instance.CiudadActual?.IdCiudad ?? -1;
+        if (idCiudad == -1)
+        {
+            UltimoMensaje = "No hay ciudad activa.";
+            return false;
+        }
+
+        // Resolver id_bien: índice 0-based en el catálogo + 1
+        int idBien = -1;
+        IReadOnlyList<BienData> catalogo = GameManager.Instance.CatalogoBienes;
+        for (int i = 0; i < catalogo.Count; i++)
+        {
+            if (catalogo[i] == bien) { idBien = i + 1; break; }
+        }
+
+        if (idBien == -1)
+        {
+            UltimoMensaje = $"Bien '{bien.nombre}' no encontrado en el catálogo.";
+            Debug.LogWarning($"[OficinaComercial] Transferir: '{bien.nombre}' no está en CatalogoBienes.");
+            return false;
+        }
+
+        // Stock disponible en el origen
+        int stockOrigen = origen == OrigenDestino.AlmacenCiudad
+            ? GameManager.Instance.GetCantidadAlmacenCiudad(idCiudad, idBien)
+            : GameManager.Instance.GetCantidadBien(bien);
+
+        int cantidadReal = Mathf.Min(cantidad, stockOrigen);
+        if (cantidadReal <= 0)
+        {
+            UltimoMensaje = "Sin stock en origen.";
+            return false;
+        }
+
+        // Restar del origen
+        if (origen == OrigenDestino.AlmacenCiudad)
+            GameManager.Instance.ModificarAlmacenCiudad(idCiudad, idBien, -cantidadReal);
+        else
+            GameManager.Instance.ModificarCantidadBien(bien, -cantidadReal);
+
+        // Sumar al destino
+        if (destino == OrigenDestino.AlmacenCiudad)
+            GameManager.Instance.ModificarAlmacenCiudad(idCiudad, idBien, cantidadReal);
+        else
+            GameManager.Instance.ModificarCantidadBien(bien, cantidadReal);
+
+        UltimoMensaje = $"Transferidas {cantidadReal} unidades de {bien.nombre} de {origen} a {destino}.";
+        return true;
     }
 
     // ─── Validaciones comunes ────────────────────────────────────────────────

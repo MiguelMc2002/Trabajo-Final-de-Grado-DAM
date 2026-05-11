@@ -24,6 +24,7 @@ public class SaveManager : MonoBehaviour
     private BarcoDAO                _barcoDAO;
     private EstadoMercadoCiudadDAO  _mercadoDAO;
     private AlmacenJugadorDAO       _almacenJugadorDAO;
+    private AlmacenCiudadDAO        _almacenCiudadDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -73,6 +74,9 @@ public class SaveManager : MonoBehaviour
         // Paso 6 — Almacén del jugador (FK a Bien, debe ir después de catálogos)
         GuardarAlmacenJugador();
 
+        // Paso 6b — Almacén de ciudad del jugador
+        GuardarAlmacenCiudad();
+
         // Paso 7 — Estado económico del mercado de cada ciudad
         GuardarEstadoEconomico();
 
@@ -98,6 +102,8 @@ public class SaveManager : MonoBehaviour
         _barcoDAO          = new BarcoDAO(db);
         _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
+        _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
+        GameManager.Instance?.InyectarAlmacenCiudadDAO(_almacenCiudadDAO);
     }
 
     /// <summary>
@@ -183,6 +189,37 @@ public class SaveManager : MonoBehaviour
 
         _almacenJugadorDAO.GuardarAlmacen(almacenPorId);
         Debug.Log($"[SaveManager] Guardadas {almacenPorId.Count} entradas en AlmacenJugador.");
+    }
+
+    /// <summary>
+    /// Paso 6b: persiste el almacén de ciudad del jugador en AlmacenCiudadJugador.
+    /// Itera todas las ciudades disponibles, obtiene el diccionario en memoria de cada una
+    /// y llama a <see cref="AlmacenCiudadDAO.SetCantidad"/> por cada par id_bien/cantidad.
+    /// Si GameManager no está disponible, omite el paso con un aviso.
+    /// </summary>
+    private void GuardarAlmacenCiudad()
+    {
+        if (GameManager.Instance == null)
+        {
+            Debug.LogWarning("[SaveManager] GameManager.Instance es null; se omite el guardado del almacén de ciudad.");
+            return;
+        }
+
+        IReadOnlyList<CiudadData> ciudades = GameManager.Instance.CiudadesDisponibles;
+        if (ciudades == null) return;
+
+        foreach (CiudadData ciudad in ciudades)
+        {
+            if (ciudad == null) continue;
+
+            Dictionary<int, int> almacen = GameManager.Instance.GetAlmacenCiudad(ciudad.IdCiudad);
+            if (almacen.Count == 0) continue;
+
+            foreach (KeyValuePair<int, int> par in almacen)
+                _almacenCiudadDAO.SetCantidad(ciudad.IdCiudad, par.Key, par.Value);
+        }
+
+        Debug.Log("[SaveManager] Almacén de ciudad guardado.");
     }
 
     /// <summary>

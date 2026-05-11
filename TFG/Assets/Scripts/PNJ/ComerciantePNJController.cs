@@ -12,22 +12,25 @@ public class ComerciantePNJController
 {
     private readonly FlotaRuntimeData _flota;
     private readonly FlotaManager _manager;
-    private readonly MemoriaComercialPNJDAO _memoriaDAO;
 
     private int _diasRestantesViaje;
     private readonly Dictionary<int, double> _precioCompra;
 
     /// <summary>
-    /// Inicializa el controlador vinculándolo a una flota, a su gestor y al DAO de memoria comercial.
+    /// Historial de las últimas 2 ciudades visitadas como destino.
+    /// Evita que el comerciante repita ciclos cortos A→B→A→B indefinidamente.
+    /// </summary>
+    private readonly Queue<int> _historialCiudades = new Queue<int>(2);
+
+    /// <summary>
+    /// Inicializa el controlador vinculándolo a una flota y a su gestor.
     /// </summary>
     /// <param name="flota">Datos de runtime de la flota que este controlador gobierna.</param>
     /// <param name="manager">Gestor central de flotas PNJ, usado para aplicar transiciones de estado.</param>
-    /// <param name="memoriaDAO">DAO de memoria comercial PNJ compartido con FlotaManager.</param>
-    public ComerciantePNJController(FlotaRuntimeData flota, FlotaManager manager, MemoriaComercialPNJDAO memoriaDAO)
+    public ComerciantePNJController(FlotaRuntimeData flota, FlotaManager manager)
     {
         _flota        = flota;
         _manager      = manager;
-        _memoriaDAO   = memoriaDAO;
         _precioCompra = new Dictionary<int, double>();
     }
 
@@ -63,57 +66,57 @@ public class ComerciantePNJController
             return;
         }
 
-        var preciosVigentes = ObtenerSnapshotGlobal();
-
-        if (preciosVigentes == null || preciosVigentes.Count == 0)
-        {
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} no tiene información de mercado, esperando...");
-            return;
-        }
-
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} evaluando mercado con {preciosVigentes.Count} entradas conocidas...");
+        Debug.Log($"[PNJ] {_flota.NombrePropietario} evaluando mercado en ciudad {_flota.CiudadOrigenId}...");
 
         // ── PASO 1: Seleccionar bien y destino más rentable ───────────────────
 
-        int idBienSeleccionado             = -1;
-        int ciudadDestinoId                = -1;
-        double mejorMargen                 = 0;
-        MemoriaComercialPNJDto mejorDestinoDto = null;
+        int idBienSeleccionado   = -1;
+        double mejorMargen       = 0;
+        int mejorCiudadDestinoId = -1;
+        var ciudadesDisponibles  = GameManager.Instance.CiudadesDisponibles;
 
-        var porBien = preciosVigentes.GroupBy(e => e.IdBien);
-
-        foreach (var grupo in porBien)
+        for (int idBien = 1; idBien <= GameManager.Instance.CatalogoBienes.Count; idBien++)
         {
-            var entradasGrupo = grupo.ToList();
+            float precioOrigen = EstimarPrecioMercado(_flota.CiudadOrigenId, idBien);
+            if (precioOrigen <= 0f) continue;
 
-            MemoriaComercialPNJDto precioOrigen = entradasGrupo
-                .Where(e => e.IdCiudad == _flota.CiudadOrigenId)
-                .OrderByDescending(e => e.DiaJuegoConocido)
-                .FirstOrDefault();
+            float mejorPrecioDestino = 0f;
+            int   mejorDestinoBien   = -1;
 
-            if (precioOrigen == null) continue;
+            foreach (CiudadData ciudad in ciudadesDisponibles)
+            {
+                if (ciudad.IdCiudad == _flota.CiudadOrigenId) continue;
 
-            MemoriaComercialPNJDto mejorDestino = entradasGrupo
-                .Where(e => e.IdCiudad != _flota.CiudadOrigenId)
-                .OrderByDescending(e => e.PrecioConocido)
-                .FirstOrDefault();
+                if (_historialCiudades.Contains(ciudad.IdCiudad)) continue;
 
-            if (mejorDestino == null) continue;
+                int flotasEnRuta = _manager.ContarFlotasEnRutaHacia(ciudad.IdCiudad, idBien);
+                if (flotasEnRuta >= 2) continue;
 
-            double margen = mejorDestino.PrecioConocido - precioOrigen.PrecioConocido;
+                float precioDestino = EstimarPrecioMercado(ciudad.IdCiudad, idBien);
+                if (precioDestino > mejorPrecioDestino)
+                {
+                    mejorPrecioDestino = precioDestino;
+                    mejorDestinoBien   = ciudad.IdCiudad;
+                }
+            }
+
+            if (mejorDestinoBien == -1) continue;
+
+            double margen = mejorPrecioDestino - precioOrigen;
+
             if (margen > mejorMargen)
             {
-                mejorMargen        = margen;
-                idBienSeleccionado = grupo.Key;
-                mejorDestinoDto    = mejorDestino;
+                mejorMargen          = margen;
+                idBienSeleccionado   = idBien;
+                mejorCiudadDestinoId = mejorDestinoBien;
             }
         }
 
-        if (idBienSeleccionado == -1 || mejorDestinoDto == null)
+        if (idBienSeleccionado == -1 || mejorCiudadDestinoId == -1)
         {
             // Sin margen positivo en ninguna ruta: viaja en vacío a una ciudad aleatoria
-            // para que el snapshot del día siguiente pueda ofrecer mejores oportunidades.
-            var ciudadesAlternativas = GameManager.Instance.CiudadesDisponibles
+            // para que el mercado del día siguiente pueda ofrecer mejores oportunidades.
+            var ciudadesAlternativas = ciudadesDisponibles
                 .Where(c => c.IdCiudad != _flota.CiudadOrigenId)
                 .ToList();
 
@@ -128,12 +131,11 @@ public class ComerciantePNJController
 
             {
                 RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
-                CiudadData ciudadOrigen1 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
-                CiudadData ciudadDestino1 = destino;
+                CiudadData ciudadOrigen1  = ciudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
                 int diasViaje1 = 3;
-                if (calculador != null && ciudadOrigen1 != null && ciudadDestino1 != null)
+                if (calculador != null && ciudadOrigen1 != null)
                 {
-                    List<Vector3Int> ruta = calculador.CalcularRuta(ciudadOrigen1.CasillaMapamundi, ciudadDestino1.CasillaMapamundi);
+                    List<Vector3Int> ruta = calculador.CalcularRutaConRuido(ciudadOrigen1.CasillaMapamundi, destino.CasillaMapamundi);
                     _flota.RutaActualTilemap = ruta;
                     diasViaje1 = ruta.Count > 0 ? Mathf.Max(1, ruta.Count / 5) : 3;
                 }
@@ -148,7 +150,44 @@ public class ComerciantePNJController
 
         if (entrada == null || entrada.StockActual <= 0)
         {
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} sin stock de bien {idBienSeleccionado} en ciudad {_flota.CiudadOrigenId}.");
+            // Sin stock en ciudad actual: viajar en vacío a la ciudad con stock del bien seleccionado.
+            CiudadData ciudadConStock = null;
+            foreach (CiudadData candidato in ciudadesDisponibles
+                .Where(c => c.IdCiudad != _flota.CiudadOrigenId)
+                .OrderByDescending(c => EstimarPrecioMercado(c.IdCiudad, idBienSeleccionado)))
+            {
+                EntradaMercado entradaCandidato = ObtenerEntrada(candidato.IdCiudad, idBienSeleccionado);
+                if (entradaCandidato != null && entradaCandidato.StockActual > 0)
+                {
+                    ciudadConStock = candidato;
+                    break;
+                }
+            }
+
+            if (ciudadConStock == null)
+            {
+                ciudadConStock = ciudadesDisponibles
+                    .Where(c => c.IdCiudad != _flota.CiudadOrigenId)
+                    .OrderBy(_ => UnityEngine.Random.value)
+                    .FirstOrDefault();
+            }
+
+            if (ciudadConStock == null) return;
+
+            Debug.Log($"[PNJ] {_flota.NombrePropietario} sin stock de bien {idBienSeleccionado} en ciudad {_flota.CiudadOrigenId}, viajando en vacío a ciudad {ciudadConStock.IdCiudad}.");
+
+            RutaCalculadorTilemap calc = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
+            CiudadData origen = ciudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
+            int dias = 3;
+            if (origen == null)
+                Debug.LogWarning($"[PNJ] {_flota.NombrePropietario} CiudadData no encontrada para id={_flota.CiudadOrigenId}; se usará diasViaje=3.");
+            if (calc != null && origen != null)
+            {
+                List<Vector3Int> ruta = calc.CalcularRutaConRuido(origen.CasillaMapamundi, ciudadConStock.CasillaMapamundi);
+                _flota.RutaActualTilemap = ruta;
+                dias = ruta.Count > 0 ? Mathf.Max(1, ruta.Count / 5) : 3;
+            }
+            IniciarViaje(ciudadConStock.IdCiudad, new Dictionary<int, double>(), diasViaje: dias);
             return;
         }
 
@@ -170,11 +209,9 @@ public class ComerciantePNJController
 
         // ── PASO 4: Iniciar viaje ─────────────────────────────────────────────
 
-        ciudadDestinoId = mejorDestinoDto.IdCiudad;
-
-        if (ciudadDestinoId == _flota.CiudadOrigenId)
+        if (mejorCiudadDestinoId == _flota.CiudadOrigenId)
         {
-            CiudadData alternativa = GameManager.Instance.CiudadesDisponibles
+            CiudadData alternativa = ciudadesDisponibles
                 .FirstOrDefault(c => c.IdCiudad != _flota.CiudadOrigenId);
 
             if (alternativa == null)
@@ -183,24 +220,24 @@ public class ComerciantePNJController
                 return;
             }
 
-            ciudadDestinoId = alternativa.IdCiudad;
+            mejorCiudadDestinoId = alternativa.IdCiudad;
         }
 
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} partirá hacia ciudad {ciudadDestinoId}.");
+        Debug.Log($"[PNJ] {_flota.NombrePropietario} partirá hacia ciudad {mejorCiudadDestinoId}.");
 
         {
             RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
-            CiudadData ciudadOrigen2 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
-            CiudadData ciudadDestino2 = GameManager.Instance.CiudadesDisponibles.FirstOrDefault(c => c.IdCiudad == ciudadDestinoId);
+            CiudadData ciudadOrigen2  = ciudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
+            CiudadData ciudadDestino2 = ciudadesDisponibles.FirstOrDefault(c => c.IdCiudad == mejorCiudadDestinoId);
             int diasViaje2 = 3;
             if (calculador != null && ciudadOrigen2 != null && ciudadDestino2 != null)
             {
-                List<Vector3Int> ruta = calculador.CalcularRuta(ciudadOrigen2.CasillaMapamundi, ciudadDestino2.CasillaMapamundi);
+                List<Vector3Int> ruta = calculador.CalcularRutaConRuido(ciudadOrigen2.CasillaMapamundi, ciudadDestino2.CasillaMapamundi);
                 _flota.RutaActualTilemap = ruta;
                 diasViaje2 = ruta.Count > 0 ? Mathf.Max(1, ruta.Count / 5) : 3;
             }
             IniciarViaje(
-                ciudadDestinoId,
+                mejorCiudadDestinoId,
                 new Dictionary<int, double> { { idBienSeleccionado, (double)entrada.PrecioActual } },
                 diasViaje: diasViaje2
             );
@@ -213,7 +250,9 @@ public class ComerciantePNJController
 
         if (_diasRestantesViaje <= 0)
         {
-            _flota.CiudadOrigenId = _flota.CiudadDestinoId;
+            _flota.CiudadOrigenId    = _flota.CiudadDestinoId;
+            if (_historialCiudades.Count >= 2) _historialCiudades.Dequeue();
+            _historialCiudades.Enqueue(_flota.CiudadDestinoId);
             Debug.Log($"[PNJ] {_flota.NombrePropietario} ha llegado a ciudad {_flota.CiudadDestinoId}.");
             CambiarEstado(EstadoFlotaPNJ.Comerciando);
         }
@@ -250,7 +289,6 @@ public class ComerciantePNJController
                 entrada.StockActual += cantidad;
                 GameManager.Instance.NotificarMercadoActualizado(_flota.CiudadOrigenId, entrada.Bien);
                 Debug.Log($"[PNJ] {_flota.NombrePropietario} vendió {cantidad}x bien {idBien} a {entrada.PrecioActual}g en ciudad {_flota.CiudadOrigenId}.");
-                _memoriaDAO.GuardarMemoria(0, idBien, _flota.CiudadOrigenId, entrada.PrecioActual, GameManager.Instance.EstadoPartida.DiaJuego);
             }
             else
             {
@@ -303,13 +341,24 @@ public class ComerciantePNJController
     // ─── Helpers privados ────────────────────────────────────────────────────
 
     /// <summary>
-    /// Devuelve el snapshot global de precios de mercado almacenado con idFlota=0.
-    /// Es la memoria compartida que FlotaManager actualiza cada 7 días.
+    /// Estima el precio actual de un bien en una ciudad consultando el mercado en memoria.
+    /// El error de estimación depende de la inteligencia comercial del comerciante:
+    /// un comerciante inteligente (1.0) estima con ±5% de error;
+    /// uno poco hábil (0.1) puede equivocarse hasta ±38%.
+    /// Fórmula: ruido = Lerp(0.40, 0.05, inteligencia); precio ∈ [real-ruido, real+ruido].
     /// </summary>
-    /// <returns>Lista de entradas de memoria con precios observados en todas las ciudades.</returns>
-    private List<MemoriaComercialPNJDto> ObtenerSnapshotGlobal()
+    /// <param name="idCiudad">Ciudad cuyo precio se quiere estimar.</param>
+    /// <param name="idBien">Identificador 1-based del bien.</param>
+    /// <returns>Precio estimado con ruido proporcional a la inteligencia del comerciante.</returns>
+    private float EstimarPrecioMercado(int idCiudad, int idBien)
     {
-        return _memoriaDAO.ObtenerMemoriaDeFlota(0);
+        EntradaMercado entrada = ObtenerEntrada(idCiudad, idBien);
+        if (entrada == null) return 0f;
+
+        float precioReal = entrada.PrecioActual;
+        float ruido      = UnityEngine.Mathf.Lerp(0.40f, 0.05f, _flota.InteligenciaComercial);
+        float rango      = precioReal * ruido;
+        return UnityEngine.Random.Range(precioReal - rango, precioReal + rango);
     }
 
     /// <summary>
@@ -317,14 +366,20 @@ public class ComerciantePNJController
     /// resolviendo el <see cref="BienData"/> a partir del índice del catálogo.
     /// </summary>
     /// <param name="idCiudad">Identificador de la ciudad cuyo mercado se consulta.</param>
-    /// <param name="idBien">Índice del bien en <see cref="GameManager.CatalogoBienes"/>.</param>
+    /// <param name="idBien">Índice 1-based del bien en <see cref="GameManager.CatalogoBienes"/>.</param>
     /// <returns>La entrada del mercado correspondiente, o <c>null</c> si no existe.</returns>
     private EntradaMercado ObtenerEntrada(int idCiudad, int idBien)
     {
         var entradas = GameManager.Instance.GetEntradasMercado(idCiudad);
         if (entradas == null) return null;
 
-        BienData bien = GameManager.Instance.CatalogoBienes[idBien];
+        int indice = idBien - 1;
+        if (indice < 0 || indice >= GameManager.Instance.CatalogoBienes.Count)
+        {
+            Debug.LogWarning($"[PNJ] ObtenerEntrada: idBien={idBien} fuera de rango (catálogo tiene {GameManager.Instance.CatalogoBienes.Count} bienes).");
+            return null;
+        }
+        BienData bien = GameManager.Instance.CatalogoBienes[indice];
         return entradas.FirstOrDefault(e => e.Bien == bien);
     }
 }
