@@ -20,6 +20,7 @@ public class LoadManager : MonoBehaviour
     private BienDAO                _bienDAO;
     private EstadoMercadoCiudadDAO _mercadoDAO;
     private AlmacenJugadorDAO      _almacenJugadorDAO;
+    private AlmacenCiudadDAO       _almacenCiudadDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -80,6 +81,11 @@ public class LoadManager : MonoBehaviour
         // Paso 5 — Mercado activo en escena
         RestaurarMercados();
 
+        // Paso 6 — Almacén de ciudad del jugador
+        GameManager.Instance?.LimpiarAlmacenCiudades();
+        GameManager.Instance?.CargarAlmacenCiudadesDesdeDAO();
+        Debug.Log("[LoadManager] Almacén de ciudad restaurado.");
+
         Debug.Log($"[LoadManager] Carga desde slot {slotIndex} completada.");
     }
 
@@ -96,6 +102,8 @@ public class LoadManager : MonoBehaviour
         _bienDAO           = new BienDAO(db);
         _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
+        _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
+        GameManager.Instance?.InyectarAlmacenCiudadDAO(_almacenCiudadDAO);
     }
 
     /// <summary>

@@ -13,6 +13,14 @@ public class FlotaRuntimeData
     /// <summary>Nombre del comerciante propietario de la flota.</summary>
     public string NombrePropietario { get; }
 
+    /// <summary>
+    /// Nivel de inteligencia comercial del comerciante, entre 0 y 1.
+    /// Determina la precisión con la que estima los precios de mercado en ciudades no visitadas.
+    /// Un valor de 1 implica estimaciones casi exactas; 0 implica error máximo del 40%.
+    /// Se asigna aleatoriamente al crear la flota y no cambia durante la partida.
+    /// </summary>
+    public float InteligenciaComercial { get; }
+
     /// <summary>Identificador de la ciudad donde la flota inició su ruta actual.</summary>
     public int CiudadOrigenId { get; set; }
 
@@ -47,8 +55,9 @@ public class FlotaRuntimeData
     /// <param name="nombrePropietario">Nombre del comerciante propietario.</param>
     public FlotaRuntimeData(int id, string nombrePropietario)
     {
-        Id               = id;
-        NombrePropietario = nombrePropietario;
+        Id                    = id;
+        NombrePropietario     = nombrePropietario;
+        InteligenciaComercial = UnityEngine.Random.Range(0.1f, 1.0f);
         CiudadOrigenId   = -1;
         CiudadDestinoId  = -1;
         EstadoActual     = EstadoFlotaPNJ.EnPuerto;

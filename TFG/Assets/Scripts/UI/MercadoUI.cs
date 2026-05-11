@@ -199,11 +199,17 @@ public class MercadoUI : MonoBehaviour
 
         if (_textoCapacidadAlmacen != null)
         {
-            int usado = GameManager.Instance.GetTotalUnidadesAlmacen();
-            bool esBeta = GameManager.CapacidadAlmacen == int.MaxValue;
-            _textoCapacidadAlmacen.text = esBeta
-                ? $"{usado:N0} / ∞"
-                : $"{usado:N0} / {GameManager.CapacidadAlmacen:N0}";
+            int bodega = GameManager.Instance.GetTotalUnidadesAlmacen();
+
+            int almacenCiudad = 0;
+            CiudadData ciudadActual = GameManager.Instance.CiudadActual;
+            if (ciudadActual != null)
+            {
+                foreach (int cantidad in GameManager.Instance.GetAlmacenCiudad(ciudadActual.IdCiudad).Values)
+                    almacenCiudad += cantidad;
+            }
+
+            _textoCapacidadAlmacen.text = $"Bodega: {bodega:N0} / Almacén: {almacenCiudad:N0}";
         }
     }
 }

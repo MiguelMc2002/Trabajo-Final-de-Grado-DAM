@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -48,6 +49,16 @@ public class MarketRowUI : MonoBehaviour
     /// <summary>Botón para vender 100 unidades del bien.</summary>
     [SerializeField] private Button _btnVender100;
 
+    [Header("Columnas ciclables")]
+    /// <summary>Etiqueta de la columna izquierda: "Mercado ciudad", "Almacén ciudad" o "Bodega barco".</summary>
+    [SerializeField] private TextMeshProUGUI _textoEtiquetaIzq;
+    /// <summary>Etiqueta de la columna derecha.</summary>
+    [SerializeField] private TextMeshProUGUI _textoEtiquetaDer;
+    /// <summary>Flecha que cicla la columna izquierda.</summary>
+    [SerializeField] private Button _btnCiclarIzq;
+    /// <summary>Flecha que cicla la columna derecha.</summary>
+    [SerializeField] private Button _btnCiclarDer;
+
     // ─── Colores de indicador ────────────────────────────────────────────────
 
     /// <summary>Color del indicador cuando el stock supera el 66 % del máximo (precio bajo).</summary>
@@ -71,6 +82,11 @@ public class MarketRowUI : MonoBehaviour
     /// </summary>
     private OficinaComercial _oficina;
 
+    private OficinaComercial.OrigenDestino _columnaIzq = OficinaComercial.OrigenDestino.Mercado;
+    private OficinaComercial.OrigenDestino _columnaDer = OficinaComercial.OrigenDestino.BodegaBarco;
+    private int _idCiudad;
+    private int _idBien;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -92,6 +108,18 @@ public class MarketRowUI : MonoBehaviour
         // Nombre del bien (estático, no cambia en runtime)
         _textoNombre.text = bien.nombre;
 
+        // Resolver _idCiudad e _idBien
+        _idCiudad = GameManager.Instance?.CiudadActual?.IdCiudad ?? -1;
+        _idBien   = -1;
+        if (GameManager.Instance != null)
+        {
+            IReadOnlyList<BienData> catalogo = GameManager.Instance.CatalogoBienes;
+            for (int i = 0; i < catalogo.Count; i++)
+            {
+                if (catalogo[i] == bien) { _idBien = i + 1; break; }
+            }
+        }
+
         // Limpiar listeners previos para evitar duplicados si Inicializar se llama más de una vez
         _btnComprar1.onClick.RemoveAllListeners();
         _btnComprar10.onClick.RemoveAllListeners();
@@ -99,6 +127,9 @@ public class MarketRowUI : MonoBehaviour
         _btnVender1.onClick.RemoveAllListeners();
         _btnVender10.onClick.RemoveAllListeners();
         _btnVender100.onClick.RemoveAllListeners();
+
+        if (_btnCiclarIzq != null) { _btnCiclarIzq.onClick.RemoveAllListeners(); _btnCiclarIzq.onClick.AddListener(CiclarColumnaIzq); }
+        if (_btnCiclarDer != null) { _btnCiclarDer.onClick.RemoveAllListeners(); _btnCiclarDer.onClick.AddListener(CiclarColumnaDer); }
 
         // Listeners de compra
         _btnComprar1.onClick.AddListener(() => EjecutarCompra(1));
@@ -144,8 +175,8 @@ public class MarketRowUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Actualiza todos los elementos visuales de la fila con los datos actuales del mercado
-    /// y de la bodega del jugador: stock de ciudad, stock en almacén, precio e indicador de color.
+    /// Actualiza todos los elementos visuales de la fila: stocks de las dos columnas ciclables,
+    /// etiquetas de columna, precio (solo si alguna columna es Mercado) e indicador de color.
     /// </summary>
     private void Refrescar()
     {
@@ -179,17 +210,71 @@ public class MarketRowUI : MonoBehaviour
             return;
         }
 
-        int stockCiudad    = _marketManager.GetStockActual(_bien);
-        int stockAlmacen   = GameManager.Instance.GetCantidadBien(_bien);
+        // Stocks de las dos columnas ciclables
+        _textoStockCiudad.text  = GetStock(_columnaIzq).ToString("N0");
+        _textoStockAlmacen.text = GetStock(_columnaDer).ToString("N0");
+
+        // Etiquetas de columna
+        if (_textoEtiquetaIzq != null) _textoEtiquetaIzq.text = EtiquetaColumna(_columnaIzq);
+        if (_textoEtiquetaDer != null) _textoEtiquetaDer.text = EtiquetaColumna(_columnaDer);
+
+        // Precio: solo si alguna columna es Mercado
+        bool hayMercado = _columnaIzq == OficinaComercial.OrigenDestino.Mercado
+                       || _columnaDer == OficinaComercial.OrigenDestino.Mercado;
         float precioActual = _marketManager.GetPrecioActual(_bien);
+        _textoPrecio.text = hayMercado ? $"{precioActual:N0} g" : "—";
 
-        Debug.Log($"[MarketRowUI] Refrescando '{_bien.nombre}': stock={stockCiudad}, precio={precioActual}, almacen={stockAlmacen}");
+        // Botones comprar/vender: activos solo cuando el Mercado está en alguna columna
+        bool comprarActivo = _columnaIzq == OficinaComercial.OrigenDestino.Mercado;
+        bool venderActivo  = _columnaDer == OficinaComercial.OrigenDestino.Mercado;
+        _btnComprar1.interactable   = comprarActivo;
+        _btnComprar10.interactable  = comprarActivo;
+        _btnComprar100.interactable = comprarActivo;
+        _btnVender1.interactable    = venderActivo;
+        _btnVender10.interactable   = venderActivo;
+        _btnVender100.interactable  = venderActivo;
 
-        _textoStockCiudad.text  = stockCiudad.ToString("N0");
-        _textoStockAlmacen.text = stockAlmacen.ToString("N0");
-        _textoPrecio.text       = $"{precioActual:N0} g";
+        if (hayMercado) ActualizarIndicadorColor(precioActual);
 
-        ActualizarIndicadorColor(precioActual);
+        Debug.Log($"[MarketRowUI] Refrescando '{_bien.nombre}': izq={_columnaIzq}({GetStock(_columnaIzq)}), der={_columnaDer}({GetStock(_columnaDer)})");
+    }
+
+    // ─── Columnas ciclables ──────────────────────────────────────────────────
+
+    /// <summary>Cicla la columna izquierda por los tres valores del enum y refresca la fila.</summary>
+    private void CiclarColumnaIzq()
+    {
+        _columnaIzq = (OficinaComercial.OrigenDestino)(((int)_columnaIzq + 1) % 3);
+        Refrescar();
+    }
+
+    /// <summary>Cicla la columna derecha por los tres valores del enum y refresca la fila.</summary>
+    private void CiclarColumnaDer()
+    {
+        _columnaDer = (OficinaComercial.OrigenDestino)(((int)_columnaDer + 1) % 3);
+        Refrescar();
+    }
+
+    /// <summary>Devuelve la etiqueta legible de una columna para mostrar al jugador.</summary>
+    private string EtiquetaColumna(OficinaComercial.OrigenDestino col) => col switch
+    {
+        OficinaComercial.OrigenDestino.Mercado       => "Mercado ciudad",
+        OficinaComercial.OrigenDestino.AlmacenCiudad => "Almacén ciudad",
+        OficinaComercial.OrigenDestino.BodegaBarco   => "Bodega barco",
+        _                                             => string.Empty
+    };
+
+    /// <summary>Devuelve el stock actual de la columna indicada.</summary>
+    private int GetStock(OficinaComercial.OrigenDestino col)
+    {
+        if (GameManager.Instance == null) return 0;
+        return col switch
+        {
+            OficinaComercial.OrigenDestino.Mercado       => _marketManager.GetStockActual(_bien),
+            OficinaComercial.OrigenDestino.AlmacenCiudad => GameManager.Instance.GetCantidadAlmacenCiudad(_idCiudad, _idBien),
+            OficinaComercial.OrigenDestino.BodegaBarco   => GameManager.Instance.GetCantidadBien(_bien),
+            _                                             => 0
+        };
     }
 
     /// <summary>
@@ -233,9 +318,10 @@ public class MarketRowUI : MonoBehaviour
             return;
         }
 
-        _oficina.Comprar(_bien, cantidad);
-        // Refrescar explícitamente para reflejar cambios en almacén y precio aunque
-        // OnMercadoActualizado ya lo haga al modificar el stock de la ciudad.
+        if (_columnaIzq == OficinaComercial.OrigenDestino.Mercado)
+            _oficina.Comprar(_bien, cantidad);
+        else
+            _oficina.Transferir(_bien, cantidad, _columnaIzq, _columnaDer);
         Refrescar();
     }
 
@@ -254,7 +340,10 @@ public class MarketRowUI : MonoBehaviour
             return;
         }
 
-        _oficina.Vender(_bien, cantidad);
+        if (_columnaDer == OficinaComercial.OrigenDestino.Mercado)
+            _oficina.Vender(_bien, cantidad);
+        else
+            _oficina.Transferir(_bien, cantidad, _columnaIzq, _columnaDer);
         Refrescar();
     }
 }

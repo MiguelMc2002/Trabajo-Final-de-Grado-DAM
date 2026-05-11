@@ -23,26 +23,68 @@ MonoBehaviour:
     ConsumoDiario: 7
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 0958af29e3469ca41964ec15617d1ebf, type: 2}
-    StockActual: 280
-    StockMax: 560
-    ProduccionDiaria: 5
-    ConsumoDiario: 5
+    StockActual: 100
+    StockMax: 200
+    ProduccionDiaria: 0
+    ConsumoDiario: 8
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 15b6cb82c6fc54d429f54747db2ae0d1, type: 2}
-    StockActual: 300
-    StockMax: 600
-    ProduccionDiaria: 6
-    ConsumoDiario: 6
+    StockActual: 150
+    StockMax: 300
+    ProduccionDiaria: 5
+    ConsumoDiario: 15
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: 89dfd2d6b0d14b6499cdd9f21679f362, type: 2}
-    StockActual: 600
-    StockMax: 1000
-    ProduccionDiaria: 15
+    StockActual: 700
+    StockMax: 900
+    ProduccionDiaria: 60
     ConsumoDiario: 8
     PrecioActual: 0
   - Bien: {fileID: 11400000, guid: c291b4d24c3b3474f9db5ffc01902bb0, type: 2}
-    StockActual: 200
-    StockMax: 400
-    ProduccionDiaria: 4
+    StockActual: 50
+    StockMax: 100
+    ProduccionDiaria: 0
     ConsumoDiario: 5
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: c169ed82e244a744bad2c8e086dddeeb, type: 2}
+    StockActual: 100
+    StockMax: 200
+    ProduccionDiaria: 0
+    ConsumoDiario: 12
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: a3795bd4ed1b202459fc8030f4771659, type: 2}
+    StockActual: 220
+    StockMax: 300
+    ProduccionDiaria: 20
+    ConsumoDiario: 5
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: ff8085a55ca65274f93f684806e4f3f4, type: 2}
+    StockActual: 400
+    StockMax: 600
+    ProduccionDiaria: 40
+    ConsumoDiario: 10
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: 45067d49b41bc3c41a76d6eeaa773fd1, type: 2}
+    StockActual: 40
+    StockMax: 100
+    ProduccionDiaria: 0
+    ConsumoDiario: 6
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: 5bf5142f3f01f894bac9a77f43aef339, type: 2}
+    StockActual: 150
+    StockMax: 300
+    ProduccionDiaria: 10
+    ConsumoDiario: 12
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: ff8085a55ca65274f93f684806e4f3f4, type: 2}
+    StockActual: 15
+    StockMax: 80
+    ProduccionDiaria: 0
+    ConsumoDiario: 4
+    PrecioActual: 0
+  - Bien: {fileID: 11400000, guid: 6217f1261d0207644a0574f5d511b670, type: 2}
+    StockActual: 8
+    StockMax: 50
+    ProduccionDiaria: 0
+    ConsumoDiario: 3
     PrecioActual: 0

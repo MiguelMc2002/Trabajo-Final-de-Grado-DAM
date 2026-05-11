@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -22,10 +21,6 @@ public class FlotaManager : MonoBehaviour
     // ─── Controladores de comportamiento ─────────────────────────────────────
 
     private readonly Dictionary<int, ComerciantePNJController> _controladores = new();
-
-    private int _diasDesdeUltimoRefresh = 0;
-
-    private MemoriaComercialPNJDAO _memoriaDAO;
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -62,8 +57,7 @@ public class FlotaManager : MonoBehaviour
 
         FlotasPorId[flota.Id] = flota;
 
-        // Crear y registrar el controlador de comportamiento para esta flota
-        _controladores[flota.Id] = new ComerciantePNJController(flota, this, ObtenerMemoriaDAO());
+        _controladores[flota.Id] = new ComerciantePNJController(flota, this);
 
         Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}");
     }
@@ -93,48 +87,21 @@ public class FlotaManager : MonoBehaviour
     /// <summary>
     /// Avanza un día de simulación en todos los controladores de comportamiento PNJ registrados.
     /// Suscrito a <see cref="SimulacionTiempo.OnNuevoDia"/> en <c>Awake</c>.
-    /// Cada 7 días realiza un snapshot global de precios de mercado antes de ejecutar los ticks.
     /// </summary>
     public void TickTodosLosControladores()
     {
-        _diasDesdeUltimoRefresh++;
-        if (_diasDesdeUltimoRefresh >= 7)
-        {
-            RefreshMemoriaGlobal();
-            _diasDesdeUltimoRefresh = 0;
-        }
-
         foreach (ComerciantePNJController controlador in _controladores.Values)
             controlador.Tick();
     }
 
-    private void RefreshMemoriaGlobal()
-    {
-        int diaJuego = GameManager.Instance.EstadoPartida.DiaJuego;
-
-        foreach (var kvp in GameManager.Instance.MercadosPorCiudad)
-        {
-            int idCiudad = kvp.Key;
-            foreach (EntradaMercado entrada in kvp.Value)
-            {
-                int idBien = GameManager.Instance.CatalogoBienes.ToList().IndexOf(entrada.Bien);
-                if (idBien == -1) continue;
-
-                ObtenerMemoriaDAO().GuardarMemoria(0, idBien, idCiudad, entrada.PrecioActual, diaJuego);
-            }
-        }
-
-        Debug.Log($"[PNJ] Snapshot global actualizado. Día {diaJuego}.");
-    }
-
     /// <summary>
-    /// Crea y registra las flotas PNJ iniciales de prueba al comenzar una partida nueva.
-    /// Genera exactamente 2 comerciantes: Hans (id 1001) y Klaus (id 1002),
-    /// asignando sus ciudades de origen a partir del catálogo recibido.
+    /// Crea y registra los 18 comerciantes PNJ iniciales al comenzar una partida nueva.
+    /// Garantiza que las 6 ciudades tienen mercado inicializado antes de crear las flotas.
+    /// Los IDs van del 1001 al 1018 y se distribuyen 3 por ciudad de origen;
+    /// el índice se resuelve con módulo para evitar desbordamiento si hay menos de 6 ciudades.
     /// </summary>
     /// <param name="ciudades">
-    /// Lista de ciudades disponibles en la partida.
-    /// Se usa la primera y la segunda ciudad (o la primera para ambas si solo hay una).
+    /// Lista de ciudades disponibles en la partida. Debe contener al menos una entrada.
     /// </param>
     public void SpawnFlotasPNJIniciales(IReadOnlyList<CiudadData> ciudades)
     {
@@ -144,40 +111,61 @@ public class FlotaManager : MonoBehaviour
             return;
         }
 
-        int ciudadHansId  = ciudades[0].IdCiudad;
-        int ciudadKlausId = ciudades.Count >= 2 ? ciudades[1].IdCiudad : ciudades[0].IdCiudad;
+        GameManager.Instance.InicializarMercadosCiudades(GameManager.Instance.CiudadesDisponibles);
 
-        FlotaRuntimeData hans = new FlotaRuntimeData(1001, "Comerciante Hans");
-        hans.CiudadOrigenId = ciudadHansId;
-        RegistrarFlota(hans);
+        // (id, nombre, índice en ciudades[])
+        var definiciones = new (int id, string nombre, int idxCiudad)[]
+        {
+            (1001, "Comerciante Hans",      0),
+            (1002, "Comerciante Klaus",     1),
+            (1003, "Comerciante Erik",      2),
+            (1004, "Comerciante Pieter",    3),
+            (1005, "Comerciante Johann",    4),
+            (1006, "Comerciante Willem",    5),
+            (1007, "Comerciante Dirk",      0),
+            (1008, "Comerciante Conrad",    1),
+            (1009, "Comerciante Albrecht",  2),
+            (1010, "Comerciante Heinrich",  3),
+            (1011, "Comerciante Gerhard",   4),
+            (1012, "Comerciante Rutger",    5),
+            (1013, "Comerciante Berthold",  0),
+            (1014, "Comerciante Siegfried", 1),
+            (1015, "Comerciante Wolfram",   2),
+            (1016, "Comerciante Dietrich",  3),
+            (1017, "Comerciante Kaspar",    4),
+            (1018, "Comerciante Ludolf",    5),
+        };
 
-        FlotaRuntimeData klaus = new FlotaRuntimeData(1002, "Comerciante Klaus");
-        klaus.CiudadOrigenId = ciudadKlausId;
-        RegistrarFlota(klaus);
+        foreach (var (id, nombre, idxCiudad) in definiciones)
+        {
+            int idCiudad = ciudades[idxCiudad % ciudades.Count].IdCiudad;
+            FlotaRuntimeData flota = new FlotaRuntimeData(id, nombre);
+            flota.CiudadOrigenId = idCiudad;
+            RegistrarFlota(flota);
+        }
 
-        Debug.Log($"[FlotaManager] Flotas PNJ iniciales creadas: Hans (ciudad {ciudadHansId}), Klaus (ciudad {ciudadKlausId}).");
-
-        RefreshMemoriaGlobal();
+        Debug.Log($"[FlotaManager] 18 flotas PNJ iniciales creadas distribuidas entre {ciudades.Count} ciudades.");
     }
-
-    // ─── Helpers privados ─────────────────────────────────────────────────────
 
     /// <summary>
-    /// Devuelve el DAO de memoria comercial, creándolo si aún no existe.
-    /// Se inicializa de forma lazy para garantizar que <see cref="DatabaseManager"/>
-    /// ya tiene una conexión SQLite abierta cuando se accede por primera vez.
+    /// Cuenta cuántas flotas PNJ viajan actualmente hacia la ciudad indicada
+    /// transportando el bien indicado. Usado por <see cref="ComerciantePNJController"/> para
+    /// evitar saturación de rutas cuando demasiados comerciantes eligen el mismo destino.
     /// </summary>
-    /// <returns>Instancia del DAO de memoria comercial PNJ lista para su uso.</returns>
-    private MemoriaComercialPNJDAO ObtenerMemoriaDAO()
+    /// <param name="idCiudad">Ciudad destino a comprobar.</param>
+    /// <param name="idBien">Identificador del bien transportado.</param>
+    /// <returns>Número de flotas en ruta hacia esa ciudad con ese bien.</returns>
+    public int ContarFlotasEnRutaHacia(int idCiudad, int idBien)
     {
-        if (_memoriaDAO == null)
-            _memoriaDAO = new MemoriaComercialPNJDAO(DatabaseManager.Instance);
-        return _memoriaDAO;
-    }
-
-    private void OnDestroy()
-    {
-        SimulacionTiempo.OnNuevoDia -= TickTodosLosControladores;
+        int count = 0;
+        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
+        {
+            if (flota.EstadoActual == EstadoFlotaPNJ.Viajando &&
+                flota.CiudadDestinoId == idCiudad &&
+                flota.Carga.ContainsKey(idBien))
+                count++;
+        }
+        return count;
     }
 
     /// <summary>
@@ -197,5 +185,10 @@ public class FlotaManager : MonoBehaviour
 
         flota.EstadoActual = nuevoEstado;
         Debug.Log($"[FlotaManager] Flota {flotaId} → {nuevoEstado}");
+    }
+
+    private void OnDestroy()
+    {
+        SimulacionTiempo.OnNuevoDia -= TickTodosLosControladores;
     }
 }
