@@ -52,6 +52,21 @@ public class ComerciantePNJController
             case EstadoFlotaPNJ.Comerciando:
                 TickComerciando();
                 break;
+            case EstadoFlotaPNJ.Huyendo:
+                TickHuyendo();
+                break;
+            case EstadoFlotaPNJ.Patrullando:
+                // TODO Día 21: lógica de patrulla pirata con memoria de casillas
+                break;
+            case EstadoFlotaPNJ.Interceptando:
+                // TODO Día 21: persecución activa de comerciante objetivo
+                break;
+            case EstadoFlotaPNJ.HuyendoAPuerto:
+                // TODO Día 21: comerciante busca ciudad más cercana
+                break;
+            case EstadoFlotaPNJ.EsperandoEnPuerto:
+                // TODO Día 21: comprobación diaria de proximidad pirata
+                break;
         }
     }
 
@@ -59,6 +74,8 @@ public class ComerciantePNJController
 
     private void TickEnPuerto()
     {
+        if (_flota.IsPirata) { TickPatrullaPirata(); return; }
+
         if (_flota.TieneCarga())
         {
             Debug.LogWarning($"[PNJ] {_flota.NombrePropietario} tiene carga sin vender en puerto. Redirigiendo a Comerciando.");
@@ -254,12 +271,18 @@ public class ComerciantePNJController
             if (_historialCiudades.Count >= 2) _historialCiudades.Dequeue();
             _historialCiudades.Enqueue(_flota.CiudadDestinoId);
             Debug.Log($"[PNJ] {_flota.NombrePropietario} ha llegado a ciudad {_flota.CiudadDestinoId}.");
-            CambiarEstado(EstadoFlotaPNJ.Comerciando);
+
+            if (_flota.IsPirata)
+                CambiarEstado(EstadoFlotaPNJ.Patrullando);
+            else
+                CambiarEstado(EstadoFlotaPNJ.Comerciando);
         }
     }
 
     private void TickComerciando()
     {
+        if (_flota.IsPirata) { TickPatrullaPirata(); return; }
+
         if (!_flota.TieneCarga())
         {
             Debug.Log($"[PNJ] {_flota.NombrePropietario} llegó sin carga a ciudad {_flota.CiudadOrigenId}.");
@@ -307,6 +330,23 @@ public class ComerciantePNJController
         }
 
         CambiarEstado(EstadoFlotaPNJ.EnPuerto);
+    }
+
+    private void TickHuyendo()
+    {
+        EstadoFlotaPNJ siguienteEstado = _flota.IsPirata ? EstadoFlotaPNJ.Patrullando : EstadoFlotaPNJ.EnPuerto;
+        CambiarEstado(siguienteEstado);
+        Debug.Log($"[PNJ] {_flota.NombrePropietario} dejó de huir y se reagrupó.");
+    }
+
+    private void TickPatrullaPirata()
+    {
+        _diasRestantesViaje    = UnityEngine.Random.Range(3, 8);
+        _flota.CiudadDestinoId = -1;
+        _flota.RutaActualTilemap = new System.Collections.Generic.List<UnityEngine.Vector3Int>();
+        CambiarEstado(EstadoFlotaPNJ.Patrullando);
+        Debug.Log($"[PNJ-Pirata] {_flota.NombrePropietario} sale a patrullar.");
+        // TODO Día 21: ruta real hacia casillas de mar con sesgo a rutas comerciales transitadas
     }
 
     // ─── Transiciones ────────────────────────────────────────────────────────

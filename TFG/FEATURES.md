@@ -1690,3 +1690,158 @@ Ambos archivos usan el patrón autónomo de MemoriaComercialPNJDAOTests: clases 
 - `MemoriaComercialPNJDAO` sin uso — evaluar mantener para estadísticas o eliminar antes del freeze (Día 32).
 - `BienData` sin ID numérico propio — frágil con reordenación de assets en Inspector.
 - [ ] **ZonaPeligro sin tile visual** — diferido al Día 21 (piratas).
+
+---
+
+## TO-DO Día 20
+
+- [x] EstadoFlotaPNJ ampliado: Huyendo, Patrullando, Interceptando, HuyendoAPuerto, EsperandoEnPuerto
+- [x] FlotaRuntimeData ampliado con stats de combate: IsPirata, VidaMax, VidaActual, FuerzaCanhones, VelocidadFlota, ManiobrabilidadFlota, HabilidadCapitan, NumBarcos, Tripulacion
+- [x] Constructor secundario FlotaRuntimeData(id, nombre, esPirata) para flotas pirata
+- [x] Métodos AplicarDanio, EstaDestruida, ResetearParaReabastecimiento en FlotaRuntimeData
+- [x] ResultadoCombate.cs — clase inmutable con enum DesenlaceCombate
+- [x] CombateNavalResolver.cs — resolución directa sin rondas: huida, rendición, combate
+- [x] MapamundiController singleton + ComprobarProximidadCombate + TriggerCombate
+- [x] FlotaIconoMapamundi conectado a ComprobarProximidadCombate al llegar a waypoint
+- [x] 3 flotas pirata históricas en FlotaManager (Störtebeker, Gödeke Michels, Klaus Scheld)
+- [x] Reabastecimiento semanal de piratas en FlotaManager (ReabastecerPiratas cada 7 días)
+- [x] TickHuyendo y TickPatrullaPirata en ComerciantePNJController
+- [x] Stubs de estados nuevos en Tick() para implementación Día 21
+
+---
+
+## DÍA 20 — Sistema de combate naval por auto-resolución
+
+### Resumen
+
+Día dedicado a implementar el sistema de encuentros navales entre piratas y comerciantes. Se crea la infraestructura de combate completa (resolver puro, resultado inmutable, detección por proximidad) sin interfaz gráfica; toda la resolución ocurre en lógica de juego y queda registrada en el log de consola. Se añaden también las tres flotas pirata históricas y el ciclo de reabastecimiento semanal.
+
+### Clases nuevas
+
+#### ResultadoCombate — `Assets/Scripts/Combate/ResultadoCombate.cs`
+
+Clase inmutable que encapsula el resultado completo de un encuentro naval. Generada por `CombateNavalResolver.Resolver`; el llamador es el responsable de aplicar los cambios al estado del mundo.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `DesenlaceCombate` | `enum` | `PirataGana`, `ComercianteEscapa`, `ComercianteGana`, `Rendicion`, `Empate`. |
+| `Desenlace` | `DesenlaceCombate` (get) | Desenlace final del encuentro. |
+| `VidaFinalAtacante` | `float` (get) | Puntos de vida del pirata tras el combate. |
+| `VidaFinalDefensor` | `float` (get) | Puntos de vida de la víctima tras el combate. |
+| `BarcosHundidosAtacante` | `int` (get) | Bajas del pirata. |
+| `BarcosHundidosDefensor` | `int` (get) | Bajas de la víctima. |
+| `BarcosCapturedDefensor` | `int` (get) | Barcos capturados al defensor (solo si pirata gana). |
+| `BotonCapturado` | `Dictionary<int,int>` (get) | Carga capturada: clave `id_bien`, valor unidades. Vacío si el pirata no ganó. |
+| `Descripcion` | `string` (get) | Texto de log con el resumen del combate. |
+| `ResultadoCombate(...)` | Constructor | Inicializa todos los campos. `boton` y `descripcion` admiten `null` (se convierten a colección vacía y `string.Empty`). |
+
+#### CombateNavalResolver — `Assets/Scripts/Combate/CombateNavalResolver.cs`
+
+Clase estática pura que resuelve encuentros navales de forma instantánea. No tiene estado propio y no modifica ningún objeto externo.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Resolver(FlotaRuntimeData pirata, FlotaRuntimeData victima, System.Random rng)` | `static ResultadoCombate` | Resuelve el encuentro en tres pasos secuenciales. `rng` puede ser `null`; se crea un generador nuevo en ese caso. |
+
+### Clases modificadas
+
+#### EstadoFlotaPNJ — `Assets/Scripts/PNJ/EstadoFlotaPNJ.cs`
+
+| Valor nuevo | Descripción |
+|---|---|
+| `Huyendo` | Flota en retirada tras combate. Abstracto por ahora; implementación real en Día 21. |
+| `Patrullando` | Pirata moviéndose por el mar buscando presas. Implementación real en Día 21. |
+| `Interceptando` | Pirata persiguiendo activamente a un comerciante detectado. Implementación real en Día 21. |
+| `HuyendoAPuerto` | Comerciante que detectó un pirata y busca el puerto más cercano como refugio. Implementación real en Día 21. |
+| `EsperandoEnPuerto` | Comerciante refugiado esperando a que el peligro desaparezca. Implementación real en Día 21. |
+
+#### FlotaRuntimeData — `Assets/Scripts/PNJ/FlotaRuntimeData.cs`
+
+**Nuevas propiedades (backing field privado):**
+
+| Propiedad | Tipo | Default comerciante | Default pirata | Descripción |
+|---|---|---|---|---|
+| `IsPirata` | `bool` (get) | `false` | `true` | Marca si la flota es hostil. |
+| `VidaMax` | `float` (get) | `100f` | `100f` | Puntos de vida máximos. |
+| `VidaActual` | `float` (get+set) | `100f` | `100f` | Puntos de vida actuales. |
+| `FuerzaCanhones` | `float` (get) | `8f` | `25f` | Potencia de fuego combinada. |
+| `VelocidadFlota` | `float` (get) | `5f` | `4f` | Velocidad de navegación. |
+| `ManiobrabilidadFlota` | `float` (get) | `5f` | `4f` | Maniobrabilidad, influye en capturas. |
+| `HabilidadCapitan` | `float` (get) | `= InteligenciaComercial` | `= InteligenciaComercial` | Habilidad táctica del capitán. |
+| `NumBarcos` | `int` (get+set) | `5` | `5` | Barcos operativos. |
+| `Tripulacion` | `int` (get+set) | `30` | `40` | Tripulantes activos. |
+
+**Nuevo constructor:**
+
+| Firma | Descripción |
+|---|---|
+| `FlotaRuntimeData(int id, string nombrePropietario, bool esPirata)` | Llama al constructor base y sobreescribe los campos de combate con valores piratas si `esPirata == true`. |
+
+**Métodos nuevos:**
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AplicarDanio(float cantidad)` | `bool` | Reduce `VidaActual` sin bajar de 0. Devuelve `true` si la flota queda destruida. |
+| `EstaDestruida()` | `bool` | Devuelve `NumBarcos <= 0`. |
+| `ResetearParaReabastecimiento()` | `void` | Restaura `VidaActual`, `Tripulacion` y `NumBarcos` a sus valores iniciales y vacía la carga. Usado por el ciclo semanal pirata. |
+
+#### MapamundiController — `Assets/Scripts/Navegacion/MapamundiController.cs`
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_instance` | `static MapamundiController` (campo privado) | Referencia a la instancia activa. |
+| `Instance` | `static MapamundiController` (get) | Punto de acceso global. Sin `DontDestroyOnLoad`. |
+| `Awake()` | `private void` | Asigna `_instance = this`. |
+| `ComprobarProximidadCombate(FlotaRuntimeData flotaQueSeMovio)` | `public void` | Itera todas las flotas activas; si hay una pirata y una no-pirata a distancia ≤ 1.5 unidades, llama a `TriggerCombate`. Solo resuelve el primer encuentro encontrado. |
+| `TriggerCombate(FlotaRuntimeData pirata, FlotaRuntimeData victima)` | `private void` | Pausa la simulación, resuelve con `CombateNavalResolver.Resolver`, aplica los cambios de estado a ambas flotas según el desenlace y reanuda la simulación. |
+
+#### FlotaIconoMapamundi — `Assets/Scripts/Mapamundi/FlotaIconoMapamundi.cs`
+
+En `Update()`, al finalizar la ruta (bloque `IndiceWaypointActual >= RutaActualTilemap.Count`), después de limpiar la ruta y resetear el índice se añade:
+
+```csharp
+if (MapamundiController.Instance != null)
+    MapamundiController.Instance.ComprobarProximidadCombate(Flota);
+```
+
+Esto conecta la llegada a cada waypoint con la detección de encuentros navales.
+
+#### FlotaManager — `Assets/Scripts/PNJ/FlotaManager.cs`
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_diasDesdeUltimoReabastecimientoPirata` | `int` (campo privado) | Contador de días desde el último reabastecimiento. |
+| `ReabastecerPiratas()` | `private void` | Itera todas las flotas y llama a `ResetearParaReabastecimiento()` en las piratas. Llamado automáticamente desde `TickTodosLosControladores` cada 7 días. |
+| Piratas en `SpawnFlotasPNJIniciales` | — | Tras los 18 comerciantes, crea 3 flotas pirata históricas (IDs 2001–2003): Störtebeker, Gödeke Michels, Klaus Scheld. Estado inicial `Patrullando`. Posición temporal proporcional al ID hasta que se asignen casillas de mar reales en el Día 21. |
+
+#### ComerciantePNJController — `Assets/Scripts/PNJ/ComerciantePNJController.cs`
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `TickHuyendo()` | `private void` | Si `IsPirata`: transiciona a `Patrullando`. Si no: transiciona a `EnPuerto`. Registra log de reagrupamiento. |
+| `TickPatrullaPirata()` | `private void` | Asigna `_diasRestantesViaje` aleatorio (3–7), limpia la ruta y transiciona a `Patrullando`. Stub hasta Día 21. |
+| Guard `IsPirata` en `TickEnPuerto` | — | `if (_flota.IsPirata) { TickPatrullaPirata(); return; }` — los piratas nunca entran en lógica comercial. |
+| Guard `IsPirata` en `TickComerciando` | — | Igual que `TickEnPuerto`. |
+| `TickViajando` modificado | — | Al llegar a destino: si pirata → `Patrullando`; si no → `Comerciando`. |
+| Stubs en `Tick()` | — | Casos `Patrullando`, `Interceptando`, `HuyendoAPuerto`, `EsperandoEnPuerto` con `// TODO Día 21`. |
+
+### Lógica de CombateNavalResolver.Resolver()
+
+**Paso 1 — ¿Intenta huir la víctima?**
+Si `pirata.FuerzaCanhones / victima.FuerzaCanhones >= 1.2`, la víctima intentará huir. Se calcula un `factorHuida` como el cociente de `(velocidad + maniobrabilidad + habilidadCapitán×10)` de la víctima entre el del pirata, multiplicado por ruido aleatorio `[0.8, 1.2]`. Si `factorHuida > 1.0` → `ComercianteEscapa`.
+
+**Paso 2 — ¿Puede luchar la víctima?**
+Si `FuerzaCanhones == 0 && NumBarcos <= 1`, la víctima se rinde. Se captura toda la carga y todos los barcos → `Rendicion`.
+
+**Paso 3 — Combate**
+Cada bando calcula su fuerza efectiva: `cañones + tripulación×0.5 + habilidadCapitán×10`, multiplicada por ruido `[0.8, 1.2]`. El `ratioA` (0–1) determina la proporción de daño infligido. Las bajas en barcos son proporcionales al ratio y al 80% de los barcos de cada bando. Si `ratioA > 0.5`, el pirata puede capturar parte de los barcos hundidos del defensor (probabilidad proporcional a maniobrabilidad y tripulación). El botín es el 50% de la carga si no hay captura de barcos, o el 100% si los hay. El desenlace es `PirataGana` si `ratioA >= 0.5`, `ComercianteGana` si no, o `Empate` si `|ratioA - 0.5| < 0.05`.
+
+### TO-DOs abiertos tras el Día 20
+
+- IA de detección y persecución pirata con memoria de casillas (Día 21)
+- Zonas de peligro en tilemap (Día 21)
+- Panel modal de encuentro para el jugador (Día 25)
+- Stats reales por barco individual cuando existan cascos y módulos (Día 25+)
+- FindFirstObjectByType deprecado en ComerciantePNJController (3 llamadas) — Día 32
+- Posiciones iniciales reales de piratas en casillas de mar del tilemap (Día 21)
+
