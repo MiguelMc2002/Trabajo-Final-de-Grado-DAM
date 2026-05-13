@@ -1,15 +1,13 @@
 {
     "name": "SaveLoadTests.PlayMode",
-    "references": [],
+    "references": [
+        "Assembly-CSharp"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": true,
-    "precompiledReferences": [
-        "nunit.framework.dll",
-        "Mono.Data.Sqlite.dll",
-        "sqlite3.dll"
-    ],
+    "overrideReferences": false,
+    "precompiledReferences": [],
     "autoReferenced": false,
     "defineConstraints": [],
     "versionDefines": [],

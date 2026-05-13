@@ -138,6 +138,9 @@ public class FlotaManager : MonoBehaviour
 
         foreach (var (id, nombre, idxCiudad) in definiciones)
         {
+            // Si la flota ya fue cargada desde BD (por CargarFlotasPNJ), no duplicar
+            if (FlotasPorId.ContainsKey(id)) continue;
+
             int idCiudad = ciudades[idxCiudad % ciudades.Count].IdCiudad;
             FlotaRuntimeData flota = new FlotaRuntimeData(id, nombre);
             flota.CiudadOrigenId = idCiudad;

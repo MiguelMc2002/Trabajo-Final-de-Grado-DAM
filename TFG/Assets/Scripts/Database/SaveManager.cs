@@ -77,6 +77,9 @@ public class SaveManager : MonoBehaviour
         // Paso 6b — Almacén de ciudad del jugador
         GuardarAlmacenCiudad();
 
+        // Paso 6c — Flotas PNJ
+        GuardarFlotasPNJ();
+
         // Paso 7 — Estado económico del mercado de cada ciudad
         GuardarEstadoEconomico();
 
@@ -220,6 +223,94 @@ public class SaveManager : MonoBehaviour
         }
 
         Debug.Log("[SaveManager] Almacén de ciudad guardado.");
+    }
+
+    /// <summary>
+    /// Paso 6c: persiste el estado de todas las flotas PNJ activas en las tablas
+    /// <c>FlotaPNJ</c> y <c>CargaFlotaPNJ</c>. Primero borra las filas existentes
+    /// de cada flota y luego las reinserta para garantizar consistencia.
+    /// Si <see cref="FlotaManager"/> no está disponible, omite el paso con un aviso.
+    /// </summary>
+    private void GuardarFlotasPNJ()
+    {
+        if (FlotaManager.Instance == null)
+        {
+            Debug.LogWarning("[SaveManager] FlotaManager.Instance es null; se omite el guardado de flotas PNJ.");
+            return;
+        }
+
+        Mono.Data.Sqlite.SqliteConnection conexion = DatabaseManager.Instance.Conexion;
+        System.Collections.Generic.IReadOnlyCollection<FlotaRuntimeData> flotas =
+            FlotaManager.Instance.ObtenerTodasLasFlotas();
+        int guardadas = 0;
+
+        foreach (FlotaRuntimeData flota in flotas)
+        {
+            try
+            {
+                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM FlotaPNJ WHERE id = @id;";
+                    cmd.Parameters.AddWithValue("@id", flota.Id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        INSERT INTO FlotaPNJ
+                            (id, nombre_propietario, ciudad_origen_id, ciudad_destino_id, estado,
+                             posicion_actual_x, posicion_actual_y,
+                             casilla_destino_x, casilla_destino_y, casilla_destino_z)
+                        VALUES
+                            (@id, @nombre, @origen, @destino, @estado,
+                             @posX, @posY,
+                             @cDestX, @cDestY, @cDestZ);";
+                    cmd.Parameters.AddWithValue("@id",      flota.Id);
+                    cmd.Parameters.AddWithValue("@nombre",  flota.NombrePropietario);
+                    cmd.Parameters.AddWithValue("@origen",  flota.CiudadOrigenId);
+                    cmd.Parameters.AddWithValue("@destino", flota.CiudadDestinoId);
+                    cmd.Parameters.AddWithValue("@estado",  flota.EstadoActual.ToString());
+                    cmd.Parameters.AddWithValue("@posX",    flota.PosicionActual.x);
+                    cmd.Parameters.AddWithValue("@posY",    flota.PosicionActual.y);
+                    cmd.Parameters.AddWithValue("@cDestX",  flota.CasillaDestino.x);
+                    cmd.Parameters.AddWithValue("@cDestY",  flota.CasillaDestino.y);
+                    cmd.Parameters.AddWithValue("@cDestZ",  flota.CasillaDestino.z);
+                    cmd.ExecuteNonQuery();
+                }
+
+                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM CargaFlotaPNJ WHERE id_flota = @id;";
+                    cmd.Parameters.AddWithValue("@id", flota.Id);
+                    cmd.ExecuteNonQuery();
+                }
+
+                foreach (System.Collections.Generic.KeyValuePair<int, int> par in flota.Carga)
+                {
+                    if (par.Value <= 0) continue;
+
+                    using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+                    {
+                        cmd.CommandText = @"
+                            INSERT INTO CargaFlotaPNJ (id_flota, id_bien, cantidad)
+                            VALUES (@idFlota, @idBien, @cantidad);";
+                        cmd.Parameters.AddWithValue("@idFlota",  flota.Id);
+                        cmd.Parameters.AddWithValue("@idBien",   par.Key);
+                        cmd.Parameters.AddWithValue("@cantidad", par.Value);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+
+                guardadas++;
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[SaveManager] Error al guardar flota PNJ id={flota.Id}: {ex}");
+            }
+        }
+
+        Debug.Log($"[SaveManager] {guardadas} flotas PNJ guardadas en FlotaPNJ/CargaFlotaPNJ.");
     }
 
     /// <summary>

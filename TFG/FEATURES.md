@@ -1621,4 +1621,72 @@ Ampliado de 5 a 12 bienes: añadidos Sal, Cera (primarios), Tela, Herramientas, 
 - [ ] **`FindFirstObjectByType` deprecado en Unity 6** — reemplazar por `FindAnyObjectByType` en `ComerciantePNJController` (3 llamadas) y `DebugCasillaHex`. Registrado en Día 18.
 - [ ] **`MemoriaComercialPNJDAO` sin uso** — `ComerciantePNJController` ya no la usa tras el refactor del Día 18. Evaluar si mantener para estadísticas o eliminar antes del freeze (Día 32).
 - [ ] **Marcadores visuales de ciudad** — GameObjects creados pero sin sprite ni feedback visual. Diferido al Día 17.
+
+---
+
+## DÍA 19 — Persistencia de flotas PNJ + tests de persistencia
+
+### Resumen
+Día dedicado a dos bloques: (1) persistencia real del estado de las 18 flotas PNJ comerciantes entre sesiones de juego, guardando y cargando desde SQLite las tablas FlotaPNJ y CargaFlotaPNJ; (2) tests automatizados de Play Mode para el almacén ciudad del jugador y para la persistencia de flotas PNJ.
+
+### TO-DO Día 19
+
+- [x] Persistencia de flotas PNJ entre sesiones (GuardarFlotasPNJ + CargarFlotasPNJ)
+- [x] Guard en SpawnFlotasPNJIniciales para evitar duplicados al cargar partida
+- [x] Constructor secundario AlmacenCiudadDAO(SqliteConnection) para tests autónomos
+- [x] Tablas FlotaPNJ y CargaFlotaPNJ en DatabaseManager (MigrarTablasFlotaPNJ)
+- [x] Tests PlayMode SaveLoadAlmacenCiudadTests (3 tests — todos PASS)
+- [x] Tests PlayMode SaveLoadFlotasPNJTests (2 tests — todos PASS)
+
+---
+
+### Clases modificadas
+
+#### AlmacenCiudadDAO (Día 19)
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AlmacenCiudadDAO(SqliteConnection conexion)` | Constructor secundario | Para tests autónomos sin DatabaseManager. La propiedad privada `Conexion` resuelve entre `_conexionDirecta` y `_dbManager.Conexion`. |
+
+#### DatabaseManager (Día 19)
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MigrarTablasFlotaPNJ()` | `void` (privado) | Crea `FlotaPNJ` y `CargaFlotaPNJ` con CREATE TABLE IF NOT EXISTS. Llamado desde `InicializarSlot()`. PosicionActual persiste como REAL x/y (Vector2). CasillaDestino persiste como INTEGER x/y/z (Vector3Int). InteligenciaComercial NO se persiste — se regenera aleatoriamente por sesión. |
+
+#### SaveManager (Día 19)
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarFlotasPNJ()` | `void` (privado) | Paso 6c del guardado. Itera `FlotaManager.ObtenerTodasLasFlotas()`, hace DELETE+INSERT en `FlotaPNJ` y DELETE+INSERT en `CargaFlotaPNJ` por cada flota. |
+
+#### LoadManager (Día 19)
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CargarFlotasPNJ()` | `void` (privado) | Paso 7 de la carga. Lee `FlotaPNJ` y `CargaFlotaPNJ`, reconstruye cada `FlotaRuntimeData` y llama `FlotaManager.RegistrarFlota()`. `RutaActualTilemap` e `IndiceWaypointActual` no se restauran — se recalculan al entrar al mapamundi. |
+
+#### FlotaManager (Día 19)
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `SpawnFlotasPNJIniciales` | — | Guard añadido: `if (FlotasPorId.ContainsKey(id)) continue;` al inicio del bucle. Evita sobreescribir flotas ya restauradas desde BD al cargar partida. |
+
+### Tests creados
+
+| Archivo | Tests | Estado |
+|---|---|---|
+| `Assets/Tests/PlayMode/SaveLoadAlmacenCiudadTests.cs` | 3 (GuardarYCargar, NoPermiteNegativo, LimpiarSoloEsaCiudad) | ✅ todos PASS |
+| `Assets/Tests/PlayMode/SaveLoadFlotasPNJTests.cs` | 2 (GuardarYCargar, SobreescribeCarga) | ✅ todos PASS |
+
+Ambos archivos usan el patrón autónomo de MemoriaComercialPNJDAOTests: clases locales (TestableAlmacenCiudadDAO, FlotaRuntimeDataLocal) que replican la lógica SQL sin importar nada de Assembly-CSharp.
+
+### TO-DOs abiertos tras el Día 19
+
+- Combate naval auto-resolución (Día 20).
+- Sistema de piratas con comportamiento de patrulla (Día 21).
+- Sistema de producción del jugador: edificios que consumen materias primas y producen manufacturados (Días 23-24).
+- `FindFirstObjectByType` deprecado en Unity 6 — reemplazar por `FindAnyObjectByType` en `ComerciantePNJController` (3 llamadas) y `DebugCasillaHex`.
+- `MemoriaComercialPNJDAO` sin uso — evaluar mantener para estadísticas o eliminar antes del freeze (Día 32).
+- `BienData` sin ID numérico propio — frágil con reordenación de assets en Inspector.
 - [ ] **ZonaPeligro sin tile visual** — diferido al Día 21 (piratas).
