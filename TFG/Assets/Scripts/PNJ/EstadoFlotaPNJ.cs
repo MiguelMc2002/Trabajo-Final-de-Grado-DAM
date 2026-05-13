@@ -22,4 +22,32 @@ public enum EstadoFlotaPNJ
     /// Estado transitorio entre <see cref="EnPuerto"/> y <see cref="Viajando"/>.
     /// </summary>
     Comerciando,
+
+    /// <summary>
+    /// La flota huye tras recibir daño en combate. Implementación abstracta; en Día 21 se añade
+    /// movimiento real hacia puerto de refugio.
+    /// </summary>
+    Huyendo,
+
+    /// <summary>
+    /// Pirata moviéndose por el mar en busca de presas. Implementación real en Día 21.
+    /// </summary>
+    Patrullando,
+
+    /// <summary>
+    /// Pirata persiguiendo activamente a un comerciante detectado. Implementación real en Día 21.
+    /// </summary>
+    Interceptando,
+
+    /// <summary>
+    /// Comerciante que detectó un pirata cercano y busca el puerto más próximo como refugio.
+    /// Implementación real en Día 21.
+    /// </summary>
+    HuyendoAPuerto,
+
+    /// <summary>
+    /// Comerciante refugiado en puerto esperando que el peligro pirata desaparezca.
+    /// Implementación real en Día 21.
+    /// </summary>
+    EsperandoEnPuerto,
 }

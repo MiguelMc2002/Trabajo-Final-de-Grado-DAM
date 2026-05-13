@@ -86,6 +86,9 @@ public class LoadManager : MonoBehaviour
         GameManager.Instance?.CargarAlmacenCiudadesDesdeDAO();
         Debug.Log("[LoadManager] Almacén de ciudad restaurado.");
 
+        // Paso 7 — Flotas PNJ
+        CargarFlotasPNJ();
+
         Debug.Log($"[LoadManager] Carga desde slot {slotIndex} completada.");
     }
 
@@ -104,6 +107,116 @@ public class LoadManager : MonoBehaviour
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
         _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
         GameManager.Instance?.InyectarAlmacenCiudadDAO(_almacenCiudadDAO);
+    }
+
+    /// <summary>
+    /// Paso 7: carga todas las flotas PNJ guardadas en FlotaPNJ/CargaFlotaPNJ y las registra
+    /// en FlotaManager. Las flotas ya registradas se sobreescriben (RegistrarFlota es idempotente).
+    /// RutaActualTilemap e IndiceWaypointActual no se restauran; se recalculan al entrar al mapamundi.
+    /// </summary>
+    private void CargarFlotasPNJ()
+    {
+        if (FlotaManager.Instance == null)
+        {
+            Debug.LogWarning("[LoadManager] FlotaManager.Instance es null; se omite la carga de flotas PNJ.");
+            return;
+        }
+
+        Mono.Data.Sqlite.SqliteConnection conexion = DatabaseManager.Instance.Conexion;
+        int cargadas = 0;
+
+        const string sqlFlotas = @"
+            SELECT id, nombre_propietario, ciudad_origen_id, ciudad_destino_id, estado,
+                   posicion_actual_x, posicion_actual_y,
+                   casilla_destino_x, casilla_destino_y, casilla_destino_z
+            FROM FlotaPNJ;";
+
+        var idsLeidos = new System.Collections.Generic.List<int>();
+        var flotasLeidas = new System.Collections.Generic.List<FlotaRuntimeData>();
+
+        try
+        {
+            using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = sqlFlotas;
+                using (Mono.Data.Sqlite.SqliteDataReader reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        int    id             = reader.GetInt32(0);
+                        string nombre         = reader.GetString(1);
+                        int    origenId       = reader.GetInt32(2);
+                        int    destinoId      = reader.GetInt32(3);
+                        string estadoTexto    = reader.GetString(4);
+                        float  posX           = reader.GetFloat(5);
+                        float  posY           = reader.GetFloat(6);
+                        int    cDestX         = reader.GetInt32(7);
+                        int    cDestY         = reader.GetInt32(8);
+                        int    cDestZ         = reader.GetInt32(9);
+
+                        var flota = new FlotaRuntimeData(id, nombre);
+                        flota.CiudadOrigenId  = origenId;
+                        flota.CiudadDestinoId = destinoId;
+
+                        try
+                        {
+                            flota.EstadoActual = (EstadoFlotaPNJ)System.Enum.Parse(
+                                typeof(EstadoFlotaPNJ), estadoTexto);
+                        }
+                        catch
+                        {
+                            flota.EstadoActual = EstadoFlotaPNJ.EnPuerto;
+                        }
+
+                        flota.PosicionActual       = new UnityEngine.Vector2(posX, posY);
+                        flota.CasillaDestino       = new UnityEngine.Vector3Int(cDestX, cDestY, cDestZ);
+                        flota.RutaActualTilemap    = new System.Collections.Generic.List<UnityEngine.Vector3Int>();
+                        flota.IndiceWaypointActual = 0;
+
+                        idsLeidos.Add(id);
+                        flotasLeidas.Add(flota);
+                    }
+                }
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[LoadManager] Error al leer FlotaPNJ: {ex}");
+            return;
+        }
+
+        // Cargar carga de cada flota
+        const string sqlCarga = "SELECT id_bien, cantidad FROM CargaFlotaPNJ WHERE id_flota = @id;";
+        for (int i = 0; i < flotasLeidas.Count; i++)
+        {
+            FlotaRuntimeData flota = flotasLeidas[i];
+            try
+            {
+                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+                {
+                    cmd.CommandText = sqlCarga;
+                    cmd.Parameters.AddWithValue("@id", flota.Id);
+                    using (Mono.Data.Sqlite.SqliteDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            int idBien   = reader.GetInt32(0);
+                            int cantidad = reader.GetInt32(1);
+                            flota.Carga[idBien] = cantidad;
+                        }
+                    }
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"[LoadManager] Error al leer CargaFlotaPNJ para flota id={flota.Id}: {ex}");
+            }
+
+            FlotaManager.Instance.RegistrarFlota(flota);
+            cargadas++;
+        }
+
+        Debug.Log($"[LoadManager] {cargadas} flotas PNJ cargadas desde FlotaPNJ.");
     }
 
     /// <summary>

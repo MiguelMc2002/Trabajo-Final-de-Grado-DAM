@@ -11,6 +11,9 @@ using UnityEngine;
 public class AlmacenCiudadDAO
 {
     private readonly DatabaseManager _dbManager;
+    private readonly SqliteConnection _conexionDirecta;
+
+    private SqliteConnection Conexion => _conexionDirecta ?? Conexion;
 
     /// <summary>
     /// Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
@@ -19,6 +22,17 @@ public class AlmacenCiudadDAO
     public AlmacenCiudadDAO(DatabaseManager dbManager)
     {
         _dbManager = dbManager;
+    }
+
+    /// <summary>
+    /// Constructor secundario para tests automatizados.
+    /// Permite instanciar el DAO con una conexión SQLite directa sin depender de DatabaseManager.
+    /// </summary>
+    /// <param name="conexion">Conexión SQLite ya abierta.</param>
+    public AlmacenCiudadDAO(SqliteConnection conexion)
+    {
+        _conexionDirecta = conexion;
+        _dbManager = null;
     }
 
     /// <summary>
@@ -36,7 +50,7 @@ public class AlmacenCiudadDAO
 
         try
         {
-            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            using (SqliteCommand cmd = Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@idCiudad", idCiudad);
@@ -68,7 +82,7 @@ public class AlmacenCiudadDAO
 
         try
         {
-            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            using (SqliteCommand cmd = Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@idCiudad", idCiudad);
@@ -122,7 +136,7 @@ public class AlmacenCiudadDAO
 
         try
         {
-            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            using (SqliteCommand cmd = Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@idCiudad", idCiudad);
@@ -157,7 +171,7 @@ public class AlmacenCiudadDAO
 
         try
         {
-            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            using (SqliteCommand cmd = Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
                 cmd.Parameters.AddWithValue("@idCiudad", idCiudad);

@@ -1,12 +1,65 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
-/// Datos de runtime de una flota PNJ comerciante.
+/// Datos de runtime de una flota PNJ (comerciante o pirata).
 /// POCO puro (no MonoBehaviour): vive en <see cref="EstadoPartida.FlotasPorId"/>
 /// y es gestionado por <see cref="FlotaManager"/>.
 /// </summary>
 public class FlotaRuntimeData
 {
+    // ─── Backing fields de combate ────────────────────────────────────────────
+
+    private bool  _isPirata;
+    private float _vidaMax;
+    private float _vidaActual;
+    private float _fuerzaCanhones;
+    private float _velocidadFlota;
+    private float _maniobrabilidadFlota;
+    private float _habilidadCapitan;
+    private int   _numBarcos;
+    private int   _tripulacion;
+
+    // ─── Propiedades de combate ───────────────────────────────────────────────
+
+    /// <summary>Indica si esta flota es pirata. Los piratas atacan a comerciantes al cruzarse.</summary>
+    public bool IsPirata => _isPirata;
+
+    /// <summary>Puntos de vida máximos de la flota, proporcionales al número inicial de barcos.</summary>
+    public float VidaMax => _vidaMax;
+
+    /// <summary>Puntos de vida actuales de la flota. Se reduce al recibir daño en combate.</summary>
+    public float VidaActual
+    {
+        get => _vidaActual;
+        set => _vidaActual = value;
+    }
+
+    /// <summary>Potencia de fuego combinada de todos los barcos de la flota.</summary>
+    public float FuerzaCanhones => _fuerzaCanhones;
+
+    /// <summary>Velocidad de navegación de la flota, usada para resolver intentos de huida.</summary>
+    public float VelocidadFlota => _velocidadFlota;
+
+    /// <summary>Maniobrabilidad de la flota, influye en capturas de barco y maniobras evasivas.</summary>
+    public float ManiobrabilidadFlota => _maniobrabilidadFlota;
+
+    /// <summary>Habilidad táctica del capitán. Coincide con <see cref="InteligenciaComercial"/> al crear la flota.</summary>
+    public float HabilidadCapitan => _habilidadCapitan;
+
+    /// <summary>Número de barcos operativos en la flota. Se reduce con bajas en combate.</summary>
+    public int NumBarcos
+    {
+        get => _numBarcos;
+        set => _numBarcos = value;
+    }
+
+    /// <summary>Tripulantes activos. Influyen en la fuerza de combate cuerpo a cuerpo.</summary>
+    public int Tripulacion
+    {
+        get => _tripulacion;
+        set => _tripulacion = value;
+    }
     /// <summary>Identificador único de la flota. Coincide con el <c>id_flota</c> de la base de datos.</summary>
     public int Id { get; }
 
@@ -57,12 +110,42 @@ public class FlotaRuntimeData
     {
         Id                    = id;
         NombrePropietario     = nombrePropietario;
-        InteligenciaComercial = UnityEngine.Random.Range(0.1f, 1.0f);
+        InteligenciaComercial = Random.Range(0.1f, 1.0f);
         CiudadOrigenId   = -1;
         CiudadDestinoId  = -1;
         EstadoActual     = EstadoFlotaPNJ.EnPuerto;
         RutaActual       = new List<int>();
         Carga            = new Dictionary<int, int>();
+
+        _isPirata             = false;
+        _vidaMax              = 100f;
+        _vidaActual           = 100f;
+        _fuerzaCanhones       = 8f;
+        _velocidadFlota       = 5f;
+        _maniobrabilidadFlota = 5f;
+        _habilidadCapitan     = InteligenciaComercial;
+        _numBarcos            = 5;
+        _tripulacion          = 30;
+    }
+
+    /// <summary>
+    /// Constructor para flotas pirata. Sobreescribe las estadísticas de combate con valores hostiles.
+    /// </summary>
+    /// <param name="id">Identificador único de la flota.</param>
+    /// <param name="nombrePropietario">Nombre del capitán pirata.</param>
+    /// <param name="esPirata">Debe ser <c>true</c> para activar los stats piratas.</param>
+    public FlotaRuntimeData(int id, string nombrePropietario, bool esPirata) : this(id, nombrePropietario)
+    {
+        _isPirata = esPirata;
+        if (esPirata)
+        {
+            _fuerzaCanhones       = 25f;
+            _velocidadFlota       = 4f;
+            _maniobrabilidadFlota = 4f;
+            _tripulacion          = 40;
+            // NumBarcos y VidaMax se mantienen en 5 y 100f
+            // HabilidadCapitan ya asignada desde InteligenciaComercial en this()
+        }
     }
 
     // Posición y ruta en el mapamundi
@@ -78,6 +161,36 @@ public class FlotaRuntimeData
 
     /// <summary>Índice del siguiente waypoint dentro de <see cref="RutaActual"/>. Se recalcula al cargar.</summary>
     [System.NonSerialized] public int IndiceWaypointActual;
+
+    /// <summary>
+    /// Reduce la vida de la flota en la cantidad indicada, sin bajar de cero.
+    /// </summary>
+    /// <param name="cantidad">Puntos de daño a aplicar.</param>
+    /// <returns><c>true</c> si la flota queda destruida (vida llega a 0).</returns>
+    public bool AplicarDanio(float cantidad)
+    {
+        _vidaActual = Mathf.Max(0f, _vidaActual - cantidad);
+        return _vidaActual <= 0f;
+    }
+
+    /// <summary>
+    /// Indica si la flota ha sido destruida por completo (sin barcos operativos).
+    /// </summary>
+    /// <returns><c>true</c> si <see cref="NumBarcos"/> es cero o negativo.</returns>
+    public bool EstaDestruida() => _numBarcos <= 0;
+
+    /// <summary>
+    /// Restaura la flota a su estado inicial de combate: vida máxima, tripulación y barcos completos,
+    /// y bodega vaciada. Se llama semanalmente en piratas como ciclo de reabastecimiento.
+    /// </summary>
+    public void ResetearParaReabastecimiento()
+    {
+        _vidaActual  = _vidaMax;
+        _tripulacion = _isPirata ? 40 : 30;
+        _numBarcos   = 5;
+        Carga.Clear();
+        UnityEngine.Debug.Log($"[FlotaRuntimeData] {NombrePropietario} reabastecida: vida={_vidaActual} tripulación={_tripulacion} barcos={_numBarcos}");
+    }
 
     /// <summary>
     /// Indica si la bodega de la flota contiene al menos un bien con cantidad mayor que cero.

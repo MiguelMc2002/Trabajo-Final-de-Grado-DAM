@@ -76,6 +76,9 @@ public class FlotaIconoMapamundi : MonoBehaviour
                 }
                 Flota.RutaActualTilemap.Clear();
                 Flota.IndiceWaypointActual = 0;
+
+                if (MapamundiController.Instance != null)
+                    MapamundiController.Instance.ComprobarProximidadCombate(Flota);
             }
         }
     }

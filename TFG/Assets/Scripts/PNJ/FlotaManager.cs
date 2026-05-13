@@ -22,6 +22,8 @@ public class FlotaManager : MonoBehaviour
 
     private readonly Dictionary<int, ComerciantePNJController> _controladores = new();
 
+    private int _diasDesdeUltimoReabastecimientoPirata = 0;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -92,6 +94,27 @@ public class FlotaManager : MonoBehaviour
     {
         foreach (ComerciantePNJController controlador in _controladores.Values)
             controlador.Tick();
+
+        _diasDesdeUltimoReabastecimientoPirata++;
+        if (_diasDesdeUltimoReabastecimientoPirata >= 7)
+        {
+            _diasDesdeUltimoReabastecimientoPirata = 0;
+            ReabastecerPiratas();
+        }
+    }
+
+    /// <summary>
+    /// Restaura vida, tripulación y barcos de todas las flotas pirata activas.
+    /// Se llama automáticamente cada 7 días de juego desde <see cref="TickTodosLosControladores"/>.
+    /// </summary>
+    private void ReabastecerPiratas()
+    {
+        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
+        {
+            if (!flota.IsPirata) continue;
+            flota.ResetearParaReabastecimiento();
+            Debug.Log($"[FlotaManager] {flota.NombrePropietario} reabastecido.");
+        }
     }
 
     /// <summary>
@@ -138,6 +161,9 @@ public class FlotaManager : MonoBehaviour
 
         foreach (var (id, nombre, idxCiudad) in definiciones)
         {
+            // Si la flota ya fue cargada desde BD (por CargarFlotasPNJ), no duplicar
+            if (FlotasPorId.ContainsKey(id)) continue;
+
             int idCiudad = ciudades[idxCiudad % ciudades.Count].IdCiudad;
             FlotaRuntimeData flota = new FlotaRuntimeData(id, nombre);
             flota.CiudadOrigenId = idCiudad;
@@ -145,6 +171,27 @@ public class FlotaManager : MonoBehaviour
         }
 
         Debug.Log($"[FlotaManager] 18 flotas PNJ iniciales creadas distribuidas entre {ciudades.Count} ciudades.");
+
+        var defPiratas = new (int id, string nombre)[]
+        {
+            (2001, "Pirata Störtebeker"),
+            (2002, "Pirata Gödeke Michels"),
+            (2003, "Pirata Klaus Scheld"),
+        };
+
+        foreach (var (id, nombre) in defPiratas)
+        {
+            if (FlotasPorId.ContainsKey(id)) continue;
+            var flota = new FlotaRuntimeData(id, nombre, esPirata: true);
+            flota.CiudadOrigenId  = -1;
+            flota.CiudadDestinoId = -1;
+            flota.EstadoActual    = EstadoFlotaPNJ.Patrullando;
+            // TODO Día 21: posicionar en casillas de mar real del tilemap
+            flota.PosicionActual  = new UnityEngine.Vector2(id % 10, (id / 10) % 10);
+            RegistrarFlota(flota);
+        }
+
+        Debug.Log("[FlotaManager] 3 flotas pirata creadas.");
     }
 
     /// <summary>

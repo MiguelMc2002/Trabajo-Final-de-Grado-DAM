@@ -75,6 +75,7 @@ public class DatabaseManager : MonoBehaviour
             new CiudadDAO(this).MigrarColumnasCasilla();
             new FlotaDAO(this).MigrarColumnasMapamundi();
             MigrarTablaAlmacenCiudad();
+            MigrarTablasFlotaPNJ();
         }
         catch (Exception ex)
         {
@@ -132,6 +133,48 @@ public class DatabaseManager : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogError($"[DatabaseManager] Error al migrar tabla AlmacenCiudadJugador: {ex}");
+        }
+    }
+
+    /// <summary>
+    /// Crea las tablas FlotaPNJ y CargaFlotaPNJ para la persistencia de flotas PNJ comerciantes.
+    /// Separadas de la tabla Flota original (que usa id_flota y tipo_propietario) para evitar
+    /// conflictos de schema con FlotaDAO. Seguro de llamar siempre gracias a IF NOT EXISTS.
+    /// </summary>
+    private void MigrarTablasFlotaPNJ()
+    {
+        const string sql = @"
+            CREATE TABLE IF NOT EXISTS FlotaPNJ (
+                id                INTEGER PRIMARY KEY,
+                nombre_propietario TEXT NOT NULL,
+                ciudad_origen_id   INTEGER NOT NULL DEFAULT -1,
+                ciudad_destino_id  INTEGER NOT NULL DEFAULT -1,
+                estado             TEXT NOT NULL DEFAULT 'EnPuerto',
+                posicion_actual_x  REAL NOT NULL DEFAULT 0,
+                posicion_actual_y  REAL NOT NULL DEFAULT 0,
+                casilla_destino_x  INTEGER NOT NULL DEFAULT 0,
+                casilla_destino_y  INTEGER NOT NULL DEFAULT 0,
+                casilla_destino_z  INTEGER NOT NULL DEFAULT 0
+            );
+
+            CREATE TABLE IF NOT EXISTS CargaFlotaPNJ (
+                id_flota  INTEGER NOT NULL,
+                id_bien   INTEGER NOT NULL,
+                cantidad  INTEGER NOT NULL DEFAULT 0,
+                PRIMARY KEY (id_flota, id_bien)
+            );";
+
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = sql;
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[DatabaseManager] Error al crear tablas FlotaPNJ/CargaFlotaPNJ: {ex}");
         }
     }
 
