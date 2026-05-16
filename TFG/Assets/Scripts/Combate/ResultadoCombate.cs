@@ -1,85 +1,74 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// Resultado inmutable de una resolución de combate naval automática.
-/// Se genera por <see cref="CombateNavalResolver.Resolver"/> y no modifica
-/// ningún estado externo: es el llamador quien aplica los cambios.
+/// Resultado inmutable de una resolución de combate naval.
+/// Generado por <see cref="CombateNavalResolver.Resolver"/> y consumido por la UI de resultados.
+/// No modifica ningún estado externo por sí mismo.
 /// </summary>
 public class ResultadoCombate
 {
-    /// <summary>
-    /// Posibles desenlaces de un encuentro naval entre un pirata y su víctima.
-    /// </summary>
-    public enum DesenlaceCombate
-    {
-        /// <summary>El pirata vence: la víctima pierde barcos y carga.</summary>
-        PirataGana,
-        /// <summary>La víctima consigue escapar antes del primer disparo.</summary>
-        ComercianteEscapa,
-        /// <summary>El comerciante rechaza el ataque y el pirata sale dañado.</summary>
-        ComercianteGana,
-        /// <summary>La víctima se rinde sin combatir, cediendo toda la carga.</summary>
-        Rendicion,
-        /// <summary>Ambos bandos sufren bajas pero ninguno gana de forma clara.</summary>
-        Empate,
-    }
+    /// <summary>Flota que inició el ataque. Se conserva para mostrar nombres en la UI.</summary>
+    public FlotaRuntimeData Atacante { get; }
 
-    /// <summary>Desenlace final del encuentro naval.</summary>
-    public DesenlaceCombate Desenlace { get; }
+    /// <summary>Flota que recibió el ataque. Se conserva para mostrar nombres en la UI.</summary>
+    public FlotaRuntimeData Defensor { get; }
 
-    /// <summary>Puntos de vida del atacante (pirata) tras el combate.</summary>
-    public float VidaFinalAtacante { get; }
+    /// <summary><c>true</c> si el jugador salió victorioso del encuentro.</summary>
+    public bool JugadorGana { get; }
 
-    /// <summary>Puntos de vida del defensor (víctima) tras el combate.</summary>
-    public float VidaFinalDefensor { get; }
+    /// <summary>Barcos perdidos por el atacante durante el combate.</summary>
+    public int BarcosPerdidosAtacante { get; }
 
-    /// <summary>Número de barcos del atacante hundidos durante el combate.</summary>
-    public int BarcosHundidosAtacante { get; }
+    /// <summary>Barcos perdidos por el defensor durante el combate.</summary>
+    public int BarcosPerdidosDefensor { get; }
 
-    /// <summary>Número de barcos del defensor hundidos durante el combate.</summary>
-    public int BarcosHundidosDefensor { get; }
+    /// <summary>Daño total recibido por el atacante en puntos de vida.</summary>
+    public float DanioRecibidoAtacante { get; }
 
-    /// <summary>Número de barcos del defensor capturados por el atacante.</summary>
-    public int BarcosCapturedDefensor { get; }
+    /// <summary>Daño total recibido por el defensor en puntos de vida.</summary>
+    public float DanioRecibidoDefensor { get; }
+
+    /// <summary>Oro obtenido como botín. Vale 0 si el jugador perdió.</summary>
+    public long BotinOro { get; }
 
     /// <summary>
-    /// Mercancías capturadas al defensor.
-    /// Clave: <c>id_bien</c>. Valor: unidades capturadas.
-    /// Vacío si el pirata no ganó.
+    /// Mercancías capturadas al vencido.
+    /// Clave: <c>id_bien</c>. Valor: unidades capturadas. Vacío si el jugador perdió.
     /// </summary>
-    public Dictionary<int, int> BotonCapturado { get; }
+    public Dictionary<int, int> BotinMercancia { get; }
 
-    /// <summary>Texto descriptivo del combate para el log de juego.</summary>
-    public string Descripcion { get; }
+    /// <summary>Descripción narrativa del resultado del combate para mostrar en pantalla.</summary>
+    public string TextoNarrativo { get; }
+
+    /// <summary><c>true</c> si el jugador optó por huir y consiguió escapar sin combatir.</summary>
+    public bool JugadorHuyo { get; }
 
     /// <summary>
-    /// Inicializa un resultado de combate con todos sus campos. Todos los valores son inmutables.
+    /// Inicializa un resultado de combate con todos sus campos.
     /// </summary>
-    /// <param name="desenlace">Desenlace del encuentro.</param>
-    /// <param name="vidaAtacante">Vida final del pirata.</param>
-    /// <param name="vidaDefensor">Vida final de la víctima.</param>
-    /// <param name="barcosHundidosAtacante">Bajas del pirata.</param>
-    /// <param name="barcosHundidosDefensor">Bajas de la víctima.</param>
-    /// <param name="barcosCapturedDefensor">Barcos capturados al defensor.</param>
-    /// <param name="boton">Carga capturada (puede ser null).</param>
-    /// <param name="descripcion">Texto del log (puede ser null).</param>
     public ResultadoCombate(
-        DesenlaceCombate desenlace,
-        float vidaAtacante,
-        float vidaDefensor,
-        int barcosHundidosAtacante,
-        int barcosHundidosDefensor,
-        int barcosCapturedDefensor,
-        Dictionary<int, int> boton,
-        string descripcion)
+        FlotaRuntimeData atacante,
+        FlotaRuntimeData defensor,
+        bool jugadorGana,
+        int barcosPerdidosAtacante,
+        int barcosPerdidosDefensor,
+        float danioRecibidoAtacante,
+        float danioRecibidoDefensor,
+        long botinOro,
+        Dictionary<int, int> botinMercancia,
+        string textoNarrativo,
+        bool jugadorHuyo = false)
     {
-        Desenlace              = desenlace;
-        VidaFinalAtacante      = vidaAtacante;
-        VidaFinalDefensor      = vidaDefensor;
-        BarcosHundidosAtacante = barcosHundidosAtacante;
-        BarcosHundidosDefensor = barcosHundidosDefensor;
-        BarcosCapturedDefensor = barcosCapturedDefensor;
-        BotonCapturado         = boton ?? new Dictionary<int, int>();
-        Descripcion            = descripcion ?? string.Empty;
+        Atacante                = atacante;
+        Defensor                = defensor;
+        JugadorGana             = jugadorGana;
+        BarcosPerdidosAtacante  = barcosPerdidosAtacante;
+        BarcosPerdidosDefensor  = barcosPerdidosDefensor;
+        DanioRecibidoAtacante   = danioRecibidoAtacante;
+        DanioRecibidoDefensor   = danioRecibidoDefensor;
+        BotinOro                = botinOro;
+        BotinMercancia          = botinMercancia ?? new Dictionary<int, int>();
+        TextoNarrativo          = textoNarrativo ?? string.Empty;
+        JugadorHuyo             = jugadorHuyo;
     }
 }

@@ -21,6 +21,9 @@ public class LoadManager : MonoBehaviour
     private EstadoMercadoCiudadDAO _mercadoDAO;
     private AlmacenJugadorDAO      _almacenJugadorDAO;
     private AlmacenCiudadDAO       _almacenCiudadDAO;
+    private BarcoDAO               _barcoDAO;
+    private ModuloBarcoDAO         _moduloBarcoDAO;
+    private CapitanDAO             _capitanDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -42,7 +45,9 @@ public class LoadManager : MonoBehaviour
     /// Carga la partida guardada en el slot indicado y restaura el estado del mundo.
     /// El proceso sigue este orden para respetar las dependencias entre sistemas:
     /// 1) abre el fichero de base de datos, 2) restaura la fecha y velocidad de juego,
-    /// 3) limpia el inventario del jugador, 4) restaura el mercado activo en escena.
+    /// 3) limpia el inventario del jugador, 4) restaura el mercado activo en escena,
+    /// 5) almacén de ciudad, 6) almacén del jugador, 7) flotas PNJ,
+    /// 8) flota del jugador (barcos y módulos), 9) capitanes contratados.
     /// Si la base de datos del slot está vacía (partida nueva sin guardar) cada paso
     /// se omite con un aviso en consola sin provocar errores.
     /// </summary>
@@ -89,6 +94,12 @@ public class LoadManager : MonoBehaviour
         // Paso 7 — Flotas PNJ
         CargarFlotasPNJ();
 
+        // Paso 8 — Flota del jugador (barcos + módulos)
+        CargarFlotaJugador();
+
+        // Paso 9 — Capitanes contratados
+        CargarCapitanes();
+
         Debug.Log($"[LoadManager] Carga desde slot {slotIndex} completada.");
     }
 
@@ -106,7 +117,104 @@ public class LoadManager : MonoBehaviour
         _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
         _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
+        _barcoDAO          = new BarcoDAO(db);
+        _moduloBarcoDAO    = new ModuloBarcoDAO(db);
+        _capitanDAO        = new CapitanDAO(db);
         GameManager.Instance?.InyectarAlmacenCiudadDAO(_almacenCiudadDAO);
+    }
+
+    /// <summary>
+    /// Paso 8: restaura los barcos del jugador desde la tabla Barco (id_flota = 0)
+    /// y reinstala sus módulos resolviendo los <see cref="ModuloBarcoData"/> por nombre.
+    /// </summary>
+    private void CargarFlotaJugador()
+    {
+        if (GameManager.Instance == null || AstilleroManager.Instance == null)
+        {
+            Debug.LogWarning("[LoadManager] GameManager o AstilleroManager no disponibles; se omite la carga de la flota.");
+            return;
+        }
+
+        List<BarcoDto> dtos = _barcoDAO.ObtenerBarcosDeFlota(0);
+        if (dtos.Count == 0)
+        {
+            Debug.Log("[LoadManager] No hay barcos del jugador guardados en BD.");
+            return;
+        }
+
+        int restaurados = 0;
+        foreach (BarcoDto dto in dtos)
+        {
+            // Resolver TipoCascoData
+            TipoCascoData tipoCasco = null;
+            foreach (TipoCascoData t in AstilleroManager.Instance.CascosDisponibles)
+            {
+                if (t.idTipoCasco == dto.IdTipoCasco) { tipoCasco = t; break; }
+            }
+
+            if (tipoCasco == null)
+            {
+                Debug.LogWarning($"[LoadManager] TipoCascoData no encontrado para id={dto.IdTipoCasco}; se omite el barco '{dto.NombreBarco}'.");
+                continue;
+            }
+
+            BarcoJugador barco = new BarcoJugador(dto.IdBarco, dto.NombreBarco, tipoCasco);
+            barco.VidaActual      = dto.VidaActual;
+            barco.Tripulacion     = dto.TripulacionActual;
+            barco.EsBarcosCombate = dto.EsBarcosCombate;
+
+            // Restaurar módulos
+            List<ModuloDto> modDtos = _moduloBarcoDAO.CargarModulosDeBarco(dto.IdBarco);
+            foreach (ModuloDto modDto in modDtos)
+            {
+                ModuloBarcoData moduloData = null;
+                foreach (ModuloBarcoData m in AstilleroManager.Instance.ModulosDisponibles)
+                {
+                    if (m.nombreModulo == modDto.NombreModulo) { moduloData = m; break; }
+                }
+
+                if (moduloData != null)
+                    barco.InstalarModulo(moduloData);
+                else
+                    Debug.LogWarning($"[LoadManager] ModuloBarcoData '{modDto.NombreModulo}' no encontrado en catálogo; se omite.");
+            }
+
+            GameManager.Instance.FlotaJugador.AñadirBarco(barco);
+            restaurados++;
+        }
+
+        Debug.Log($"[LoadManager] {restaurados} barcos del jugador restaurados en FlotaJugador.");
+    }
+
+    /// <summary>
+    /// Paso 9: restaura los capitanes contratados desde la tabla Capitan y los registra
+    /// en <see cref="TabernaManager"/> con sus habilidades exactas y barco asignado.
+    /// </summary>
+    private void CargarCapitanes()
+    {
+        if (TabernaManager.Instance == null)
+        {
+            Debug.LogWarning("[LoadManager] TabernaManager no disponible; se omite la carga de capitanes.");
+            return;
+        }
+
+        List<CapitanDto> dtos = _capitanDAO.CargarTodosLosCapitanes();
+        int restaurados = 0;
+
+        foreach (CapitanDto dto in dtos)
+        {
+            CapitanData capitan = new CapitanData(
+                dto.IdCapitan, dto.Nombre,
+                dto.HabilidadNavegacion, dto.HabilidadCombate);
+
+            if (dto.Asignado && dto.IdBarcoAsignado > 0)
+                capitan.IdBarcoAsignado = dto.IdBarcoAsignado;
+
+            TabernaManager.Instance.RestaurarCapitanContratado(capitan);
+            restaurados++;
+        }
+
+        Debug.Log($"[LoadManager] {restaurados} capitanes restaurados en TabernaManager.");
     }
 
     /// <summary>

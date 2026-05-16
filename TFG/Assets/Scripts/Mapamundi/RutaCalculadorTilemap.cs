@@ -11,13 +11,20 @@ public class RutaCalculadorTilemap : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
 
     // Costes por nombre de sprite
-    private const float CosteMarAbierto  = 1.0f;
-    private const float CosteCosta       = 1.2f;
-    private const float CosteCiudad      = 1.0f;
+    private const float CosteMarAbierto   = 1.0f;
+    private const float CosteCosta        = 1.2f;
+    private const float CosteCiudad       = 1.0f;
+    private const float CosteZonaPeligro  = 5.0f;
 
     private const string NombreMarAbierto = "loonapix_17783290501031121577";
     private const string NombreCosta      = "Costa";
     private const string NombreCiudad     = "medieval_openCastle_0";
+
+    /// <summary>
+    /// Nombre del sprite que identifica las casillas de zona de peligro en el tilemap.
+    /// Configurable desde el Inspector para adaptarse al nombre real del asset.
+    /// </summary>
+    [SerializeField] private string _nombreTileZonaPeligro = "ZonaPeligro";
 
     // Direcciones estándar en coordenadas cube para hexágonos Pointy Top
     private static readonly Vector3Int[] DireccionesCube =
@@ -60,6 +67,8 @@ public class RutaCalculadorTilemap : MonoBehaviour
         Sprite sprite = tilemap.GetSprite(offsetPos);
         if (sprite == null)
             return float.PositiveInfinity;
+
+        if (sprite.name == _nombreTileZonaPeligro) return CosteZonaPeligro;
 
         return sprite.name switch
         {
@@ -208,6 +217,14 @@ public class RutaCalculadorTilemap : MonoBehaviour
     /// en orden de recorrido. Devuelve lista con un único elemento si origen == destino,
     /// o lista vacía si no existe ruta.
     /// </returns>
+    /// <summary>
+    /// Convierte una posición en coordenadas de mundo a coordenadas offset del Tilemap.
+    /// </summary>
+    /// <param name="posicionMundo">Posición world-space a convertir.</param>
+    /// <returns>Coordenadas offset de la casilla que contiene esa posición.</returns>
+    public Vector3Int MundoACasilla(Vector2 posicionMundo)
+        => tilemap.WorldToCell(posicionMundo);
+
     public List<Vector3Int> CalcularRuta(Vector3Int origen, Vector3Int destino)
         => CalcularRutaInterna(origen, destino, conRuido: false);
 
@@ -225,7 +242,22 @@ public class RutaCalculadorTilemap : MonoBehaviour
     public List<Vector3Int> CalcularRutaConRuido(Vector3Int origen, Vector3Int destino)
         => CalcularRutaInterna(origen, destino, conRuido: true);
 
-    private List<Vector3Int> CalcularRutaInterna(Vector3Int origen, Vector3Int destino, bool conRuido)
+    /// <summary>
+    /// Calcula una ruta en la que las casillas de zona de peligro tienen coste 0.2f
+    /// en lugar de 5.0f, haciendo que los piratas las prefieran activamente.
+    /// El resto de costes son idénticos a <see cref="CalcularRuta"/>.
+    /// </summary>
+    /// <param name="origen">Casilla de inicio en coordenadas offset del Tilemap.</param>
+    /// <param name="destino">Casilla de destino en coordenadas offset del Tilemap.</param>
+    /// <returns>
+    /// Lista de casillas en coordenadas offset que prefiere zonas de peligro,
+    /// o lista vacía si no existe ruta.
+    /// </returns>
+    public List<Vector3Int> CalcularRutaConPreferenciaZonaPeligro(Vector3Int origen, Vector3Int destino)
+        => CalcularRutaInterna(origen, destino, conRuido: false, prefiereZonaPeligro: true);
+
+    private List<Vector3Int> CalcularRutaInterna(Vector3Int origen, Vector3Int destino, bool conRuido,
+                                                  bool prefiereZonaPeligro = false)
     {
         if (origen == destino)
             return new List<Vector3Int> { origen };
@@ -249,7 +281,13 @@ public class RutaCalculadorTilemap : MonoBehaviour
 
             foreach (Vector3Int vecino in GetVecinosHex(actual))
             {
-                float nuevoCosto = costeSoFar[actual] + CosteCasilla(vecino);
+                float coste = CosteCasilla(vecino);
+
+                // Los piratas prefieren las zonas de peligro (coste muy bajo en lugar de penalización)
+                if (prefiereZonaPeligro && tilemap.GetSprite(vecino)?.name == _nombreTileZonaPeligro)
+                    coste = 0.2f;
+
+                float nuevoCosto = costeSoFar[actual] + coste;
 
                 if (!costeSoFar.TryGetValue(vecino, out float costoAnterior) || nuevoCosto < costoAnterior)
                 {

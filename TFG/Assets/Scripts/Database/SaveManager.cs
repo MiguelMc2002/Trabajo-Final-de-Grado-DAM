@@ -25,6 +25,8 @@ public class SaveManager : MonoBehaviour
     private EstadoMercadoCiudadDAO  _mercadoDAO;
     private AlmacenJugadorDAO       _almacenJugadorDAO;
     private AlmacenCiudadDAO        _almacenCiudadDAO;
+    private ModuloBarcoDAO          _moduloBarcoDAO;
+    private CapitanDAO              _capitanDAO;
 
     // ─── Unity lifecycle ──────────────────────────────────────────────────────
 
@@ -86,6 +88,12 @@ public class SaveManager : MonoBehaviour
         // Paso 8 — Edificios de cada ciudad
         GuardarEdificios();
 
+        // Paso 9 — Flota del jugador (barcos + módulos)
+        GuardarFlotaJugador();
+
+        // Paso 10 — Capitanes contratados
+        GuardarCapitanes();
+
         Debug.Log($"[SaveManager] Guardado en slot {slotIndex} completado.");
     }
 
@@ -106,6 +114,8 @@ public class SaveManager : MonoBehaviour
         _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
         _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
+        _moduloBarcoDAO    = new ModuloBarcoDAO(db);
+        _capitanDAO        = new CapitanDAO(db);
         GameManager.Instance?.InyectarAlmacenCiudadDAO(_almacenCiudadDAO);
     }
 
@@ -341,6 +351,63 @@ public class SaveManager : MonoBehaviour
         }
 
         Debug.Log($"[SaveManager] Guardados {ciudadesGuardadas} mercados en EstadoMercadoCiudad.");
+    }
+
+    /// <summary>
+    /// Paso 9: persiste todos los barcos de la flota del jugador en las tablas Barco y ModuloBarco.
+    /// Usa id_flota = 0 como convención para barcos del jugador.
+    /// </summary>
+    private void GuardarFlotaJugador()
+    {
+        FlotaJugador flota = GameManager.Instance?.FlotaJugador;
+        if (flota == null || flota.Barcos.Count == 0)
+        {
+            Debug.Log("[SaveManager] Flota del jugador vacía; se omite el guardado.");
+            return;
+        }
+
+        int guardados = 0;
+        foreach (BarcoJugador barco in flota.Barcos)
+        {
+            _barcoDAO.InsertarBarco(
+                barco.IdBarco,
+                barco.CascoBase.idTipoCasco,
+                barco.Nombre,
+                barco.EsBarcosCombate,
+                barco.VidaActual,
+                barco.Tripulacion,
+                barco.CascoBase.capacidadTripulacion,
+                idFlota: 0);
+
+            _moduloBarcoDAO.GuardarModulosDeBarco(barco.IdBarco, barco.ModulosInstalados);
+            guardados++;
+        }
+
+        Debug.Log($"[SaveManager] {guardados} barcos del jugador guardados en Barco/ModuloBarco.");
+    }
+
+    /// <summary>
+    /// Paso 10: persiste todos los capitanes contratados por el jugador en la tabla Capitan.
+    /// Borra primero las filas anteriores para garantizar consistencia.
+    /// </summary>
+    private void GuardarCapitanes()
+    {
+        if (TabernaManager.Instance == null)
+        {
+            Debug.Log("[SaveManager] TabernaManager no disponible; se omite el guardado de capitanes.");
+            return;
+        }
+
+        _capitanDAO.EliminarTodosLosCapitanes();
+
+        int guardados = 0;
+        foreach (CapitanData capitan in TabernaManager.Instance.CapitanesContratados)
+        {
+            _capitanDAO.GuardarCapitan(capitan, capitan.IdBarcoAsignado);
+            guardados++;
+        }
+
+        Debug.Log($"[SaveManager] {guardados} capitanes guardados en Capitan.");
     }
 
     /// <summary>

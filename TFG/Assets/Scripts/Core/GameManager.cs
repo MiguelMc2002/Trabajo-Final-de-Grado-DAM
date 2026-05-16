@@ -88,6 +88,17 @@ public class GameManager : MonoBehaviour
 
     private AlmacenCiudadDAO _almacenCiudadDAO;
 
+    // ─── Flota del jugador ───────────────────────────────────────────────────
+
+    private FlotaJugador _flotaJugador = new FlotaJugador();
+
+    /// <summary>
+    /// Flota de barcos del jugador. Contiene hasta 5 barcos con sus cascos y módulos instalados.
+    /// Usada por <see cref="AstilleroManager"/> para comprar y personalizar barcos,
+    /// y por <see cref="EncuentroNavalUI"/> para resolver combates.
+    /// </summary>
+    public FlotaJugador FlotaJugador => _flotaJugador;
+
     // ─── Estado de partida ───────────────────────────────────────────────────
 
     /// <summary>

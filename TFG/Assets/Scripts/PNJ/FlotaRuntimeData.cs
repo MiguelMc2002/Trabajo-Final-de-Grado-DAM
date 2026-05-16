@@ -36,16 +36,28 @@ public class FlotaRuntimeData
     }
 
     /// <summary>Potencia de fuego combinada de todos los barcos de la flota.</summary>
-    public float FuerzaCanhones => _fuerzaCanhones;
+    public float FuerzaCanhones
+    {
+        get => _fuerzaCanhones;
+        set => _fuerzaCanhones = value;
+    }
 
     /// <summary>Velocidad de navegación de la flota, usada para resolver intentos de huida.</summary>
-    public float VelocidadFlota => _velocidadFlota;
+    public float VelocidadFlota
+    {
+        get => _velocidadFlota;
+        set => _velocidadFlota = value;
+    }
 
     /// <summary>Maniobrabilidad de la flota, influye en capturas de barco y maniobras evasivas.</summary>
     public float ManiobrabilidadFlota => _maniobrabilidadFlota;
 
     /// <summary>Habilidad táctica del capitán. Coincide con <see cref="InteligenciaComercial"/> al crear la flota.</summary>
-    public float HabilidadCapitan => _habilidadCapitan;
+    public float HabilidadCapitan
+    {
+        get => _habilidadCapitan;
+        set => _habilidadCapitan = value;
+    }
 
     /// <summary>Número de barcos operativos en la flota. Se reduce con bajas en combate.</summary>
     public int NumBarcos

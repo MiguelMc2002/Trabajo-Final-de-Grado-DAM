@@ -15,7 +15,9 @@
       "Bash(curl -k -L \"https://www.sqlite.org/2025/sqlite-dll-win-x64-x64-3490100.zip\" -o sqlite.zip)",
       "Bash(tar -xf sqlite.zip sqlite3.dll)",
       "PowerShell($page = Invoke-WebRequest -Uri \"https://www.sqlite.org/download.html\" -UseBasicParsing; $matches = [regex]::Matches\\($page.Content, 'sqlite-dll-win-x64[^\"]+\\\\.zip'\\); $matches | ForEach-Object { $_.Value } | Select-Object -First 5)",
-      "Bash(git ls-tree *)"
+      "Bash(git ls-tree *)",
+      "Bash(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\tfg\\\\FEATURES.md\")",
+      "Bash(Measure-Object -Line)"
     ]
   }
 }

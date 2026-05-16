@@ -1845,3 +1845,511 @@ Cada bando calcula su fuerza efectiva: `cañones + tripulación×0.5 + habilidad
 - FindFirstObjectByType deprecado en ComerciantePNJController (3 llamadas) — Día 32
 - Posiciones iniciales reales de piratas en casillas de mar del tilemap (Día 21)
 
+---
+
+## Cambios Día 19-20 (16/05/2026)
+
+### PirataPNJController (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/PNJ/PirataPNJController.cs` |
+| **Tipo** | Clase pura C# (no MonoBehaviour) |
+| **Módulo** | PNJs — Comportamiento |
+| **Descripción** | Controlador de comportamiento de una flota pirata. Instanciado por FlotaManager cuando IsPirata==true. Máquina de estados con tres estados: Patrullando (waypoints circulares predefinidos en zonas marítimas históricas), Interceptando (persigue comerciante más cercano dentro del radio, recalcula ruta cada 3 ticks, dispara CombateEventos al llegar a distancia ≤1), Huyendo (regresa a waypoint más cercano, transiciona a Patrullando tras 2 ticks). Detección de objetivo por distancia euclidiana con radio de 3 unidades. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `PirataPNJController(FlotaRuntimeData flota, FlotaManager manager, RutaCalculadorTilemap rutaCalculador)` | Constructor | Inicializa el controlador con sus dependencias. |
+| `Tick()` | `void` | Avanza un paso de la máquina de estados. Llamado por FlotaManager.TickTodosLosControladores() cada día de simulación. |
+
+---
+
+### CombateEventos (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Combate/CombateEventos.cs` |
+| **Tipo** | Clase estática |
+| **Módulo** | Combate naval |
+| **Descripción** | Bus de eventos estático para notificar el inicio de combates navales. Desacopla los controladores PNJ de la UI de combate. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `OnCombateIniciado` | `static event Action<FlotaRuntimeData, FlotaRuntimeData>` | Se dispara cuando dos flotas enemigas se interceptan. Primer parámetro: atacante. Segundo: defensor. |
+| `DispararCombate(FlotaRuntimeData atacante, FlotaRuntimeData defensor)` | `static void` | Valida que ninguna flota sea null ni esté destruida antes de invocar el evento. |
+
+---
+
+### ResultadoCombate (reescrito)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Combate/ResultadoCombate.cs` |
+| **Tipo** | Clase POCO (no MonoBehaviour) |
+| **Módulo** | Combate naval |
+| **Descripción** | Resultado inmutable de una resolución de combate naval. Generado por CombateNavalResolver y consumido por la UI de resultados. No modifica ningún estado externo por sí mismo. API completamente reescrita en Día 19-20 — la versión anterior (con DesenlaceCombate enum, VidaFinalAtacante, BotonCapturado, etc.) queda eliminada. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Atacante` | `FlotaRuntimeData` (get) | Flota que inició el ataque. |
+| `Defensor` | `FlotaRuntimeData` (get) | Flota que recibió el ataque. |
+| `JugadorGana` | `bool` (get) | true si el jugador salió victorioso. |
+| `BarcosPerdidosAtacante` | `int` (get) | Barcos perdidos por el atacante. |
+| `BarcosPerdidosDefensor` | `int` (get) | Barcos perdidos por el defensor. |
+| `DanioRecibidoAtacante` | `float` (get) | Daño en puntos de vida recibido por el atacante. |
+| `DanioRecibidoDefensor` | `float` (get) | Daño en puntos de vida recibido por el defensor. |
+| `BotinOro` | `long` (get) | Oro obtenido como botín. 0 si el jugador perdió. |
+| `BotinMercancia` | `Dictionary<int,int>` (get) | Mercancías capturadas. Clave: id_bien, valor: unidades. Vacío si el jugador perdió. |
+| `TextoNarrativo` | `string` (get) | Frase descriptiva del resultado para mostrar en pantalla. |
+| `JugadorHuyo` | `bool` (get) | true si el jugador intentó huir y lo consiguió sin combatir. |
+
+---
+
+### CombateNavalResolver (reescrito)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Combate/CombateNavalResolver.cs` |
+| **Tipo** | Clase estática pura |
+| **Módulo** | Combate naval |
+| **Descripción** | Resuelve encuentros navales de forma instantánea por estadísticas. Aplica daño directamente sobre las flotas y transfiere botín de oro a GameManager si el jugador gana. API reescrita en Día 19-20. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Resolver(FlotaRuntimeData atacante, FlotaRuntimeData defensor, bool jugadorEsAtacante, bool jugadorIntentaHuir = false)` | `static ResultadoCombate` | Resuelve el combate. Huida: 30% escape limpio, 70% combate con penalización -20% en fuerza del jugador. FuerzaTotal = VidaActual × FuerzaCañones × (NumBarcos×0.3+0.7) × HabilidadCapitan × Random(0.85,1.15). Daño: 60% VidaActual al perdedor, 20% al ganador. Botín si jugador gana: VidaMax×10 oro + 40% de la carga del vencido. |
+
+---
+
+### EncuentroNavalUI (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Combate/EncuentroNavalUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Combate naval — UI |
+| **Descripción** | Gestiona el panel de encuentro naval. Se suscribe a CombateEventos.OnCombateIniciado, pausa el juego, muestra el panel con los botones correspondientes según si el jugador es atacante o defensor, y delega la resolución en CombateNavalResolver. Adjuntar a un GameObject en la escena Mapamundi y asignar los campos desde el Inspector. Por ahora el jugador siempre es tratado como defensor hasta que exista FlotaJugador en GameManager. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_panelEncuentro` | `GameObject` | Panel modal que se activa al detectar un encuentro. Asignar desde Inspector. |
+| `_textoNarrativo` | `TextMeshProUGUI` | Texto descriptivo del encuentro. Asignar desde Inspector. |
+| `_btnAtacar` | `Button` | Botón activo cuando el jugador es atacante. Asignar desde Inspector. |
+| `_btnHuir` | `Button` | Botón activo cuando el jugador es atacante. Asignar desde Inspector. |
+| `_btnDefender` | `Button` | Botón activo cuando el jugador es defensor. Asignar desde Inspector. |
+
+---
+
+### Cambios en clases existentes (Día 19-20)
+
+#### FlotaManager
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_controladores_pirata` | `Dictionary<int, PirataPNJController>` | Diccionario separado para controladores de flotas pirata. |
+| `RegistrarFlota(FlotaRuntimeData)` | — | Corregido: si IsPirata==true crea PirataPNJController en lugar de ComerciantePNJController. |
+| `TickTodosLosControladores()` | — | Ampliado: itera también _controladores_pirata.Values. |
+
+#### RutaCalculadorTilemap
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_nombreTileZonaPeligro` | `string` [SerializeField] | Nombre del sprite de zona de peligro, configurable desde Inspector. Default: "ZonaPeligro". |
+| `CalcularRutaConPreferenciaZonaPeligro(Vector3Int origen, Vector3Int destino)` | `List<Vector3Int>` | Igual que CalcularRuta pero con coste 0.2f para casillas ZonaPeligro en lugar de 5.0f. Usado por piratas para preferir zonas de peligro. |
+| `MundoACasilla(Vector2 posicionMundo)` | `Vector3Int` | Convierte posición world-space a coordenadas offset del Tilemap. |
+
+#### MapamundiController
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `TriggerCombate()` | — | Eliminado. La resolución de combate ya no ocurre en MapamundiController. |
+| `ComprobarProximidadCombate(FlotaRuntimeData)` | — | Simplificado: solo detecta proximidad y dispara CombateEventos.DispararCombate(). Ya no resuelve el combate directamente. |
+
+---
+
+### TO-DOs abiertos tras Día 19-20
+
+- [ ] FlotaJugador en GameManager — FlotaRuntimeData propia del jugador para que EncuentroNavalUI pueda determinar si el jugador es atacante o defensor.
+- [ ] Flota navegable del jugador en el mapamundi — icono, movimiento por click, toggle "Modo pirata" en panel de flota.
+- [ ] Toggle "Modo pirata" del jugador: checkbox en UI del mapamundi que activa IsPirata en FlotaJugador. Si activo, comerciantes huyen del jugador y puede atacarlos. Puertos siguen siendo accesibles (sin penalización para el TFG).
+- [ ] Pantalla de resultados de combate visual (ResultadoCombateUI) — actualmente MostrarResultado() solo hace Debug.Log. Implementar mañana.
+- [ ] Inyección de RutaCalculadorTilemap en FlotaManager sin FindFirstObjectByType — usar setter o inyección desde MapamundiController.
+- [ ] FindFirstObjectByType deprecado en ComerciantePNJController (3 llamadas) y FlotaManager — reemplazar por FindAnyObjectByType antes del freeze.
+
+---
+
+## Cambios Día 19-20 — Segunda parte (16/05/2026)
+
+### TipoCascoData (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/TipoCascoData.cs` |
+| **Tipo** | `ScriptableObject` |
+| **Módulo** | Astillero — Construcción naval |
+| **Descripción** | Define las estadísticas base de un tipo de casco de barco. Crear instancias desde Assets → Create → TFG → Astillero → TipoCasco. Los 4 cascos base son Cog (id=1), Hulk (id=2), Carraca (id=3), Galera (id=4). |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `idTipoCasco` | `int` | Identificador único. Debe coincidir con id_tipo_casco en BD. |
+| `nombreCasco` | `string` | Nombre visible en la UI del astillero. |
+| `vidaBase` | `int` | Puntos de vida del casco sin módulos. |
+| `velocidadBase` | `int` | Velocidad base de navegación. |
+| `maniobrabilidadBase` | `int` | Maniobrabilidad base. |
+| `capacidadCargaBase` | `int` | Unidades de carga máximas sin módulos de bodega. |
+| `capacidadModulos` | `int` | Slots disponibles para instalar módulos. |
+| `capacidadTripulacion` | `int` | Tripulantes máximos que admite el casco. |
+| `costeOro` | `int` | Precio de construcción en el astillero. |
+| `iconoCasco` | `Sprite` | Sprite para mostrar en la UI. |
+
+---
+
+### TipoModulo (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/TipoModulo.cs` |
+| **Tipo** | `enum` |
+| **Módulo** | Astillero — Construcción naval |
+| **Descripción** | Categoría funcional de un módulo instalable en un barco. Solo puede haber un módulo de cada tipo instalado simultáneamente. |
+
+| Valor | Descripción |
+|---|---|
+| `Armamento` | Modifica la fuerza de combate y puede reducir velocidad. |
+| `Velas` | Modifica velocidad y maniobrabilidad. |
+| `Bodega` | Modifica la capacidad de carga. |
+
+---
+
+### ModuloBarcoData (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/ModuloBarcoData.cs` |
+| **Tipo** | `ScriptableObject` |
+| **Módulo** | Astillero — Construcción naval |
+| **Descripción** | Define un módulo instalable en un barco. Implementa el patrón Decorator sobre TipoCascoData. Crear instancias desde Assets → Create → TFG → Astillero → ModuloBarco. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `nombreModulo` | `string` | Nombre visible en la UI. |
+| `tipoModulo` | `TipoModulo` | Categoría funcional del módulo. |
+| `slotsCosto` | `int` | Slots del casco que ocupa este módulo (1 o 2). |
+| `deltaVida` | `int` | Modificador de vida (puede ser negativo). |
+| `deltaVelocidad` | `int` | Modificador de velocidad. |
+| `deltaManiobrabilidad` | `int` | Modificador de maniobrabilidad. |
+| `deltaCargaMaxima` | `int` | Modificador de capacidad de carga. |
+| `deltaFuerzaCombate` | `int` | Modificador de fuerza de combate. |
+| `costeOro` | `int` | Coste de instalación en oro. |
+| `requierePolvora` | `bool` | Si true, solo disponible a partir del año 1380. |
+| `AnioDesbloqueoPolvoraJuego` | `const int = 1380` | Año a partir del cual se desbloquean módulos de pólvora. |
+| `iconoModulo` | `Sprite` | Sprite para mostrar en la UI. |
+
+---
+
+### BarcoJugador (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/BarcoJugador.cs` |
+| **Tipo** | Clase pura C# |
+| **Módulo** | Astillero — Construcción naval |
+| **Descripción** | Representa un barco propiedad del jugador. Implementa el patrón Decorator: el casco define stats base y los módulos instalados los modifican. Máximo un módulo por TipoModulo. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `IdBarco` | `int` (get) | Identificador único. |
+| `Nombre` | `string` (get) | Nombre propio del barco. |
+| `CascoBase` | `TipoCascoData` (get) | Casco base que define stats iniciales. |
+| `ModulosInstalados` | `List<ModuloBarcoData>` (get, readonly) | Módulos actualmente instalados. |
+| `EsBarcosCombate` | `bool` (get, set) | Si el barco participa activamente en combate naval. |
+| `VidaActual` | `int` (get, set) | Vida actual. Se inicializa a VidaTotal al construir. |
+| `Tripulacion` | `int` (get, set) | Tripulantes embarcados. Default: 30. |
+| `VidaTotal` | `int` (get) | Vida máxima = vidaBase + suma deltaVida de módulos. |
+| `VelocidadTotal` | `int` (get) | Velocidad = velocidadBase + suma deltaVelocidad. |
+| `ManiobrabilidadTotal` | `int` (get) | Maniobrabilidad = base + suma deltas. |
+| `CargaMaximaTotal` | `int` (get) | Carga máxima = base + suma deltaCargaMaxima. |
+| `FuerzaCombateTotal` | `int` (get) | Suma de deltaFuerzaCombate de todos los módulos. |
+| `SlotsUsados` | `int` (get) | Suma de slotsCosto de módulos instalados. |
+| `SlotsDisponibles` | `int` (get) | capacidadModulos - SlotsUsados. |
+| `InstalarModulo(ModuloBarcoData)` | `bool` | False si no hay slots, nombre duplicado o requiere pólvora no desbloqueada. |
+| `DesinstalarModulo(ModuloBarcoData)` | `bool` | False si el módulo no está instalado. |
+| `PuedeInstalar(ModuloBarcoData)` | `bool` | Comprueba slots y requisito de pólvora. |
+| `ObtenerModuloPorTipo(TipoModulo)` | `ModuloBarcoData` | Devuelve el módulo instalado de ese tipo o null. |
+
+---
+
+### FlotaJugador (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/FlotaJugador.cs` |
+| **Tipo** | Clase pura C# |
+| **Módulo** | Astillero — Flotas |
+| **Descripción** | Agrupa los barcos del jugador. Máximo 5 barcos. Expone stats agregadas y permite convertirse en FlotaRuntimeData para el sistema de combate. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MaxBarcos` | `const int = 5` | Límite de barcos por flota. |
+| `Barcos` | `List<BarcoJugador>` (get, readonly) | Lista de barcos activos. |
+| `ModoPirata` | `bool` (get, set) | Si true, los comerciantes huyen y el jugador puede atacar. Los puertos siguen siendo accesibles (TFG). |
+| `VidaTotalFlota` | `int` (get) | Suma de VidaTotal de todos los barcos. |
+| `VelocidadFlota` | `float` (get) | MIN de VelocidadTotal — el más lento limita la flota. |
+| `ManiobrabilidadMedia` | `float` (get) | Media de ManiobrabilidadTotal. |
+| `CargaMaximaTotal` | `int` (get) | Suma de CargaMaximaTotal. |
+| `FuerzaCombateTotal` | `int` (get) | Suma de FuerzaCombateTotal. |
+| `TripulacionTotal` | `int` (get) | Suma de Tripulacion de cada barco. |
+| `AñadirBarco(BarcoJugador)` | `bool` | False si ya hay MaxBarcos. |
+| `EliminarBarco(int idBarco)` | `bool` | False si no existe. |
+| `ObtenerBarco(int idBarco)` | `BarcoJugador` | Null si no existe. |
+| `ComoFlotaRuntime()` | `FlotaRuntimeData` | Convierte la flota a FlotaRuntimeData para CombateNavalResolver. IsPirata = ModoPirata. |
+
+---
+
+### AstilleroManager (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/AstilleroManager.cs` |
+| **Tipo** | `MonoBehaviour` (singleton) |
+| **Módulo** | Astillero — Construcción naval |
+| **Descripción** | Gestiona las operaciones del astillero: compra, instalación de módulos, reparación y venta de barcos. Sin persistencia BD por ahora — todo en memoria. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static AstilleroManager` (get) | Punto de acceso global. |
+| `CascosDisponibles` | `List<TipoCascoData>` | Asignar los 4 ScriptableObjects desde Inspector. |
+| `ModulosDisponibles` | `List<ModuloBarcoData>` | Asignar todos los ScriptableObjects de módulo desde Inspector. |
+| `ComprarBarco(TipoCascoData, string)` | `ResultadoOperacion` | Verifica flota < 5 y oro, construye BarcoJugador y lo añade a FlotaJugador. |
+| `InstalarModulo(BarcoJugador, ModuloBarcoData)` | `ResultadoOperacion` | Swap si hay módulo del mismo tipo: costeNeto = nuevo - 50% anterior. Puede devolver oro si el nuevo es más barato. |
+| `RepararBarco(BarcoJugador)` | `ResultadoOperacion` | 10 oro por punto de daño. Restaura VidaActual = VidaTotal. |
+| `VenderBarco(BarcoJugador)` | `ResultadoOperacion` | Devuelve 50% del coste total (casco + módulos). Elimina de FlotaJugador. |
+
+| Struct | Descripción |
+|---|---|
+| `ResultadoOperacion` | `bool Exito, string MensajeError`. Usado también por TabernaManager. |
+
+---
+
+### AstilleroUI (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/AstilleroUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Astillero — UI |
+| **Descripción** | Panel modal del astillero con 5 subpaneles: Menú (Construir/Modificar/Reparar/Vender), Construir (selector de casco + 3 selectores de módulo + precio), Modificar (selector de barco + módulos instalados + delta de stats), Reparar (selector de barco + coste), Vender (selector de barco + valor de venta). Todos los campos se asignan desde el Inspector. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirAstillero()` | `void` | Activa el panel, muestra el menú principal, refresca UI. |
+| `CerrarAstillero()` | `void` | Desactiva el panel. |
+
+---
+
+### CapitanData (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Taberna/CapitanData.cs` |
+| **Tipo** | Clase pura C# |
+| **Módulo** | Taberna — Tripulación |
+| **Descripción** | Datos de un capitán contratado. Stats aleatorias entre 0 y 5 al crear. Constructor alternativo para restaurar desde BD sin aleatoriedad. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `IdCapitan` | `int` (get) | Identificador único. |
+| `Nombre` | `string` (get) | Nombre del capitán. |
+| `HabilidadNavegacion` | `float` (get) | 0-5, 1 decimal. Afecta velocidad del convoy. |
+| `HabilidadCombate` | `float` (get) | 0-5, 1 decimal. Usado como HabilidadCapitan en FlotaRuntimeData del convoy. |
+| `IdBarcoAsignado` | `int` (get, set) | -1 si sin barco asignado. |
+| `CapitanData(int, string)` | Constructor | Stats aleatorias. |
+| `CapitanData(int, string, float, float)` | Constructor | Stats exactas para restaurar desde BD. |
+
+---
+
+### TabernaManager (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Taberna/TabernaManager.cs` |
+| **Tipo** | `MonoBehaviour` (singleton) |
+| **Módulo** | Taberna — Tripulación |
+| **Descripción** | Gestiona la oferta diaria de marineros y capitanes por ciudad. Refresca la oferta cada día via SimulacionTiempo.OnNuevoDia. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static TabernaManager` (get) | Punto de acceso global. |
+| `CapitanesContratados` | `IReadOnlyList<CapitanData>` (get) | Capitanes ya contratados por el jugador. |
+| `GetMarinerosDisponibles(int idCiudad)` | `int` | Marineros disponibles hoy en esa ciudad (0-50). |
+| `GetCapitanesDisponibles(int idCiudad)` | `List<CapitanData>` | Capitanes disponibles para contratar en esa ciudad. |
+| `ContratarMarineros(BarcoJugador, int cantidad)` | `ResultadoOperacion` | 5 oro por marinero. Respeta capacidadTripulacion del casco. |
+| `ContratarCapitan(BarcoJugador, CapitanData)` | `ResultadoOperacion` | 500 oro. El barco no puede tener ya un capitán. |
+| `GetCapitanDeBarco(int idBarco)` | `CapitanData` | Null si el barco no tiene capitán. |
+| `RestaurarCapitanContratado(CapitanData)` | `void` | Añade un capitán a la lista de contratados al cargar partida. |
+
+---
+
+### TabernaUI (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Taberna/TabernaUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Taberna — UI |
+| **Descripción** | Panel modal de la taberna con 3 subpaneles: Menú, Contratar Marineros (selector de barco + cantidad + coste), Contratar Capitán (selector de barco + lista de capitanes disponibles). Todos los campos se asignan desde el Inspector. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirTaberna()` | `void` | Activa el panel y muestra el menú principal. |
+| `CerrarTaberna()` | `void` | Desactiva el panel. |
+
+---
+
+### ConvoyData (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Taberna/ConvoyData.cs` |
+| **Tipo** | Clase pura C# |
+| **Módulo** | Flotas — Convoyes |
+| **Descripción** | Agrupa barcos del jugador en un convoy. El nombre del convoy es el nombre del barco líder. Las stats del capitán del barco líder determinan la HabilidadCapitan del convoy en combate. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `NombreConvoy` | `string` (get) | Nombre del barco líder. |
+| `BarcoLider` | `BarcoJugador` (get) | Barco que lidera el convoy. |
+| `Miembros` | `List<BarcoJugador>` (get, readonly) | Incluye al líder. Máximo 5 en total. |
+| `ModoPirata` | `bool` (get, set) | Modo pirata del convoy. |
+| `TripulacionTotal` | `int` (get) | Suma de tripulación de todos los miembros. |
+| `VelocidadConvoy` | `float` (get) | MIN de VelocidadTotal — el más lento limita. |
+| `FuerzaCombateTotal` | `int` (get) | Suma de FuerzaCombateTotal de todos los miembros. |
+| `CargaMaximaTotal` | `int` (get) | Suma de CargaMaximaTotal. |
+| `AñadirMiembro(BarcoJugador)` | `bool` | False si ya es miembro o hay 5 barcos. |
+| `EliminarMiembro(BarcoJugador)` | `bool` | False si es el líder. |
+| `ComoFlotaRuntime()` | `FlotaRuntimeData` | Convierte el convoy a FlotaRuntimeData. HabilidadCapitan = HabilidadCombate del capitán del barco líder. |
+
+---
+
+### ConvoyManager (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Taberna/ConvoyManager.cs` |
+| **Tipo** | `MonoBehaviour` (singleton) |
+| **Módulo** | Flotas — Convoyes |
+| **Descripción** | Gestiona los convoyes activos del jugador. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static ConvoyManager` (get) | Punto de acceso global. |
+| `ConvoysActivos` | `IReadOnlyList<ConvoyData>` (get) | Todos los convoyes activos. |
+| `CrearConvoy(BarcoJugador)` | `ConvoyData` | Crea un convoy con el barco como líder. Si ya lidera uno, devuelve el existente. |
+| `UnirseAConvoy(ConvoyData, BarcoJugador)` | `bool` | Añade el barco al convoy. |
+| `AbandonarConvoy(ConvoyData, BarcoJugador)` | `bool` | Elimina el barco del convoy. Disuelve si queda vacío. |
+| `GetConvoyDeBarco(BarcoJugador)` | `ConvoyData` | Null si el barco no pertenece a ningún convoy. |
+| `DisolverConvoy(ConvoyData)` | `void` | Elimina el convoy de la lista activa. |
+
+---
+
+### PanelFlotaUI (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/UI/PanelFlotaUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | UI — Panel lateral |
+| **Descripción** | Panel lateral siempre visible en Ciudad y Mapamundi (estilo Patrician). Muestra stats del barco seleccionado, capitán, convoy y permite acciones rápidas. Se activa al llamar MostrarBarco() o al hacer clic en un icono de barco. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MostrarBarco(BarcoJugador)` | `void` | Muestra el panel con los datos del barco indicado. |
+| `OcultarPanel()` | `void` | Desactiva el panel. |
+| `RefrescarUI()` | `void` | Actualiza todos los textos con el barco seleccionado actual. |
+
+---
+
+### Nuevos DAOs (Día 19-20)
+
+#### ModuloBarcoDAO
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/ModuloBarcoDAO.cs` |
+| **Módulo** | Base de datos — Persistencia |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarModulosDeBarco(int idBarco, List<ModuloBarcoData>)` | `void` | DELETE + INSERT OR REPLACE de todos los módulos del barco. |
+| `CargarModulosDeBarco(int idBarco)` | `List<ModuloDto>` | Devuelve los módulos persistidos para ese barco. |
+
+#### CapitanDAO
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Database/CapitanDAO.cs` |
+| **Módulo** | Base de datos — Persistencia |
+| **Descripción** | Migra automáticamente las columnas habilidad_navegacion, habilidad_combate e id_barco_asignado en la tabla Capitan si no existen. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarCapitan(CapitanData, int idBarcoAsignado)` | `void` | INSERT OR REPLACE con todas las columnas. |
+| `CargarTodosLosCapitanes()` | `List<CapitanDto>` | Lee todos los capitanes de la BD. |
+| `EliminarTodosLosCapitanes()` | `void` | DELETE FROM Capitan. Llamar antes de reinsertar al guardar. |
+
+---
+
+### Cambios en clases existentes (Día 19-20 — segunda parte)
+
+#### GameManager
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `FlotaJugador` | `FlotaJugador` (get) | Flota del jugador. Inicializada vacía al arrancar. |
+
+#### BarcoDAO
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `InsertarTiposCascoSiNoExisten()` | — | Ampliado: añade Galera (id=4, vida=80, velocidad=5, maniobra=4, carga=150). |
+
+#### FlotaRuntimeData
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `FuerzaCanhones` | `float` (get, **set**) | Setter añadido para que FlotaJugador.ComoFlotaRuntime() pueda asignarlo. |
+| `VelocidadFlota` | `float` (get, **set**) | Setter añadido por el mismo motivo. |
+| `HabilidadCapitan` | `float` (get, **set**) | Setter añadido para que ConvoyData.ComoFlotaRuntime() pueda asignar la habilidad del capitán. |
+
+#### SaveManager
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarFlotaJugador()` | `void` (privado) | Paso 9: persiste barcos del jugador + módulos en BD. |
+| `GuardarCapitanes()` | `void` (privado) | Paso 10: persiste capitanes contratados en BD. |
+
+#### LoadManager
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CargarFlotaJugador()` | `void` (privado) | Paso 8: restaura barcos del jugador + módulos desde BD. |
+| `CargarCapitanes()` | `void` (privado) | Paso 9: restaura capitanes contratados desde BD. |
+
+---
+
+### TO-DOs abiertos tras Día 19-20 (segunda parte)
+
+- [ ] Conectar AstilleroUI al edificio astillero en escena Ciudad (mañana en Unity).
+- [ ] Conectar TabernaUI al edificio taberna en escena Ciudad (mañana en Unity).
+- [ ] Montar PanelFlotaUI en Canvas de Ciudad y Mapamundi — panel lateral siempre visible (mañana en Unity).
+- [ ] Conectar EncuentroNavalUI al Canvas del Mapamundi con los 3 botones (mañana en Unity).
+- [ ] Asignar posiciones válidas de tilemap a los 3 piratas en SpawnFlotasPNJIniciales() (mañana en Unity, identificar casillas de mar).
+- [ ] Crear ScriptableObjects TipoCascoData (4 cascos) y ModuloBarcoData (módulos de armamento, velas, bodega) en el proyecto.
+- [ ] Asignar CascosDisponibles y ModulosDisponibles en AstilleroManager desde Inspector.
+- [ ] Asignar TabernaManager y ConvoyManager como GameObjects en la escena.
+- [ ] ResultadoCombateUI — pantalla de resultados visual (pendiente de implementar).
+- [ ] Flota navegable del jugador en el mapamundi — icono y movimiento por click.
+- [ ] Toggle modo pirata integrado en PanelFlotaUI ya implementado — conectar en Unity.
+- [ ] Persistencia de convoyes — ConvoyData es efímero, se recrea al cargar (aceptable para TFG).
+- [ ] FindFirstObjectByType en FlotaManager.RegistrarFlota (piratas) — reemplazar por inyección desde MapamundiController.
+
