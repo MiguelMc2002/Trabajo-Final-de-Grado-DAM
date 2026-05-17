@@ -20,7 +20,8 @@ public class FlotaManager : MonoBehaviour
 
     // ─── Controladores de comportamiento ─────────────────────────────────────
 
-    private readonly Dictionary<int, ComerciantePNJController> _controladores = new();
+    private readonly Dictionary<int, ComerciantePNJController> _controladores        = new();
+    private readonly Dictionary<int, PirataPNJController>     _controladores_pirata = new();
 
     private int _diasDesdeUltimoReabastecimientoPirata = 0;
 
@@ -59,9 +60,17 @@ public class FlotaManager : MonoBehaviour
 
         FlotasPorId[flota.Id] = flota;
 
-        _controladores[flota.Id] = new ComerciantePNJController(flota, this);
+        if (flota.IsPirata)
+        {
+            RutaCalculadorTilemap rutaCalculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
+            _controladores_pirata[flota.Id] = new PirataPNJController(flota, this, rutaCalculador);
+        }
+        else
+        {
+            _controladores[flota.Id] = new ComerciantePNJController(flota, this);
+        }
 
-        Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}");
+        Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}, pirata={flota.IsPirata}");
     }
 
     /// <summary>
@@ -93,6 +102,9 @@ public class FlotaManager : MonoBehaviour
     public void TickTodosLosControladores()
     {
         foreach (ComerciantePNJController controlador in _controladores.Values)
+            controlador.Tick();
+
+        foreach (PirataPNJController controlador in _controladores_pirata.Values)
             controlador.Tick();
 
         _diasDesdeUltimoReabastecimientoPirata++;

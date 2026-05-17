@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using static ResultadoCombate;
 
 /// <summary>
 /// Controla el mapamundi: inicializa los marcadores de ciudad visibles en el mapa,
@@ -148,8 +147,9 @@ public class MapamundiController : MonoBehaviour
     // ─── Detección y resolución de combate ───────────────────────────────────
 
     /// <summary>
-    /// Comprueba si la flota que acaba de moverse está lo bastante cerca de otra flota
-    /// enemiga (pirata vs. no-pirata) para desencadenar un combate automático.
+    /// Comprueba si la flota que acaba de moverse está lo bastante cerca de una flota
+    /// enemiga (pirata vs. no-pirata) y, si es así, dispara <see cref="CombateEventos.OnCombateIniciado"/>
+    /// para que la UI de encuentro gestione la resolución.
     /// Solo se considera un combate por llamada; el primero encontrado interrumpe el bucle.
     /// </summary>
     /// <param name="flotaQueSeMovio">Flota que acaba de terminar un segmento de ruta.</param>
@@ -160,96 +160,15 @@ public class MapamundiController : MonoBehaviour
         foreach (FlotaRuntimeData otra in FlotaManager.Instance.ObtenerTodasLasFlotas())
         {
             if (otra.Id == flotaQueSeMovio.Id) continue;
-            if (flotaQueSeMovio.IsPirata == otra.IsPirata) continue; // solo pirata vs. no-pirata
+            if (flotaQueSeMovio.IsPirata == otra.IsPirata) continue;
 
             float distancia = Vector2.Distance(flotaQueSeMovio.PosicionActual, otra.PosicionActual);
             if (distancia > 1.5f) continue;
 
-            FlotaRuntimeData pirata  = flotaQueSeMovio.IsPirata ? flotaQueSeMovio : otra;
-            FlotaRuntimeData victima = flotaQueSeMovio.IsPirata ? otra : flotaQueSeMovio;
-            TriggerCombate(pirata, victima);
+            FlotaRuntimeData atacante = flotaQueSeMovio.IsPirata ? flotaQueSeMovio : otra;
+            FlotaRuntimeData defensor = flotaQueSeMovio.IsPirata ? otra : flotaQueSeMovio;
+            CombateEventos.DispararCombate(atacante, defensor);
             break;
         }
-    }
-
-    /// <summary>
-    /// Resuelve el combate naval entre pirata y víctima, aplica los cambios de estado
-    /// a ambas flotas y reanuda la simulación al terminar.
-    /// </summary>
-    /// <param name="pirata">Flota atacante.</param>
-    /// <param name="victima">Flota defensora.</param>
-    private void TriggerCombate(FlotaRuntimeData pirata, FlotaRuntimeData victima)
-    {
-        SimulacionTiempo.Instance?.PausarPorMenu();
-
-        var rng = new System.Random();
-        ResultadoCombate resultado = CombateNavalResolver.Resolver(pirata, victima, rng);
-        Debug.Log($"[Combate] {resultado.Descripcion}");
-
-        switch (resultado.Desenlace)
-        {
-            case DesenlaceCombate.ComercianteEscapa:
-                // Sin cambios. Log ya hecho.
-                break;
-
-            case DesenlaceCombate.Rendicion:
-                // Aplicar botín completo al pirata
-                foreach (var kvp in resultado.BotonCapturado)
-                    pirata.Carga[kvp.Key] = pirata.Carga.ContainsKey(kvp.Key) ? pirata.Carga[kvp.Key] + kvp.Value : kvp.Value;
-                victima.Carga.Clear();
-                victima.NumBarcos = 0;
-                FlotaManager.Instance.CambiarEstado(victima.Id, EstadoFlotaPNJ.Huyendo);
-                break;
-
-            case DesenlaceCombate.PirataGana:
-                pirata.NumBarcos  = Mathf.Max(0, pirata.NumBarcos  - resultado.BarcosHundidosAtacante);
-                pirata.VidaActual = resultado.VidaFinalAtacante;
-                victima.NumBarcos = Mathf.Max(0, victima.NumBarcos - resultado.BarcosHundidosDefensor - resultado.BarcosCapturedDefensor);
-                victima.VidaActual = resultado.VidaFinalDefensor;
-
-                foreach (var kvp in resultado.BotonCapturado)
-                {
-                    pirata.Carga[kvp.Key] = pirata.Carga.ContainsKey(kvp.Key) ? pirata.Carga[kvp.Key] + kvp.Value : kvp.Value;
-                    if (victima.Carga.ContainsKey(kvp.Key))
-                        victima.Carga[kvp.Key] = Mathf.Max(0, victima.Carga[kvp.Key] - kvp.Value);
-                }
-
-                FlotaManager.Instance.CambiarEstado(victima.Id, EstadoFlotaPNJ.Huyendo);
-
-                // Teleport víctima a su ciudad origen como refugio
-                CiudadData ciudadRefugio = null;
-                foreach (CiudadData c in GameManager.Instance.CiudadesDisponibles)
-                    if (c.IdCiudad == victima.CiudadOrigenId) { ciudadRefugio = c; break; }
-
-                if (ciudadRefugio != null)
-                    victima.PosicionActual = tilemap.GetCellCenterWorld(ciudadRefugio.CasillaMapamundi);
-                else
-                    victima.PosicionActual += new Vector2(5f, 5f);
-
-                victima.RutaActualTilemap?.Clear();
-                victima.IndiceWaypointActual = 0;
-                break;
-
-            case DesenlaceCombate.ComercianteGana:
-                pirata.NumBarcos   = Mathf.Max(0, pirata.NumBarcos  - resultado.BarcosHundidosAtacante);
-                pirata.VidaActual  = resultado.VidaFinalAtacante;
-                victima.VidaActual = resultado.VidaFinalDefensor;
-                FlotaManager.Instance.CambiarEstado(pirata.Id, EstadoFlotaPNJ.Huyendo);
-                pirata.PosicionActual += new Vector2(Random.Range(-5f, 5f), Random.Range(-5f, 5f));
-                pirata.RutaActualTilemap?.Clear();
-                pirata.IndiceWaypointActual = 0;
-                break;
-
-            case DesenlaceCombate.Empate:
-                pirata.NumBarcos   = Mathf.Max(0, pirata.NumBarcos  - resultado.BarcosHundidosAtacante);
-                pirata.VidaActual  = resultado.VidaFinalAtacante;
-                victima.NumBarcos  = Mathf.Max(0, victima.NumBarcos - resultado.BarcosHundidosDefensor);
-                victima.VidaActual = resultado.VidaFinalDefensor;
-                FlotaManager.Instance.CambiarEstado(pirata.Id,  EstadoFlotaPNJ.Huyendo);
-                FlotaManager.Instance.CambiarEstado(victima.Id, EstadoFlotaPNJ.Huyendo);
-                break;
-        }
-
-        SimulacionTiempo.Instance?.ReanudarDesdMenu();
     }
 }
