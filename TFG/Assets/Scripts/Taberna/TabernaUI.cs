@@ -124,7 +124,7 @@ public class TabernaUI : MonoBehaviour
         if (barco == null) return;
 
         int disponibles = GetMarinerosDisponibles();
-        int hueco       = barco.CascoBase.capacidadTripulacion - barco.Tripulacion;
+        int hueco       = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
         int maximo      = Mathf.Max(1, Mathf.Min(disponibles, hueco));
 
         _cantidadMarineros = Mathf.Clamp(_cantidadMarineros + dir, 1, maximo);
@@ -148,12 +148,12 @@ public class TabernaUI : MonoBehaviour
         }
 
         int disponibles = GetMarinerosDisponibles();
-        int hueco       = barco.CascoBase.capacidadTripulacion - barco.Tripulacion;
+        int hueco       = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
         int maximo      = Mathf.Max(1, Mathf.Min(disponibles, hueco));
         _cantidadMarineros = Mathf.Clamp(_cantidadMarineros, 1, maximo);
 
         _textoBarcoMarineros      .text = barco.Nombre;
-        _textoTripulacion         .text = $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.capacidadTripulacion}";
+        _textoTripulacion         .text = $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.CapacidadTripulacion}";
         _textoMarinerosDisponibles.text = $"Marineros disponibles: {disponibles}";
         _textoCantidad            .text = _cantidadMarineros.ToString();
         _textoCosteMar            .text = $"Coste: {_cantidadMarineros * 5} oro";

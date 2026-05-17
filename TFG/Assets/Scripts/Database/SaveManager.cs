@@ -371,12 +371,12 @@ public class SaveManager : MonoBehaviour
         {
             _barcoDAO.InsertarBarco(
                 barco.IdBarco,
-                barco.CascoBase.idTipoCasco,
+                barco.CascoBase.IdTipoCasco,
                 barco.Nombre,
                 barco.EsBarcosCombate,
                 barco.VidaActual,
                 barco.Tripulacion,
-                barco.CascoBase.capacidadTripulacion,
+                barco.CascoBase.CapacidadTripulacion,
                 idFlota: 0);
 
             _moduloBarcoDAO.GuardarModulosDeBarco(barco.IdBarco, barco.ModulosInstalados);

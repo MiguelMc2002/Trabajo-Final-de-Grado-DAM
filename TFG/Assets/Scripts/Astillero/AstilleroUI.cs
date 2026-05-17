@@ -257,13 +257,13 @@ public class AstilleroUI : MonoBehaviour
             return;
         }
 
-        TipoCascoData casco = cascos[_indiceCasco];
-        _textoCascoConstruir.text        = casco.nombreCasco;
-        _statsVidaCasco.text             = $"Vida: {casco.vidaBase}";
-        _statsVelocidadCasco.text        = $"Velocidad: {casco.velocidadBase}";
-        _statsManiobrabilidadCasco.text  = $"Maniobrabilidad: {casco.maniobrabilidadBase}";
-        _statsCargaCasco.text            = $"Carga: {casco.capacidadCargaBase}";
-        _statsSlotsDisponibles.text      = $"Slots: {casco.capacidadModulos}";
+        IBarco casco = cascos[_indiceCasco];
+        _textoCascoConstruir.text        = casco.NombreCasco;
+        _statsVidaCasco.text             = $"Vida: {casco.VidaBase}";
+        _statsVelocidadCasco.text        = $"Velocidad: {casco.VelocidadBase}";
+        _statsManiobrabilidadCasco.text  = $"Maniobrabilidad: {casco.ManiobrabilidadBase}";
+        _statsCargaCasco.text            = $"Carga: {casco.CapacidadCargaBase}";
+        _statsSlotsDisponibles.text      = $"Slots: {casco.CapacidadModulos}";
 
         ModuloBarcoData modArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
         ModuloBarcoData modVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
@@ -277,7 +277,7 @@ public class AstilleroUI : MonoBehaviour
         _statsVelas.text     = modVel != null ? FormatearDeltasModulo(modVel) : "—";
         _statsBodega.text    = modBod != null ? FormatearDeltasModulo(modBod) : "—";
 
-        int precioTotal = casco.costeOro
+        int precioTotal = casco.CosteOro
             + (modArm != null ? modArm.costeOro : 0)
             + (modVel != null ? modVel.costeOro : 0)
             + (modBod != null ? modBod.costeOro : 0);
@@ -344,7 +344,7 @@ public class AstilleroUI : MonoBehaviour
         BarcoJugador barco = ObtenerBarcoVen();
         if (barco == null) { _textoBarcoVender.text = "Sin barcos"; return; }
 
-        int costeTotal = barco.CascoBase.costeOro;
+        int costeTotal = barco.CascoBase.CosteOro;
         foreach (ModuloBarcoData m in barco.ModulosInstalados) costeTotal += m.costeOro;
         long valorVenta = (long)(costeTotal * 0.5f);
 
@@ -359,7 +359,7 @@ public class AstilleroUI : MonoBehaviour
         var cascos = AstilleroManager.Instance.CascosDisponibles;
         if (cascos == null || cascos.Count == 0) return;
 
-        TipoCascoData casco = cascos[_indiceCasco];
+        IBarco casco = cascos[_indiceCasco];
         string nombre = $"Barco_{System.DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
 
         ResultadoOperacion res = AstilleroManager.Instance.ComprarBarco(casco, nombre);
@@ -376,7 +376,7 @@ public class AstilleroUI : MonoBehaviour
             InstalarModuloSiSeleccionado(nuevoBarco, TipoModulo.Bodega,    _indiceModuloBodega);
         }
 
-        Debug.Log($"[AstilleroUI] Barco construido: {nombre} con casco {casco.nombreCasco}.");
+        Debug.Log($"[AstilleroUI] Barco construido: {nombre} con casco {casco.NombreCasco}.");
         RefrescarUI();
     }
 
