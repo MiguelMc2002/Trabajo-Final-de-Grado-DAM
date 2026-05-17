@@ -2339,17 +2339,221 @@ Cada bando calcula su fuerza efectiva: `cañones + tripulación×0.5 + habilidad
 
 ### TO-DOs abiertos tras Día 19-20 (segunda parte)
 
-- [ ] Conectar AstilleroUI al edificio astillero en escena Ciudad (mañana en Unity).
-- [ ] Conectar TabernaUI al edificio taberna en escena Ciudad (mañana en Unity).
-- [ ] Montar PanelFlotaUI en Canvas de Ciudad y Mapamundi — panel lateral siempre visible (mañana en Unity).
-- [ ] Conectar EncuentroNavalUI al Canvas del Mapamundi con los 3 botones (mañana en Unity).
-- [ ] Asignar posiciones válidas de tilemap a los 3 piratas en SpawnFlotasPNJIniciales() (mañana en Unity, identificar casillas de mar).
-- [ ] Crear ScriptableObjects TipoCascoData (4 cascos) y ModuloBarcoData (módulos de armamento, velas, bodega) en el proyecto.
-- [ ] Asignar CascosDisponibles y ModulosDisponibles en AstilleroManager desde Inspector.
+- [x] Conectar AstilleroUI al edificio astillero en escena Ciudad — UI montada con ConstruirUIsCiudadEditor.
+- [x] Conectar TabernaUI al edificio taberna en escena Ciudad — UI montada con ConstruirUIsCiudadEditor.
+- [ ] Montar PanelFlotaUI en Canvas de Ciudad y Mapamundi — panel lateral siempre visible.
+- [ ] Conectar EncuentroNavalUI al Canvas del Mapamundi con los 3 botones.
+- [ ] Asignar posiciones válidas de tilemap a los 3 piratas en SpawnFlotasPNJIniciales().
+- [x] Crear ScriptableObjects de cascos (CascoCog, CascoHulk, CascoCarraca, CascoGalera) y módulos (8 assets) en el proyecto.
+- [x] Asignar _cascosDecoradores y ModulosDisponibles en AstilleroManager desde Inspector.
 - [ ] Asignar TabernaManager y ConvoyManager como GameObjects en la escena.
 - [ ] ResultadoCombateUI — pantalla de resultados visual (pendiente de implementar).
 - [ ] Flota navegable del jugador en el mapamundi — icono y movimiento por click.
 - [ ] Toggle modo pirata integrado en PanelFlotaUI ya implementado — conectar en Unity.
 - [ ] Persistencia de convoyes — ConvoyData es efímero, se recrea al cargar (aceptable para TFG).
 - [ ] FindFirstObjectByType en FlotaManager.RegistrarFlota (piratas) — reemplazar por inyección desde MapamundiController.
+
+---
+
+## Día 21 — Patrón Decorator (Cascos) + UI Astillero/Taberna montada en escena
+
+### IBarco (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/IBarco.cs` |
+| **Tipo** | Interfaz C# |
+| **Módulo** | Astillero — Patrón Decorator |
+| **Descripción** | IComponent del patrón Decorator para cascos de barco. Expone las 9 propiedades de stats de un casco en PascalCase. Implementada por `TipoCascoData` (ConcreteComponent) y `CascoDecorador` (ComponentDecorator), lo que permite tratarlos de forma uniforme en `BarcoJugador` y `AstilleroManager`. |
+
+| Propiedad | Tipo | Descripción |
+|---|---|---|
+| `IdTipoCasco` | `int` | Identificador único. Coincide con `id_tipo_casco` en BD. |
+| `NombreCasco` | `string` | Nombre visible en la UI del astillero. |
+| `VidaBase` | `int` | Puntos de vida del casco sin módulos. |
+| `VelocidadBase` | `int` | Velocidad base de navegación. |
+| `ManiobrabilidadBase` | `int` | Maniobrabilidad base. |
+| `CapacidadCargaBase` | `int` | Carga máxima sin módulos de bodega. |
+| `CapacidadModulos` | `int` | Slots disponibles para módulos. |
+| `CapacidadTripulacion` | `int` | Tripulantes máximos del casco. |
+| `CosteOro` | `int` | Precio de construcción en el astillero. |
+
+---
+
+### CascoDecorador (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Astillero/CascoDecorador.cs` |
+| **Tipo** | `ScriptableObject` abstracto |
+| **Módulo** | Astillero — Patrón Decorator |
+| **Descripción** | ComponentDecorator del patrón Decorator. Envuelve un `TipoCascoData` base (campo `_cascoBase`) y delega todas las propiedades de `IBarco` en él por defecto mediante propiedades `virtual`. Las subclases concretas sobreescriben con `override` las propiedades que necesiten cambiar. `OnValidate()` emite un `LogWarning` si `_cascoBase` es null. No tiene `CreateAssetMenu` porque es abstracto. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_cascoBase` | `TipoCascoData` (protegido) | Casco base envuelto. Asignar desde el Inspector. |
+| Todas las propiedades de `IBarco` | `virtual` | Delegación por defecto a `_cascoBase`. Las subclases hacen `override` con valores fijos. |
+
+---
+
+### Decoradores concretos de casco (nuevos)
+
+Cada uno hereda de `CascoDecorador` y sobreescribe **todas** las propiedades de `IBarco` con valores fijos. El campo `_cascoBase` se asigna desde el Inspector pero las propiedades no dependen de él.
+
+| Clase | Ruta | Menú de creación |
+|---|---|---|
+| `CascoCog` | `Assets/Scripts/Astillero/CascoCog.cs` | `TFG/Astillero/Cascos/Cog` |
+| `CascoHulk` | `Assets/Scripts/Astillero/CascoHulk.cs` | `TFG/Astillero/Cascos/Hulk` |
+| `CascoCarraca` | `Assets/Scripts/Astillero/CascoCarraca.cs` | `TFG/Astillero/Cascos/Carraca` |
+| `CascoGalera` | `Assets/Scripts/Astillero/CascoGalera.cs` | `TFG/Astillero/Cascos/Galera` |
+
+#### Stats por casco
+
+| Casco | Id | VidaBase | VelocidadBase | ManiobrabilidadBase | CapacidadCargaBase | CapacidadModulos | CapacidadTripulacion | CosteOro |
+|---|---|---|---|---|---|---|---|---|
+| Cog | 1 | 100 | 3 | 2 | 200 | 4 | 40 | 800 |
+| Hulk | 2 | 150 | 2 | 1 | 350 | 6 | 60 | 1200 |
+| Carraca | 3 | 200 | 2 | 2 | 300 | 5 | 80 | 1800 |
+| Galera | 4 | 80 | 5 | 4 | 150 | 3 | 50 | 1500 |
+
+---
+
+### Cambios en clases existentes (Día 21)
+
+#### TipoCascoData
+
+Ahora implementa `IBarco`. Se añaden propiedades wrapper de solo lectura en PascalCase que exponen cada campo público camelCase existente. Los campos públicos camelCase se conservan íntegros para compatibilidad con el Inspector y con el código de BD.
+
+| Propiedad añadida | Implementa |
+|---|---|
+| `IdTipoCasco` | `idTipoCasco` |
+| `NombreCasco` | `nombreCasco` |
+| `VidaBase` | `vidaBase` |
+| `VelocidadBase` | `velocidadBase` |
+| `ManiobrabilidadBase` | `maniobrabilidadBase` |
+| `CapacidadCargaBase` | `capacidadCargaBase` |
+| `CapacidadModulos` | `capacidadModulos` |
+| `CapacidadTripulacion` | `capacidadTripulacion` |
+| `CosteOro` | `costeOro` |
+
+#### BarcoJugador
+
+| Cambio | Detalle |
+|---|---|
+| `CascoBase` | Tipo cambiado de `TipoCascoData` a `IBarco`. Acepta tanto `TipoCascoData` como cualquier `CascoDecorador`. |
+| Constructor | Acepta `IBarco` en lugar de `TipoCascoData`. |
+| Propiedades calculadas | Acceden a `CascoBase.VidaBase`, `.VelocidadBase`, `.ManiobrabilidadBase`, `.CapacidadCargaBase`, `.CapacidadModulos` (PascalCase via interfaz). |
+
+#### AstilleroManager
+
+| Cambio | Detalle |
+|---|---|
+| `_cascosBases` | `[SerializeField] private List<TipoCascoData>` — lista legacy serializable (vacía en producción). |
+| `_cascosDecoradores` | `[SerializeField] private List<CascoDecorador>` — los 4 cascos concretos. Asignar desde Inspector. |
+| `CascosDisponibles` | Propiedad `IReadOnlyList<IBarco>` — concatenación de `_cascosBases` + `_cascosDecoradores`. Sustituye al antiguo `List<TipoCascoData>` serializable. |
+| `ComprarBarco` | Acepta `IBarco` en vez de `TipoCascoData`. Usa `casco.CosteOro` y `casco.NombreCasco`. |
+| `VenderBarco` | Usa `barco.CascoBase.CosteOro` (PascalCase via interfaz). |
+
+#### AstilleroUI
+
+| Cambio | Detalle |
+|---|---|
+| Iteración de cascos | Itera `IReadOnlyList<IBarco>` en vez de `List<TipoCascoData>`. |
+| Acceso a propiedades | Todas las referencias a campos camelCase del casco reemplazadas por propiedades PascalCase de `IBarco` (`NombreCasco`, `VidaBase`, `CosteOro`, etc.). |
+| UI montada en escena | Panel construido con `ConstruirUIsCiudadEditor`. Todos los campos `[SerializeField]` cableados (43 campos). |
+
+#### TabernaUI
+
+| Cambio | Detalle |
+|---|---|
+| Acceso a `CapacidadTripulacion` | Actualizado a `barco.CascoBase.CapacidadTripulacion` (PascalCase). |
+| UI montada en escena | Panel construido con `ConstruirUIsCiudadEditor`. 19 de 22 campos `[SerializeField]` cableados. `_prefabFilaCapitan` queda null (pendiente). |
+
+#### TabernaManager, PanelFlotaUI, SaveManager
+
+Accesos a `CascoBase.capacidadTripulacion`, `CascoBase.nombreCasco`, `CascoBase.idTipoCasco` actualizados a PascalCase (`CapacidadTripulacion`, `NombreCasco`, `IdTipoCasco`) para compilar con `IBarco`.
+
+#### BarcoDAO
+
+Se añade comentario `TODO` encima de `InsertarTiposCascoSiNoExisten`: en el futuro los valores deberían leerse de los assets `IBarco` en vez de estar hardcodeados.
+
+---
+
+### Assets ScriptableObjects creados (Día 21)
+
+#### Cascos (`Assets/ScriptableObjects/`)
+
+| Asset | Tipo | IdTipoCasco |
+|---|---|---|
+| `CascoGenerico` | `TipoCascoData` | — (dummy base para `_cascoBase` del decorador) |
+| `CascoCog` | `CascoCog` | 1 |
+| `CascoHulk` | `CascoHulk` | 2 |
+| `CascoCarraca` | `CascoCarraca` | 3 |
+| `CascoGalera` | `CascoGalera` | 4 |
+
+#### Módulos (`Assets/ScriptableObjects/`)
+
+| Asset | Tipo | Slots | Efecto principal | CosteOro |
+|---|---|---|---|---|
+| `ModuloVelasLatinas` | Velas | 2 | +2 maniobra, −1 velocidad | 400 |
+| `ModuloVelasCuadradas` | Velas | 2 | +1 velocidad, +1 maniobra | 350 |
+| `ModuloVelasMixtas` | Velas | 3 | +2 velocidad, −1 maniobra | 500 |
+| `ModuloArmCatapulta` | Armamento | 2 | +3 fuerza combate | 300 |
+| `ModuloArmBalista` | Armamento | 1 | +2 fuerza, +1 maniobra | 250 |
+| `ModuloArmBombarda` | Armamento | 3 | +6 fuerza (requiere pólvora ≥ 1380) | 800 |
+| `ModuloBodegaReforzada` | Bodega | 2 | +100 carga | 300 |
+| `ModuloBodegaAmpliada` | Bodega | 3 | +200 carga, −1 velocidad | 500 |
+
+---
+
+### ConstruirUIsCiudadEditor (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Editor/ConstruirUIsCiudadEditor.cs` |
+| **Tipo** | Script de editor estático (`#if UNITY_EDITOR`), desechable |
+| **Módulo** | Herramientas de editor |
+| **Descripción** | Construye y cablea automáticamente la jerarquía UI completa de `PanelAstillero` (5 subpaneles) y `PanelTaberna` (3 subpaneles) en la escena Ciudad. Localiza paneles inactivos con `Resources.FindObjectsOfTypeAll`. Elimina hijos con `UnityEngine.Object.DestroyImmediate` y reconstruye desde cero con `VerticalLayoutGroup`, `HorizontalLayoutGroup` y `LayoutElement`. Cablea todos los campos `[SerializeField]` via `SerializedObject` + `FindProperty`. Marca la escena como dirty con `EditorSceneManager.MarkSceneDirty`. |
+
+| Menú | Acción |
+|---|---|
+| `TFG → Construir UI Astillero` | Reconstruye y cablea `PanelAstillero` (43 campos). |
+| `TFG → Construir UI Taberna` | Reconstruye y cablea `PanelTaberna` (19 campos; `_prefabFilaCapitan` = null). |
+
+| Helper | Descripción |
+|---|---|
+| `CreateChild(Transform, string, float)` | Hijo con `RectTransform` + `LayoutElement` de altura preferida. |
+| `CreateFlexChild(Transform, string)` | Hijo con ancho y alto flexibles (columnas de HLG). |
+| `CreateFixedChild(Transform, string, float)` | Hijo con ancho fijo y flexible = 0 (botones laterales). |
+| `AddTMP(GameObject, string, int)` | `TextMeshProUGUI` con texto, fontSize y color negro centrado. |
+| `AddButton(GameObject, string)` | `Image` gris + `Button` + hijo `TextMeshProUGUI` centrado. |
+| `AddSelector(Transform, string, string, float)` | Fila `[◄] [Texto] [►]` con HLG. Devuelve `(Button izq, TextMeshProUGUI txt, Button der)`. |
+| `AddVLG(GameObject, float)` | `VerticalLayoutGroup` con `childControlWidth = true`. |
+| `AddHLG(GameObject, float)` | `HorizontalLayoutGroup` con `childForceExpandHeight = true`. |
+| `BuscarIncluyendoInactivos(string)` | `Resources.FindObjectsOfTypeAll<GameObject>()` filtrado por `scene.isLoaded` y nombre. |
+| `LimpiarHijos(Transform)` | `DestroyImmediate` de todos los hijos en orden inverso. |
+
+---
+
+### TO-DO Día 22
+
+**Inmediato:**
+- [ ] Conectar botón "CONSTRUIR" en `AstilleroUI` — crear barco real en `FlotaJugador`.
+- [ ] `FlotaJugador` visible en mapamundi — icono/sprite moviéndose por el mapa.
+- [ ] Crear prefab `FilaCapitan` para `TabernaUI._prefabFilaCapitan`.
+
+**Próximos días:**
+- [ ] Paneles Modificar/Reparar/Vender de `AstilleroUI` funcionales end-to-end.
+- [ ] Pintar escena Ciudad: fondo map background + 4 edificios `SpriteRenderer` + botones invisibles sobre ellos.
+- [ ] `PanelFlotaUI` en Canvas Ciudad y Mapamundi.
+- [ ] Conectar `EncuentroNavalUI` al Canvas del Mapamundi.
+- [ ] Asignar posiciones válidas de tilemap a los 3 piratas en `SpawnFlotasPNJIniciales`.
+- [ ] Viajar con flota jugador — movimiento continuo en mapamundi.
+- [ ] Combate naval con resolución automática conectada.
+- [ ] Pantalla de resultados de combate.
+- [ ] Audio mínimo (música por escena + efectos de interfaz).
+- [ ] Iconos finales de barcos y bienes.
+- [ ] Tests de persistencia multi-ciudad.
+- [ ] Pulido UI general (tamaños, colores, fuente Cinzel consistente).
+- [ ] Build standalone Windows.
 

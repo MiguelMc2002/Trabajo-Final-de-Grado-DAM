@@ -6,7 +6,7 @@ using UnityEngine;
 /// Assets → Create → TFG → Astillero → TipoCasco.
 /// </summary>
 [CreateAssetMenu(menuName = "TFG/Astillero/TipoCasco", fileName = "NuevoTipoCasco")]
-public class TipoCascoData : ScriptableObject
+public class TipoCascoData : ScriptableObject, IBarco
 {
     /// <summary>Identificador único que coincide con <c>id_tipo_casco</c> en la base de datos.</summary>
     public int idTipoCasco;
@@ -49,4 +49,25 @@ public class TipoCascoData : ScriptableObject
 
     /// <summary>Icono del casco para mostrar en la interfaz del astillero.</summary>
     public Sprite iconoCasco;
+
+    // ─── IBarco ───────────────────────────────────────────────────────────────
+
+    /// <inheritdoc/>
+    public int    IdTipoCasco          => idTipoCasco;
+    /// <inheritdoc/>
+    public string NombreCasco          => nombreCasco;
+    /// <inheritdoc/>
+    public int    VidaBase             => vidaBase;
+    /// <inheritdoc/>
+    public int    VelocidadBase        => velocidadBase;
+    /// <inheritdoc/>
+    public int    ManiobrabilidadBase  => maniobrabilidadBase;
+    /// <inheritdoc/>
+    public int    CapacidadCargaBase   => capacidadCargaBase;
+    /// <inheritdoc/>
+    public int    CapacidadModulos     => capacidadModulos;
+    /// <inheritdoc/>
+    public int    CapacidadTripulacion => capacidadTripulacion;
+    /// <inheritdoc/>
+    public int    CosteOro             => costeOro;
 }

@@ -208,6 +208,8 @@ public class BarcoDAO
     /// Debe llamarse antes de insertar barcos para respetar la restricción de FK.
     /// La operación es segura de llamar varias veces gracias a INSERT OR IGNORE.
     /// </summary>
+    // TODO: en el futuro los valores deberían leerse de los assets IBarco (CascoCog, CascoHulk, etc.)
+    //       en vez de estar hardcodeados aquí, para que exista una única fuente de verdad.
     public void InsertarTiposCascoSiNoExisten()
     {
         const string sql = @"

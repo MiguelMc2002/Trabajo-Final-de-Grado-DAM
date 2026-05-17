@@ -110,13 +110,13 @@ public class PanelFlotaUI : MonoBehaviour
 
         // Info barco
         _textoNombreBarco.text = b.Nombre;
-        _textoCasco      .text = b.CascoBase.nombreCasco;
+        _textoCasco      .text = b.CascoBase.NombreCasco;
         _textoVida       .text = $"Vida: {b.VidaActual}/{b.VidaTotal}";
         _textoVelocidad  .text = $"Velocidad: {b.VelocidadTotal}";
         _textoManiobra   .text = $"Maniobrabilidad: {b.ManiobrabilidadTotal}";
         _textoCarga      .text = $"Carga máxima: {b.CargaMaximaTotal}";
         _textoFuerza     .text = $"Fuerza de combate: {b.FuerzaCombateTotal}";
-        _textoTripulacion.text = $"Tripulación: {b.Tripulacion}/{b.CascoBase.capacidadTripulacion}";
+        _textoTripulacion.text = $"Tripulación: {b.Tripulacion}/{b.CascoBase.CapacidadTripulacion}";
 
         // Módulos
         if (b.ModulosInstalados.Count == 0)

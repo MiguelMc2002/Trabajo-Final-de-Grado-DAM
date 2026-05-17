@@ -30,10 +30,31 @@ public class AstilleroManager : MonoBehaviour
     // ─── Catálogos (asignar desde Inspector) ─────────────────────────────────
 
     /// <summary>
-    /// Tipos de casco disponibles para construir.
-    /// Asignar los 4 ScriptableObjects (Cog, Hulk, Carraca, Galera) desde el Inspector.
+    /// Cascos base (TipoCascoData legacy) asignados desde el Inspector.
+    /// Se combinan con <see cref="_cascosDecoradores"/> en <see cref="CascosDisponibles"/>.
     /// </summary>
-    [SerializeField] public List<TipoCascoData> CascosDisponibles = new List<TipoCascoData>();
+    [SerializeField] private List<TipoCascoData> _cascosBases = new List<TipoCascoData>();
+
+    /// <summary>
+    /// Cascos definidos mediante decoradores concretos (CascoCog, CascoHulk, etc.).
+    /// Asignar los assets desde el Inspector.
+    /// </summary>
+    [SerializeField] private List<CascoDecorador> _cascosDecoradores = new List<CascoDecorador>();
+
+    /// <summary>
+    /// Lista unificada de todos los tipos de casco disponibles (bases + decoradores).
+    /// Usar esta propiedad en lugar de acceder directamente a las listas internas.
+    /// </summary>
+    public IReadOnlyList<IBarco> CascosDisponibles
+    {
+        get
+        {
+            var combinados = new List<IBarco>();
+            combinados.AddRange(_cascosBases);
+            combinados.AddRange(_cascosDecoradores);
+            return combinados;
+        }
+    }
 
     /// <summary>
     /// Módulos disponibles para instalar en los barcos.
@@ -61,7 +82,7 @@ public class AstilleroManager : MonoBehaviour
     /// <param name="casco">Tipo de casco a construir.</param>
     /// <param name="nombreBarco">Nombre propio del nuevo barco.</param>
     /// <returns><see cref="ResultadoOperacion"/> con el resultado de la operación.</returns>
-    public ResultadoOperacion ComprarBarco(TipoCascoData casco, string nombreBarco)
+    public ResultadoOperacion ComprarBarco(IBarco casco, string nombreBarco)
     {
         if (casco == null)
             return Fallo("Tipo de casco no válido.");
@@ -71,15 +92,15 @@ public class AstilleroManager : MonoBehaviour
         if (flota.Barcos.Count >= FlotaJugador.MaxBarcos)
             return Fallo($"La flota ya tiene el máximo de {FlotaJugador.MaxBarcos} barcos.");
 
-        if (GameManager.Instance.Dinero < casco.costeOro)
-            return Fallo($"Oro insuficiente. Necesitas {casco.costeOro}, tienes {GameManager.Instance.Dinero}.");
+        if (GameManager.Instance.Dinero < casco.CosteOro)
+            return Fallo($"Oro insuficiente. Necesitas {casco.CosteOro}, tienes {GameManager.Instance.Dinero}.");
 
-        GameManager.Instance.ModificarDinero(-casco.costeOro);
+        GameManager.Instance.ModificarDinero(-casco.CosteOro);
 
         var barco = new BarcoJugador(_proximoIdBarco++, nombreBarco, casco);
         flota.AñadirBarco(barco);
 
-        Debug.Log($"[AstilleroManager] Barco comprado: '{nombreBarco}' ({casco.nombreCasco}) por {casco.costeOro} oro.");
+        Debug.Log($"[AstilleroManager] Barco comprado: '{nombreBarco}' ({casco.NombreCasco}) por {casco.CosteOro} oro.");
         return Exito();
     }
 
@@ -182,7 +203,7 @@ public class AstilleroManager : MonoBehaviour
         if (barco == null)
             return Fallo("Barco no válido.");
 
-        int costeTotal = barco.CascoBase.costeOro;
+        int costeTotal = barco.CascoBase.CosteOro;
         foreach (ModuloBarcoData m in barco.ModulosInstalados)
             costeTotal += m.costeOro;
 

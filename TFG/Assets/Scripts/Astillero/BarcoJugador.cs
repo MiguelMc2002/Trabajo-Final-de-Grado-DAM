@@ -18,8 +18,8 @@ public class BarcoJugador
     /// <summary>Nombre propio del barco asignado por el jugador.</summary>
     public string Nombre { get; }
 
-    /// <summary>ScriptableObject con las estadísticas base del casco seleccionado.</summary>
-    public TipoCascoData CascoBase { get; }
+    /// <summary>Casco base del barco. Puede ser un <see cref="TipoCascoData"/> o cualquier <see cref="CascoDecorador"/>.</summary>
+    public IBarco CascoBase { get; }
 
     /// <summary>Lista de módulos actualmente instalados. Solo lectura desde fuera.</summary>
     public IReadOnlyList<ModuloBarcoData> ModulosInstalados => _modulos;
@@ -48,7 +48,7 @@ public class BarcoJugador
     {
         get
         {
-            int total = CascoBase.vidaBase;
+            int total = CascoBase.VidaBase;
             foreach (ModuloBarcoData m in _modulos) total += m.deltaVida;
             return total;
         }
@@ -59,7 +59,7 @@ public class BarcoJugador
     {
         get
         {
-            int total = CascoBase.velocidadBase;
+            int total = CascoBase.VelocidadBase;
             foreach (ModuloBarcoData m in _modulos) total += m.deltaVelocidad;
             return total;
         }
@@ -70,7 +70,7 @@ public class BarcoJugador
     {
         get
         {
-            int total = CascoBase.maniobrabilidadBase;
+            int total = CascoBase.ManiobrabilidadBase;
             foreach (ModuloBarcoData m in _modulos) total += m.deltaManiobrabilidad;
             return total;
         }
@@ -81,7 +81,7 @@ public class BarcoJugador
     {
         get
         {
-            int total = CascoBase.capacidadCargaBase;
+            int total = CascoBase.CapacidadCargaBase;
             foreach (ModuloBarcoData m in _modulos) total += m.deltaCargaMaxima;
             return total;
         }
@@ -113,7 +113,7 @@ public class BarcoJugador
     }
 
     /// <summary>Slots libres restantes en este casco.</summary>
-    public int SlotsDisponibles => CascoBase.capacidadModulos - SlotsUsados;
+    public int SlotsDisponibles => CascoBase.CapacidadModulos - SlotsUsados;
 
     // ─── Constructor ──────────────────────────────────────────────────────────
 
@@ -124,7 +124,7 @@ public class BarcoJugador
     /// <param name="idBarco">Identificador único del barco.</param>
     /// <param name="nombre">Nombre propio asignado por el jugador.</param>
     /// <param name="casco">ScriptableObject con las estadísticas base del casco.</param>
-    public BarcoJugador(int idBarco, string nombre, TipoCascoData casco)
+    public BarcoJugador(int idBarco, string nombre, IBarco casco)
     {
         IdBarco   = idBarco;
         Nombre    = nombre;

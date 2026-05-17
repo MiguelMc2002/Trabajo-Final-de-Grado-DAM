@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdae86b166323794198981833889c0e1, type: 3}
+  m_Name: ModuloBombarda
+  m_EditorClassIdentifier: Assembly-CSharp::ModuloBarcoData
+  nombreModulo: Bombarda
+  tipoModulo: 0
+  slotsCosto: 3
+  deltaVida: 0
+  deltaVelocidad: 0
+  deltaManiobrabilidad: 0
+  deltaCargaMaxima: 0
+  deltaFuerzaCombate: 6
+  costeMadera: 0
+  costeHierro: 0
+  costeHerramientas: 0
+  costeOro: 800
+  requierePolvora: 1
+  iconoModulo: {fileID: 0}

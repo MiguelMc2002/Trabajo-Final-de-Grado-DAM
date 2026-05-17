@@ -128,7 +128,7 @@ public class TabernaManager : MonoBehaviour
         if (!_marinerosDisponibles.TryGetValue(idCiudad, out int disponibles) || disponibles < cantidad)
             return Fallo($"Solo hay {GetMarinerosDisponibles(idCiudad)} marineros disponibles en {ciudad.NombreCiudad}.");
 
-        int hueco = barco.CascoBase.capacidadTripulacion - barco.Tripulacion;
+        int hueco = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
         cantidad  = Mathf.Min(cantidad, hueco);
 
         if (cantidad <= 0)
@@ -143,7 +143,7 @@ public class TabernaManager : MonoBehaviour
         _marinerosDisponibles[idCiudad]  -= cantidad;
 
         Debug.Log($"[TabernaManager] {cantidad} marineros contratados para '{barco.Nombre}' por {coste} oro. " +
-                  $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.capacidadTripulacion}.");
+                  $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.CapacidadTripulacion}.");
         return Exito();
     }
 
