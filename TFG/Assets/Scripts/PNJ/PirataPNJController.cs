@@ -11,7 +11,7 @@ public class PirataPNJController
 {
     private readonly FlotaRuntimeData      _flota;
     private readonly FlotaManager          _manager;
-    private readonly RutaCalculadorTilemap _rutaCalculador;
+    private RutaCalculadorTilemap _rutaCalculador;
 
     // Radio de detección de objetivos en distancia cube (casillas hex)
     private const int RadioDeteccion = 3;
@@ -68,6 +68,15 @@ public class PirataPNJController
         }
     }
 
+    /// <summary>
+    /// Reasigna el RutaCalculadorTilemap a todos los controladores pirata.
+    /// Llamar desde MapamundiController.Start() tras cargar la escena.
+    /// </summary>
+    public void AsignarRutaCalculador(RutaCalculadorTilemap rutaCalculador)
+    {
+        _rutaCalculador = rutaCalculador;
+    }
+
     // ─── Estados ─────────────────────────────────────────────────────────────
 
     private void TickPatrullando()
@@ -82,20 +91,24 @@ public class PirataPNJController
             return;
         }
 
-        // Avanzar al siguiente waypoint de patrulla en orden circular
-        Vector3Int destino = WaypointsPatrulla[_indiceWaypoint];
-        _indiceWaypoint = (_indiceWaypoint + 1) % WaypointsPatrulla.Length;
+        if (_rutaCalculador == null) return;
 
-        if (_rutaCalculador != null)
-        {
-            Vector3Int origen = _rutaCalculador.MundoACasilla(_flota.PosicionActual);
-            List<Vector3Int> ruta = _rutaCalculador.CalcularRutaConPreferenciaZonaPeligro(origen, destino);
-            _flota.RutaActualTilemap   = ruta;
-            _flota.IndiceWaypointActual = 0;
-            _flota.CasillaDestino      = destino;
-        }
+        // Obtener casilla actual
+        Vector3Int casillaActual = _rutaCalculador.MundoACasilla(_flota.PosicionActual);
 
-        Debug.Log($"[Pirata] {_flota.NombrePropietario} patrullando hacia waypoint {destino}.");
+        // Obtener vecinos navegables y elegir uno aleatorio
+        List<Vector3Int> vecinos = _rutaCalculador.GetVecinosNavegables(casillaActual);
+        if (vecinos == null || vecinos.Count == 0) return;
+
+        Vector3Int destino = vecinos[Random.Range(0, vecinos.Count)];
+
+        // Asignar ruta de un solo paso
+        _flota.RutaActualTilemap    = new List<Vector3Int> { casillaActual, destino };
+        _flota.IndiceWaypointActual = 0;
+        _flota.CasillaDestino       = destino;
+
+        Debug.Log($"[Pirata] {_flota.NombrePropietario} moviéndose a casilla aleatoria {destino}.");
+        Debug.Log($"[Pirata] {_flota.NombrePropietario} ruta asignada: {_flota.RutaActualTilemap?.Count} casillas, destino={_flota.CasillaDestino}");
     }
 
     private void TickInterceptando()

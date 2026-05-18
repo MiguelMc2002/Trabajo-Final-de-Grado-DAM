@@ -132,6 +132,17 @@ public class RutaCalculadorTilemap : MonoBehaviour
     }
 
     /// <summary>
+    /// Devuelve los vecinos navegables (agua o costa) de la casilla indicada
+    /// en coordenadas offset. Usado por PirataPNJController para movimiento aleatorio.
+    /// </summary>
+    /// <param name="casilla">Casilla en coordenadas offset del Tilemap.</param>
+    /// <returns>Lista de casillas vecinas transitables en coordenadas offset.</returns>
+    public List<Vector3Int> GetVecinosNavegables(Vector3Int casilla)
+    {
+        return GetVecinosHex(casilla);
+    }
+
+    /// <summary>
     /// Heurística A*: distancia hexagonal en coordenadas cube.
     /// Con <paramref name="conRuido"/> aplica un factor aleatorio entre 1.0 y 1.15
     /// para que las rutas de PNJs no sean siempre idénticas.

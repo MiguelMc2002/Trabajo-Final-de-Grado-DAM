@@ -25,10 +25,21 @@ public class FlotaIconoMapamundi : MonoBehaviour
         Flota.IndiceWaypointActual = 0;
     }
 
+    private int _frameDebug;
+
     private void Update()
     {
         if (Flota == null || _tilemap == null || _rutaCalculador == null) return;
         if (SimulacionTiempo.Instance != null && SimulacionTiempo.Instance.EstaPausado) return;
+
+        _frameDebug++;
+        if (_frameDebug % 60 == 0)
+        {
+            int rutaCount = Flota.RutaActualTilemap != null ? Flota.RutaActualTilemap.Count : -1;
+            Debug.Log($"[FlotaIcono] Id={Flota.Id} | Estado={Flota.EstadoActual} | " +
+                      $"Destino={Flota.CasillaDestino} | RutaCount={rutaCount} | " +
+                      $"Waypoint={Flota.IndiceWaypointActual} | Pos={transform.position}");
+        }
 
         float velocidad = velocidadBase * Time.deltaTime *
             (SimulacionTiempo.Instance != null ? SimulacionTiempo.Instance.VelocidadActual : 1f);
@@ -36,7 +47,10 @@ public class FlotaIconoMapamundi : MonoBehaviour
         // Si no hay ruta pero está viajando, calcularla
         if (Flota.RutaActualTilemap == null || Flota.RutaActualTilemap.Count == 0 || Flota.IndiceWaypointActual >= Flota.RutaActualTilemap.Count)
         {
-            if (Flota.EstadoActual == EstadoFlotaPNJ.Viajando && Flota.CasillaDestino != Vector3Int.zero)
+            if (Flota.CasillaDestino != Vector3Int.zero &&
+                (Flota.EstadoActual == EstadoFlotaPNJ.Viajando ||
+                Flota.EstadoActual == EstadoFlotaPNJ.Patrullando ||
+                Flota.EstadoActual == EstadoFlotaPNJ.Interceptando))
             {
                 Vector3Int casillaActual = _tilemap.WorldToCell(transform.position);
                 if (casillaActual != Flota.CasillaDestino)

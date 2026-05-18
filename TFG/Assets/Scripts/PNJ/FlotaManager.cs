@@ -130,6 +130,17 @@ public class FlotaManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Reasigna el RutaCalculadorTilemap a todos los controladores pirata.
+    /// Llamar desde MapamundiController.Start() tras cargar la escena.
+    /// </summary>
+    public void AsignarRutaCalculadorAPiratas(RutaCalculadorTilemap rutaCalculador)
+    {
+        foreach (var kvp in _controladores_pirata)
+            kvp.Value.AsignarRutaCalculador(rutaCalculador);
+        Debug.Log($"[FlotaManager] RutaCalculador asignado a {_controladores_pirata.Count} piratas.");
+    }
+
+    /// <summary>
     /// Crea y registra los 18 comerciantes PNJ iniciales al comenzar una partida nueva.
     /// Garantiza que las 6 ciudades tienen mercado inicializado antes de crear las flotas.
     /// Los IDs van del 1001 al 1018 y se distribuyen 3 por ciudad de origen;

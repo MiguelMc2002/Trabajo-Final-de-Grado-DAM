@@ -150,6 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::RutaCalculadorTilemap
   tilemap: {fileID: 205712087}
+  _nombreTileZonaPeligro: ZonaPeligro
 --- !u!4 &4049791
 Transform:
   m_ObjectHideFlags: 0
@@ -39540,6 +39541,8 @@ MonoBehaviour:
   tilemap: {fileID: 205712087}
   rutaCalculador: {fileID: 4049790}
   spriteBarco: {fileID: 21300000, guid: 8b21530cf705261499ec62e46b37586c, type: 3}
+  colorFlotaJugador: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  colorFlotaPirata: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &1366443677
 Transform:
   m_ObjectHideFlags: 0

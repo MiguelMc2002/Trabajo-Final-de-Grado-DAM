@@ -360,7 +360,7 @@ public class AstilleroUI : MonoBehaviour
         if (cascos == null || cascos.Count == 0) return;
 
         IBarco casco = cascos[_indiceCasco];
-        string nombre = $"Barco_{System.DateTimeOffset.UtcNow.ToUnixTimeSeconds()}";
+        string nombre = GenerarNombreBarco();
 
         ResultadoOperacion res = AstilleroManager.Instance.ComprarBarco(casco, nombre);
         if (!res.Exito) { Debug.LogWarning($"[AstilleroUI] Construir: {res.MensajeError}"); return; }
@@ -450,6 +450,45 @@ public class AstilleroUI : MonoBehaviour
         _indiceBarcoVen = 0;
         MostrarPanel(0);
         RefrescarUI();
+    }
+
+    // ─── Helpers — nombre de barco ───────────────────────────────────────────
+
+    /// <summary>
+    /// Genera un nombre temático para el nuevo barco eligiendo aleatoriamente entre
+    /// un repertorio de 50 nombres hanseáticos y mediterráneos.
+    /// Reintenta hasta 10 veces para evitar duplicados con barcos ya existentes en
+    /// la flota del jugador. Si no encuentra nombre libre, devuelve un fallback
+    /// numérico basado en el tamaño actual de la flota.
+    /// </summary>
+    /// <returns>Nombre único para el barco recién construido.</returns>
+    private static string GenerarNombreBarco()
+    {
+        string[] _nombres = new[]
+        {
+            "Der Adler", "Hansekogge", "Die Möwe", "Lubecker Bär", "Nordstern",
+            "Gott Mit Uns", "Das Einhorn", "Silberfisch", "Meereswind", "Eisvogel",
+            "Santa María", "San Juan", "La Esperanza", "El Halcón", "Mar del Norte",
+            "La Fortuna", "Viento del Sur", "San Cristóbal", "El Trueno", "La Paloma",
+            "Santa Cruz", "Madonna del Mare", "San Giorgio", "La Serenissima", "Stella Maris",
+            "Sant'Elmo", "Il Corvo", "Aquila d'Oro", "La Sirena", "Buona Fortuna",
+            "L'Étoile du Nord", "La Couronne", "Saint Michel", "Le Faucon", "Fleur de Lys",
+            "La Bonne Chance", "L'Hirondelle", "Saint Jacques", "Le Lion d'Or", "La Tempête",
+            "De Gouden Leeuw", "Het Anker", "De Zeemeeuw", "Vliegende Hollander", "Het Zwaard",
+            "Konrad von Lübeck", "Heinrich der Seefahrer", "Wilhelm der Starke", "Klaus Störtebeker", "Der Hanseat"
+        };
+
+        var barcos = GameManager.Instance.FlotaJugador.Barcos;
+        var nombresUsados = new System.Collections.Generic.HashSet<string>();
+        foreach (var b in barcos) nombresUsados.Add(b.Nombre);
+
+        for (int i = 0; i < 10; i++)
+        {
+            string candidato = _nombres[UnityEngine.Random.Range(0, _nombres.Length)];
+            if (!nombresUsados.Contains(candidato)) return candidato;
+        }
+
+        return "Barco_" + (barcos.Count + 1);
     }
 
     // ─── Helpers — índices ────────────────────────────────────────────────────
