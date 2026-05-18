@@ -32,6 +32,10 @@ public class MapamundiController : MonoBehaviour
     [SerializeField] private Tilemap tilemap;
     [SerializeField] private RutaCalculadorTilemap rutaCalculador;
     [SerializeField] private Sprite spriteBarco;
+    [SerializeField] private Color colorFlotaJugador = Color.yellow;
+    [SerializeField] private Color colorFlotaPirata  = Color.red;
+
+    private FlotaIconoMapamundi _iconoFlotaJugador;
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -40,7 +44,9 @@ public class MapamundiController : MonoBehaviour
         foreach (MarcadorCiudad marcador in Ciudades)
             marcador.Inicializar(this);
 
+        FlotaManager.Instance?.AsignarRutaCalculadorAPiratas(rutaCalculador);
         SpawnIconosFlotas();
+        SpawnIconoFlotaJugador();
     }
 
     // ─── Flotas PNJ ──────────────────────────────────────────────────────────
@@ -64,6 +70,7 @@ public class MapamundiController : MonoBehaviour
 
             SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
             sr.sprite       = spriteBarco;
+            sr.color        = flota.IsPirata ? colorFlotaPirata : Color.white;
             sr.sortingOrder = 10;
             go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
 
@@ -96,8 +103,89 @@ public class MapamundiController : MonoBehaviour
                 }
             }
 
+            // Reubicar piratas con posición inválida en una casilla de mar válida
+            if (flota.IsPirata)
+            {
+                Vector3Int casilla = BuscarCasillaMarValida();
+                if (casilla != Vector3Int.zero)
+                {
+                    Vector3 posicion      = tilemap.GetCellCenterWorld(casilla);
+                    go.transform.position = posicion;
+                    flota.PosicionActual  = posicion;
+                }
+            }
+
             icono.InicializarIcono();
         }
+    }
+
+    /// <summary>
+    /// Busca una casilla de mar válida aleatoria en el tilemap.
+    /// Prueba hasta 200 posiciones aleatorias dentro de cellBounds.
+    /// Una casilla es válida si su sprite es mar abierto o costa.
+    /// </summary>
+    private Vector3Int BuscarCasillaMarValida()
+    {
+        BoundsInt bounds = tilemap.cellBounds;
+        for (int i = 0; i < 200; i++)
+        {
+            int x = Random.Range(bounds.xMin, bounds.xMax);
+            int y = Random.Range(bounds.yMin, bounds.yMax);
+            Vector3Int casilla = new Vector3Int(x, y, 0);
+            Sprite sprite = tilemap.GetSprite(casilla);
+            if (sprite != null &&
+                (sprite.name == "loonapix_17783290501031121577" || sprite.name == "Costa"))
+                return casilla;
+        }
+
+        Debug.LogWarning("[MapamundiController] BuscarCasillaMarValida: no se encontró casilla de mar en 200 intentos.");
+        return Vector3Int.zero;
+    }
+
+    // ─── Flota jugador ────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Instancia el icono del jugador en el mapamundi a partir de su
+    /// <see cref="FlotaJugador"/>. Posiciona el icono en la ciudad actual
+    /// (o en la primera ciudad disponible como fallback) e inicializa el
+    /// componente <see cref="FlotaIconoMapamundi"/> para que pueda navegar
+    /// por el tilemap igual que las flotas PNJ.
+    /// </summary>
+    private void SpawnIconoFlotaJugador()
+    {
+        FlotaRuntimeData flota = GameManager.Instance.FlotaJugador.ComoFlotaRuntime();
+
+        CiudadData ciudad = GameManager.Instance.CiudadActual;
+        if (ciudad == null)
+        {
+            var ciudades = GameManager.Instance.CiudadesDisponibles;
+            if (ciudades == null || ciudades.Count == 0)
+            {
+                Debug.LogWarning("[MapamundiController] No hay ciudades disponibles — no se crea el icono de flota del jugador.");
+                return;
+            }
+            ciudad = ciudades[0];
+        }
+
+        GameObject go = new GameObject("FlotaIcono_Jugador");
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite       = spriteBarco;
+        sr.color        = colorFlotaJugador;
+        sr.sortingOrder = 11;
+        go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+
+        Vector3 posicion = tilemap.GetCellCenterWorld(ciudad.CasillaMapamundi);
+        go.transform.position  = posicion;
+        flota.PosicionActual   = posicion;
+        flota.CiudadOrigenId   = ciudad.IdCiudad;
+
+        FlotaIconoMapamundi icono = go.AddComponent<FlotaIconoMapamundi>();
+        icono.Flota = flota;
+        icono.Inicializar(tilemap, rutaCalculador);
+        icono.InicializarIcono();
+
+        _iconoFlotaJugador = icono;
     }
 
     // ─── Input por teclado ────────────────────────────────────────────────────

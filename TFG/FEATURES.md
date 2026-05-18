@@ -2557,3 +2557,84 @@ Se añade comentario `TODO` encima de `InsertarTiposCascoSiNoExisten`: en el fut
 - [ ] Pulido UI general (tamaños, colores, fuente Cinzel consistente).
 - [ ] Build standalone Windows.
 
+---
+
+## Cambios Día 22
+
+### AstilleroUI — GenerarNombreBarco()
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GenerarNombreBarco()` | `private static string` | Genera un nombre temático aleatorio para el barco recién construido eligiendo entre un pool de 50 nombres hanseáticos y mediterráneos. Reintenta hasta 10 veces para evitar duplicados con barcos ya existentes en la flota. Fallback: `"Barco_" + flota.Count + 1`. |
+
+---
+
+### MapamundiController — Cambios Día 22
+
+Nuevos campos:
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `colorFlotaJugador` | `Color` (SerializeField) | Color del icono de la flota del jugador en el mapamundi. Default: amarillo. |
+| `colorFlotaPirata` | `Color` (SerializeField) | Color del icono de las flotas pirata. Default: rojo. |
+| `_iconoFlotaJugador` | `FlotaIconoMapamundi` (private) | Referencia al icono de la flota del jugador en el mapamundi. |
+
+Nuevos métodos:
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `SpawnIconoFlotaJugador()` | `private void` | Instancia el icono del jugador en el mapamundi usando `FlotaJugador.ComoFlotaRuntime()`. Lo posiciona en `CiudadActual` o en la primera ciudad disponible como fallback. Color amarillo, sortingOrder 11. |
+| `BuscarCasillaMarValida()` | `private Vector3Int` | Busca una casilla de mar válida aleatoria en el tilemap probando hasta 200 posiciones aleatorias dentro de cellBounds. Devuelve `Vector3Int.zero` si no encuentra ninguna. |
+
+---
+
+### RutaCalculadorTilemap — Cambios Día 22
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GetVecinosNavegables(Vector3Int casilla)` | `public List<Vector3Int>` | Devuelve los vecinos navegables (agua o costa) de la casilla indicada en coordenadas offset. Usado por `PirataPNJController` para movimiento aleatorio de patrulla. |
+
+---
+
+### PirataPNJController — Cambios Día 22
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AsignarRutaCalculador(RutaCalculadorTilemap rutaCalculador)` | `public void` | Asigna o reasigna el calculador de rutas. Llamado desde `FlotaManager.AsignarRutaCalculadorAPiratas()` cuando la escena Mapamundi termina de cargar. Necesario porque los piratas se crean antes de que el Mapamundi esté cargado. |
+
+Cambio en comportamiento:
+- `TickPatrullando()` reescrito: en lugar de waypoints hardcodeados, elige una casilla vecina navegable aleatoria cada tick usando `GetVecinosNavegables()`. Movimiento continuo delegado a `FlotaIconoMapamundi.Update()`.
+
+---
+
+### FlotaManager — Cambios Día 22
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AsignarRutaCalculadorAPiratas(RutaCalculadorTilemap rutaCalculador)` | `public void` | Reasigna el RutaCalculadorTilemap a todos los controladores pirata activos. Llamado desde `MapamundiController.Start()` tras cargar la escena Mapamundi. |
+
+---
+
+### CrearPrefabFilaCapitanEditor (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Editor/CrearPrefabFilaCapitanEditor.cs` |
+| **Tipo** | `static class` (editor only, `#if UNITY_EDITOR`) |
+| **Módulo** | Utilidades de editor — Taberna |
+| **Descripción** | Crea el prefab `FilaCapitan` en `Assets/Prefabs/UI/` y lo asigna automáticamente al campo `_prefabFilaCapitan` de `TabernaUI` en la escena activa. Menú: `TFG → Crear Prefab FilaCapitan`. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CrearPrefabFilaCapitan()` | `static void` | Crea GameObject con `HorizontalLayoutGroup`, hijo `TxtNombreCapitan` (TextMeshProUGUI) e hijo `BtnContratar` (Button dorado). Guarda como prefab, busca `TabernaUI` en escena y asigna el prefab via `SerializedObject`. |
+
+---
+
+### TO-DOs abiertos tras Día 22
+
+- [ ] Piratas con movimiento continuo (casilla por casilla en lugar de tick diario) — diferido a Día 27 buffer.
+- [ ] InputField nombre barco en AstilleroUI — diferido a Día 24 pulido UI.
+- [ ] EncuentroNavalUI conectada al Canvas Mapamundi — pendiente.
+- [ ] PanelFlotaUI en Canvas Ciudad y Mapamundi — pendiente Día 23.
+- [ ] Piratas con movimiento continuo real (no por tick) — Día 27.
+

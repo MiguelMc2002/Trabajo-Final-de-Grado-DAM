@@ -14348,7 +14348,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -25}
+  m_AnchoredPosition: {x: 0, y: -25.000061}
   m_SizeDelta: {x: -200, y: -150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &847398572
@@ -16719,7 +16719,7 @@ MonoBehaviour:
   _btnBarcoCaplzq: {fileID: 2089419605}
   _btnBarcoCapDer: {fileID: 1025147933}
   _contenedorListaCapitanes: {fileID: 1996017365}
-  _prefabFilaCapitan: {fileID: 0}
+  _prefabFilaCapitan: {fileID: 5370590016608928288, guid: 1177e75f9aa5a9c4aa8270c3dbe97def, type: 3}
   _btnVolverDesdeCapitan: {fileID: 1687007635}
 --- !u!114 &957050761
 MonoBehaviour:
