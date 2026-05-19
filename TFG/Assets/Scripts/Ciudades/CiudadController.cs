@@ -37,6 +37,9 @@ public class CiudadController : MonoBehaviour
     /// <summary>Panel de UI de la taberna. Se activa al pulsar el edificio Taberna.</summary>
     public GameObject PanelTaberna;
 
+    /// <summary>Panel de UI de la flota. Se activa al pulsar el edificio Puerto.</summary>
+    public GameObject PanelFlota;
+
     /// <summary>Botón que regresa al mapamundi. Se oculta mientras hay un panel abierto.</summary>
     public GameObject BotonMapa;
 
@@ -108,6 +111,9 @@ public class CiudadController : MonoBehaviour
     /// <summary>Abre directamente el panel de la taberna.</summary>
     public void AbrirTaberna() => AbrirEdificio(TipoEdificio.Taberna);
 
+    /// <summary>Abre directamente el panel de flota.</summary>
+    public void AbrirPuerto() => AbrirEdificio(TipoEdificio.Puerto);
+
     /// <summary>
     /// Cierra todos los paneles de edificios ocultándolos.
     /// Se llama antes de abrir cualquier panel y al inicializar la escena.
@@ -117,6 +123,7 @@ public class CiudadController : MonoBehaviour
         if (PanelMercado   != null) PanelMercado.SetActive(false);
         if (PanelAstillero != null) PanelAstillero.SetActive(false);
         if (PanelTaberna   != null) PanelTaberna.SetActive(false);
+        if (PanelFlota     != null) PanelFlota.SetActive(false);
         if (BotonMapa      != null) BotonMapa.SetActive(true);
     }
 
@@ -180,6 +187,16 @@ public class CiudadController : MonoBehaviour
                     Debug.LogWarning("[CiudadController] PanelTaberna no asignado en el Inspector.");
                 break;
 
+            case TipoEdificio.Puerto:
+                if (PanelFlota != null)
+                {
+                    PanelFlota.SetActive(true);
+                    PanelFlota.GetComponent<PanelFlotaUI>()?.AbrirPanel();
+                }
+                else
+                    Debug.LogWarning("[CiudadController] PanelFlota no asignado en el Inspector.");
+                break;
+
             default:
                 Debug.LogWarning($"[CiudadController] TipoEdificio desconocido: {tipo}.");
                 break;
@@ -200,5 +217,8 @@ public enum TipoEdificio
     Astillero,
 
     /// <summary>Taberna: contratación de capitanes y tripulación. Disponible tras la beta.</summary>
-    Taberna
+    Taberna,
+
+    /// <summary>Puerto: gestión de la flota del jugador.</summary>
+    Puerto
 }

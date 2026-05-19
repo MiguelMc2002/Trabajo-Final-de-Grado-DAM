@@ -2535,6 +2535,36 @@ Se añade comentario `TODO` encima de `InsertarTiposCascoSiNoExisten`: en el fut
 
 ---
 
+## ConstruirPanelFlotaEditor
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Editor/ConstruirPanelFlotaEditor.cs` |
+| **Tipo** | Script de editor estático (`#if UNITY_EDITOR`), desechable |
+| **Módulo** | Herramientas de editor |
+| **Descripción** | Construye y cablea automáticamente la jerarquía UI completa de `PanelFlota` en la escena activa. Crea `PanelInfoBarco` (16 elementos) y `PanelUnirseConvoy` (3 elementos). Cablea los 21 campos `[SerializeField]` de `PanelFlotaUI` via `SerializedObject` + `FindProperty`. Añade `PanelFlotaUI` automáticamente si el GameObject no lo tiene. `_prefabFilaConvoy` se deja null hasta crear el prefab. El panel usa `ScrollRect` (vertical, `Clamped`, sensibilidad 30) con `Viewport` (`Mask`) y `Content` (`ContentSizeFitter` vertical) para scroll con rueda de ratón. |
+
+| Menú | Acción |
+|---|---|
+| `TFG → Construir Panel Flota Ciudad` | Construye y cablea `PanelFlota` (21 campos). |
+
+| Helper | Descripción |
+|---|---|
+| `BuscarOCrearPanelFlota(Transform canvasTransform)` | Busca "PanelFlota" incluyendo inactivos; lo crea bajo el Canvas si no existe. |
+| `BuscarCanvasPrincipal()` | `Resources.FindObjectsOfTypeAll<Canvas>()` filtrado por `scene.isLoaded`. Devuelve el primero encontrado. |
+| `BuscarIncluyendoInactivos(string)` | `Resources.FindObjectsOfTypeAll<GameObject>()` filtrado por `scene.isLoaded` y nombre. |
+| `LimpiarHijos(Transform)` | `DestroyImmediate` de todos los hijos en orden inverso. |
+| `CreateChild(Transform, string, float)` | Hijo con `LayoutElement` de altura preferida y anchura flexible. |
+| `CreateFlexChild(Transform, string)` | Hijo con anchura y altura flexibles (columnas en HLG). |
+| `CreateFixedChild(Transform, string, float)` | Hijo con anchura fija (botones laterales en HLG). |
+| `AddTMP(GameObject, string, int)` | `TextMeshProUGUI` centrado, color blanco. |
+| `AddButton(GameObject, string)` | `Image` gris + `Button` + hijo `Text` (TMP). |
+| `AddVLG(GameObject, float)` | `VerticalLayoutGroup` con `childControlWidth = true`. |
+| `AddHLG(GameObject, float)` | `HorizontalLayoutGroup` con `childForceExpandHeight = true`. |
+| `Prop(SerializedObject, string)` | `FindProperty` con warning si no existe. |
+
+---
+
 ### TO-DO Día 22
 
 **Inmediato:**
@@ -2635,6 +2665,71 @@ Cambio en comportamiento:
 - [ ] Piratas con movimiento continuo (casilla por casilla en lugar de tick diario) — diferido a Día 27 buffer.
 - [ ] InputField nombre barco en AstilleroUI — diferido a Día 24 pulido UI.
 - [ ] EncuentroNavalUI conectada al Canvas Mapamundi — pendiente.
-- [ ] PanelFlotaUI en Canvas Ciudad y Mapamundi — pendiente Día 23.
+- [x] PanelFlotaUI en Canvas Ciudad — completado Día 23.
 - [ ] Piratas con movimiento continuo real (no por tick) — Día 27.
+
+---
+
+## Cambios Día 23
+
+### CamaraFija (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Core/CamaraFija.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Core |
+| **Descripción** | Fija `orthographicSize` de la cámara al valor `_size` tanto en `Awake()` como en `Update()`, impidiendo cualquier modificación externa o zoom accidental. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_size` | `[SerializeField] float` | Tamaño ortográfico fijo. Valor por defecto: `0.71f`. |
+| `Awake()` | `private void` | Obtiene el componente `Camera` y aplica `orthographicSize = _size`. |
+| `Update()` | `private void` | Reaplica `orthographicSize = _size` cada frame para evitar modificaciones externas. |
+
+---
+
+### CiudadController — Cambios Día 23
+
+| Miembro | Cambio |
+|---|---|
+| `PanelFlota` | Nuevo campo `public GameObject`. Panel de UI de la flota; se activa al pulsar el edificio Puerto. |
+| `TipoEdificio.Puerto` | Nuevo valor de enum. Identifica el edificio Puerto para gestión de flota. |
+| `CerrarTodosPaneles()` | Ahora también llama a `PanelFlota.SetActive(false)`. |
+| `AbrirPuerto()` | Nuevo método público. Atajo a `AbrirEdificio(TipoEdificio.Puerto)`. |
+| `AbrirEdificio()` | Nuevo `case TipoEdificio.Puerto`: activa `PanelFlota` y llama a `PanelFlota.GetComponent<PanelFlotaUI>()?.AbrirPanel()`. |
+
+---
+
+### PanelFlotaUI — Cambios Día 23
+
+| Miembro | Cambio |
+|---|---|
+| `_btnCerrar` | Nuevo `[SerializeField] Button`. Botón que cierra el panel llamando a `OcultarPanel()`. |
+| `Awake()` | Nuevo. Registra el listener `_btnCerrar.onClick → OcultarPanel()`. |
+| `Start()` | Llama a `CiudadController.CerrarTodosPaneles()` al inicializar, igual que el resto de paneles de ciudad. |
+| `AbrirPanel()` | Nuevo método público. Llama a `CerrarTodosPaneles()` antes de activar el panel (patrón modal). Activa `_panelInfoBarco` y oculta `_panelUnirseConvoy`. |
+
+---
+
+### ConstruirPanelFlotaEditor (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Editor/ConstruirPanelFlotaEditor.cs` |
+| **Tipo** | Script de editor estático (`#if UNITY_EDITOR`), desechable |
+| **Módulo** | Herramientas de editor |
+| **Descripción** | Construye y cablea automáticamente la jerarquía UI completa de `PanelFlota` en la escena activa. Cablea los 22 campos `[SerializeField]` de `PanelFlotaUI` via `SerializedObject` + `FindProperty`. Sigue el patrón exacto de `ConstruirUIsCiudadEditor`. |
+
+| Menú | Acción |
+|---|---|
+| `TFG → Construir Panel Flota Ciudad` | Limpia hijos de `PanelFlota`, construye `SubpanelInfo` (título + `BtnCerrar` + 11 textos + 3 botones + toggle) y `SubpanelConvoy` (título + contenedor + botón volver), y cablea los 22 campos. |
+
+---
+
+### TO-DOs abiertos tras Día 23
+
+- [ ] PanelFlotaUI en Canvas Mapamundi — pendiente.
+- [x] PanelFlotaUI en Canvas Ciudad — completado Día 23.
+- [x] Pintar escena Ciudad (edificio Puerto clickable) — completado Día 23.
 

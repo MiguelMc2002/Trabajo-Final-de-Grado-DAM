@@ -28,6 +28,8 @@ public class PanelFlotaUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _textoConvoy;
 
     // ─── Botones de acción ────────────────────────────────────────────────────
+    /// <summary>Botón que cierra el panel de flota.</summary>
+    [SerializeField] private Button _btnCerrar;
     [SerializeField] private Button _btnVerBodega;
     [SerializeField] private Button _btnFormarConvoy;
     [SerializeField] private Button _btnUnirseConvoy;
@@ -45,6 +47,12 @@ public class PanelFlotaUI : MonoBehaviour
 
     // ─────────────────────────────────────────────────────────────────────────
 
+    private void Awake()
+    {
+        if (_btnCerrar != null)
+            _btnCerrar.onClick.AddListener(OcultarPanel);
+    }
+
     private void Start()
     {
         _panelFlota.SetActive(false);
@@ -55,9 +63,25 @@ public class PanelFlotaUI : MonoBehaviour
         _btnVolverConvoy.onClick.AddListener(OnVolverDesdeConvoy);
 
         _toggleModoPirata.onValueChanged.AddListener(OnToggleModoPirata);
+
+        CiudadController ciudad = FindObjectOfType<CiudadController>();
+        if (ciudad != null)
+            ciudad.CerrarTodosPaneles();
     }
 
     // ─── API pública ──────────────────────────────────────────────────────────
+
+    /// <summary>Abre el panel de flota como modal, cerrando el resto de paneles de ciudad.</summary>
+    public void AbrirPanel()
+    {
+        CiudadController ciudad = FindObjectOfType<CiudadController>();
+        if (ciudad != null)
+            ciudad.CerrarTodosPaneles();
+
+        _panelFlota.SetActive(true);
+        _panelInfoBarco   .SetActive(true);
+        _panelUnirseConvoy.SetActive(false);
+    }
 
     /// <summary>
     /// Muestra el panel con los datos del barco indicado.
