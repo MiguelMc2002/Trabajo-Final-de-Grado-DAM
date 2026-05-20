@@ -2733,3 +2733,99 @@ Cambio en comportamiento:
 - [x] PanelFlotaUI en Canvas Ciudad — completado Día 23.
 - [x] Pintar escena Ciudad (edificio Puerto clickable) — completado Día 23.
 
+---
+
+## Cambios Día 24 (20/05/2026)
+
+### ResultadoCombateUI (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/Combate/ResultadoCombateUI.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Módulo** | Combate naval — UI |
+| **Descripción** | Panel modal que se muestra tras resolver un combate naval. Recibe un `ResultadoCombate`, rellena todos los textos y pausa el tiempo. Se cierra con el botón Continuar, que reanuda la simulación. Llamado desde `EncuentroNavalUI.MostrarResultado(resultado)`. Todos los campos null-safe con `Debug.LogWarning`. |
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_panelResultado` | `[SerializeField] GameObject` | Panel raíz. Empieza desactivado en `Awake()`. |
+| `_txtTitulo` | `[SerializeField] TextMeshProUGUI` | "HUIDA EXITOSA" / "VICTORIA" / "DERROTA" según `JugadorHuyo` → `JugadorGana`. |
+| `_txtNarrativo` | `[SerializeField] TextMeshProUGUI` | Muestra `ResultadoCombate.TextoNarrativo`. |
+| `_txtBotin` | `[SerializeField] TextMeshProUGUI` | "Botín: X oro" + línea por cada entrada de `BotinMercancia`. `gameObject.SetActive(false)` si el jugador no ganó o el botín está vacío. |
+| `_txtBajas` | `[SerializeField] TextMeshProUGUI` | "Tus bajas: N barcos, D daño" + "Bajas enemigas: N barcos, D daño". Defensor = jugador, atacante = enemigo. |
+| `_btnContinuar` | `[SerializeField] Button` | Cierra el panel y restaura `Time.timeScale = 1f`. Listener registrado en `Awake()`. |
+| `MostrarResultado(ResultadoCombate)` | `public void` | Activa el panel, pausa `Time.timeScale = 0f` y rellena los cuatro textos. |
+| `OcultarResultado()` | `public void` | Desactiva el panel y restaura `Time.timeScale = 1f`. |
+
+---
+
+### AstilleroUI — Cambios Día 24
+
+Implementación completa de los 4 subpaneles operativos. Campos `[SerializeField]` renombrados para coincidir con los nombres del Inspector real.
+
+#### Campos renombrados / añadidos
+
+| Campo nuevo | Reemplaza | Subpanel |
+|---|---|---|
+| `_txtCascoSeleccionado` | `_textoCascoConstruir` | Construir |
+| `_txtStatsBarco` | stats individuales (`_statsVidaCasco`, etc.) | Construir |
+| `_txtModuloArmamento` | `_textoModuloArmamento` | Construir |
+| `_txtModuloVelas` | `_textoModuloVelas` | Construir |
+| `_txtModuloBodega` | `_textoModuloBodega` | Construir |
+| `_txtPrecioConstruir` | `_textoPrecioConstruir` | Construir |
+| `_btnConstruirConfirmar` | `_btnConstruir` | Construir |
+| `_txtBarcoMod` | `_textoBarcoModificar` | Modificar |
+| `_txtModulosInstalados` | `_textoModuloArmamentoMod` + `_statsArmamentoMod` + etc. | Modificar |
+| `_txtDeltaStats` | `_textoPrecioModificar` | Modificar |
+| `_btnModificarConfirmar` | `_btnAplicarModificacion` | Modificar |
+| `_txtBarcoRep` | `_textoBarcoReparar` | Reparar |
+| `_txtVidaRep` | `_textoVidaReparar` | Reparar |
+| `_txtCosteRep` | `_textoPrecioReparar` | Reparar |
+| `_btnRepararConfirmar` | `_btnReparar` | Reparar |
+| `_txtBarcoVen` | `_textoBarcoVender` | Vender |
+| `_txtStatsVen` | — (nuevo) | Vender |
+| `_txtValorVen` | `_textoValorVenta` | Vender |
+| `_btnVenderConfirmar` | `_btnVender` | Vender |
+| `_txtFeedback` | — (nuevo, compartido) | Todos |
+
+#### Fix de API
+
+| Antes | Después |
+|---|---|
+| `barco.NombreBarco` | `barco.Nombre` |
+| `barco.Modulos` | `barco.ModulosInstalados` |
+
+#### Lógica implementada
+
+| Método | Descripción |
+|---|---|
+| `OnConstruirConfirmar()` | Llama a `AstilleroManager.ComprarBarco()` e instala los 3 módulos seleccionados en cadena via `InstalarModulo()`. Muestra feedback en `_txtFeedback`. |
+| `OnModificarConfirmar()` | Aplica los 3 cambios de módulo (swap / instalar / desinstalar) via `AstilleroManager.InstalarModulo()` y `barco.DesinstalarModulo()`. Calcula coste neto con lógica 50% de reembolso. |
+| `OnRepararConfirmar()` | Llama a `AstilleroManager.RepararBarco()`. Muestra resultado en `_txtFeedback`. |
+| `OnVenderConfirmar()` | Llama a `AstilleroManager.VenderBarco()`. Vuelve al menú principal si tiene éxito. |
+| `RefrescarUIConstruir()` | Null-safe. Muestra nombre + stats compactas del casco seleccionado, nombres de los 3 módulos y precio total. |
+| `RefrescarUIModificar()` | Null-safe. Lista módulos instalados con `•`, muestra deltas netos de stats y coste neto. |
+| `RefrescarUIReparar()` | Null-safe. Muestra vida actual/máxima y coste (10 oro × daño). |
+| `RefrescarUIVender()` | Null-safe. Muestra stats del barco y valor de venta (50% del coste total). |
+| `MostrarPanel(int)` | Limpia `_txtFeedback` y llama al `Refrescar*()` correspondiente al abrir cada subpanel. |
+
+---
+
+### Unity — Escena Mapamundi
+
+- `PanelFlota` creado bajo el Canvas principal con `TFG → Construir Panel Flota Ciudad`.
+- Anclado en esquina superior derecha. Fondo `Image` color `#8B5E3C`.
+- Todos los campos `[SerializeField]` de `PanelFlotaUI` cableados desde el Inspector.
+
+---
+
+### TO-DOs abiertos tras Día 24
+
+- [x] Conectar Construir / Modificar / Reparar / Vender del Astillero — completado Día 24.
+- [x] `ResultadoCombateUI` implementada — completado Día 24.
+- [x] `PanelFlotaUI` en Canvas Mapamundi — completado Día 24.
+- [ ] Pulido UI: fuente Cinzel coherente + colores en Astillero y Taberna — Día 25.
+- [ ] `EncuentroNavalUI` conectada al Canvas Mapamundi — Día 25.
+- [ ] Combate naval con resolución automática conectada — Día 25.
+- [ ] Pantalla resultados combate conectada al Canvas — Día 25.
+
