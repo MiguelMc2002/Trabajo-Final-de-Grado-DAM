@@ -21,55 +21,31 @@ public class AstilleroUI : MonoBehaviour
     [SerializeField] private GameObject _panelReparar;
     [SerializeField] private GameObject _panelVender;
 
-    // ─── Panel Construir ──────────────────────────────────────────────────────
-    [SerializeField] private TextMeshProUGUI _textoCascoConstruir;
-    [SerializeField] private TextMeshProUGUI _statsVidaCasco;
-    [SerializeField] private TextMeshProUGUI _statsVelocidadCasco;
-    [SerializeField] private TextMeshProUGUI _statsManiobrabilidadCasco;
-    [SerializeField] private TextMeshProUGUI _statsCargaCasco;
-    [SerializeField] private TextMeshProUGUI _statsSlotsDisponibles;
-    [SerializeField] private TextMeshProUGUI _textoModuloArmamento;
-    [SerializeField] private TextMeshProUGUI _textoModuloVelas;
-    [SerializeField] private TextMeshProUGUI _textoModuloBodega;
-    [SerializeField] private TextMeshProUGUI _statsArmamento;
-    [SerializeField] private TextMeshProUGUI _statsVelas;
-    [SerializeField] private TextMeshProUGUI _statsBodega;
-    [SerializeField] private TextMeshProUGUI _textoPrecioConstruir;
-    [SerializeField] private Button          _btnConstruir;
+    // ─── Construir — textos ───────────────────────────────────────────────────
+    [SerializeField] private TextMeshProUGUI _txtCascoSeleccionado;
+    [SerializeField] private TextMeshProUGUI _txtStatsBarco;
+    [SerializeField] private TextMeshProUGUI _txtModuloArmamento;
+    [SerializeField] private TextMeshProUGUI _txtModuloVelas;
+    [SerializeField] private TextMeshProUGUI _txtModuloBodega;
+    [SerializeField] private TextMeshProUGUI _txtPrecioConstruir;
 
-    // ─── Panel Modificar ──────────────────────────────────────────────────────
-    [SerializeField] private TextMeshProUGUI _textoBarcoModificar;
-    [SerializeField] private TextMeshProUGUI _textoModuloArmamentoMod;
-    [SerializeField] private TextMeshProUGUI _textoModuloVelasMod;
-    [SerializeField] private TextMeshProUGUI _textoModuloBodegaMod;
-    [SerializeField] private TextMeshProUGUI _statsArmamentoMod;
-    [SerializeField] private TextMeshProUGUI _statsVelasMod;
-    [SerializeField] private TextMeshProUGUI _statsBodegaMod;
-    [SerializeField] private TextMeshProUGUI _textoPrecioModificar;
-    [SerializeField] private Button          _btnAplicarModificacion;
-
-    // ─── Panel Reparar ────────────────────────────────────────────────────────
-    [SerializeField] private TextMeshProUGUI _textoBarcoReparar;
-    [SerializeField] private TextMeshProUGUI _textoVidaReparar;
-    [SerializeField] private TextMeshProUGUI _textoPrecioReparar;
-    [SerializeField] private Button          _btnReparar;
-
-    // ─── Panel Vender ─────────────────────────────────────────────────────────
-    [SerializeField] private TextMeshProUGUI _textoBarcoVender;
-    [SerializeField] private TextMeshProUGUI _textoValorVenta;
-    [SerializeField] private Button          _btnVender;
-
-    // ─── Flechas Construir ────────────────────────────────────────────────────
+    // ─── Construir — botones ──────────────────────────────────────────────────
     [SerializeField] private Button _btnCascoIzq;
     [SerializeField] private Button _btnCascoDer;
-    [SerializeField] private Button _btnArmamentoIzq;
-    [SerializeField] private Button _btnArmamentoDer;
-    [SerializeField] private Button _btnVelasIzq;
-    [SerializeField] private Button _btnVelasDer;
-    [SerializeField] private Button _btnBodegaIzq;
-    [SerializeField] private Button _btnBodegaDer;
+    [SerializeField] private Button _btnModuloArmamentoIzq;
+    [SerializeField] private Button _btnModuloArmamentoDer;
+    [SerializeField] private Button _btnModuloVelasIzq;
+    [SerializeField] private Button _btnModuloVelasDer;
+    [SerializeField] private Button _btnModuloBodegaIzq;
+    [SerializeField] private Button _btnModuloBodegaDer;
+    [SerializeField] private Button _btnConstruirConfirmar;
 
-    // ─── Flechas Modificar ────────────────────────────────────────────────────
+    // ─── Modificar — textos ───────────────────────────────────────────────────
+    [SerializeField] private TextMeshProUGUI _txtBarcoMod;
+    [SerializeField] private TextMeshProUGUI _txtModulosInstalados;
+    [SerializeField] private TextMeshProUGUI _txtDeltaStats;
+
+    // ─── Modificar — botones ──────────────────────────────────────────────────
     [SerializeField] private Button _btnBarcoModIzq;
     [SerializeField] private Button _btnBarcoModDer;
     [SerializeField] private Button _btnArmamentoModIzq;
@@ -78,56 +54,66 @@ public class AstilleroUI : MonoBehaviour
     [SerializeField] private Button _btnVelasModDer;
     [SerializeField] private Button _btnBodegaModIzq;
     [SerializeField] private Button _btnBodegaModDer;
+    [SerializeField] private Button _btnModificarConfirmar;
 
-    // ─── Flechas Reparar ──────────────────────────────────────────────────────
+    // ─── Reparar — textos ─────────────────────────────────────────────────────
+    [SerializeField] private TextMeshProUGUI _txtBarcoRep;
+    [SerializeField] private TextMeshProUGUI _txtVidaRep;
+    [SerializeField] private TextMeshProUGUI _txtCosteRep;
+
+    // ─── Reparar — botones ────────────────────────────────────────────────────
     [SerializeField] private Button _btnBarcoRepIzq;
     [SerializeField] private Button _btnBarcoRepDer;
+    [SerializeField] private Button _btnRepararConfirmar;
 
-    // ─── Flechas Vender ───────────────────────────────────────────────────────
+    // ─── Vender — textos ──────────────────────────────────────────────────────
+    [SerializeField] private TextMeshProUGUI _txtBarcoVen;
+    [SerializeField] private TextMeshProUGUI _txtStatsVen;
+    [SerializeField] private TextMeshProUGUI _txtValorVen;
+
+    // ─── Vender — botones ─────────────────────────────────────────────────────
     [SerializeField] private Button _btnBarcoVenIzq;
     [SerializeField] private Button _btnBarcoVenDer;
+    [SerializeField] private Button _btnVenderConfirmar;
+
+    // ─── Feedback compartido ──────────────────────────────────────────────────
+    [SerializeField] private TextMeshProUGUI _txtFeedback;
 
     // ─── Índices de selección ─────────────────────────────────────────────────
+    private int _indiceCasco           = 0;
+    private int _indiceModuloArmamento = 0;
+    private int _indiceModuloVelas     = 0;
+    private int _indiceModuloBodega    = 0;
 
-    // Construir
-    private int _indiceCasco             = 0;
-    private int _indiceModuloArmamento   = 0;
-    private int _indiceModuloVelas       = 0;
-    private int _indiceModuloBodega      = 0;
+    private int _indiceBarcoMod        = 0;
+    private int _indiceModuloArmMod    = 0;
+    private int _indiceModuloVelMod    = 0;
+    private int _indiceModuloBodMod    = 0;
 
-    // Modificar
-    private int _indiceBarcoMod          = 0;
-    private int _indiceModuloArmMod      = 0;
-    private int _indiceModuloVelMod      = 0;
-    private int _indiceModuloBodMod      = 0;
-
-    // Reparar / Vender
-    private int _indiceBarcoRep          = 0;
-    private int _indiceBarcoVen          = 0;
+    private int _indiceBarcoRep        = 0;
+    private int _indiceBarcoVen        = 0;
 
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
     {
-        // Menú principal
         _panelAstillero.SetActive(false);
 
-        // Flechas Construir — casco
+        // Construir — casco
         _btnCascoIzq.onClick.AddListener(() => CiclarCasco(-1));
         _btnCascoDer.onClick.AddListener(() => CiclarCasco(+1));
 
-        // Flechas Construir — módulos
-        _btnArmamentoIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Armamento, -1));
-        _btnArmamentoDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Armamento, +1));
-        _btnVelasIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Velas, -1));
-        _btnVelasDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Velas, +1));
-        _btnBodegaIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Bodega, -1));
-        _btnBodegaDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Bodega, +1));
+        // Construir — módulos
+        _btnModuloArmamentoIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Armamento, -1));
+        _btnModuloArmamentoDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Armamento, +1));
+        _btnModuloVelasIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Velas, -1));
+        _btnModuloVelasDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Velas, +1));
+        _btnModuloBodegaIzq.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Bodega, -1));
+        _btnModuloBodegaDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Bodega, +1));
 
-        // Botón Construir
-        _btnConstruir.onClick.AddListener(OnConstruir);
+        _btnConstruirConfirmar.onClick.AddListener(OnConstruirConfirmar);
 
-        // Flechas Modificar — barco y módulos
+        // Modificar — barco y módulos
         _btnBarcoModIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMod, -1, SincronizarSelectoresModificar));
         _btnBarcoModDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMod, +1, SincronizarSelectoresModificar));
         _btnArmamentoModIzq.onClick.AddListener(() => CiclarModuloMod(TipoModulo.Armamento, -1));
@@ -136,32 +122,28 @@ public class AstilleroUI : MonoBehaviour
         _btnVelasModDer.onClick.AddListener(() => CiclarModuloMod(TipoModulo.Velas, +1));
         _btnBodegaModIzq.onClick.AddListener(() => CiclarModuloMod(TipoModulo.Bodega, -1));
         _btnBodegaModDer.onClick.AddListener(() => CiclarModuloMod(TipoModulo.Bodega, +1));
+        _btnModificarConfirmar.onClick.AddListener(OnModificarConfirmar);
 
-        // Botón Aplicar modificación
-        _btnAplicarModificacion.onClick.AddListener(OnAplicarModificacion);
-
-        // Flechas Reparar
+        // Reparar
         _btnBarcoRepIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, -1, null));
         _btnBarcoRepDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, +1, null));
-        _btnReparar.onClick.AddListener(OnReparar);
+        _btnRepararConfirmar.onClick.AddListener(OnRepararConfirmar);
 
-        // Flechas Vender
+        // Vender
         _btnBarcoVenIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, -1, null));
         _btnBarcoVenDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, +1, null));
-        _btnVender.onClick.AddListener(OnVender);
+        _btnVenderConfirmar.onClick.AddListener(OnVenderConfirmar);
     }
 
     // ─── API pública ──────────────────────────────────────────────────────────
 
     /// <summary>
     /// Abre el panel del astillero y muestra el menú principal.
-    /// Refresca todos los datos antes de mostrar.
     /// </summary>
     public void AbrirAstillero()
     {
         _panelAstillero.SetActive(true);
         MostrarPanel(0);
-        RefrescarUI();
     }
 
     /// <summary>
@@ -171,20 +153,6 @@ public class AstilleroUI : MonoBehaviour
     {
         _panelAstillero.SetActive(false);
     }
-
-    /// <summary>
-    /// Actualiza todos los textos y estados de los botones según los índices actuales.
-    /// Llamar siempre que cambie cualquier selector.
-    /// </summary>
-    public void RefrescarUI()
-    {
-        RefrescarPanelConstruir();
-        RefrescarPanelModificar();
-        RefrescarPanelReparar();
-        RefrescarPanelVender();
-    }
-
-    // ─── Navegación de subpaneles ─────────────────────────────────────────────
 
     /// <summary>Muestra el subpanel indicado y oculta los demás.</summary>
     /// <param name="indice">0=Menú, 1=Construir, 2=Modificar, 3=Reparar, 4=Vender.</param>
@@ -196,176 +164,211 @@ public class AstilleroUI : MonoBehaviour
         _panelReparar.SetActive(indice == 3);
         _panelVender.SetActive(indice == 4);
 
-        if (indice == 2) SincronizarSelectoresModificar();
+        LimpiarFeedback();
+
+        switch (indice)
+        {
+            case 1: RefrescarUIConstruir();  break;
+            case 2:
+                SincronizarSelectoresModificar();
+                RefrescarUIModificar();
+                break;
+            case 3: RefrescarUIReparar(); break;
+            case 4: RefrescarUIVender();  break;
+        }
     }
 
     // ─── Ciclar selectores ────────────────────────────────────────────────────
 
     private void CiclarCasco(int dir)
     {
-        var cascos = AstilleroManager.Instance.CascosDisponibles;
+        var cascos = AstilleroManager.Instance?.CascosDisponibles;
         if (cascos == null || cascos.Count == 0) return;
         _indiceCasco = Modulo(_indiceCasco + dir, cascos.Count);
-        RefrescarUI();
+        RefrescarUIConstruir();
     }
 
     private void CiclarModuloConstruir(TipoModulo tipo, int dir)
     {
         var lista = ObtenerModulosFiltrados(tipo);
-        int nuevoIndice = Modulo(GetIndiceConstruir(tipo) + dir, lista.Count);
-        SetIndiceConstruir(tipo, nuevoIndice);
-        RefrescarUI();
+        SetIndiceConstruir(tipo, Modulo(GetIndiceConstruir(tipo) + dir, lista.Count));
+        RefrescarUIConstruir();
     }
 
     private void CiclarModuloMod(TipoModulo tipo, int dir)
     {
         var lista = ObtenerModulosFiltrados(tipo);
-        int nuevoIndice = Modulo(GetIndiceMod(tipo) + dir, lista.Count);
-        SetIndiceMod(tipo, nuevoIndice);
-        RefrescarUI();
+        SetIndiceMod(tipo, Modulo(GetIndiceMod(tipo) + dir, lista.Count));
+        RefrescarUIModificar();
     }
 
     private void CiclarBarco(ref int indice, int dir, System.Action postCiclo)
     {
-        var barcos = GameManager.Instance.FlotaJugador.Barcos;
+        var barcos = GameManager.Instance?.FlotaJugador?.Barcos;
         if (barcos == null || barcos.Count == 0) return;
         indice = Modulo(indice + dir, barcos.Count);
         postCiclo?.Invoke();
-        RefrescarUI();
     }
 
-    // ─── Sincronizar Modificar con el barco seleccionado ─────────────────────
+    // ─── Sincronizar Modificar ────────────────────────────────────────────────
 
     private void SincronizarSelectoresModificar()
     {
         BarcoJugador barco = ObtenerBarcoMod();
         if (barco == null) return;
-
         _indiceModuloArmMod = IndiceDeModuloEnLista(barco.ObtenerModuloPorTipo(TipoModulo.Armamento), TipoModulo.Armamento);
         _indiceModuloVelMod = IndiceDeModuloEnLista(barco.ObtenerModuloPorTipo(TipoModulo.Velas),     TipoModulo.Velas);
         _indiceModuloBodMod = IndiceDeModuloEnLista(barco.ObtenerModuloPorTipo(TipoModulo.Bodega),    TipoModulo.Bodega);
     }
 
-    // ─── Refresco por panel ───────────────────────────────────────────────────
+    // ─── Refrescos por subpanel ───────────────────────────────────────────────
 
-    private void RefrescarPanelConstruir()
+    private void RefrescarUIConstruir()
     {
         var cascos = AstilleroManager.Instance?.CascosDisponibles;
         if (cascos == null || cascos.Count == 0)
         {
-            _textoCascoConstruir.text = "Sin cascos disponibles";
+            _txtCascoSeleccionado.text = "Sin cascos disponibles";
+            _txtStatsBarco.text        = "";
+            _txtModuloArmamento.text   = "Ninguno";
+            _txtModuloVelas.text       = "Ninguno";
+            _txtModuloBodega.text      = "Ninguno";
+            _txtPrecioConstruir.text   = "";
             return;
         }
 
         IBarco casco = cascos[_indiceCasco];
-        _textoCascoConstruir.text        = casco.NombreCasco;
-        _statsVidaCasco.text             = $"Vida: {casco.VidaBase}";
-        _statsVelocidadCasco.text        = $"Velocidad: {casco.VelocidadBase}";
-        _statsManiobrabilidadCasco.text  = $"Maniobrabilidad: {casco.ManiobrabilidadBase}";
-        _statsCargaCasco.text            = $"Carga: {casco.CapacidadCargaBase}";
-        _statsSlotsDisponibles.text      = $"Slots: {casco.CapacidadModulos}";
+        _txtCascoSeleccionado.text = casco.NombreCasco;
+        _txtStatsBarco.text = $"Vida {casco.VidaBase}  Vel {casco.VelocidadBase}" +
+                              $"  Man {casco.ManiobrabilidadBase}  Carga {casco.CapacidadCargaBase}" +
+                              $"  Slots {casco.CapacidadModulos}";
 
         ModuloBarcoData modArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
         ModuloBarcoData modVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
         ModuloBarcoData modBod = ModuloSeleccionadoConstruir(TipoModulo.Bodega);
 
-        _textoModuloArmamento.text = modArm != null ? modArm.nombreModulo : "Ninguno";
-        _textoModuloVelas.text     = modVel != null ? modVel.nombreModulo : "Ninguno";
-        _textoModuloBodega.text    = modBod != null ? modBod.nombreModulo : "Ninguno";
+        _txtModuloArmamento.text = modArm != null ? modArm.nombreModulo : "Ninguno";
+        _txtModuloVelas.text     = modVel != null ? modVel.nombreModulo : "Ninguno";
+        _txtModuloBodega.text    = modBod != null ? modBod.nombreModulo : "Ninguno";
 
-        _statsArmamento.text = modArm != null ? FormatearDeltasModulo(modArm) : "—";
-        _statsVelas.text     = modVel != null ? FormatearDeltasModulo(modVel) : "—";
-        _statsBodega.text    = modBod != null ? FormatearDeltasModulo(modBod) : "—";
-
-        int precioTotal = casco.CosteOro
-            + (modArm != null ? modArm.costeOro : 0)
-            + (modVel != null ? modVel.costeOro : 0)
-            + (modBod != null ? modBod.costeOro : 0);
-        _textoPrecioConstruir.text = $"Precio: {precioTotal} oro";
+        int precio = casco.CosteOro
+            + (modArm?.costeOro ?? 0)
+            + (modVel?.costeOro ?? 0)
+            + (modBod?.costeOro ?? 0);
+        _txtPrecioConstruir.text = $"Precio: {precio} oro";
     }
 
-    private void RefrescarPanelModificar()
+    private void RefrescarUIModificar()
     {
-        var barcos = GameManager.Instance.FlotaJugador.Barcos;
+        var barcos = GameManager.Instance?.FlotaJugador?.Barcos;
         if (barcos == null || barcos.Count == 0)
         {
-            _textoBarcoModificar.text    = "Sin barcos en la flota";
-            _textoPrecioModificar.text   = "";
+            _txtBarcoMod.text         = "Sin barcos disponibles";
+            _txtModulosInstalados.text = "";
+            _txtDeltaStats.text        = "";
             return;
         }
 
         BarcoJugador barco = ObtenerBarcoMod();
-        _textoBarcoModificar.text = barco?.Nombre ?? "—";
+        if (barco == null) return;
 
-        RefrescarSelectorModMod(TipoModulo.Armamento, barco, _indiceModuloArmMod, _textoModuloArmamentoMod, _statsArmamentoMod);
-        RefrescarSelectorModMod(TipoModulo.Velas,     barco, _indiceModuloVelMod, _textoModuloVelasMod,     _statsVelasMod);
-        RefrescarSelectorModMod(TipoModulo.Bodega,    barco, _indiceModuloBodMod, _textoModuloBodegaMod,    _statsBodegaMod);
+        _txtBarcoMod.text = barco.Nombre;
+
+        // Módulos instalados actualmente
+        var sb = new System.Text.StringBuilder();
+        foreach (ModuloBarcoData m in barco.ModulosInstalados)
+            sb.AppendLine($"• {m.nombreModulo} ({m.tipoModulo})");
+        _txtModulosInstalados.text = sb.Length > 0 ? sb.ToString().TrimEnd() : "Sin módulos instalados";
+
+        // Deltas de la selección respecto al estado actual
+        int dVida  = DeltaModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod, m => m.deltaVida)
+                   + DeltaModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod, m => m.deltaVida)
+                   + DeltaModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod, m => m.deltaVida);
+        int dVel   = DeltaModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod, m => m.deltaVelocidad)
+                   + DeltaModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod, m => m.deltaVelocidad)
+                   + DeltaModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod, m => m.deltaVelocidad);
+        int dMan   = DeltaModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod, m => m.deltaManiobrabilidad)
+                   + DeltaModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod, m => m.deltaManiobrabilidad)
+                   + DeltaModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod, m => m.deltaManiobrabilidad);
+        int dCarga = DeltaModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod, m => m.deltaCargaMaxima)
+                   + DeltaModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod, m => m.deltaCargaMaxima)
+                   + DeltaModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod, m => m.deltaCargaMaxima);
 
         int costeNeto = CalcularCosteNetoModificacion(barco);
-        _textoPrecioModificar.text = costeNeto >= 0
-            ? $"Coste: {costeNeto} oro"
-            : $"Recibirás {-costeNeto} oro";
+
+        _txtDeltaStats.text = FormatearDeltas(dVida, dVel, dMan, dCarga, "vs. actual")
+                            + $"\nCoste neto: {(costeNeto >= 0 ? $"{costeNeto} oro" : $"Recibirás {-costeNeto} oro")}";
     }
 
-    private void RefrescarSelectorModMod(TipoModulo tipo, BarcoJugador barco,
-        int indiceSeleccionado, TextMeshProUGUI textoNombre, TextMeshProUGUI textoStats)
+    private void RefrescarUIReparar()
     {
-        var lista = ObtenerModulosFiltrados(tipo);
-        ModuloBarcoData seleccionado = indiceSeleccionado < lista.Count ? lista[indiceSeleccionado] : null;
-        ModuloBarcoData instalado    = barco?.ObtenerModuloPorTipo(tipo);
+        var barcos = GameManager.Instance?.FlotaJugador?.Barcos;
+        if (barcos == null || barcos.Count == 0)
+        {
+            _txtBarcoRep.text  = "Sin barcos disponibles";
+            _txtVidaRep.text   = "";
+            _txtCosteRep.text  = "";
+            return;
+        }
 
-        textoNombre.text = seleccionado != null ? seleccionado.nombreModulo : "Ninguno";
-
-        if (seleccionado == null && instalado == null)
-        { textoStats.text = "—"; return; }
-
-        int dVida  = (seleccionado?.deltaVida          ?? 0) - (instalado?.deltaVida          ?? 0);
-        int dVel   = (seleccionado?.deltaVelocidad     ?? 0) - (instalado?.deltaVelocidad     ?? 0);
-        int dMan   = (seleccionado?.deltaManiobrabilidad ?? 0) - (instalado?.deltaManiobrabilidad ?? 0);
-        int dCarga = (seleccionado?.deltaCargaMaxima   ?? 0) - (instalado?.deltaCargaMaxima   ?? 0);
-        int dFuerz = (seleccionado?.deltaFuerzaCombate ?? 0) - (instalado?.deltaFuerzaCombate ?? 0);
-
-        textoStats.text = FormatearDeltas(dVida, dVel, dMan, dCarga, dFuerz, "respecto al actual");
-    }
-
-    private void RefrescarPanelReparar()
-    {
         BarcoJugador barco = ObtenerBarcoRep();
-        if (barco == null) { _textoBarcoReparar.text = "Sin barcos"; return; }
+        if (barco == null) return;
 
         int danio = barco.VidaTotal - barco.VidaActual;
-        _textoBarcoReparar.text  = barco.Nombre;
-        _textoVidaReparar.text   = $"Vida: {barco.VidaActual} / {barco.VidaTotal}";
-        _textoPrecioReparar.text = danio > 0 ? $"Coste: {danio * 10} oro" : "Sin daño";
+        _txtBarcoRep.text  = barco.Nombre;
+        _txtVidaRep.text   = $"Vida: {barco.VidaActual} / {barco.VidaTotal}";
+        _txtCosteRep.text  = danio > 0 ? $"Coste: {danio * 10} oro" : "Sin daño";
     }
 
-    private void RefrescarPanelVender()
+    private void RefrescarUIVender()
     {
+        var barcos = GameManager.Instance?.FlotaJugador?.Barcos;
+        if (barcos == null || barcos.Count == 0)
+        {
+            _txtBarcoVen.text  = "Sin barcos disponibles";
+            _txtStatsVen.text  = "";
+            _txtValorVen.text  = "";
+            return;
+        }
+
         BarcoJugador barco = ObtenerBarcoVen();
-        if (barco == null) { _textoBarcoVender.text = "Sin barcos"; return; }
+        if (barco == null) return;
 
         int costeTotal = barco.CascoBase.CosteOro;
         foreach (ModuloBarcoData m in barco.ModulosInstalados) costeTotal += m.costeOro;
         long valorVenta = (long)(costeTotal * 0.5f);
 
-        _textoBarcoVender.text = barco.Nombre;
-        _textoValorVenta.text  = $"Valor de venta: {valorVenta} oro";
+        _txtBarcoVen.text  = barco.Nombre;
+        _txtStatsVen.text  = $"Vida {barco.VidaActual}/{barco.VidaTotal}" +
+                             $"  Vel {barco.VelocidadTotal}  Man {barco.ManiobrabilidadTotal}" +
+                             $"  Carga {barco.CargaMaximaTotal}";
+        _txtValorVen.text  = $"Valor de venta: {valorVenta} oro";
     }
 
-    // ─── Operaciones ──────────────────────────────────────────────────────────
+    // ─── Operaciones de confirmación ──────────────────────────────────────────
 
-    private void OnConstruir()
+    private void OnConstruirConfirmar()
     {
+        if (AstilleroManager.Instance == null)
+        {
+            Debug.LogWarning("[AstilleroUI] AstilleroManager.Instance es null.");
+            return;
+        }
+
         var cascos = AstilleroManager.Instance.CascosDisponibles;
         if (cascos == null || cascos.Count == 0) return;
 
-        IBarco casco = cascos[_indiceCasco];
+        IBarco casco  = cascos[_indiceCasco];
         string nombre = GenerarNombreBarco();
 
         ResultadoOperacion res = AstilleroManager.Instance.ComprarBarco(casco, nombre);
-        if (!res.Exito) { Debug.LogWarning($"[AstilleroUI] Construir: {res.MensajeError}"); return; }
+        if (!res.Exito)
+        {
+            MostrarFeedback(res.MensajeError, false);
+            return;
+        }
 
-        // Recuperar el barco recién añadido (último de la lista)
+        // Instalar módulos seleccionados sobre el barco recién creado
         var barcos = GameManager.Instance.FlotaJugador.Barcos;
         BarcoJugador nuevoBarco = barcos.Count > 0 ? barcos[barcos.Count - 1] : null;
 
@@ -376,13 +379,76 @@ public class AstilleroUI : MonoBehaviour
             InstalarModuloSiSeleccionado(nuevoBarco, TipoModulo.Bodega,    _indiceModuloBodega);
         }
 
-        Debug.Log($"[AstilleroUI] Barco construido: {nombre} con casco {casco.NombreCasco}.");
-        RefrescarUI();
+        MostrarFeedback($"'{nombre}' construido.", true);
+        RefrescarUIConstruir();
     }
+
+    private void OnModificarConfirmar()
+    {
+        if (AstilleroManager.Instance == null)
+        {
+            Debug.LogWarning("[AstilleroUI] AstilleroManager.Instance es null.");
+            return;
+        }
+
+        BarcoJugador barco = ObtenerBarcoMod();
+        if (barco == null) return;
+
+        AplicarCambioModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod);
+        AplicarCambioModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod);
+        AplicarCambioModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod);
+
+        MostrarFeedback($"'{barco.Nombre}' modificado.", true);
+        SincronizarSelectoresModificar();
+        RefrescarUIModificar();
+    }
+
+    private void OnRepararConfirmar()
+    {
+        if (AstilleroManager.Instance == null)
+        {
+            Debug.LogWarning("[AstilleroUI] AstilleroManager.Instance es null.");
+            return;
+        }
+
+        BarcoJugador barco = ObtenerBarcoRep();
+        if (barco == null) return;
+
+        ResultadoOperacion r = AstilleroManager.Instance.RepararBarco(barco);
+        MostrarFeedback(r.Exito ? $"'{barco.Nombre}' reparado." : r.MensajeError, r.Exito);
+        RefrescarUIReparar();
+    }
+
+    private void OnVenderConfirmar()
+    {
+        if (AstilleroManager.Instance == null)
+        {
+            Debug.LogWarning("[AstilleroUI] AstilleroManager.Instance es null.");
+            return;
+        }
+
+        BarcoJugador barco = ObtenerBarcoVen();
+        if (barco == null) return;
+
+        string nombreBarco = barco.Nombre;
+        ResultadoOperacion r = AstilleroManager.Instance.VenderBarco(barco);
+        if (r.Exito)
+        {
+            _indiceBarcoVen = 0;
+            MostrarFeedback($"'{nombreBarco}' vendido.", true);
+            RefrescarUIVender();
+        }
+        else
+        {
+            MostrarFeedback(r.MensajeError, false);
+        }
+    }
+
+    // ─── Helpers — instalación ────────────────────────────────────────────────
 
     private void InstalarModuloSiSeleccionado(BarcoJugador barco, TipoModulo tipo, int indice)
     {
-        if (indice == 0) return; // índice 0 = Ninguno
+        if (indice == 0) return; // 0 = Ninguno
         var lista = ObtenerModulosFiltrados(tipo);
         if (indice >= lista.Count) return;
         ModuloBarcoData modulo = lista[indice];
@@ -391,104 +457,99 @@ public class AstilleroUI : MonoBehaviour
         if (!r.Exito) Debug.LogWarning($"[AstilleroUI] InstalarModulo({tipo}): {r.MensajeError}");
     }
 
-    private void OnAplicarModificacion()
-    {
-        BarcoJugador barco = ObtenerBarcoMod();
-        if (barco == null) return;
-
-        AplicarCambioModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod);
-        AplicarCambioModulo(barco, TipoModulo.Velas,     _indiceModuloVelMod);
-        AplicarCambioModulo(barco, TipoModulo.Bodega,    _indiceModuloBodMod);
-
-        Debug.Log($"[AstilleroUI] Modificación aplicada a '{barco.Nombre}'.");
-        SincronizarSelectoresModificar();
-        RefrescarUI();
-    }
-
     private void AplicarCambioModulo(BarcoJugador barco, TipoModulo tipo, int indiceSeleccionado)
     {
-        var lista      = ObtenerModulosFiltrados(tipo);
-        ModuloBarcoData seleccionado = indiceSeleccionado < lista.Count ? lista[indiceSeleccionado] : null;
-        ModuloBarcoData instalado    = barco.ObtenerModuloPorTipo(tipo);
+        var lista            = ObtenerModulosFiltrados(tipo);
+        ModuloBarcoData sel  = indiceSeleccionado < lista.Count ? lista[indiceSeleccionado] : null;
+        ModuloBarcoData inst = barco.ObtenerModuloPorTipo(tipo);
 
-        if (seleccionado == instalado) return; // sin cambio
+        if (sel == inst) return;
 
-        if (seleccionado == null)
+        if (sel == null)
         {
-            // Selector en Ninguno: desinstalar sin coste
-            if (instalado != null) barco.DesinstalarModulo(instalado);
+            // Desinstalar sin coste
+            if (inst != null) barco.DesinstalarModulo(inst);
             return;
         }
 
-        ResultadoOperacion r = AstilleroManager.Instance.InstalarModulo(barco, seleccionado);
-        if (!r.Exito) Debug.LogWarning($"[AstilleroUI] Modificar {tipo}: {r.MensajeError}");
+        ResultadoOperacion r = AstilleroManager.Instance.InstalarModulo(barco, sel);
+        if (!r.Exito) Debug.LogWarning($"[AstilleroUI] Modificar({tipo}): {r.MensajeError}");
     }
 
-    private void OnReparar()
+    // ─── Helpers — delta stats modificar ─────────────────────────────────────
+
+    private int DeltaModulo(BarcoJugador barco, TipoModulo tipo, int indice,
+                             System.Func<ModuloBarcoData, int> selector)
     {
-        BarcoJugador barco = ObtenerBarcoRep();
-        if (barco == null) return;
-
-        ResultadoOperacion r = AstilleroManager.Instance.RepararBarco(barco);
-        Debug.Log(r.Exito
-            ? $"[AstilleroUI] '{barco.Nombre}' reparado."
-            : $"[AstilleroUI] Reparar: {r.MensajeError}");
-
-        RefrescarUI();
+        var lista            = ObtenerModulosFiltrados(tipo);
+        ModuloBarcoData sel  = indice < lista.Count ? lista[indice] : null;
+        ModuloBarcoData inst = barco.ObtenerModuloPorTipo(tipo);
+        return (sel != null ? selector(sel) : 0) - (inst != null ? selector(inst) : 0);
     }
 
-    private void OnVender()
+    private int CalcularCosteNetoModificacion(BarcoJugador barco)
     {
-        BarcoJugador barco = ObtenerBarcoVen();
-        if (barco == null) return;
-
-        ResultadoOperacion r = AstilleroManager.Instance.VenderBarco(barco);
-        Debug.Log(r.Exito
-            ? $"[AstilleroUI] '{barco.Nombre}' vendido."
-            : $"[AstilleroUI] Vender: {r.MensajeError}");
-
-        _indiceBarcoVen = 0;
-        MostrarPanel(0);
-        RefrescarUI();
+        if (barco == null) return 0;
+        return CosteNetoTipo(barco, TipoModulo.Armamento, _indiceModuloArmMod)
+             + CosteNetoTipo(barco, TipoModulo.Velas,     _indiceModuloVelMod)
+             + CosteNetoTipo(barco, TipoModulo.Bodega,    _indiceModuloBodMod);
     }
 
-    // ─── Helpers — nombre de barco ───────────────────────────────────────────
+    private int CosteNetoTipo(BarcoJugador barco, TipoModulo tipo, int indiceSeleccionado)
+    {
+        var lista           = ObtenerModulosFiltrados(tipo);
+        ModuloBarcoData sel = indiceSeleccionado < lista.Count ? lista[indiceSeleccionado] : null;
+        ModuloBarcoData ins = barco.ObtenerModuloPorTipo(tipo);
+
+        if (sel == ins)   return 0;
+        if (sel == null)  return -Mathf.RoundToInt((ins?.costeOro ?? 0) * 0.5f);
+        if (ins != null)  return sel.costeOro - Mathf.RoundToInt(ins.costeOro * 0.5f);
+        return sel.costeOro;
+    }
+
+    // ─── Helpers — obtener barco ──────────────────────────────────────────────
+
+    private BarcoJugador ObtenerBarcoMod() => ObtenerBarcoEnIndice(_indiceBarcoMod);
+    private BarcoJugador ObtenerBarcoRep() => ObtenerBarcoEnIndice(_indiceBarcoRep);
+    private BarcoJugador ObtenerBarcoVen() => ObtenerBarcoEnIndice(_indiceBarcoVen);
+
+    private BarcoJugador ObtenerBarcoEnIndice(int indice)
+    {
+        var barcos = GameManager.Instance?.FlotaJugador?.Barcos;
+        if (barcos == null || barcos.Count == 0) return null;
+        return barcos[Modulo(indice, barcos.Count)];
+    }
+
+    // ─── Helpers — listas de módulos ─────────────────────────────────────────
 
     /// <summary>
-    /// Genera un nombre temático para el nuevo barco eligiendo aleatoriamente entre
-    /// un repertorio de 50 nombres hanseáticos y mediterráneos.
-    /// Reintenta hasta 10 veces para evitar duplicados con barcos ya existentes en
-    /// la flota del jugador. Si no encuentra nombre libre, devuelve un fallback
-    /// numérico basado en el tamaño actual de la flota.
+    /// Devuelve una lista con <c>null</c> en índice 0 (Ninguno) seguida de los módulos
+    /// filtrados por tipo. El índice 0 equivale a desinstalar/no instalar.
     /// </summary>
-    /// <returns>Nombre único para el barco recién construido.</returns>
-    private static string GenerarNombreBarco()
+    private List<ModuloBarcoData> ObtenerModulosFiltrados(TipoModulo tipo)
     {
-        string[] _nombres = new[]
-        {
-            "Der Adler", "Hansekogge", "Die Möwe", "Lubecker Bär", "Nordstern",
-            "Gott Mit Uns", "Das Einhorn", "Silberfisch", "Meereswind", "Eisvogel",
-            "Santa María", "San Juan", "La Esperanza", "El Halcón", "Mar del Norte",
-            "La Fortuna", "Viento del Sur", "San Cristóbal", "El Trueno", "La Paloma",
-            "Santa Cruz", "Madonna del Mare", "San Giorgio", "La Serenissima", "Stella Maris",
-            "Sant'Elmo", "Il Corvo", "Aquila d'Oro", "La Sirena", "Buona Fortuna",
-            "L'Étoile du Nord", "La Couronne", "Saint Michel", "Le Faucon", "Fleur de Lys",
-            "La Bonne Chance", "L'Hirondelle", "Saint Jacques", "Le Lion d'Or", "La Tempête",
-            "De Gouden Leeuw", "Het Anker", "De Zeemeeuw", "Vliegende Hollander", "Het Zwaard",
-            "Konrad von Lübeck", "Heinrich der Seefahrer", "Wilhelm der Starke", "Klaus Störtebeker", "Der Hanseat"
-        };
+        var resultado = new List<ModuloBarcoData> { null };
+        var todos = AstilleroManager.Instance?.ModulosDisponibles;
+        if (todos == null) return resultado;
+        foreach (ModuloBarcoData m in todos)
+            if (m != null && m.tipoModulo == tipo) resultado.Add(m);
+        return resultado;
+    }
 
-        var barcos = GameManager.Instance.FlotaJugador.Barcos;
-        var nombresUsados = new System.Collections.Generic.HashSet<string>();
-        foreach (var b in barcos) nombresUsados.Add(b.Nombre);
+    private ModuloBarcoData ModuloSeleccionadoConstruir(TipoModulo tipo)
+    {
+        var lista  = ObtenerModulosFiltrados(tipo);
+        int indice = GetIndiceConstruir(tipo);
+        return indice < lista.Count ? lista[indice] : null;
+    }
 
-        for (int i = 0; i < 10; i++)
-        {
-            string candidato = _nombres[UnityEngine.Random.Range(0, _nombres.Length)];
-            if (!nombresUsados.Contains(candidato)) return candidato;
-        }
-
-        return "Barco_" + (barcos.Count + 1);
+    private int IndiceDeModuloEnLista(ModuloBarcoData modulo, TipoModulo tipo)
+    {
+        if (modulo == null) return 0;
+        var lista = ObtenerModulosFiltrados(tipo);
+        for (int i = 0; i < lista.Count; i++)
+            if (lista[i] == modulo) return i;
+        return 0;
     }
 
     // ─── Helpers — índices ────────────────────────────────────────────────────
@@ -527,95 +588,71 @@ public class AstilleroUI : MonoBehaviour
         }
     }
 
-    // ─── Helpers — obtener barco seleccionado ─────────────────────────────────
+    // ─── Helpers — feedback ───────────────────────────────────────────────────
 
-    private BarcoJugador ObtenerBarcoMod()  => ObtenerBarcoEnIndice(_indiceBarcoMod);
-    private BarcoJugador ObtenerBarcoRep()  => ObtenerBarcoEnIndice(_indiceBarcoRep);
-    private BarcoJugador ObtenerBarcoVen()  => ObtenerBarcoEnIndice(_indiceBarcoVen);
-
-    private BarcoJugador ObtenerBarcoEnIndice(int indice)
+    private void MostrarFeedback(string mensaje, bool exito)
     {
-        var barcos = GameManager.Instance.FlotaJugador.Barcos;
-        if (barcos == null || barcos.Count == 0) return null;
-        return barcos[Modulo(indice, barcos.Count)];
+        if (_txtFeedback == null) return;
+        _txtFeedback.text  = mensaje;
+        _txtFeedback.color = exito ? Color.green : Color.red;
     }
 
-    // ─── Helpers — listas de módulos ─────────────────────────────────────────
+    private void LimpiarFeedback()
+    {
+        if (_txtFeedback == null) return;
+        _txtFeedback.text = "";
+    }
+
+    // ─── Helpers — nombre aleatorio ──────────────────────────────────────────
 
     /// <summary>
-    /// Devuelve una lista con <c>null</c> en el índice 0 (Ninguno) seguida de los módulos
-    /// de <see cref="AstilleroManager.ModulosDisponibles"/> filtrados por tipo.
+    /// Genera un nombre temático único para el nuevo barco.
+    /// Reintenta hasta 10 veces para evitar duplicados con la flota existente.
     /// </summary>
-    private List<ModuloBarcoData> ObtenerModulosFiltrados(TipoModulo tipo)
+    private static string GenerarNombreBarco()
     {
-        var resultado = new List<ModuloBarcoData> { null }; // índice 0 = Ninguno
-        var todos = AstilleroManager.Instance?.ModulosDisponibles;
-        if (todos == null) return resultado;
-        foreach (ModuloBarcoData m in todos)
-            if (m != null && m.tipoModulo == tipo) resultado.Add(m);
-        return resultado;
-    }
+        string[] nombres =
+        {
+            "Der Adler", "Hansekogge", "Die Möwe", "Lubecker Bär", "Nordstern",
+            "Gott Mit Uns", "Das Einhorn", "Silberfisch", "Meereswind", "Eisvogel",
+            "Santa María", "San Juan", "La Esperanza", "El Halcón", "Mar del Norte",
+            "La Fortuna", "Viento del Sur", "San Cristóbal", "El Trueno", "La Paloma",
+            "Santa Cruz", "Madonna del Mare", "San Giorgio", "La Serenissima", "Stella Maris",
+            "Sant'Elmo", "Il Corvo", "Aquila d'Oro", "La Sirena", "Buona Fortuna",
+            "L'Étoile du Nord", "La Couronne", "Saint Michel", "Le Faucon", "Fleur de Lys",
+            "La Bonne Chance", "L'Hirondelle", "Saint Jacques", "Le Lion d'Or", "La Tempête",
+            "De Gouden Leeuw", "Het Anker", "De Zeemeeuw", "Vliegende Hollander", "Het Zwaard",
+            "Konrad von Lübeck", "Heinrich der Seefahrer", "Wilhelm der Starke", "Klaus Störtebeker", "Der Hanseat"
+        };
 
-    private ModuloBarcoData ModuloSeleccionadoConstruir(TipoModulo tipo)
-    {
-        var lista  = ObtenerModulosFiltrados(tipo);
-        int indice = GetIndiceConstruir(tipo);
-        return indice < lista.Count ? lista[indice] : null;
-    }
+        var barcos = GameManager.Instance.FlotaJugador.Barcos;
+        var usados = new HashSet<string>();
+        foreach (BarcoJugador b in barcos) usados.Add(b.Nombre);
 
-    private int IndiceDeModuloEnLista(ModuloBarcoData modulo, TipoModulo tipo)
-    {
-        if (modulo == null) return 0;
-        var lista = ObtenerModulosFiltrados(tipo);
-        for (int i = 0; i < lista.Count; i++)
-            if (lista[i] == modulo) return i;
-        return 0;
-    }
+        for (int i = 0; i < 10; i++)
+        {
+            string candidato = nombres[Random.Range(0, nombres.Length)];
+            if (!usados.Contains(candidato)) return candidato;
+        }
 
-    // ─── Helpers — coste neto modificación ───────────────────────────────────
-
-    private int CalcularCosteNetoModificacion(BarcoJugador barco)
-    {
-        if (barco == null) return 0;
-        int total = 0;
-        total += CosteNetoTipo(barco, TipoModulo.Armamento, _indiceModuloArmMod);
-        total += CosteNetoTipo(barco, TipoModulo.Velas,     _indiceModuloVelMod);
-        total += CosteNetoTipo(barco, TipoModulo.Bodega,    _indiceModuloBodMod);
-        return total;
-    }
-
-    private int CosteNetoTipo(BarcoJugador barco, TipoModulo tipo, int indiceSeleccionado)
-    {
-        var lista      = ObtenerModulosFiltrados(tipo);
-        ModuloBarcoData sel = indiceSeleccionado < lista.Count ? lista[indiceSeleccionado] : null;
-        ModuloBarcoData ins = barco.ObtenerModuloPorTipo(tipo);
-
-        if (sel == ins) return 0;                                              // sin cambio
-        if (sel == null) return -Mathf.RoundToInt((ins?.costeOro ?? 0) * 0.5f); // desinstalar = ingreso
-        if (ins != null) return sel.costeOro - Mathf.RoundToInt(ins.costeOro * 0.5f); // swap
-        return sel.costeOro;                                                   // instalación nueva
-    }
-
-    // ─── Helpers — formateo ───────────────────────────────────────────────────
-
-    private string FormatearDeltasModulo(ModuloBarcoData m)
-        => FormatearDeltas(m.deltaVida, m.deltaVelocidad, m.deltaManiobrabilidad,
-                           m.deltaCargaMaxima, m.deltaFuerzaCombate, "");
-
-    private string FormatearDeltas(int vida, int vel, int man, int carga, int fuerza, string sufijo)
-    {
-        var partes = new List<string>();
-        if (vida  != 0) partes.Add($"{vida:+#;-#;0} vida");
-        if (vel   != 0) partes.Add($"{vel:+#;-#;0} velocidad");
-        if (man   != 0) partes.Add($"{man:+#;-#;0} maniob.");
-        if (carga != 0) partes.Add($"{carga:+#;-#;0} carga");
-        if (fuerza!= 0) partes.Add($"{fuerza:+#;-#;0} fuerza");
-        string base_ = partes.Count > 0 ? string.Join(", ", partes) : "Sin cambios";
-        return string.IsNullOrEmpty(sufijo) ? base_ : $"{base_} {sufijo}";
+        return "Barco_" + (barcos.Count + 1);
     }
 
     // ─── Helpers — matemáticas ────────────────────────────────────────────────
 
     private static int Modulo(int valor, int total)
         => total <= 0 ? 0 : ((valor % total) + total) % total;
+
+    // ─── Helpers — formateo ───────────────────────────────────────────────────
+
+    private static string FormatearDeltas(int vida, int vel, int man, int carga, string sufijo)
+    {
+        var partes = new List<string>();
+        if (vida  != 0) partes.Add($"{vida:+#;-#;0} vida");
+        if (vel   != 0) partes.Add($"{vel:+#;-#;0} velocidad");
+        if (man   != 0) partes.Add($"{man:+#;-#;0} maniob.");
+        if (carga != 0) partes.Add($"{carga:+#;-#;0} carga");
+        string base_ = partes.Count > 0 ? string.Join(", ", partes) : "Sin cambios";
+        return string.IsNullOrEmpty(sufijo) ? base_ : $"{base_} {sufijo}";
+    }
 }
