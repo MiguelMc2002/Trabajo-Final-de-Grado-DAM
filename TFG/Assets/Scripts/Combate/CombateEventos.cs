@@ -33,7 +33,6 @@ public static class CombateEventos
             return;
         }
 
-        Debug.Log($"[CombateEventos] Combate iniciado: {atacante.NombrePropietario} → {defensor.NombrePropietario}");
         OnCombateIniciado?.Invoke(atacante, defensor);
     }
 }

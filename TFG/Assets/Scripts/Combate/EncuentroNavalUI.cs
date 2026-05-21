@@ -6,26 +6,30 @@ using UnityEngine.UI;
 /// MonoBehaviour que gestiona el panel de encuentro naval del jugador.
 /// Se suscribe a <see cref="CombateEventos.OnCombateIniciado"/>, muestra el panel
 /// cuando el jugador está involucrado y delega la resolución en <see cref="CombateNavalResolver"/>.
+/// El panel expone dos botones: Luchar (el jugador combate) y Huir (intenta escapar).
 /// Adjuntar a un GameObject persistente en la escena Mapamundi y asignar los campos desde el Inspector.
 /// </summary>
 public class EncuentroNavalUI : MonoBehaviour
 {
     [SerializeField] private GameObject          _panelEncuentro;
     [SerializeField] private TextMeshProUGUI     _textoNarrativo;
-    [SerializeField] private Button              _btnAtacar;
+    [SerializeField] private Button              _btnLuchar;
     [SerializeField] private Button              _btnHuir;
-    [SerializeField] private Button              _btnDefender;
+
+    /// <summary>
+    /// Panel de resultados post-combate. Cuando está asignado, <see cref="MostrarResultado"/>
+    /// delega en él en lugar de limitarse al log de diagnóstico.
+    /// </summary>
+    [SerializeField] private ResultadoCombateUI  _resultadoCombateUI;
 
     private FlotaRuntimeData _atacante;
     private FlotaRuntimeData _defensor;
-    private bool             _jugadorEsAtacante;
     private ResultadoCombate _ultimoResultado;
 
     private void Start()
     {
-        _btnAtacar.onClick.AddListener(OnAtacar);
+        _btnLuchar.onClick.AddListener(OnLuchar);
         _btnHuir.onClick.AddListener(OnHuir);
-        _btnDefender.onClick.AddListener(OnDefender);
 
         if (_panelEncuentro != null)
             _panelEncuentro.SetActive(false);
@@ -48,37 +52,17 @@ public class EncuentroNavalUI : MonoBehaviour
         _atacante = atacante;
         _defensor = defensor;
 
-        // FlotaJugador no existe todavía: tratar siempre al jugador como defensor por defecto
-        _jugadorEsAtacante = false;
-
         _panelEncuentro.SetActive(true);
         SceneController.SetPausa(true);
 
-        if (_jugadorEsAtacante)
-        {
-            _textoNarrativo.text = $"Habéis avistado la flota de {defensor.NombrePropietario}. ¿Atacáis o huís, capitán?";
-            _btnAtacar.gameObject.SetActive(true);
-            _btnHuir.gameObject.SetActive(true);
-            _btnDefender.gameObject.SetActive(false);
-        }
-        else
-        {
-            _textoNarrativo.text = "Una flota pirata os intercepta en alta mar. ¿Qué ordenáis, capitán?";
-            _btnAtacar.gameObject.SetActive(false);
-            _btnHuir.gameObject.SetActive(false);
-            _btnDefender.gameObject.SetActive(true);
-        }
+        _textoNarrativo.text = $"Una flota pirata de {atacante.NombrePropietario} os intercepta. ¿Combatís o huís, capitán?";
+        _btnLuchar.gameObject.SetActive(true);
+        _btnHuir.gameObject.SetActive(true);
     }
 
     // ─── Callbacks de botones ─────────────────────────────────────────────────
 
-    private void OnAtacar()
-    {
-        _ultimoResultado = CombateNavalResolver.Resolver(_atacante, _defensor, jugadorEsAtacante: true);
-        MostrarResultado();
-    }
-
-    private void OnDefender()
+    private void OnLuchar()
     {
         _ultimoResultado = CombateNavalResolver.Resolver(_atacante, _defensor, jugadorEsAtacante: false);
         MostrarResultado();
@@ -93,13 +77,19 @@ public class EncuentroNavalUI : MonoBehaviour
     // ─── Resultado ────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Cierra el panel de encuentro, reanuda el tiempo y vuelca el resultado al log.
-    /// El panel de resultados visual se implementará en la siguiente sesión.
+    /// Cierra el panel de encuentro, reanuda el tiempo y delega el resultado en
+    /// <see cref="ResultadoCombateUI"/> si está asignado; si no, vuelca al log como
+    /// fallback de diagnóstico.
     /// </summary>
     private void MostrarResultado()
     {
         _panelEncuentro.SetActive(false);
         SceneController.SetPausa(false);
+
+        if (_resultadoCombateUI != null)
+            _resultadoCombateUI.MostrarResultado(_ultimoResultado);
+        else
+            Debug.LogWarning("[EncuentroNavalUI] _resultadoCombateUI no asignado. Resultado solo en log.");
 
         ResultadoCombate r = _ultimoResultado;
         Debug.Log($"[EncuentroNaval] {r.TextoNarrativo}");

@@ -145,11 +145,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        if (_catalogoBienes == null || _catalogoBienes.Count == 0)
-            Debug.LogWarning("[GameManager] _catalogoBienes está vacío. Asignarlo en el Inspector antes de cargar una partida.");
-
         InicializarEstado();
-        Debug.Log($"[GameManager] Inicializado como singleton persistente. Dinero: {Dinero:N0}");
     }
 
     /// <summary>
@@ -158,7 +154,6 @@ public class GameManager : MonoBehaviour
     private void InicializarEstado()
     {
         Dinero = DineroBeta;
-        Debug.Log($"[GameManager] Partida iniciada. Dinero: {Dinero:N0}");
     }
 
     // ─── Catálogo de bienes ──────────────────────────────────────────────────
@@ -180,7 +175,6 @@ public class GameManager : MonoBehaviour
     {
         if (_catalogoBienes == null || _catalogoBienes.Count == 0)
         {
-            Debug.LogWarning("[GameManager] GetBienPorNombre: el catálogo de bienes está vacío.");
             return null;
         }
 
@@ -190,7 +184,6 @@ public class GameManager : MonoBehaviour
                 return bien;
         }
 
-        Debug.LogWarning($"[GameManager] GetBienPorNombre: no se encontró BienData con nombre '{nombre}'.");
         return null;
     }
 
@@ -206,7 +199,6 @@ public class GameManager : MonoBehaviour
     public void SetDinero(long valor)
     {
         Dinero = valor >= 0 ? valor : 0;
-        Debug.Log($"[GameManager] Dinero establecido directamente a {Dinero:N0}");
     }
 
     /// <summary>
@@ -218,14 +210,9 @@ public class GameManager : MonoBehaviour
     /// <returns><c>true</c> si el pago o cobro se realizó; <c>false</c> si el tesoro es insuficiente.</returns>
     public bool ModificarDinero(long cantidad)
     {
-        if (Dinero + cantidad < 0)
-        {
-            Debug.LogWarning("[GameManager] Saldo insuficiente para realizar la operación.");
-            return false;
-        }
+        if (Dinero + cantidad < 0) return false;
 
         Dinero += cantidad;
-        Debug.Log($"[GameManager] Dinero actualizado: {Dinero:N0} ({(cantidad >= 0 ? "+" : string.Empty)}{cantidad:N0})");
         return true;
     }
 
@@ -238,7 +225,6 @@ public class GameManager : MonoBehaviour
     {
         UltimaCiudad = CiudadActual;
         CiudadActual = ciudad;
-        Debug.Log($"[GameManager] Ciudad actual: {ciudad.NombreCiudad}");
     }
 
     // ─── Almacén del jugador ─────────────────────────────────────────────────
@@ -267,26 +253,17 @@ public class GameManager : MonoBehaviour
         int actual = GetCantidadBien(bien);
         int nuevo = actual + cantidad;
 
-        if (nuevo < 0)
-        {
-            Debug.LogWarning($"[GameManager] Stock insuficiente de '{bien.nombre}' para retirar {-cantidad} unidades (disponible: {actual}).");
-            return false;
-        }
+        if (nuevo < 0) return false;
 
         // Comprobación de capacidad total de bodega (para la release; en beta es int.MaxValue)
         int totalActual = GetTotalUnidadesAlmacen();
-        if (cantidad > 0 && totalActual + cantidad > CapacidadAlmacen)
-        {
-            Debug.LogWarning($"[GameManager] Bodega llena. No se pueden cargar {cantidad} unidades de '{bien.nombre}'.");
-            return false;
-        }
+        if (cantidad > 0 && totalActual + cantidad > CapacidadAlmacen) return false;
 
         if (nuevo == 0)
             _almacen.Remove(bien);
         else
             _almacen[bien] = nuevo;
 
-        Debug.Log($"[GameManager] Almacén '{bien.nombre}': {actual} → {nuevo}");
         return true;
     }
 
@@ -356,20 +333,11 @@ public class GameManager : MonoBehaviour
     /// <param name="entradas">Lista de entradas del mercado. No puede ser <c>null</c>.</param>
     public void RegistrarMercadoCiudad(int idCiudad, List<EntradaMercado> entradas)
     {
-        if (idCiudad <= 0)
-        {
-            Debug.LogError($"[GameManager] RegistrarMercadoCiudad: idCiudad inválido ({idCiudad}).");
-            return;
-        }
+        if (idCiudad <= 0) return;
 
-        if (entradas == null)
-        {
-            Debug.LogError($"[GameManager] RegistrarMercadoCiudad: entradas null para ciudad {idCiudad}.");
-            return;
-        }
+        if (entradas == null) return;
 
         _estadoPartida.MercadosPorCiudad[idCiudad] = entradas;
-        Debug.Log($"[GameManager] Mercado registrado para ciudad {idCiudad} con {entradas.Count} bienes.");
     }
 
     /// <summary>
@@ -379,7 +347,6 @@ public class GameManager : MonoBehaviour
     public void LimpiarMercados()
     {
         _estadoPartida.MercadosPorCiudad.Clear();
-        Debug.Log("[GameManager] Mercados limpiados.");
     }
 
     /// <summary>
@@ -395,8 +362,6 @@ public class GameManager : MonoBehaviour
         // Spawn de flotas PNJ al iniciar partida nueva
         if (FlotaManager.Instance != null)
             FlotaManager.Instance.SpawnFlotasPNJIniciales(_ciudadesDisponibles);
-        else
-            Debug.LogWarning("[GameManager] InicializarMercadosDesdeAssets: FlotaManager.Instance es null, flotas PNJ no creadas.");
     }
 
     /// <summary>
@@ -408,11 +373,7 @@ public class GameManager : MonoBehaviour
     /// <param name="ciudades">Colección de <see cref="CiudadData"/> que se deben inicializar.</param>
     public void InicializarMercadosCiudades(IEnumerable<CiudadData> ciudades)
     {
-        if (ciudades == null)
-        {
-            Debug.LogError("[GameManager] InicializarMercadosCiudades: colección de ciudades null.");
-            return;
-        }
+        if (ciudades == null) return;
 
         foreach (CiudadData ciudad in ciudades)
         {
@@ -495,11 +456,7 @@ public class GameManager : MonoBehaviour
         int actual = GetCantidadAlmacenCiudad(idCiudad, idBien);
         int nuevo  = actual + delta;
 
-        if (nuevo < 0)
-        {
-            Debug.LogWarning($"[GameManager] Stock insuficiente en almacén ciudad={idCiudad}, bien={idBien}: actual={actual}, delta={delta}.");
-            return false;
-        }
+        if (nuevo < 0) return false;
 
         SetCantidadAlmacenCiudad(idCiudad, idBien, nuevo);
         _almacenCiudadDAO?.SetCantidad(idCiudad, idBien, nuevo);
@@ -525,7 +482,6 @@ public class GameManager : MonoBehaviour
     public void LimpiarAlmacenCiudades()
     {
         _almacenCiudad.Clear();
-        Debug.Log("[GameManager] Almacenes de ciudad limpiados.");
     }
 
     /// <summary>
@@ -535,11 +491,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void CargarAlmacenCiudadesDesdeDAO()
     {
-        if (_almacenCiudadDAO == null)
-        {
-            Debug.LogWarning("[GameManager] CargarAlmacenCiudadesDesdeDAO: DAO no inyectado.");
-            return;
-        }
+        if (_almacenCiudadDAO == null) return;
 
         if (_ciudadesDisponibles == null) return;
 
@@ -553,7 +505,6 @@ public class GameManager : MonoBehaviour
             _almacenCiudad[ciudad.IdCiudad] = entradas;
         }
 
-        Debug.Log("[GameManager] Almacenes de ciudad cargados desde DAO.");
     }
 
     /// <summary>
