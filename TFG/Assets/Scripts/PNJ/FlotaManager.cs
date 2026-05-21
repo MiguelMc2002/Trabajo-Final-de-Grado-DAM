@@ -22,6 +22,7 @@ public class FlotaManager : MonoBehaviour
 
     private readonly Dictionary<int, ComerciantePNJController> _controladores        = new();
     private readonly Dictionary<int, PirataPNJController>     _controladores_pirata = new();
+    private readonly Dictionary<int, PirataBrain>             _brainsPirata         = new();
 
     private int _diasDesdeUltimoReabastecimientoPirata = 0;
 
@@ -40,7 +41,6 @@ public class FlotaManager : MonoBehaviour
 
         SimulacionTiempo.OnNuevoDia += TickTodosLosControladores;
 
-        Debug.Log("[FlotaManager] Inicializado como singleton persistente.");
     }
 
     // ─── API pública ─────────────────────────────────────────────────────────
@@ -52,11 +52,7 @@ public class FlotaManager : MonoBehaviour
     /// <param name="flota">Datos de la flota a registrar. No puede ser <c>null</c>.</param>
     public void RegistrarFlota(FlotaRuntimeData flota)
     {
-        if (flota == null)
-        {
-            Debug.LogError("[FlotaManager] RegistrarFlota: el parámetro flota es null.");
-            return;
-        }
+        if (flota == null) return;
 
         FlotasPorId[flota.Id] = flota;
 
@@ -70,7 +66,6 @@ public class FlotaManager : MonoBehaviour
             _controladores[flota.Id] = new ComerciantePNJController(flota, this);
         }
 
-        Debug.Log($"[FlotaManager] Flota registrada: id={flota.Id}, propietario={flota.NombrePropietario}, pirata={flota.IsPirata}");
     }
 
     /// <summary>
@@ -125,9 +120,25 @@ public class FlotaManager : MonoBehaviour
         {
             if (!flota.IsPirata) continue;
             flota.ResetearParaReabastecimiento();
-            Debug.Log($"[FlotaManager] {flota.NombrePropietario} reabastecido.");
         }
     }
+
+    /// <summary>
+    /// Registra el <see cref="PirataBrain"/> asociado a una flota pirata.
+    /// Llamado desde <see cref="PirataBrainBootstrapper"/> tras construir el brain.
+    /// </summary>
+    /// <param name="flotaId">Identificador de la flota pirata.</param>
+    /// <param name="brain">Brain a registrar.</param>
+    public void RegistrarPirataBrain(int flotaId, PirataBrain brain)
+        => _brainsPirata[flotaId] = brain;
+
+    /// <summary>
+    /// Devuelve el <see cref="PirataBrain"/> asociado a la flota indicada,
+    /// o <c>null</c> si no hay ninguno registrado para ese identificador.
+    /// </summary>
+    /// <param name="flotaId">Identificador de la flota pirata.</param>
+    public PirataBrain ObtenerPirataBrain(int flotaId)
+        => _brainsPirata.TryGetValue(flotaId, out PirataBrain b) ? b : null;
 
     /// <summary>
     /// Reasigna el RutaCalculadorTilemap a todos los controladores pirata.
@@ -137,7 +148,6 @@ public class FlotaManager : MonoBehaviour
     {
         foreach (var kvp in _controladores_pirata)
             kvp.Value.AsignarRutaCalculador(rutaCalculador);
-        Debug.Log($"[FlotaManager] RutaCalculador asignado a {_controladores_pirata.Count} piratas.");
     }
 
     /// <summary>
@@ -151,11 +161,7 @@ public class FlotaManager : MonoBehaviour
     /// </param>
     public void SpawnFlotasPNJIniciales(IReadOnlyList<CiudadData> ciudades)
     {
-        if (ciudades == null || ciudades.Count == 0)
-        {
-            Debug.LogWarning("[FlotaManager] SpawnFlotasPNJIniciales: lista de ciudades vacía, no se crean flotas.");
-            return;
-        }
+        if (ciudades == null || ciudades.Count == 0) return;
 
         GameManager.Instance.InicializarMercadosCiudades(GameManager.Instance.CiudadesDisponibles);
 
@@ -193,7 +199,6 @@ public class FlotaManager : MonoBehaviour
             RegistrarFlota(flota);
         }
 
-        Debug.Log($"[FlotaManager] 18 flotas PNJ iniciales creadas distribuidas entre {ciudades.Count} ciudades.");
 
         var defPiratas = new (int id, string nombre)[]
         {
@@ -214,7 +219,6 @@ public class FlotaManager : MonoBehaviour
             RegistrarFlota(flota);
         }
 
-        Debug.Log("[FlotaManager] 3 flotas pirata creadas.");
     }
 
     /// <summary>
@@ -247,14 +251,9 @@ public class FlotaManager : MonoBehaviour
     public void CambiarEstado(int flotaId, EstadoFlotaPNJ nuevoEstado)
     {
         FlotaRuntimeData flota = ObtenerFlota(flotaId);
-        if (flota == null)
-        {
-            Debug.LogWarning($"[FlotaManager] CambiarEstado: no existe flota con id={flotaId}.");
-            return;
-        }
+        if (flota == null) return;
 
         flota.EstadoActual = nuevoEstado;
-        Debug.Log($"[FlotaManager] Flota {flotaId} → {nuevoEstado}");
     }
 
     private void OnDestroy()

@@ -5,6 +5,231 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 ---
 
+## Cambios Día 25
+
+### EncuentroNavalUI — campo nuevo
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_resultadoCombateUI` | `ResultadoCombateUI` (SerializeField) | Panel de resultados post-combate. Cuando está asignado, `MostrarResultado()` le delega la visualización del resultado en lugar de limitarse al log de diagnóstico. Cablear desde el Inspector o mediante `ConstruirCombateUIEditor`. |
+
+**Cambio de comportamiento:** `MostrarResultado()` ahora llama a `_resultadoCombateUI.MostrarResultado(_ultimoResultado)` si el campo está asignado. Los cuatro `Debug.Log` se mantienen como fallback de diagnóstico en ambos casos.
+
+**Simplificación de botones (post-día 25):** El panel pasa de 3 botones (Atacar / Huir / Defender) a 2 (Luchar / Huir). Se elimina `_btnDefender` y se renombra `_btnAtacar` → `_btnLuchar`. La lógica condicional de visibilidad por rol desaparece: ambos botones se muestran siempre. `ConstruirCombateUIEditor` genera `BtnLuchar` y `BtnHuir` en la `FilaBotones`.
+
+### PirataBrain (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/PNJ/PirataBrain.cs` |
+| **Tipo** | Clase pura C# (no MonoBehaviour) |
+| **Módulo** | PNJ — IA pirata asíncrona |
+| **Descripción** | Cerebro asíncrono de una flota pirata. Ejecuta dos Tasks en background con `CancellationToken`. El hilo principal (Update) solo envía snapshots y consume comandos — nunca bloquea. |
+
+#### Tipos de datos auxiliares (en el mismo archivo)
+
+| Tipo | Descripción |
+|---|---|
+| `FlotaSnapshot` | Struct inmutable con Id, PosX, PosY, IsPirata, EstaDestruida. Seguro entre hilos. |
+| `ComandoPirata` | Struct con Tipo, ObjetivoId y Ruta. Producido por el brain, consumido en Update. |
+| `ComandoPirataTipo` | Enum: `NuevaRuta`, `InterceptarObjetivo`, `Patrullar`. |
+
+#### API pública de PirataBrain
+
+| Miembro | Descripción |
+|---|---|
+| `ColaSalida` | `ConcurrentQueue<ComandoPirata>` — consumir con `TryDequeue` máximo 1 por frame. |
+| `PirataBrain(flotaId, radioDeteccion, grafo, casillasCiudad)` | Constructor. No inicia Tasks. |
+| `IniciarTasks()` | Lanza `BucleDeteccion` y `BucleNavegacion` como Tasks en background. |
+| `Detener()` | Cancela los Tasks. Llamar desde `OnDestroy`. |
+| `EnviarSnapshot(snapshots)` | Encola snapshots del mundo. Descarta los más antiguos si la cola supera 3 entradas. |
+| `ActualizarPosPropia(posicion, casilla)` | Actualiza la posición propia del pirata. Thread-safe. |
+
+#### Arquitectura de Tasks
+
+```
+Hilo principal (Update)
+  EnviarSnapshot() + ActualizarPosPropia()
+         │
+         ▼
+  ConcurrentQueue<FlotaSnapshot[]>  ←→  _posPropia / _casillaPropia
+         │
+  BucleDeteccion (Task 1, 150ms)
+  Detecta presas dentro de radioDeteccion
+         │ _tieneObjetivo / _posObjetivo
+  BucleNavegacion (Task 2, 500ms / ruta.Count×200ms)
+  Calcula A* puro sobre _grafoNavegacion
+         │
+  ConcurrentQueue<ComandoPirata> ColaSalida
+         │
+  Hilo principal: TryDequeue 1/frame → aplica ruta / cambia estado
+```
+
+#### PirataBrainBootstrapper (nuevo)
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Scripts/PNJ/PirataBrainBootstrapper.cs` |
+| **Tipo** | `MonoBehaviour` |
+| **Descripción** | Construye el grafo de navegación en el hilo principal (donde `Tilemap.GetSprite` es seguro), instancia un `PirataBrain` por cada flota pirata y los registra en `FlotaManager`. Detiene todos los brains en `OnDestroy`. |
+
+#### Cambios en archivos existentes
+
+| Archivo | Cambio |
+|---|---|
+| `FlotaManager` | `RegistrarPirataBrain(id, brain)` + `ObtenerPirataBrain(id)` + `_brainsPirata` dict. |
+| `FlotaIconoMapamundi.Update` | Bloque pirata: actualiza posición en brain, envía snapshot, consume hasta 1 comando/frame. |
+| `PirataPNJController.Tick` | Simplificado: solo ejecuta `TickHuyendo()`; detección y rutas las gestiona el brain. |
+
+---
+
+### Fixes
+
+| Bug | Archivo | Fix |
+|---|---|---|
+| Panel combate aparece en PNJ vs PNJ | `MapamundiController.cs` | `ComprobarProximidadCombate` distingue jugador vs PNJ comparando `Id` con `FlotaJugador.ComoFlotaRuntime().Id`; combates PNJ resueltos en silencio via `CombateNavalResolver.Resolver` sin disparar el evento de UI. |
+| Piratas spawneaban en casillas de ciudad | `PirataPNJController.cs` | `EsCasillaMarOCosta()` descarta cualquier casilla que coincida con `CiudadData.CasillaMapamundi` en el bucle de búsqueda de destino de patrulla. |
+
+---
+
+### ConstruirCombateUIEditor — nuevo script de editor
+
+| Campo | Valor |
+|---|---|
+| **Ruta** | `Assets/Editor/ConstruirCombateUIEditor.cs` |
+| **Tipo** | `static class` (solo editor, `#if UNITY_EDITOR`) |
+| **Módulo** | Editor — Utilidades de construcción de UI |
+| **Menú Unity** | `TFG → Construir UIs Combate Mapamundi` |
+| **Descripción** | Genera en la escena activa los GameObjects `PanelEncuentroNaval` y `PanelResultadoCombate` hijos del Canvas, añade los componentes `EncuentroNavalUI` y `ResultadoCombateUI` a un GO `CombateUIController`, cablea todos los campos `[SerializeField]` de ambos componentes entre sí y asigna posiciones de fallback a los piratas en `FlotaManager`. |
+
+#### Método principal
+
+| Miembro | Descripción |
+|---|---|
+| `BuildCombateUI()` | Punto de entrada del menú. Ejecuta las subtareas 2A–2D en orden y marca la escena como modificada. |
+
+#### Estructura generada en escena
+
+```
+Canvas
+├── PanelEncuentroNaval          (Image marrón, inactivo por defecto)
+│   ├── TxtNarrativo             (TMP, blanco, 16px, wrapping)
+│   └── FilaBotones              (HLG)
+│       ├── BtnAtacar            (Button dorado, 140×45)
+│       ├── BtnHuir              (Button dorado, 140×45)
+│       └── BtnDefender          (Button dorado, 140×45)
+├── PanelResultadoCombate        (Image casi negro, inactivo por defecto)
+│   ├── TxtTitulo                (TMP, dorado, 24px, bold)
+│   ├── TxtNarrativo             (TMP, blanco, 14px, wrapping)
+│   ├── TxtBotin                 (TMP, amarillo, 13px, h=80)
+│   ├── TxtBajas                 (TMP, rojizo, 13px, h=60)
+│   └── BtnContinuar             (Button verde, 50px, ancho completo)
+└── CombateUIController
+    ├── EncuentroNavalUI         (todos los campos cableados)
+    └── ResultadoCombateUI       (todos los campos cableados)
+```
+
+---
+
+### FlotaIconoMapamundi — cambios Día 25
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `EnCombate` | `bool` (get/set) | Cuando true, congela el movimiento del icono sin pausar el juego. Se activa durante resolución de combate PNJ y se desactiva al terminar. |
+| `HuirAlPuertoMasCercano()` | `public void` | Calcula la ciudad más cercana en casillas, traza ruta con A* y cambia estado a `HuyendoAPuerto`. Llamar tras combate PNJ cuando el defensor sobrevive. |
+| `BucleDeteccionContinua()` | `private IEnumerator` | Coroutine exclusiva de piratas. Pulsa cada 0.1s mientras `Patrullando`. Si detecta flota no-pirata en radio 3u mundo, llama a `ComprobarProximidadCombate` y se suspende con `WaitUntil` hasta volver a `Patrullando`. |
+| `_coroutineDeteccion` | `Coroutine` | Referencia a la coroutine de detección, detenida en `OnDestroy`. |
+
+---
+
+### MapamundiController — cambios Día 25
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_iconosPorId` | `Dictionary<int, FlotaIconoMapamundi>` | Registro de iconos por Id de flota. Poblado en `SpawnIconosFlotas` y `SpawnIconoFlotaJugador`. |
+| `ObtenerIcono(int flotaId)` | `private FlotaIconoMapamundi` | Devuelve el icono asociado al Id, o null si no existe. |
+| `ComprobarProximidadCombate` | — | Ahora pausa ambos iconos (`EnCombate=true`) antes de resolver. Tras resolver: pirata vuelve a `Patrullando`, comerciante superviviente llama a `HuirAlPuertoMasCercano()`, comerciante destruido desactiva su GameObject. |
+
+---
+
+### PirataBrain — fixes Día 25
+
+| Fix | Descripción |
+|---|---|
+| Compromiso con objetivo | `BucleDeteccion` tiene dos ramas: con objetivo activo solo actualiza `_posObjetivo` o lo abandona si `dist > 12f` o `EstaDestruida`; sin objetivo busca el comerciante más cercano en radio. No cambia de presa mientras tiene una comprometida. |
+| Radio de detección | Reducido de 5f a 2f en `PirataBrainBootstrapper`. Factor de conversión casilla→mundo cambiado de `×1.5f` a `×1.0f`. Radio efectivo = 2 unidades mundo. |
+| Ruta de persecución obsoleta | `BucleNavegacion` recalcula la ruta hacia `_posObjetivo` actual cada 300ms, vaciando `ColaSalida` antes de encolar la nueva para evitar acumulación de rutas obsoletas. Guard `ContainsKey` evita A* hacia casillas fuera del grafo. |
+
+---
+
+### TO-DOs abiertos tras Día 25
+
+- [ ] Movimiento de flota del jugador en mapamundi (click para navegar) — Día 26
+- [ ] Conectar stats de BarcoJugador a FlotaRuntimeData del jugador — Día 26
+- [ ] Aleatorizar stats de flotas PNJ comerciantes y piratas — Día 26
+- [ ] Pulido UI Cinzel + colores Astillero y Taberna — pendiente
+- [ ] Audio mínimo — Día 28
+- [ ] Build final — Día 32
+
+---
+
+## Sesión Día 25 — Resumen completo (22/05/2026)
+
+**Rama:** `dia-25`
+
+### Objetivos completados
+
+| Tarea | Estado |
+|---|---|
+| EncuentroNavalUI conectada a ResultadoCombateUI | ✅ |
+| Panel encuentro simplificado a Luchar/Huir | ✅ |
+| Editor ConstruirCombateUIEditor | ✅ |
+| Combate naval end-to-end | ✅ |
+| Combate PNJ vs PNJ silencioso | ✅ |
+| Piratas evitan casillas de ciudad | ✅ |
+| PirataBrain con Tasks paralelos | ✅ |
+| Detección continua por coroutine | ✅ |
+| Flotas se detienen durante combate | ✅ |
+| Comerciante superviviente huye al puerto | ✅ |
+| Pulido UI Cinzel + colores | ⏳ Aplazado Día 26 |
+
+### Archivos nuevos
+
+- `Assets/Scripts/PNJ/PirataBrain.cs`
+- `Assets/Scripts/PNJ/PirataBrainBootstrapper.cs`
+- `Assets/Editor/ConstruirCombateUIEditor.cs`
+
+### Archivos modificados
+
+- `Assets/Scripts/Combate/EncuentroNavalUI.cs`
+- `Assets/Scripts/Mapamundi/FlotaIconoMapamundi.cs`
+- `Assets/Scripts/Navegacion/MapamundiController.cs`
+- `Assets/Scripts/PNJ/PirataPNJController.cs`
+- `Assets/Scripts/PNJ/FlotaManager.cs`
+- `FEATURES.md`
+
+### Estado del proyecto al final del Día 25
+
+| Módulo | Estado |
+|---|---|
+| Motor económico | ✅ Completo |
+| Persistencia SQLite | ✅ Completo |
+| IA comerciantes PNJ | ✅ Completo |
+| Mapamundi hexagonal A* | ✅ Completo |
+| Piratas — IA con Tasks paralelos | ✅ Completo |
+| Combate naval automático + UI | ✅ Completo |
+| Combate PNJ silencioso + huida al puerto | ✅ Completo |
+| Patrón Decorator — barcos | ✅ Completo |
+| Astillero — lógica + UI | ✅ Completo |
+| Taberna — lógica + UI | ✅ Completo |
+| Panel flota — Ciudad + Mapamundi | ✅ Completo |
+| FlotaJugador navegable en mapamundi | ⏳ Día 26 |
+| Pulido UI | ⏳ Día 26 |
+| Audio | ⏳ Día 28 |
+| Build final | ⏳ Día 32 |
+
+---
+
 ## GameManager
 
 | Campo | Valor |

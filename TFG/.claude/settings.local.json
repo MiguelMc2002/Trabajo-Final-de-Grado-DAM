@@ -17,7 +17,8 @@
       "PowerShell($page = Invoke-WebRequest -Uri \"https://www.sqlite.org/download.html\" -UseBasicParsing; $matches = [regex]::Matches\\($page.Content, 'sqlite-dll-win-x64[^\"]+\\\\.zip'\\); $matches | ForEach-Object { $_.Value } | Select-Object -First 5)",
       "Bash(git ls-tree *)",
       "Bash(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\tfg\\\\FEATURES.md\")",
-      "Bash(Measure-Object -Line)"
+      "Bash(Measure-Object -Line)",
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\FEATURES.md\" | Measure-Object -Line\\).Lines)"
     ]
   }
 }

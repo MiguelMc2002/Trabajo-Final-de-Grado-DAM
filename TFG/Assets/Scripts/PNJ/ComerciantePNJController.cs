@@ -78,12 +78,9 @@ public class ComerciantePNJController
 
         if (_flota.TieneCarga())
         {
-            Debug.LogWarning($"[PNJ] {_flota.NombrePropietario} tiene carga sin vender en puerto. Redirigiendo a Comerciando.");
             CambiarEstado(EstadoFlotaPNJ.Comerciando);
             return;
         }
-
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} evaluando mercado en ciudad {_flota.CiudadOrigenId}...");
 
         // ── PASO 1: Seleccionar bien y destino más rentable ───────────────────
 
@@ -139,12 +136,10 @@ public class ComerciantePNJController
 
             if (ciudadesAlternativas.Count == 0)
             {
-                Debug.Log($"[PNJ] {_flota.NombrePropietario} no hay ciudades alternativas disponibles.");
                 return;
             }
 
             var destino = ciudadesAlternativas[UnityEngine.Random.Range(0, ciudadesAlternativas.Count)];
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} sin ruta rentable en ciudad {_flota.CiudadOrigenId}, viajando en vacío a ciudad {destino.IdCiudad}.");
 
             {
                 RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
@@ -191,13 +186,9 @@ public class ComerciantePNJController
 
             if (ciudadConStock == null) return;
 
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} sin stock de bien {idBienSeleccionado} en ciudad {_flota.CiudadOrigenId}, viajando en vacío a ciudad {ciudadConStock.IdCiudad}.");
-
             RutaCalculadorTilemap calc = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
             CiudadData origen = ciudadesDisponibles.FirstOrDefault(c => c.IdCiudad == _flota.CiudadOrigenId);
             int dias = 3;
-            if (origen == null)
-                Debug.LogWarning($"[PNJ] {_flota.NombrePropietario} CiudadData no encontrada para id={_flota.CiudadOrigenId}; se usará diasViaje=3.");
             if (calc != null && origen != null)
             {
                 List<Vector3Int> ruta = calc.CalcularRutaConRuido(origen.CasillaMapamundi, ciudadConStock.CasillaMapamundi);
@@ -213,16 +204,12 @@ public class ComerciantePNJController
         // ── PASO 3: Compra simulada ───────────────────────────────────────────
 
         if (entrada.StockActual < cantidad)
-        {
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} falló compra de bien {idBienSeleccionado}.");
             return;
-        }
 
         entrada.StockActual -= cantidad;
         GameManager.Instance.NotificarMercadoActualizado(_flota.CiudadOrigenId, entrada.Bien);
 
         _flota.Carga[idBienSeleccionado] = cantidad;
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} compró {cantidad}x bien {idBienSeleccionado} a {entrada.PrecioActual}g en ciudad {_flota.CiudadOrigenId}.");
 
         // ── PASO 4: Iniciar viaje ─────────────────────────────────────────────
 
@@ -232,15 +219,10 @@ public class ComerciantePNJController
                 .FirstOrDefault(c => c.IdCiudad != _flota.CiudadOrigenId);
 
             if (alternativa == null)
-            {
-                Debug.LogWarning($"[PNJ] {_flota.NombrePropietario} no encontró ciudad destino alternativa.");
                 return;
-            }
 
             mejorCiudadDestinoId = alternativa.IdCiudad;
         }
-
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} partirá hacia ciudad {mejorCiudadDestinoId}.");
 
         {
             RutaCalculadorTilemap calculador = Object.FindFirstObjectByType<RutaCalculadorTilemap>();
@@ -270,7 +252,6 @@ public class ComerciantePNJController
             _flota.CiudadOrigenId    = _flota.CiudadDestinoId;
             if (_historialCiudades.Count >= 2) _historialCiudades.Dequeue();
             _historialCiudades.Enqueue(_flota.CiudadDestinoId);
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} ha llegado a ciudad {_flota.CiudadDestinoId}.");
 
             if (_flota.IsPirata)
                 CambiarEstado(EstadoFlotaPNJ.Patrullando);
@@ -285,7 +266,6 @@ public class ComerciantePNJController
 
         if (!_flota.TieneCarga())
         {
-            Debug.Log($"[PNJ] {_flota.NombrePropietario} llegó sin carga a ciudad {_flota.CiudadOrigenId}.");
             CambiarEstado(EstadoFlotaPNJ.EnPuerto);
             return;
         }
@@ -300,25 +280,14 @@ public class ComerciantePNJController
 
             if (entrada == null)
             {
-                Debug.Log($"[PNJ] bien {idBien} no existe en mercado de ciudad {_flota.CiudadOrigenId}, descartando.");
                 bienesParaEliminar.Add(idBien);
                 continue;
             }
 
             _precioCompra.TryGetValue(idBien, out double precioCompraRegistrado);
 
-            if (entrada.PrecioActual > precioCompraRegistrado)
-            {
-                entrada.StockActual += cantidad;
-                GameManager.Instance.NotificarMercadoActualizado(_flota.CiudadOrigenId, entrada.Bien);
-                Debug.Log($"[PNJ] {_flota.NombrePropietario} vendió {cantidad}x bien {idBien} a {entrada.PrecioActual}g en ciudad {_flota.CiudadOrigenId}.");
-            }
-            else
-            {
-                Debug.Log($"[PNJ] {_flota.NombrePropietario} vendió con pérdidas bien {idBien}: compró a {precioCompraRegistrado}g, precio actual {entrada.PrecioActual}g. Vendiendo igualmente para liberar bodega.");
-                entrada.StockActual += cantidad;
-                GameManager.Instance.NotificarMercadoActualizado(_flota.CiudadOrigenId, entrada.Bien);
-            }
+            entrada.StockActual += cantidad;
+            GameManager.Instance.NotificarMercadoActualizado(_flota.CiudadOrigenId, entrada.Bien);
 
             bienesParaEliminar.Add(idBien);
         }
@@ -336,7 +305,6 @@ public class ComerciantePNJController
     {
         EstadoFlotaPNJ siguienteEstado = _flota.IsPirata ? EstadoFlotaPNJ.Patrullando : EstadoFlotaPNJ.EnPuerto;
         CambiarEstado(siguienteEstado);
-        Debug.Log($"[PNJ] {_flota.NombrePropietario} dejó de huir y se reagrupó.");
     }
 
     private void TickPatrullaPirata()
@@ -345,7 +313,6 @@ public class ComerciantePNJController
         _flota.CiudadDestinoId = -1;
         _flota.RutaActualTilemap = new System.Collections.Generic.List<UnityEngine.Vector3Int>();
         CambiarEstado(EstadoFlotaPNJ.Patrullando);
-        Debug.Log($"[PNJ-Pirata] {_flota.NombrePropietario} sale a patrullar.");
         // TODO Día 21: ruta real hacia casillas de mar con sesgo a rutas comerciales transitadas
     }
 
@@ -415,11 +382,9 @@ public class ComerciantePNJController
 
         int indice = idBien - 1;
         if (indice < 0 || indice >= GameManager.Instance.CatalogoBienes.Count)
-        {
-            Debug.LogWarning($"[PNJ] ObtenerEntrada: idBien={idBien} fuera de rango (catálogo tiene {GameManager.Instance.CatalogoBienes.Count} bienes).");
             return null;
-        }
         BienData bien = GameManager.Instance.CatalogoBienes[indice];
         return entradas.FirstOrDefault(e => e.Bien == bien);
     }
 }
+

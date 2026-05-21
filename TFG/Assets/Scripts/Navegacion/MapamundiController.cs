@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -37,6 +38,9 @@ public class MapamundiController : MonoBehaviour
 
     private FlotaIconoMapamundi _iconoFlotaJugador;
 
+    /// <summary>Índice de iconos por Id de flota para pausarlos o redirigirlos durante combates.</summary>
+    private readonly Dictionary<int, FlotaIconoMapamundi> _iconosPorId = new();
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
@@ -58,11 +62,7 @@ public class MapamundiController : MonoBehaviour
     /// </summary>
     private void SpawnIconosFlotas()
     {
-        if (FlotaManager.Instance == null)
-        {
-            Debug.LogWarning("[MapamundiController] FlotaManager.Instance es null — no se crean iconos de flotas.");
-            return;
-        }
+        if (FlotaManager.Instance == null) return;
 
         foreach (FlotaRuntimeData flota in FlotaManager.Instance.ObtenerTodasLasFlotas())
         {
@@ -115,6 +115,7 @@ public class MapamundiController : MonoBehaviour
                 }
             }
 
+            _iconosPorId[flota.Id] = icono;
             icono.InicializarIcono();
         }
     }
@@ -159,11 +160,7 @@ public class MapamundiController : MonoBehaviour
         if (ciudad == null)
         {
             var ciudades = GameManager.Instance.CiudadesDisponibles;
-            if (ciudades == null || ciudades.Count == 0)
-            {
-                Debug.LogWarning("[MapamundiController] No hay ciudades disponibles — no se crea el icono de flota del jugador.");
-                return;
-            }
+            if (ciudades == null || ciudades.Count == 0) return;
             ciudad = ciudades[0];
         }
 
@@ -185,6 +182,8 @@ public class MapamundiController : MonoBehaviour
         icono.Inicializar(tilemap, rutaCalculador);
         icono.InicializarIcono();
 
+        FlotaRuntimeData flotaRuntime = GameManager.Instance.FlotaJugador.ComoFlotaRuntime();
+        _iconosPorId[flotaRuntime.Id] = icono;
         _iconoFlotaJugador = icono;
     }
 
@@ -213,13 +212,8 @@ public class MapamundiController : MonoBehaviour
     /// <param name="ciudadDestino">Datos del puerto al que viaja el jugador.</param>
     public void ViajarACiudad(CiudadData ciudadDestino)
     {
-        if (ciudadDestino == null)
-        {
-            Debug.LogError("[MapamundiController] ViajarACiudad recibió un CiudadData nulo.");
-            return;
-        }
+        if (ciudadDestino == null) return;
 
-        Debug.Log($"[MapamundiController] Viajando a {ciudadDestino.NombreCiudad}...");
         GameManager.Instance.EstablecerCiudadActual(ciudadDestino);
         SceneController.IrACiudad();
     }
@@ -232,12 +226,33 @@ public class MapamundiController : MonoBehaviour
         SceneController.IrAMenuPrincipal();
     }
 
+    // ─── Helpers internos ────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Devuelve el icono de mapamundi asociado a la flota indicada,
+    /// o <c>null</c> si no está registrado.
+    /// </summary>
+    /// <param name="flotaId">Identificador de la flota.</param>
+    private FlotaIconoMapamundi ObtenerIcono(int flotaId)
+        => _iconosPorId.TryGetValue(flotaId, out var icono) ? icono : null;
+
     // ─── Detección y resolución de combate ───────────────────────────────────
 
     /// <summary>
     /// Comprueba si la flota que acaba de moverse está lo bastante cerca de una flota
-    /// enemiga (pirata vs. no-pirata) y, si es así, dispara <see cref="CombateEventos.OnCombateIniciado"/>
-    /// para que la UI de encuentro gestione la resolución.
+    /// enemiga (pirata vs. no-pirata) dentro del umbral de 1,5 unidades de mundo.
+    /// <list type="bullet">
+    ///   <item><description>
+    ///     Si el jugador está involucrado (atacante o defensor coincide con
+    ///     <see cref="FlotaJugador"/>), dispara <see cref="CombateEventos.OnCombateIniciado"/>
+    ///     para que <see cref="EncuentroNavalUI"/> muestre el panel de decisión.
+    ///   </description></item>
+    ///   <item><description>
+    ///     Si es un combate PNJ vs PNJ, resuelve en silencio mediante
+    ///     <see cref="CombateNavalResolver.Resolver"/> y vuelca el resultado al log
+    ///     sin interrumpir al jugador.
+    ///   </description></item>
+    /// </list>
     /// Solo se considera un combate por llamada; el primero encontrado interrumpe el bucle.
     /// </summary>
     /// <param name="flotaQueSeMovio">Flota que acaba de terminar un segmento de ruta.</param>
@@ -255,7 +270,49 @@ public class MapamundiController : MonoBehaviour
 
             FlotaRuntimeData atacante = flotaQueSeMovio.IsPirata ? flotaQueSeMovio : otra;
             FlotaRuntimeData defensor = flotaQueSeMovio.IsPirata ? otra : flotaQueSeMovio;
-            CombateEventos.DispararCombate(atacante, defensor);
+
+            // Solo mostrar UI de combate si el jugador está involucrado
+            FlotaRuntimeData flotaJugador = GameManager.Instance?.FlotaJugador?.ComoFlotaRuntime();
+            bool jugadorInvolucrado = flotaJugador != null &&
+                (atacante.Id == flotaJugador.Id || defensor.Id == flotaJugador.Id);
+
+            if (jugadorInvolucrado)
+            {
+                CombateEventos.DispararCombate(atacante, defensor);
+            }
+            else
+            {
+                // Pausar movimiento de ambas flotas durante la resolución
+                FlotaIconoMapamundi iconoAtacante = ObtenerIcono(atacante.Id);
+                FlotaIconoMapamundi iconoDefensor = ObtenerIcono(defensor.Id);
+                if (iconoAtacante != null) iconoAtacante.EnCombate = true;
+                if (iconoDefensor != null) iconoDefensor.EnCombate = true;
+
+                ResultadoCombate resultado = CombateNavalResolver.Resolver(
+                    atacante, defensor, jugadorEsAtacante: false);
+                Debug.Log($"[Combate PNJ] {atacante.NombrePropietario} vs " +
+                          $"{defensor.NombrePropietario} — {resultado.TextoNarrativo}");
+
+                // Pirata vuelve a patrullar; el brain lo retomará
+                if (iconoAtacante != null)
+                {
+                    iconoAtacante.EnCombate = false;
+                    atacante.EstadoActual = EstadoFlotaPNJ.Patrullando;
+                    atacante.RutaActualTilemap?.Clear();
+                }
+
+                if (iconoDefensor != null)
+                {
+                    if (!defensor.EstaDestruida())
+                        iconoDefensor.HuirAlPuertoMasCercano();
+                    else
+                    {
+                        iconoDefensor.EnCombate = false;
+                        iconoDefensor.gameObject.SetActive(false);
+                    }
+                }
+            }
+
             break;
         }
     }
