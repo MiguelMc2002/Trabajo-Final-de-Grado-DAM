@@ -49,9 +49,12 @@ public class MarcadorCiudad : MonoBehaviour
     /// </summary>
     private void OnMouseDown()
     {
-        Debug.Log($"[MarcadorCiudad] Click detectado en {DatosCiudad?.NombreCiudad ?? "ciudad sin datos"}");
-        if (_controlador == null || DatosCiudad == null) return;
-        _controlador.ViajarACiudad(DatosCiudad);
+        if (DatosCiudad == null) return;
+        NavegacionJugadorController nav = NavegacionJugadorController.Instance;
+        if (nav != null)
+            nav.SolicitarEntradaCiudad(DatosCiudad);
+        else if (_controlador != null)
+            _controlador.ViajarACiudad(DatosCiudad);
     }
 
     /// <summary>

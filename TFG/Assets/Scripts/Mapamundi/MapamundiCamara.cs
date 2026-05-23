@@ -65,11 +65,19 @@ public class MapamundiCamara : MonoBehaviour
         // Iniciar arrastre con clic medio O clic izquierdo
         if (Input.GetMouseButtonDown(2) || Input.GetMouseButtonDown(0))
         {
-            // Para clic izquierdo comprobar que no hay ciudad/flota bajo el ratón
             if (Input.GetMouseButtonDown(0))
             {
-                RaycastHit2D hit = Physics2D.Raycast(_camara.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-                if (hit.collider != null) return; // hay un objeto clickable debajo
+                Vector3 posM = _camara.ScreenToWorldPoint(Input.mousePosition);
+                posM.z = 0f;
+                RaycastHit2D hit = Physics2D.Raycast(posM, Vector2.zero);
+                Debug.Log($"[Camara] Raycast en {posM} — hit: {hit.collider?.gameObject.name ?? "NADA"}");
+                if (hit.collider != null)
+                {
+                    FlotaIconoMapamundi icono = hit.collider.GetComponent<FlotaIconoMapamundi>();
+                    if (icono != null && !icono._esJugador)
+                        FlotaIconoMapamundi.InvocarFlotaClickada(icono.Flota);
+                    return;
+                }
             }
             _arrastrando    = true;
             _origenArrastre = _camara.ScreenToWorldPoint(Input.mousePosition);

@@ -5,6 +5,97 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 ---
 
+## Cambios Día 26
+
+### NavegacionJugadorController — clase nueva
+**Ruta:** `Assets/Scripts/Jugador/NavegacionJugadorController.cs`
+**Tipo:** MonoBehaviour (singleton)
+**Módulo:** Jugador — Navegación
+**Descripción:** Gestiona navegación del jugador en mapamundi. Click derecho mueve la flota calculando ruta A*. Redirección en cualquier momento. Flag `_recienSalidoDeCiudad` evita que el pop-up salte al salir de ciudad. Tecla M navega a última ciudad visitada.
+**API pública:**
+- `Instance` — singleton
+- `SolicitarEntradaCiudad(CiudadData)` — llamado por MarcadorCiudad
+- `MarcarSalidaDeCiudad()` — llamado por PopUpEntradaCiudad.AlContinuar()
+
+---
+
+### PopUpEntradaCiudad — clase nueva
+**Ruta:** `Assets/Scripts/UI/PopUpEntradaCiudad.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — Mapamundi
+**Descripción:** Panel modal al llegar a casilla de ciudad. Pausa simulación con `PausarPorMenu()`. Botón Entrar carga escena Ciudad. Botón Continuar llama `MarcarSalidaDeCiudad()` y reanuda.
+**API pública:**
+- `Mostrar(CiudadData)` — activa panel y pausa
+- `Ocultar()` — desactiva y reanuda
+
+---
+
+### PanelInspeccionFlota — clase nueva
+**Ruta:** `Assets/Scripts/UI/PanelInspeccionFlota.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — Mapamundi
+**Descripción:** Panel de inspección/debug que muestra los `BarcoJugador` de una flota PNJ. Se suscribe a `FlotaIconoMapamundi.OnFlotaClickada` en `Awake` (no `OnEnable`) para recibir eventos aunque esté inactivo. Genera una fila por barco con 7 columnas: Nombre, Casco, Vida, Velocidad, Maniobra, Carga, Fuerza.
+**⚠️ TODO PRIORITARIO:** el método `InvocarFlotaClickada` en `FlotaIconoMapamundi` no está disparando el evento correctamente — panel no se abre al clickar iconos. Pendiente fix Día 27.
+**API pública:**
+- `Mostrar(FlotaRuntimeData)` — genera filas y activa panel
+- `Ocultar()` — desactiva panel
+
+---
+
+### ConstruirPanelInspeccionFlotaEditor — clase nueva
+**Ruta:** `Assets/Editor/ConstruirPanelInspeccionFlotaEditor.cs`
+**Tipo:** static class editor
+**Módulo:** Herramientas de editor
+**Descripción:** Construye y cablea `PanelInspeccionFlota` en la escena Mapamundi. Crea prefab `FilaBarcoInspeccion` con 7 columnas TextMeshPro. Menú: **TFG → Construir Panel Inspección Flota**.
+
+---
+
+### FlotaRuntimeData — cambios Día 26
+- Añadido campo `[NonSerialized] public List<BarcoJugador> BarcosFlota` — lista de barcos reales del Decorator que componen la flota. Rellenada por `FlotaManager.AleatoriarStatsFlota()`.
+- `VidaMax`: añadido setter público
+- `ManiobrabilidadFlota`: añadido setter público
+
+### FlotaIconoMapamundi — cambios Día 26
+- Añadido evento estático `OnFlotaClickada` (`Action<FlotaRuntimeData>`)
+- Añadido evento estático `OnWaypointJugadorCruzado` (`Action<Vector3Int>`)
+- Añadido campo `_esJugador` (`public bool`) — true si `Id == -1`
+- Añadido método `AsignarRuta(List<Vector3Int>)` — redirige flota del jugador cancelando ruta anterior
+- Añadido método estático `InvocarFlotaClickada(FlotaRuntimeData)` — permite disparar el evento desde fuera de la clase
+- Añadido `CircleCollider2D` en `InicializarIcono` (radio 0.3f) para detección de click
+- **⚠️ TODO PRIORITARIO:** `InvocarFlotaClickada` no dispara el evento al clickar — pendiente fix Día 27
+
+### MapamundiController — cambios Día 26
+- Añadida propiedad pública `IconoFlotaJugador`
+- Añadido método `ObtenerCiudadEnCasilla(Vector3Int)`
+- Añadido campo `panelInspeccionFlota` `[SerializeField]`
+- `CircleCollider2D` añadido por código a cada icono de flota en `SpawnIconosFlotas()` (radio 0.3f)
+
+### FlotaManager — cambios Día 26
+- Añadido campo `[SerializeField] _cascosParaPNJ` (`List<CascoDecorador>`)
+- Añadido método `GenerarBarcosAleatorios(bool)` — crea 3–5 `BarcoJugador` con cascos del Decorator
+- Añadido método `AplicarStatsBarcos(FlotaRuntimeData, List<BarcoJugador>)` — deriva stats del runtime desde barcos reales
+- `AleatoriarStatsFlota()` ahora usa barcos reales del Decorator; fallback a floats aleatorios si `_cascosParaPNJ` no está asignado
+
+### FlotaJugador — cambios Día 26
+- `ComoFlotaRuntime()` reescrito: calcula stats desde `BarcoJugador` reales (vida suma, fuerza suma, velocidad MIN)
+- Fallback: stats predeterminadas de una Cog estándar si `Barcos` está vacío (temporal hasta implementar astillero)
+
+### MapamundiCamara — cambios Día 26
+- `GestionarArrastre()` detecta `FlotaIconoMapamundi` bajo el cursor con `Physics2D.Raycast` y dispara `OnFlotaClickada` si hay hit
+
+### MarcadorCiudad — cambios Día 26
+- `OnMouseDown()` delega en `NavegacionJugadorController.SolicitarEntradaCiudad()` en lugar de ir directo a `ViajarACiudad()`
+
+---
+
+### TODO PRIORITARIO Día 27
+- [ ] Fix `InvocarFlotaClickada` en `FlotaIconoMapamundi` — el panel de inspección no se abre al clickar iconos
+- [ ] Aumentar radio `CircleCollider2D` de 0.3f a 0.6f para área de click más generosa
+- [ ] Asignar `_cascosParaPNJ` en Inspector del `FlotaManager` (MenuPrincipal) con los 4 `CascoDecorador`
+- [ ] Astillero — construir barco funcional (deuda desde Día 22)
+
+---
+
 ## Cambios Día 25
 
 ### EncuentroNavalUI — campo nuevo

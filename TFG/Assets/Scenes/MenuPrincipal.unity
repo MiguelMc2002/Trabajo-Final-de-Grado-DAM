@@ -10535,6 +10535,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8be28f876ca651a459f83d4f77cacbf9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlotaManager
+  _cascosParaPNJ:
+  - {fileID: 11400000, guid: 472a1b830b44e1b458e80961c7e70e48, type: 2}
+  - {fileID: 11400000, guid: 6983019275509bd4cb365f59f82f4945, type: 2}
+  - {fileID: 11400000, guid: a56c3bf174e12d64bac9f8dc7620a7c9, type: 2}
+  - {fileID: 11400000, guid: be06070897070b24b91bed8d4a5c13b7, type: 2}
 --- !u!4 &1968487069
 Transform:
   m_ObjectHideFlags: 0

@@ -26,7 +26,11 @@ public class FlotaRuntimeData
     public bool IsPirata => _isPirata;
 
     /// <summary>Puntos de vida máximos de la flota, proporcionales al número inicial de barcos.</summary>
-    public float VidaMax => _vidaMax;
+    public float VidaMax
+    {
+        get => _vidaMax;
+        set => _vidaMax = value;
+    }
 
     /// <summary>Puntos de vida actuales de la flota. Se reduce al recibir daño en combate.</summary>
     public float VidaActual
@@ -50,7 +54,11 @@ public class FlotaRuntimeData
     }
 
     /// <summary>Maniobrabilidad de la flota, influye en capturas de barco y maniobras evasivas.</summary>
-    public float ManiobrabilidadFlota => _maniobrabilidadFlota;
+    public float ManiobrabilidadFlota
+    {
+        get => _maniobrabilidadFlota;
+        set => _maniobrabilidadFlota = value;
+    }
 
     /// <summary>Habilidad táctica del capitán. Coincide con <see cref="InteligenciaComercial"/> al crear la flota.</summary>
     public float HabilidadCapitan
@@ -173,6 +181,8 @@ public class FlotaRuntimeData
 
     /// <summary>Índice del siguiente waypoint dentro de <see cref="RutaActual"/>. Se recalcula al cargar.</summary>
     [System.NonSerialized] public int IndiceWaypointActual;
+    [System.NonSerialized] public List<BarcoJugador> BarcosFlota = new List<BarcoJugador>();
+
 
     /// <summary>
     /// Reduce la vida de la flota en la cantidad indicada, sin bajar de cero.

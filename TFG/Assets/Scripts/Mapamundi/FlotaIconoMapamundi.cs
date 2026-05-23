@@ -19,6 +19,24 @@ public class FlotaIconoMapamundi : MonoBehaviour
     /// </summary>
     public bool EnCombate { get; set; }
 
+    public bool _esJugador;
+
+    /// <summary>
+    /// Se dispara cada vez que la flota del jugador cruza el centro de un waypoint.
+    /// El parámetro es la casilla offset que acaba de cruzarse.
+    /// NavegacionJugadorController se suscribe para detectar llegadas a ciudad.
+    /// </summary>
+    public static event System.Action<Vector3Int> OnWaypointJugadorCruzado;
+
+    /// <summary>
+    /// Se dispara cuando el jugador hace click derecho sobre el icono de una flota PNJ.
+    /// El parámetro es la FlotaRuntimeData de la flota clickada.
+    /// PanelInspeccionFlota se suscribe para mostrar los barcos de esa flota.
+    /// </summary>
+    public static event System.Action<FlotaRuntimeData> OnFlotaClickada;
+
+    private Collider2D _collider;
+
     public void Inicializar(Tilemap t, RutaCalculadorTilemap r)
     {
         _tilemap        = t;
@@ -33,6 +51,39 @@ public class FlotaIconoMapamundi : MonoBehaviour
 
         if (Flota.IsPirata)
             _coroutineDeteccion = StartCoroutine(BucleDeteccionContinua());
+
+        _esJugador = Flota != null && !Flota.IsPirata && Flota.Id == -1;
+
+        _collider = gameObject.GetComponent<Collider2D>();
+        if (_collider == null)
+        {
+            CircleCollider2D col = gameObject.AddComponent<CircleCollider2D>();
+            col.radius = 0.3f;
+            _collider  = col;
+        }
+    }
+
+    private void OnMouseDown()
+    {
+        if (_esJugador) return;
+        FlotaIconoMapamundi.OnFlotaClickada?.Invoke(Flota);
+    }
+
+    /// <summary>Permite invocar OnFlotaClickada desde fuera de la clase.</summary>
+    public static void InvocarFlotaClickada(FlotaRuntimeData flota) => OnFlotaClickada?.Invoke(flota);
+
+    /// <summary>
+    /// Asigna una nueva ruta al icono, cancelando la ruta anterior inmediatamente.
+    /// Permite redirigir la flota del jugador en mitad de un viaje con un nuevo click.
+    /// </summary>
+    /// <param name="nuevaRuta">Lista de casillas offset que forman el camino.</param>
+    public void AsignarRuta(List<Vector3Int> nuevaRuta)
+    {
+        if (nuevaRuta == null || nuevaRuta.Count == 0) return;
+        Flota.RutaActualTilemap    = nuevaRuta;
+        Flota.IndiceWaypointActual = 0;
+        Flota.CasillaDestino       = nuevaRuta[nuevaRuta.Count - 1];
+        Flota.EstadoActual         = EstadoFlotaPNJ.Viajando;
     }
 
     /// <summary>Referencia a la coroutine de detección continua, para poder detenerla en OnDestroy.</summary>
@@ -137,6 +188,8 @@ public class FlotaIconoMapamundi : MonoBehaviour
         if (Vector3.Distance(transform.position, objetivo) < 0.01f)
         {
             Flota.IndiceWaypointActual++;
+            if (_esJugador && Flota.RutaActualTilemap != null && Flota.IndiceWaypointActual - 1 >= 0)
+                OnWaypointJugadorCruzado?.Invoke(Flota.RutaActualTilemap[Flota.IndiceWaypointActual - 1]);
             if (Flota.IndiceWaypointActual >= Flota.RutaActualTilemap.Count)
             {
                 // Forzar llegada a destino en la lógica de negocio
