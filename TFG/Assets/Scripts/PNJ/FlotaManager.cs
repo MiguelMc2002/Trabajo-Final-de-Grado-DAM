@@ -26,6 +26,13 @@ public class FlotaManager : MonoBehaviour
 
     private int _diasDesdeUltimoReabastecimientoPirata = 0;
 
+    /// <summary>
+    /// Cascos del patrón Decorator disponibles para generar flotas PNJ.
+    /// Asignar los mismos 4 assets CascoDecorador que usa AstilleroManager
+    /// (CascoCog, CascoHulk, CascoCarraca, CascoGalera) desde el Inspector.
+    /// </summary>
+    [SerializeField] private List<CascoDecorador> _cascosParaPNJ;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -196,6 +203,7 @@ public class FlotaManager : MonoBehaviour
             int idCiudad = ciudades[idxCiudad % ciudades.Count].IdCiudad;
             FlotaRuntimeData flota = new FlotaRuntimeData(id, nombre);
             flota.CiudadOrigenId = idCiudad;
+            AleatoriarStatsFlota(flota);
             RegistrarFlota(flota);
         }
 
@@ -216,9 +224,121 @@ public class FlotaManager : MonoBehaviour
             flota.EstadoActual    = EstadoFlotaPNJ.Patrullando;
             // TODO Día 21: posicionar en casillas de mar real del tilemap
             flota.PosicionActual  = new UnityEngine.Vector2(id % 10, (id / 10) % 10);
+            AleatoriarStatsFlota(flota);
             RegistrarFlota(flota);
         }
 
+    }
+
+    /// <summary>
+    /// Genera entre 3 y 5 BarcoJugador con cascos aleatorios del patrón Decorator.
+    /// Piratas prefieren cascos rápidos (Galera id=4, Cog id=1).
+    /// Comerciantes prefieren cascos de carga (Hulk id=2, Carraca id=3, Cog id=1).
+    /// Devuelve lista vacía si _cascosParaPNJ no está asignado.
+    /// </summary>
+    private List<BarcoJugador> GenerarBarcosAleatorios(bool esPirata)
+    {
+        var barcos = new List<BarcoJugador>();
+        if (_cascosParaPNJ == null || _cascosParaPNJ.Count == 0) return barcos;
+
+        int cantidad = Random.Range(3, 6); // 3, 4 o 5
+        int idBase   = esPirata ? 9000 : 8000;
+
+        for (int i = 0; i < cantidad; i++)
+        {
+            IBarco casco;
+            if (esPirata)
+            {
+                float r = Random.value;
+                if (r < 0.5f)
+                    casco = _cascosParaPNJ.Find(c => c.IdTipoCasco == 4) ?? (IBarco)_cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+                else if (r < 0.8f)
+                    casco = _cascosParaPNJ.Find(c => c.IdTipoCasco == 1) ?? (IBarco)_cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+                else
+                    casco = _cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+            }
+            else
+            {
+                float r = Random.value;
+                if (r < 0.4f)
+                    casco = _cascosParaPNJ.Find(c => c.IdTipoCasco == 2) ?? (IBarco)_cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+                else if (r < 0.7f)
+                    casco = _cascosParaPNJ.Find(c => c.IdTipoCasco == 3) ?? (IBarco)_cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+                else if (r < 0.9f)
+                    casco = _cascosParaPNJ.Find(c => c.IdTipoCasco == 1) ?? (IBarco)_cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+                else
+                    casco = _cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
+            }
+            var barco = new BarcoJugador(idBase + i, $"Barco_{idBase + i}", casco);
+            barcos.Add(barco);
+        }
+        return barcos;
+    }
+
+    /// <summary>
+    /// Calcula stats agregadas de una lista de BarcoJugador y las aplica
+    /// al FlotaRuntimeData. Si la lista está vacía no modifica el runtime.
+    /// </summary>
+    private void AplicarStatsBarcos(FlotaRuntimeData runtime, List<BarcoJugador> barcos)
+    {
+        if (barcos == null || barcos.Count == 0) return;
+
+        float vidaMax     = 0f;
+        float fuerza      = 0f;
+        float velMin      = float.MaxValue;
+        int   tripulacion = 0;
+
+        foreach (BarcoJugador barco in barcos)
+        {
+            vidaMax     += barco.VidaTotal;
+            fuerza      += barco.FuerzaCombateTotal;
+            tripulacion += barco.Tripulacion;
+            if (barco.VelocidadTotal < velMin)
+                velMin = barco.VelocidadTotal;
+        }
+
+        runtime.VidaMax        = vidaMax;
+        runtime.VidaActual     = vidaMax;
+        runtime.FuerzaCanhones = fuerza;
+        runtime.VelocidadFlota = velMin == float.MaxValue ? 3f : velMin;
+        runtime.NumBarcos      = barcos.Count;
+        runtime.Tripulacion    = tripulacion;
+    }
+
+    /// <summary>
+    /// Aplica stats de combate a una flota PNJ. Usa barcos reales del patrón Decorator
+    /// si _cascosParaPNJ está asignado; si no, usa valores aleatorios como fallback.
+    /// Llamar justo después de crear el FlotaRuntimeData y antes de registrarlo.
+    /// </summary>
+    private void AleatoriarStatsFlota(FlotaRuntimeData flota)
+    {
+        List<BarcoJugador> barcos = GenerarBarcosAleatorios(flota.IsPirata);
+        if (barcos.Count > 0)
+        {
+            flota.BarcosFlota = barcos;
+            AplicarStatsBarcos(flota, barcos);
+            return;
+        }
+
+        // Fallback si _cascosParaPNJ no está asignado en el Inspector
+        if (flota.IsPirata)
+        {
+            flota.VidaMax        = Random.Range(80f,  150f);
+            flota.VidaActual     = flota.VidaMax;
+            flota.FuerzaCanhones = Random.Range(15f,  35f);
+            flota.VelocidadFlota = Random.Range(3f,   6f);
+            flota.NumBarcos      = Random.Range(2,    5);
+            flota.Tripulacion    = Random.Range(30,   80);
+        }
+        else
+        {
+            flota.VidaMax        = Random.Range(60f,  120f);
+            flota.VidaActual     = flota.VidaMax;
+            flota.FuerzaCanhones = Random.Range(3f,   12f);
+            flota.VelocidadFlota = Random.Range(2f,   5f);
+            flota.NumBarcos      = Random.Range(1,    4);
+            flota.Tripulacion    = Random.Range(15,   50);
+        }
     }
 
     /// <summary>

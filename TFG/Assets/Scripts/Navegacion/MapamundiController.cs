@@ -35,8 +35,13 @@ public class MapamundiController : MonoBehaviour
     [SerializeField] private Sprite spriteBarco;
     [SerializeField] private Color colorFlotaJugador = Color.yellow;
     [SerializeField] private Color colorFlotaPirata  = Color.red;
+    [SerializeField] private PanelInspeccionFlota panelInspeccionFlota;
+
 
     private FlotaIconoMapamundi _iconoFlotaJugador;
+
+    /// <summary>Icono de la flota del jugador en el mapamundi.</summary>
+    public FlotaIconoMapamundi IconoFlotaJugador => _iconoFlotaJugador;
 
     /// <summary>Índice de iconos por Id de flota para pausarlos o redirigirlos durante combates.</summary>
     private readonly Dictionary<int, FlotaIconoMapamundi> _iconosPorId = new();
@@ -73,6 +78,8 @@ public class MapamundiController : MonoBehaviour
             sr.color        = flota.IsPirata ? colorFlotaPirata : Color.white;
             sr.sortingOrder = 10;
             go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+            CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+            col.radius = 0.3f;
 
             FlotaIconoMapamundi icono = go.AddComponent<FlotaIconoMapamundi>();
             icono.Flota = flota;
@@ -90,18 +97,27 @@ public class MapamundiController : MonoBehaviour
                 }
             }
 
-            // Posicionar el icono en la casilla origen si PosicionActual es zero
-            if (flota.PosicionActual == Vector2.zero)
+            // Posicionar icono: usar PosicionActual si es válida (distinta de zero y dentro de bounds),
+            // si no, usar la ciudad origen como fallback
+            Vector3 posInicial;
+            if (flota.PosicionActual != Vector2.zero)
+            {
+                posInicial = new Vector3(flota.PosicionActual.x, flota.PosicionActual.y, 0f);
+            }
+            else
             {
                 CiudadData ciudadOrigen = GameManager.Instance.CiudadesDisponibles
                     .FirstOrDefault(c => c.IdCiudad == flota.CiudadOrigenId);
-                if (ciudadOrigen != null)
+                if (ciudadOrigen == null)
                 {
-                    Vector3 posInicial = tilemap.GetCellCenterWorld(ciudadOrigen.CasillaMapamundi);
-                    go.transform.position = posInicial;
-                    flota.PosicionActual  = posInicial;
+                    var primeras = GameManager.Instance.CiudadesDisponibles;
+                    if (primeras == null || primeras.Count == 0) continue;
+                    ciudadOrigen = primeras[0];
                 }
+                posInicial           = tilemap.GetCellCenterWorld(ciudadOrigen.CasillaMapamundi);
+                flota.PosicionActual = posInicial;
             }
+            go.transform.position = posInicial;
 
             // Reubicar piratas con posición inválida en una casilla de mar válida
             if (flota.IsPirata)
@@ -171,6 +187,8 @@ public class MapamundiController : MonoBehaviour
         sr.color        = colorFlotaJugador;
         sr.sortingOrder = 11;
         go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        CircleCollider2D colJugador = go.AddComponent<CircleCollider2D>();
+        colJugador.radius = 0.3f;
 
         Vector3 posicion = tilemap.GetCellCenterWorld(ciudad.CasillaMapamundi);
         go.transform.position  = posicion;
@@ -190,16 +208,17 @@ public class MapamundiController : MonoBehaviour
     // ─── Input por teclado ────────────────────────────────────────────────────
 
     /// <summary>
-    /// Detecta atajos de teclado del mapamundi.
-    /// M → viaja directamente a la última ciudad visitada, si existe.
+    /// Devuelve el CiudadData cuya CasillaMapamundi coincide con la casilla indicada,
+    /// o null si no hay ninguna ciudad en esa casilla.
     /// </summary>
-    private void Update()
+    /// <param name="casilla">Casilla offset del tilemap a comprobar.</param>
+    public CiudadData ObtenerCiudadEnCasilla(Vector3Int casilla)
     {
-        if (Input.GetKeyDown(KeyCode.M))
-        {
-            if (GameManager.Instance != null && GameManager.Instance.UltimaCiudad != null)
-                ViajarACiudad(GameManager.Instance.UltimaCiudad);
-        }
+        if (GameManager.Instance == null) return null;
+        foreach (CiudadData ciudad in GameManager.Instance.CiudadesDisponibles)
+            if (ciudad.CasillaMapamundi == casilla)
+                return ciudad;
+        return null;
     }
 
     // ─── API pública ─────────────────────────────────────────────────────────

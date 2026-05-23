@@ -82,8 +82,8 @@ public class RutaCalculadorTilemap : MonoBehaviour
     /// <summary>
     /// Indica si la casilla en coordenadas offset es transitable.
     /// </summary>
-    private bool EsTransitable(Vector3Int offsetPos)
-        => CosteCasilla(offsetPos) < float.PositiveInfinity;
+    public bool EsTransitable(Vector3Int hex)
+        => CosteCasilla(hex) < float.PositiveInfinity;
 
     /// <summary>
     /// Devuelve los vecinos transitables de una casilla en coordenadas offset.
