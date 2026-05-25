@@ -226,7 +226,9 @@ public class MarketRowUI : MonoBehaviour
 
         // Botones comprar/vender: activos solo cuando el Mercado está en alguna columna
         bool comprarActivo = _columnaIzq == OficinaComercial.OrigenDestino.Mercado;
-        bool venderActivo  = _columnaDer == OficinaComercial.OrigenDestino.Mercado;
+        bool venderActivo  = _columnaDer == OficinaComercial.OrigenDestino.Mercado
+                          || (GameManager.Instance != null &&
+                              GameManager.Instance.GetCantidadBien(_bien) > 0);
         _btnComprar1.interactable   = comprarActivo;
         _btnComprar10.interactable  = comprarActivo;
         _btnComprar100.interactable = comprarActivo;
@@ -340,7 +342,10 @@ public class MarketRowUI : MonoBehaviour
             return;
         }
 
-        if (_columnaDer == OficinaComercial.OrigenDestino.Mercado)
+        int enBodega = GameManager.Instance?.GetCantidadBien(_bien) ?? 0;
+        if (enBodega > 0)
+            _oficina.Vender(_bien, cantidad);
+        else if (_columnaDer == OficinaComercial.OrigenDestino.Mercado)
             _oficina.Vender(_bien, cantidad);
         else
             _oficina.Transferir(_bien, cantidad, _columnaIzq, _columnaDer);

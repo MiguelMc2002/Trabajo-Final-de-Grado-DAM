@@ -31,7 +31,13 @@ public class FlotaManager : MonoBehaviour
     /// Asignar los mismos 4 assets CascoDecorador que usa AstilleroManager
     /// (CascoCog, CascoHulk, CascoCarraca, CascoGalera) desde el Inspector.
     /// </summary>
-    [SerializeField] private List<CascoDecorador> _cascosParaPNJ;
+    [SerializeField] private List<CascoDecorador>    _cascosParaPNJ;
+
+    /// <summary>
+    /// Módulos disponibles para instalar aleatoriamente en los barcos PNJ.
+    /// Asignar desde el Inspector con todos los ModuloBarcoData del proyecto.
+    /// </summary>
+    [SerializeField] private List<ModuloBarcoData> _modulosParaPNJ = new List<ModuloBarcoData>();
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -241,6 +247,20 @@ public class FlotaManager : MonoBehaviour
         var barcos = new List<BarcoJugador>();
         if (_cascosParaPNJ == null || _cascosParaPNJ.Count == 0) return barcos;
 
+        string[] nombresPirata = {
+            "Der Rabe", "Schwarzer Tod", "Die Klinge", "Meereswolf", "Sturmvogel",
+            "Der Geier", "Blutmond", "Eisenfaust", "Der Schrecken", "Dunkle Woge",
+            "Klaus Störtebeker", "Gödeke Michels", "Der Pirat", "Todesvogel", "Rote Hand"
+        };
+        string[] nombresComercio = {
+            "Der Adler", "Hansekogge", "Die Möwe", "Lubecker Bär", "Nordstern",
+            "Gott Mit Uns", "Das Einhorn", "Silberfisch", "Meereswind", "Eisvogel",
+            "Santa María", "San Juan", "La Esperanza", "El Halcón", "Mar del Norte",
+            "La Fortuna", "Viento del Sur", "San Cristóbal", "La Paloma", "Stella Maris",
+            "De Gouden Leeuw", "Het Anker", "De Zeemeeuw", "L'Étoile du Nord", "Le Lion d'Or"
+        };
+        string[] nombresLista = esPirata ? nombresPirata : nombresComercio;
+
         int cantidad = Random.Range(3, 6); // 3, 4 o 5
         int idBase   = esPirata ? 9000 : 8000;
 
@@ -269,10 +289,27 @@ public class FlotaManager : MonoBehaviour
                 else
                     casco = _cascosParaPNJ[Random.Range(0, _cascosParaPNJ.Count)];
             }
-            var barco = new BarcoJugador(idBase + i, $"Barco_{idBase + i}", casco);
+            string nombre = nombresLista[Random.Range(0, nombresLista.Length)];
+            var barco = new BarcoJugador(idBase + i, nombre, casco);
+            InstalarModuloAleatorioSiCabe(barco, TipoModulo.Armamento);
+            InstalarModuloAleatorioSiCabe(barco, TipoModulo.Velas);
+            InstalarModuloAleatorioSiCabe(barco, TipoModulo.Bodega);
             barcos.Add(barco);
         }
         return barcos;
+    }
+
+    private void InstalarModuloAleatorioSiCabe(BarcoJugador barco, TipoModulo tipo)
+    {
+        if (_modulosParaPNJ == null || _modulosParaPNJ.Count == 0) return;
+
+        var candidatos = new List<ModuloBarcoData>();
+        foreach (ModuloBarcoData m in _modulosParaPNJ)
+            if (m != null && m.tipoModulo == tipo && m.slotsCosto <= barco.SlotsDisponibles)
+                candidatos.Add(m);
+
+        if (candidatos.Count == 0) return;
+        barco.InstalarModulo(candidatos[Random.Range(0, candidatos.Count)]);
     }
 
     /// <summary>

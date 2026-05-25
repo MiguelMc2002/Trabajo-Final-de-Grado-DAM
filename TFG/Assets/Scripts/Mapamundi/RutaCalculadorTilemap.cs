@@ -273,8 +273,11 @@ public class RutaCalculadorTilemap : MonoBehaviour
         if (origen == destino)
             return new List<Vector3Int> { origen };
 
-        if (!EsTransitable(destino))
+        if (!EsTransitable(origen) || !EsTransitable(destino))
+        {
+            Debug.LogWarning($"[RutaCalculador] FAIL — origen={origen} transitable={EsTransitable(origen)} | destino={destino} transitable={EsTransitable(destino)}");
             return new List<Vector3Int>();
+        }
 
         var cola       = new MinHeap();
         var cameFrom   = new Dictionary<Vector3Int, Vector3Int>();
@@ -310,6 +313,7 @@ public class RutaCalculadorTilemap : MonoBehaviour
             }
         }
 
+        Debug.LogWarning($"[RutaCalculador] FAIL — no se encontró ruta de {origen} a {destino}");
         return new List<Vector3Int>();
     }
 }

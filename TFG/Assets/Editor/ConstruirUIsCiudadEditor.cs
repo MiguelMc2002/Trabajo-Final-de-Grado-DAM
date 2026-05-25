@@ -27,31 +27,25 @@ public static class ConstruirUIsCiudadEditor
             return;
         }
 
-        LimpiarHijos(root.transform);
-
-        // VLG raíz
-        AddVLG(root, 0f);
-
         AstilleroUI ui = root.GetComponent<AstilleroUI>() ?? root.AddComponent<AstilleroUI>();
         var so = new SerializedObject(ui);
 
-        // _panelAstillero → el propio root
-        Prop(so, "_panelAstillero").objectReferenceValue = root;
+        // ── Destruir y reconstruir SOLO SubpanelConstruir ─────────────────────
+        GameObject anterior = null;
+        int siblingIndex = 1;
+        for (int i = 0; i < root.transform.childCount; i++)
+        {
+            if (root.transform.GetChild(i).name == "SubpanelConstruir")
+            {
+                siblingIndex = i;
+                anterior = root.transform.GetChild(i).gameObject;
+                break;
+            }
+        }
+        if (anterior != null) UnityEngine.Object.DestroyImmediate(anterior);
 
-        // ── SubpanelMenu ──────────────────────────────────────────────────────
-        var panelMenu = CreateChild(root.transform, "SubpanelMenu", 230f);
-        AddVLG(panelMenu, 8f);
-        Prop(so, "_panelMenu").objectReferenceValue = panelMenu;
-
-        AddTMP(CreateChild(panelMenu.transform, "TxtTitulo", 40f), "ASTILLERO", 20);
-        AddButton(CreateChild(panelMenu.transform, "BtnMenuConstruir", 50f), "CONSTRUIR");
-        AddButton(CreateChild(panelMenu.transform, "BtnMenuModificar", 50f), "MODIFICAR");
-        AddButton(CreateChild(panelMenu.transform, "BtnMenuReparar",   50f), "REPARAR");
-        AddButton(CreateChild(panelMenu.transform, "BtnMenuVender",    50f), "VENDER");
-        AddButton(CreateChild(panelMenu.transform, "BtnCerrarAstillero", 40f), "X");
-
-        // ── SubpanelConstruir ─────────────────────────────────────────────────
         var panelCons = CreateChild(root.transform, "SubpanelConstruir", 400f);
+        panelCons.transform.SetSiblingIndex(siblingIndex);
         AddVLG(panelCons, 8f);
         Prop(so, "_panelConstruir").objectReferenceValue = panelCons;
 
@@ -59,14 +53,15 @@ public static class ConstruirUIsCiudadEditor
         var filaTituloCons = CreateChild(panelCons.transform, "FilaTitulo", 35f);
         AddHLG(filaTituloCons);
         AddTMP(CreateFlexChild(filaTituloCons.transform, "TxtTituloConstruir"), "CONSTRUIR BARCO", 15);
-        AddButton(CreateFixedChild(filaTituloCons.transform, "BtnVolverConstruir", 80f), "Volver");
+        Prop(so, "_btnVolverConstruir").objectReferenceValue =
+            AddButton(CreateFixedChild(filaTituloCons.transform, "BtnVolverConstruir", 80f), "Volver");
 
         // Selector de casco
         {
             var (izq, txt, der) = AddSelector(panelCons.transform, "FilaSelectorCasco", "Cog", 40f);
-            Prop(so, "_btnCascoIzq").objectReferenceValue         = izq;
-            Prop(so, "_textoCascoConstruir").objectReferenceValue = txt;
-            Prop(so, "_btnCascoDer").objectReferenceValue         = der;
+            Prop(so, "_btnCascoIzq").objectReferenceValue          = izq;
+            Prop(so, "_txtCascoSeleccionado").objectReferenceValue = txt;
+            Prop(so, "_btnCascoDer").objectReferenceValue          = der;
         }
 
         // Fila de columnas: Casco | Velas | Bodega | Armamento
@@ -76,145 +71,61 @@ public static class ConstruirUIsCiudadEditor
         // Columna Casco
         var colCasco = CreateFlexChild(filaColumnas.transform, "ColumnaCasco");
         AddVLG(colCasco, 3f);
-        AddTMP(CreateChild(colCasco.transform, "LblCasco",  20f), "CASCO", 12);
-        Prop(so, "_statsVidaCasco").objectReferenceValue            = AddTMP(CreateChild(colCasco.transform, "TxtVida",  18f), "Vida: —");
-        Prop(so, "_statsVelocidadCasco").objectReferenceValue       = AddTMP(CreateChild(colCasco.transform, "TxtVel",   18f), "Vel: —");
-        Prop(so, "_statsManiobrabilidadCasco").objectReferenceValue = AddTMP(CreateChild(colCasco.transform, "TxtMan",   18f), "Man: —");
-        Prop(so, "_statsCargaCasco").objectReferenceValue           = AddTMP(CreateChild(colCasco.transform, "TxtCarga", 18f), "Carga: —");
-        Prop(so, "_statsSlotsDisponibles").objectReferenceValue     = AddTMP(CreateChild(colCasco.transform, "TxtSlots", 18f), "Slots: —");
+        AddTMPC(CreateChild(colCasco.transform, "LblCasco", 20f), "CASCO", 12, ColorDorado, FontStyles.Bold);
+        Prop(so, "_txtVidaCasco").objectReferenceValue   = CrearFilaStat(colCasco.transform, "FilaVida",  "Vida:");
+        Prop(so, "_txtVelCasco").objectReferenceValue    = CrearFilaStat(colCasco.transform, "FilaVel",   "Velocidad:");
+        Prop(so, "_txtManCasco").objectReferenceValue    = CrearFilaStat(colCasco.transform, "FilaMan",   "Maniobra:");
+        Prop(so, "_txtCargaCasco").objectReferenceValue  = CrearFilaStat(colCasco.transform, "FilaCarga", "Carga:");
+        Prop(so, "_txtSlotsCasco").objectReferenceValue  = CrearFilaStat(colCasco.transform, "FilaSlots", "Módulos:");
 
         // Columna Velas
         var colVelas = CreateFlexChild(filaColumnas.transform, "ColumnaVelas");
         AddVLG(colVelas, 3f);
-        AddTMP(CreateChild(colVelas.transform, "LblVelas", 20f), "VELAS", 12);
+        AddTMPC(CreateChild(colVelas.transform, "LblVelas", 20f), "VELAS", 12, ColorDorado, FontStyles.Bold);
         {
             var (izq, txt, der) = AddSelector(colVelas.transform, "SelectorVelas", "—", 35f);
-            Prop(so, "_btnVelasIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloVelas").objectReferenceValue = txt;
-            Prop(so, "_btnVelasDer").objectReferenceValue      = der;
+            Prop(so, "_btnModuloVelasIzq").objectReferenceValue = izq;
+            Prop(so, "_txtModuloVelas").objectReferenceValue    = txt;
+            Prop(so, "_btnModuloVelasDer").objectReferenceValue = der;
         }
-        Prop(so, "_statsVelas").objectReferenceValue = AddTMP(CreateChild(colVelas.transform, "TxtStatsVelas", 18f), "—");
 
         // Columna Bodega
         var colBodega = CreateFlexChild(filaColumnas.transform, "ColumnaBodega");
         AddVLG(colBodega, 3f);
-        AddTMP(CreateChild(colBodega.transform, "LblBodega", 20f), "BODEGA", 12);
+        AddTMPC(CreateChild(colBodega.transform, "LblBodega", 20f), "BODEGA", 12, ColorDorado, FontStyles.Bold);
         {
             var (izq, txt, der) = AddSelector(colBodega.transform, "SelectorBodega", "—", 35f);
-            Prop(so, "_btnBodegaIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloBodega").objectReferenceValue = txt;
-            Prop(so, "_btnBodegaDer").objectReferenceValue      = der;
+            Prop(so, "_btnModuloBodegaIzq").objectReferenceValue = izq;
+            Prop(so, "_txtModuloBodega").objectReferenceValue    = txt;
+            Prop(so, "_btnModuloBodegaDer").objectReferenceValue = der;
         }
-        Prop(so, "_statsBodega").objectReferenceValue = AddTMP(CreateChild(colBodega.transform, "TxtStatsBodega", 18f), "—");
 
         // Columna Armamento
         var colArm = CreateFlexChild(filaColumnas.transform, "ColumnaArmamento");
         AddVLG(colArm, 3f);
-        AddTMP(CreateChild(colArm.transform, "LblArm", 20f), "ARMAMENTO", 12);
+        AddTMPC(CreateChild(colArm.transform, "LblArm", 20f), "ARMAMENTO", 12, ColorDorado, FontStyles.Bold);
         {
             var (izq, txt, der) = AddSelector(colArm.transform, "SelectorArm", "—", 35f);
-            Prop(so, "_btnArmamentoIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloArmamento").objectReferenceValue = txt;
-            Prop(so, "_btnArmamentoDer").objectReferenceValue      = der;
+            Prop(so, "_btnModuloArmamentoIzq").objectReferenceValue = izq;
+            Prop(so, "_txtModuloArmamento").objectReferenceValue    = txt;
+            Prop(so, "_btnModuloArmamentoDer").objectReferenceValue = der;
         }
-        Prop(so, "_statsArmamento").objectReferenceValue = AddTMP(CreateChild(colArm.transform, "TxtStatsArm", 18f), "—");
 
         // Precio y botón Construir
-        Prop(so, "_textoPrecioConstruir").objectReferenceValue = AddTMP(CreateChild(panelCons.transform, "TxtPrecio", 25f), "Precio: 0 oro");
-        Prop(so, "_btnConstruir").objectReferenceValue         = AddButton(CreateChild(panelCons.transform, "BtnConstruir", 45f), "CONSTRUIR");
+        Prop(so, "_txtPrecioConstruir").objectReferenceValue    = AddTMP(CreateChild(panelCons.transform, "TxtPrecio",    25f), "Precio: 0 oro");
+        Prop(so, "_btnConstruirConfirmar").objectReferenceValue = AddButton(CreateChild(panelCons.transform, "BtnConstruir", 45f), "CONSTRUIR");
 
-        // ── SubpanelModificar ─────────────────────────────────────────────────
-        var panelMod = CreateChild(root.transform, "SubpanelModificar", 420f);
-        AddVLG(panelMod, 6f);
-        Prop(so, "_panelModificar").objectReferenceValue = panelMod;
-
-        // Fila título
-        var filaTituloMod = CreateChild(panelMod.transform, "FilaTitulo", 35f);
-        AddHLG(filaTituloMod);
-        AddTMP(CreateFlexChild(filaTituloMod.transform, "TxtTituloMod"), "MODIFICAR BARCO", 15);
-        AddButton(CreateFixedChild(filaTituloMod.transform, "BtnVolverMod", 80f), "Volver");
-        // _btnVolverModificar no existe en AstilleroUI — botón solo visual
-
-        // Selector de barco
+        // Solo SubpanelMenu activo por defecto
+        Transform rootT = root.transform;
+        for (int i = 0; i < rootT.childCount; i++)
         {
-            var (izq, txt, der) = AddSelector(panelMod.transform, "SelectorBarcoMod", "Barco", 40f);
-            Prop(so, "_btnBarcoModIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoBarcoModificar").objectReferenceValue = txt;
-            Prop(so, "_btnBarcoModDer").objectReferenceValue      = der;
+            GameObject hijo = rootT.GetChild(i).gameObject;
+            hijo.SetActive(hijo.name == "SubpanelMenu");
         }
-
-        // Selectores de módulos Armamento / Velas / Bodega
-        {
-            var (izq, txt, der) = AddSelector(panelMod.transform, "SelectorArmMod", "—", 35f);
-            Prop(so, "_btnArmamentoModIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloArmamentoMod").objectReferenceValue = txt;
-            Prop(so, "_btnArmamentoModDer").objectReferenceValue      = der;
-        }
-        Prop(so, "_statsArmamentoMod").objectReferenceValue = AddTMP(CreateChild(panelMod.transform, "TxtStatsArmMod", 18f), "—");
-
-        {
-            var (izq, txt, der) = AddSelector(panelMod.transform, "SelectorVelMod", "—", 35f);
-            Prop(so, "_btnVelasModIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloVelasMod").objectReferenceValue = txt;
-            Prop(so, "_btnVelasModDer").objectReferenceValue      = der;
-        }
-        Prop(so, "_statsVelasMod").objectReferenceValue = AddTMP(CreateChild(panelMod.transform, "TxtStatsVelMod", 18f), "—");
-
-        {
-            var (izq, txt, der) = AddSelector(panelMod.transform, "SelectorBodMod", "—", 35f);
-            Prop(so, "_btnBodegaModIzq").objectReferenceValue      = izq;
-            Prop(so, "_textoModuloBodegaMod").objectReferenceValue = txt;
-            Prop(so, "_btnBodegaModDer").objectReferenceValue      = der;
-        }
-        Prop(so, "_statsBodegaMod").objectReferenceValue = AddTMP(CreateChild(panelMod.transform, "TxtStatsBodMod", 18f), "—");
-
-        Prop(so, "_textoPrecioModificar").objectReferenceValue  = AddTMP(CreateChild(panelMod.transform, "TxtCosteNeto",  25f), "Coste: 0");
-        Prop(so, "_btnAplicarModificacion").objectReferenceValue = AddButton(CreateChild(panelMod.transform, "BtnInstalar", 45f), "INSTALAR");
-
-        // ── SubpanelReparar ───────────────────────────────────────────────────
-        var panelRep = CreateChild(root.transform, "SubpanelReparar", 260f);
-        AddVLG(panelRep, 6f);
-        Prop(so, "_panelReparar").objectReferenceValue = panelRep;
-
-        var filaTituloRep = CreateChild(panelRep.transform, "FilaTitulo", 35f);
-        AddHLG(filaTituloRep);
-        AddTMP(CreateFlexChild(filaTituloRep.transform, "TxtTituloRep"), "REPARAR BARCO", 15);
-        AddButton(CreateFixedChild(filaTituloRep.transform, "BtnVolverRep", 80f), "Volver");
-        // _btnVolverReparar no existe en AstilleroUI — botón solo visual
-
-        {
-            var (izq, txt, der) = AddSelector(panelRep.transform, "SelectorBarcoRep", "Barco", 40f);
-            Prop(so, "_btnBarcoRepIzq").objectReferenceValue    = izq;
-            Prop(so, "_textoBarcoReparar").objectReferenceValue = txt;
-            Prop(so, "_btnBarcoRepDer").objectReferenceValue    = der;
-        }
-        Prop(so, "_textoVidaReparar").objectReferenceValue   = AddTMP(CreateChild(panelRep.transform, "TxtVida",  25f), "Vida: 0/0");
-        Prop(so, "_textoPrecioReparar").objectReferenceValue = AddTMP(CreateChild(panelRep.transform, "TxtCoste", 25f), "Coste: 0");
-        Prop(so, "_btnReparar").objectReferenceValue         = AddButton(CreateChild(panelRep.transform, "BtnReparar", 45f), "REPARAR");
-
-        // ── SubpanelVender ────────────────────────────────────────────────────
-        var panelVen = CreateChild(root.transform, "SubpanelVender", 220f);
-        AddVLG(panelVen, 6f);
-        Prop(so, "_panelVender").objectReferenceValue = panelVen;
-
-        var filaTituloVen = CreateChild(panelVen.transform, "FilaTitulo", 35f);
-        AddHLG(filaTituloVen);
-        AddTMP(CreateFlexChild(filaTituloVen.transform, "TxtTituloVen"), "VENDER BARCO", 15);
-        AddButton(CreateFixedChild(filaTituloVen.transform, "BtnVolverVen", 80f), "Volver");
-        // _btnVolverVender no existe en AstilleroUI — botón solo visual
-
-        {
-            var (izq, txt, der) = AddSelector(panelVen.transform, "SelectorBarcoVen", "Barco", 40f);
-            Prop(so, "_btnBarcoVenIzq").objectReferenceValue    = izq;
-            Prop(so, "_textoBarcoVender").objectReferenceValue  = txt;
-            Prop(so, "_btnBarcoVenDer").objectReferenceValue    = der;
-        }
-        Prop(so, "_textoValorVenta").objectReferenceValue = AddTMP(CreateChild(panelVen.transform, "TxtValorVenta", 25f), "Valor: 0 oro");
-        Prop(so, "_btnVender").objectReferenceValue       = AddButton(CreateChild(panelVen.transform, "BtnVender", 45f), "VENDER");
 
         so.ApplyModifiedProperties();
         EditorSceneManager.MarkSceneDirty(root.scene);
-        Debug.Log("[UIBuilder] ✓ PanelAstillero construido y cableado. Guarda la escena (Ctrl+S).");
+        Debug.Log("[UIBuilder] ✓ SubpanelConstruir reconstruido y cableado. Guarda la escena (Ctrl+S).");
     }
 
     // =========================================================================
@@ -373,6 +284,8 @@ public static class ConstruirUIsCiudadEditor
         return go;
     }
 
+    static readonly Color ColorDorado = new Color(0.784f, 0.663f, 0.431f); // #c8a96e
+
     // TMP con texto, tamaño y color negro centrado.
     static TextMeshProUGUI AddTMP(GameObject go, string texto, int size = 14)
     {
@@ -382,6 +295,39 @@ public static class ConstruirUIsCiudadEditor
         tmp.color     = Color.black;
         tmp.alignment = TextAlignmentOptions.Center;
         return tmp;
+    }
+
+    // TMP con color, estilo y alineación explícitos.
+    static TextMeshProUGUI AddTMPC(GameObject go, string texto, int size, Color color,
+                                   FontStyles style = FontStyles.Normal,
+                                   TextAlignmentOptions align = TextAlignmentOptions.Center)
+    {
+        var tmp       = go.AddComponent<TextMeshProUGUI>();
+        tmp.text      = texto;
+        tmp.fontSize  = size;
+        tmp.color     = color;
+        tmp.fontStyle = style;
+        tmp.alignment = align;
+        return tmp;
+    }
+
+    // Fila HLG con etiqueta dorada (izq) y valor blanco (der). Devuelve el TMP del valor.
+    static TextMeshProUGUI CrearFilaStat(Transform parent, string nombre, string etiqueta)
+    {
+        var fila = CreateChild(parent, nombre, 18f);
+        var hlg  = fila.AddComponent<HorizontalLayoutGroup>();
+        hlg.childAlignment         = TextAnchor.MiddleLeft;
+        hlg.childControlWidth      = true;
+        hlg.childControlHeight     = true;
+        hlg.childForceExpandWidth  = false;
+        hlg.childForceExpandHeight = true;
+        hlg.spacing = 4f;
+
+        var goLbl = CreateFlexChild(fila.transform, "Lbl");
+        AddTMPC(goLbl, etiqueta, 12, ColorDorado, FontStyles.Bold, TextAlignmentOptions.MidlineLeft);
+
+        var goVal = CreateFixedChild(fila.transform, "Val", 44f);
+        return AddTMPC(goVal, "—", 14, Color.white, FontStyles.Normal, TextAlignmentOptions.MidlineRight);
     }
 
     // Button + Image gris + hijo Text con TMP.
