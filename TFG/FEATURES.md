@@ -3145,3 +3145,113 @@ Implementación completa de los 4 subpaneles operativos. Campos `[SerializeField
 - [ ] Combate naval con resolución automática conectada — Día 25.
 - [ ] Pantalla resultados combate conectada al Canvas — Día 25.
 
+---
+
+## DÍA 27 — Panel Inspección Flotas PNJ · Astillero completo · Mercado bodega · Fixes PNJ
+
+### Resumen
+
+Día dedicado a cuatro bloques: (1) panel de inspección de flotas PNJ en el mapamundi; (2) cierre de todos los subpaneles del Astillero con lógica real; (3) restricción de compra por capacidad de bodega en el Mercado; (4) correcciones al comportamiento de flotas PNJ en el mapamundi.
+
+---
+
+### Panel Inspección Flotas PNJ
+
+#### PanelInspeccionFlota — `Assets/Scripts/Mapamundi/PanelInspeccionFlota.cs`
+
+Panel que se abre al hacer clic en el icono de una flota PNJ en el mapamundi. Muestra nombre, tipo (Pirata / Comerciante) y una tabla de barcos con sus estadísticas.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Mostrar(FlotaRuntimeData flota)` | `void` | Rellena cabecera (nombre + tipo) y genera una fila por barco con Nombre, Casco, Vida, Velocidad, Maniobra, Carga y Fuerza. |
+| `Ocultar()` | `void` | Desactiva el panel y destruye las filas generadas dinámicamente. |
+
+**Fixes aplicados:**
+- Listeners de botones movidos al componente activo para evitar el bug de `Awake()` en `GameObject` inactivo.
+- Eliminado `ScrollRect` que recortaba el contenido de la tabla.
+
+---
+
+### Astillero
+
+#### AstilleroUI — `Assets/Scripts/Ciudad/AstilleroUI.cs`
+
+Todos los subpaneles quedan completamente funcionales.
+
+**Subpanel Construir:**
+
+| Comportamiento | Descripción |
+|---|---|
+| Selector de casco | Stats individuales por columna: Vida, Velocidad, Maniobra, Carga, Módulos. |
+| Selectores de módulos | Un selector por tipo (armamento, velas, bodega). |
+| Precio en tiempo real | Se recalcula al cambiar casco o módulos. |
+| Nombres históricos | Nombre del barco generado aleatoriamente desde lista de nombres medievales. |
+| Módulos con pólvora | No aparecen si `AñoJuego < AnioDesbloqueoPolvoraJuego`. |
+
+**Subpanel Modificar:**
+
+| Comportamiento | Descripción |
+|---|---|
+| Módulos seleccionados vs instalados | Muestra ambos estados para comparación. |
+| Delta de stats | Diferencia neta de estadísticas entre configuración actual y propuesta. |
+| Coste neto | Precio de nuevos módulos menos 50% de reembolso de módulos retirados. |
+| Botón desactivado | Si slots insuficientes u oro insuficiente. |
+
+**Subpanel Reparar y Vender:** lógica conectada a `AstilleroManager`.
+
+#### AstilleroManager — `Assets/Scripts/Ciudad/AstilleroManager.cs`
+
+| Método | Descripción |
+|---|---|
+| `ComprarBarco(TipoCascoData casco, List<ModuloData> modulos, string nombre)` | Descuenta oro, crea el barco y lo añade a `FlotaJugador`. Rechaza si la flota ya tiene `FlotaJugador.MaxBarcos` (5) barcos. |
+| `InstalarModulo(BarcoData barco, ModuloData modulo)` | Instala el módulo si hay slot libre; descuenta el coste. |
+| `RepararBarco(BarcoData barco)` | Restaura vida al máximo; descuenta 10 oro × puntos de daño. |
+| `VenderBarco(BarcoData barco)` | Retira el barco de la flota y devuelve el 50% del valor total. |
+
+**Límite de flota:** máximo 5 barcos por flota (`FlotaJugador.MaxBarcos`).
+
+---
+
+### Flotas PNJ — Fixes mapamundi
+
+#### FlotaManager — `Assets/Scripts/PNJ/FlotaManager.cs`
+
+| Cambio | Descripción |
+|---|---|
+| `GenerarBarcosAleatorios()` ampliado | Instala módulos aleatorios de los 3 tipos respetando los slots del casco. Usa nombres históricos medievales para barcos PNJ. |
+| Fix recálculo de ruta | Las flotas PNJ recalculan su ruta desde la posición actual al volver al mapamundi (antes lo hacían desde la ciudad origen). |
+| Fix piratas | Los piratas solo se reubican aleatoriamente si `PosicionActual == Vector2.zero`; evita teletransporte involuntario al recargar escena. |
+
+---
+
+### Mercado — Restricción por bodega
+
+#### OficinaComercial — `Assets/Scripts/Economico/OficinaComercial.cs`
+
+- Compra ahora limitada por la capacidad de bodega restante de la flota del jugador. No se puede comprar más de lo que cabe.
+
+#### MercadoUI — `Assets/Scripts/UI/MercadoUI.cs`
+
+- Cabecera actualizada: muestra `Bodega actual / CargaMaximaTotal` de la flota en lugar del valor de almacén anterior.
+
+#### MarketRowUI — `Assets/Scripts/UI/MarketRowUI.cs`
+
+- Botones de venta activos únicamente cuando hay mercancía del bien correspondiente en la bodega.
+- Columna derecha muestra las unidades en bodega del jugador por bien.
+
+---
+
+### HUD Dinero
+
+#### HUDDinero — `Assets/Scripts/UI/HUDDinero.cs`
+
+Script creado. Pendiente de añadir el `GameObject` correspondiente en escena.
+
+---
+
+### TO-DOs abiertos tras Día 27
+
+- [ ] Añadir `GameObject` HUDDinero en escena.
+- [ ] Conectar `PanelInspeccionFlota` a clicks de iconos PNJ desde `MapamundiController`.
+- [ ] Pulido visual coherente (fuente Cinzel) en Astillero y Taberna.
+
