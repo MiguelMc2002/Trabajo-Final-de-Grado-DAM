@@ -111,6 +111,17 @@ public class OficinaComercial : MonoBehaviour
             return false;
         }
 
+        // Validación de capacidad de bodega de la flota
+        int cargaActual  = GameManager.Instance.GetTotalUnidadesAlmacen();
+        int cargaMaxima  = GameManager.Instance.FlotaJugador?.CargaMaximaTotal ?? 0;
+        int espacioLibre = cargaMaxima - cargaActual;
+        if (espacioLibre <= 0)
+        {
+            UltimoMensaje = "La bodega de la flota está llena.";
+            return false;
+        }
+        cantidadReal = Mathf.Min(cantidadReal, espacioLibre);
+
         // Delegar al mercado, que actualiza stock y bodega
         bool exito = _mercado.Comprar(bien, cantidadReal);
 

@@ -13,13 +13,6 @@ public class PanelInspeccionFlota : MonoBehaviour
     private void Awake()
     {
         btnCerrar.onClick.AddListener(Ocultar);
-        FlotaIconoMapamundi.OnFlotaClickada += Mostrar;
-        gameObject.SetActive(false);
-    }
-
-    private void OnDestroy()
-    {
-        FlotaIconoMapamundi.OnFlotaClickada -= Mostrar;
     }
 
     public void Mostrar(FlotaRuntimeData flota)
@@ -42,7 +35,7 @@ public class PanelInspeccionFlota : MonoBehaviour
         foreach (BarcoJugador barco in flota.BarcosFlota)
         {
             GameObject fila = Instantiate(prefabFila, contenedorFilas);
-            TextMeshProUGUI[] t = fila.GetComponentsInChildren<TextMeshProUGUI>();
+            TextMeshProUGUI[] t = fila.GetComponentsInChildren<TextMeshProUGUI>(true);
             if (t.Length >= 7)
             {
                 t[0].text = barco.Nombre;

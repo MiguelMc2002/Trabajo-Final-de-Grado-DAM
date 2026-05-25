@@ -97,46 +97,26 @@ public static class ConstruirPanelInspeccionFlotaEditor
         string[] cabeceras = { "Nombre", "Casco", "Vida", "Velocidad", "Maniobra", "Carga", "Fuerza" };
         GameObject filaCabecera = CrearFilaTextos(panelGO.transform, "FilaCabeceras", cabeceras, 14, new Color(1f, 0.85f, 0.4f), 25f, FontStyles.Bold);
 
-        // ── Scroll con contenedor de filas ─────────────────────────────────────
-        GameObject scrollGO = new GameObject("Scroll");
-        scrollGO.transform.SetParent(panelGO.transform, false);
-        ScrollRect scroll = scrollGO.AddComponent<ScrollRect>();
-        Image scrollImg = scrollGO.AddComponent<Image>();
-        scrollImg.color = new Color(0f, 0f, 0f, 0.2f);
-        LayoutElement leScroll = scrollGO.AddComponent<LayoutElement>();
-        leScroll.flexibleHeight = 1f;
-
-        GameObject viewport = new GameObject("Viewport");
-        viewport.transform.SetParent(scrollGO.transform, false);
-        RectTransform vpRT = viewport.AddComponent<RectTransform>();
-        vpRT.anchorMin = Vector2.zero; vpRT.anchorMax = Vector2.one;
-        vpRT.offsetMin = Vector2.zero; vpRT.offsetMax = Vector2.zero;
-        viewport.AddComponent<Image>().color = Color.clear;
-        viewport.AddComponent<Mask>().showMaskGraphic = false;
-
+        // ── Contenedor de filas (directo bajo el panel, sin ScrollRect ni Viewport) ──
         GameObject contenedor = new GameObject("ContenedorFilas");
-        contenedor.transform.SetParent(viewport.transform, false);
+        contenedor.transform.SetParent(panelGO.transform, false);
         RectTransform contRT = contenedor.AddComponent<RectTransform>();
-        contRT.anchorMin = new Vector2(0f, 1f);
-        contRT.anchorMax = new Vector2(1f, 1f);
-        contRT.pivot     = new Vector2(0.5f, 1f);
+        contRT.anchorMin = Vector2.zero;
+        contRT.anchorMax = Vector2.one;
         contRT.offsetMin = Vector2.zero;
         contRT.offsetMax = Vector2.zero;
 
+        LayoutElement leContenedor = contenedor.AddComponent<LayoutElement>();
+        leContenedor.flexibleHeight = 1f;
+
         VerticalLayoutGroup vlgCont = contenedor.AddComponent<VerticalLayoutGroup>();
-        vlgCont.childControlWidth  = true;
-        vlgCont.childControlHeight = true;
+        vlgCont.childControlWidth     = true;
+        vlgCont.childControlHeight    = true;
         vlgCont.childForceExpandWidth = true;
         vlgCont.spacing = 2f;
 
         ContentSizeFitter csf = contenedor.AddComponent<ContentSizeFitter>();
         csf.verticalFit = ContentSizeFitter.FitMode.PreferredSize;
-
-        scroll.viewport  = vpRT;
-        scroll.content   = contRT;
-        scroll.horizontal = false;
-        scroll.vertical   = true;
-        scroll.scrollSensitivity = 30f;
 
         // ── Prefab de fila ────────────────────────────────────────────────────
         string prefabPath = "Assets/Prefabs/UI/FilaBarcoInspeccion.prefab";

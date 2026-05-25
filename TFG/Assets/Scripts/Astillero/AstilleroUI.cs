@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,11 +24,22 @@ public class AstilleroUI : MonoBehaviour
 
     // ─── Construir — textos ───────────────────────────────────────────────────
     [SerializeField] private TextMeshProUGUI _txtCascoSeleccionado;
-    [SerializeField] private TextMeshProUGUI _txtStatsBarco;
+    [SerializeField] private TextMeshProUGUI _txtVidaCasco;
+    [SerializeField] private TextMeshProUGUI _txtVelCasco;
+    [SerializeField] private TextMeshProUGUI _txtManCasco;
+    [SerializeField] private TextMeshProUGUI _txtCargaCasco;
+    [SerializeField] private TextMeshProUGUI _txtSlotsCasco;
     [SerializeField] private TextMeshProUGUI _txtModuloArmamento;
     [SerializeField] private TextMeshProUGUI _txtModuloVelas;
     [SerializeField] private TextMeshProUGUI _txtModuloBodega;
     [SerializeField] private TextMeshProUGUI _txtPrecioConstruir;
+
+    // ─── Menú principal — botones ─────────────────────────────────────────────
+    [SerializeField] private Button _btnMenuConstruir;
+    [SerializeField] private Button _btnMenuModificar;
+    [SerializeField] private Button _btnMenuReparar;
+    [SerializeField] private Button _btnMenuVender;
+    [SerializeField] private Button _btnMenuCerrar;
 
     // ─── Construir — botones ──────────────────────────────────────────────────
     [SerializeField] private Button _btnCascoIzq;
@@ -39,9 +51,16 @@ public class AstilleroUI : MonoBehaviour
     [SerializeField] private Button _btnModuloBodegaIzq;
     [SerializeField] private Button _btnModuloBodegaDer;
     [SerializeField] private Button _btnConstruirConfirmar;
+    [SerializeField] private Button _btnVolverConstruir;
+    [SerializeField] private Button _btnVolverModificar;
+    [SerializeField] private Button _btnVolverReparar;
+    [SerializeField] private Button _btnVolverVender;
 
     // ─── Modificar — textos ───────────────────────────────────────────────────
     [SerializeField] private TextMeshProUGUI _txtBarcoMod;
+    [SerializeField] private TextMeshProUGUI _txtModuloArmMod;
+    [SerializeField] private TextMeshProUGUI _txtModuloVelMod;
+    [SerializeField] private TextMeshProUGUI _txtModuloBodMod;
     [SerializeField] private TextMeshProUGUI _txtModulosInstalados;
     [SerializeField] private TextMeshProUGUI _txtDeltaStats;
 
@@ -95,9 +114,16 @@ public class AstilleroUI : MonoBehaviour
 
     // ─────────────────────────────────────────────────────────────────────────
 
-    private void Start()
+    private void Awake()
     {
         _panelAstillero.SetActive(false);
+
+        // Menú principal
+        if (_btnMenuConstruir != null) _btnMenuConstruir.onClick.AddListener(() => MostrarPanel(1));
+        if (_btnMenuModificar != null) _btnMenuModificar.onClick.AddListener(() => MostrarPanel(2));
+        if (_btnMenuReparar   != null) _btnMenuReparar  .onClick.AddListener(() => MostrarPanel(3));
+        if (_btnMenuVender    != null) _btnMenuVender   .onClick.AddListener(() => MostrarPanel(4));
+        if (_btnMenuCerrar    != null) _btnMenuCerrar   .onClick.AddListener(CerrarAstillero);
 
         // Construir — casco
         _btnCascoIzq.onClick.AddListener(() => CiclarCasco(-1));
@@ -112,6 +138,10 @@ public class AstilleroUI : MonoBehaviour
         _btnModuloBodegaDer.onClick.AddListener(() => CiclarModuloConstruir(TipoModulo.Bodega, +1));
 
         _btnConstruirConfirmar.onClick.AddListener(OnConstruirConfirmar);
+        _btnVolverConstruir.onClick.AddListener(() => MostrarPanel(0));
+        if (_btnVolverModificar != null) _btnVolverModificar.onClick.AddListener(() => MostrarPanel(0));
+        if (_btnVolverReparar   != null) _btnVolverReparar  .onClick.AddListener(() => MostrarPanel(0));
+        if (_btnVolverVender    != null) _btnVolverVender   .onClick.AddListener(() => MostrarPanel(0));
 
         // Modificar — barco y módulos
         _btnBarcoModIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMod, -1, SincronizarSelectoresModificar));
@@ -134,6 +164,8 @@ public class AstilleroUI : MonoBehaviour
         _btnBarcoVenDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, +1, null));
         _btnVenderConfirmar.onClick.AddListener(OnVenderConfirmar);
     }
+
+    // ─────────────────────────────────────────────────────────────────────────
 
     // ─── API pública ──────────────────────────────────────────────────────────
 
@@ -229,7 +261,11 @@ public class AstilleroUI : MonoBehaviour
         if (cascos == null || cascos.Count == 0)
         {
             _txtCascoSeleccionado.text = "Sin cascos disponibles";
-            _txtStatsBarco.text        = "";
+            if (_txtVidaCasco  != null) _txtVidaCasco.text  = "Vida: —";
+            if (_txtVelCasco   != null) _txtVelCasco.text   = "Vel: —";
+            if (_txtManCasco   != null) _txtManCasco.text   = "Man: —";
+            if (_txtCargaCasco != null) _txtCargaCasco.text = "Carga: —";
+            if (_txtSlotsCasco != null) _txtSlotsCasco.text = "Módulos: —";
             _txtModuloArmamento.text   = "Ninguno";
             _txtModuloVelas.text       = "Ninguno";
             _txtModuloBodega.text      = "Ninguno";
@@ -239,9 +275,18 @@ public class AstilleroUI : MonoBehaviour
 
         IBarco casco = cascos[_indiceCasco];
         _txtCascoSeleccionado.text = casco.NombreCasco;
-        _txtStatsBarco.text = $"Vida {casco.VidaBase}  Vel {casco.VelocidadBase}" +
-                              $"  Man {casco.ManiobrabilidadBase}  Carga {casco.CapacidadCargaBase}" +
-                              $"  Slots {casco.CapacidadModulos}";
+        if (_txtVidaCasco  != null) _txtVidaCasco.text  = $"Vida: {casco.VidaBase}";
+        if (_txtVelCasco   != null) _txtVelCasco.text   = $"Vel: {casco.VelocidadBase}";
+        if (_txtManCasco   != null) _txtManCasco.text   = $"Man: {casco.ManiobrabilidadBase}";
+        if (_txtCargaCasco != null) _txtCargaCasco.text = $"Carga: {casco.CapacidadCargaBase}";
+        int slotsUsados = 0;
+        ModuloBarcoData mArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
+        ModuloBarcoData mVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
+        ModuloBarcoData mBod = ModuloSeleccionadoConstruir(TipoModulo.Bodega);
+        if (mArm != null) slotsUsados += mArm.slotsCosto;
+        if (mVel != null) slotsUsados += mVel.slotsCosto;
+        if (mBod != null) slotsUsados += mBod.slotsCosto;
+        if (_txtSlotsCasco != null) _txtSlotsCasco.text = $"Módulos: {slotsUsados}/{casco.CapacidadModulos}";
 
         ModuloBarcoData modArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
         ModuloBarcoData modVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
@@ -274,11 +319,38 @@ public class AstilleroUI : MonoBehaviour
 
         _txtBarcoMod.text = barco.Nombre;
 
-        // Módulos instalados actualmente
-        var sb = new System.Text.StringBuilder();
-        foreach (ModuloBarcoData m in barco.ModulosInstalados)
-            sb.AppendLine($"• {m.nombreModulo} ({m.tipoModulo})");
-        _txtModulosInstalados.text = sb.Length > 0 ? sb.ToString().TrimEnd() : "Sin módulos instalados";
+        // Nombre del módulo seleccionado en cada selector
+        var listaArm = ObtenerModulosFiltrados(TipoModulo.Armamento);
+        var listaVel = ObtenerModulosFiltrados(TipoModulo.Velas);
+        var listaBod = ObtenerModulosFiltrados(TipoModulo.Bodega);
+        if (_txtModuloArmMod != null) _txtModuloArmMod.text = _indiceModuloArmMod < listaArm.Count && listaArm[_indiceModuloArmMod] != null ? listaArm[_indiceModuloArmMod].nombreModulo : "Ninguno";
+        if (_txtModuloVelMod != null) _txtModuloVelMod.text = _indiceModuloVelMod < listaVel.Count && listaVel[_indiceModuloVelMod] != null ? listaVel[_indiceModuloVelMod].nombreModulo : "Ninguno";
+        if (_txtModuloBodMod != null) _txtModuloBodMod.text = _indiceModuloBodMod < listaBod.Count && listaBod[_indiceModuloBodMod] != null ? listaBod[_indiceModuloBodMod].nombreModulo : "Ninguno";
+
+        // Módulos seleccionados en los selectores
+        var lineas = new System.Text.StringBuilder();
+        ModuloBarcoData selArm = ObtenerModulosFiltrados(TipoModulo.Armamento).ElementAtOrDefault(_indiceModuloArmMod);
+        ModuloBarcoData selVel = ObtenerModulosFiltrados(TipoModulo.Velas).ElementAtOrDefault(_indiceModuloVelMod);
+        ModuloBarcoData selBod = ObtenerModulosFiltrados(TipoModulo.Bodega).ElementAtOrDefault(_indiceModuloBodMod);
+        if (selArm != null) lineas.AppendLine($"• {selArm.nombreModulo} (Armamento)");
+        else lineas.AppendLine("• Ninguno (Armamento)");
+        if (selVel != null) lineas.AppendLine($"• {selVel.nombreModulo} (Velas)");
+        else lineas.AppendLine("• Ninguno (Velas)");
+        if (selBod != null) lineas.AppendLine($"• {selBod.nombreModulo} (Bodega)");
+        else lineas.AppendLine("• Ninguno (Bodega)");
+        int slotsSeleccionados = 0;
+        if (selArm != null) slotsSeleccionados += selArm.slotsCosto;
+        if (selVel != null) slotsSeleccionados += selVel.slotsCosto;
+        if (selBod != null) slotsSeleccionados += selBod.slotsCosto;
+        int capacidadTotal = barco?.CascoBase?.CapacidadModulos ?? 0;
+        bool slotsSuficientes = slotsSeleccionados <= capacidadTotal;
+        bool oroCuficiente = GameManager.Instance == null ||
+            GameManager.Instance.Dinero >= CalcularCosteNetoModificacion(barco);
+        bool puedeInstalar = slotsSuficientes && oroCuficiente;
+        if (_btnModificarConfirmar != null)
+            _btnModificarConfirmar.interactable = puedeInstalar;
+        if (_txtModulosInstalados != null)
+            _txtModulosInstalados.text = $"Módulos: {slotsSeleccionados}/{capacidadTotal}\n" + lineas.ToString().TrimEnd();
 
         // Deltas de la selección respecto al estado actual
         int dVida  = DeltaModulo(barco, TipoModulo.Armamento, _indiceModuloArmMod, m => m.deltaVida)
@@ -326,7 +398,7 @@ public class AstilleroUI : MonoBehaviour
         if (barcos == null || barcos.Count == 0)
         {
             _txtBarcoVen.text  = "Sin barcos disponibles";
-            _txtStatsVen.text  = "";
+            if (_txtStatsVen != null) _txtStatsVen.text  = "";
             _txtValorVen.text  = "";
             return;
         }
@@ -339,9 +411,10 @@ public class AstilleroUI : MonoBehaviour
         long valorVenta = (long)(costeTotal * 0.5f);
 
         _txtBarcoVen.text  = barco.Nombre;
-        _txtStatsVen.text  = $"Vida {barco.VidaActual}/{barco.VidaTotal}" +
-                             $"  Vel {barco.VelocidadTotal}  Man {barco.ManiobrabilidadTotal}" +
-                             $"  Carga {barco.CargaMaximaTotal}";
+        if (_txtStatsVen != null)
+            _txtStatsVen.text = $"Vida {barco.VidaActual}/{barco.VidaTotal}" +
+                                $"  Vel {barco.VelocidadTotal}  Man {barco.ManiobrabilidadTotal}" +
+                                $"  Carga {barco.CargaMaximaTotal}";
         _txtValorVen.text  = $"Valor de venta: {valorVenta} oro";
     }
 
@@ -531,8 +604,15 @@ public class AstilleroUI : MonoBehaviour
         var resultado = new List<ModuloBarcoData> { null };
         var todos = AstilleroManager.Instance?.ModulosDisponibles;
         if (todos == null) return resultado;
+        int anioActual = SimulacionTiempo.Instance != null
+            ? SimulacionTiempo.Instance.AñoActual
+            : 0;
         foreach (ModuloBarcoData m in todos)
-            if (m != null && m.tipoModulo == tipo) resultado.Add(m);
+        {
+            if (m == null || m.tipoModulo != tipo) continue;
+            if (m.requierePolvora && anioActual < ModuloBarcoData.AnioDesbloqueoPolvoraJuego) continue;
+            resultado.Add(m);
+        }
         return resultado;
     }
 

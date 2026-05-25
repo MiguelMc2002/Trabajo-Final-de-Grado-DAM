@@ -58,15 +58,9 @@ public class FlotaIconoMapamundi : MonoBehaviour
         if (_collider == null)
         {
             CircleCollider2D col = gameObject.AddComponent<CircleCollider2D>();
-            col.radius = 0.3f;
+            col.radius = 0.6f;
             _collider  = col;
         }
-    }
-
-    private void OnMouseDown()
-    {
-        if (_esJugador) return;
-        FlotaIconoMapamundi.OnFlotaClickada?.Invoke(Flota);
     }
 
     /// <summary>Permite invocar OnFlotaClickada desde fuera de la clase.</summary>
@@ -172,7 +166,17 @@ public class FlotaIconoMapamundi : MonoBehaviour
             return;
         }
 
-        Vector3 objetivo = _tilemap.GetCellCenterWorld(Flota.RutaActualTilemap[Flota.IndiceWaypointActual]);
+        Vector3Int waypointCasilla = Flota.RutaActualTilemap[Flota.IndiceWaypointActual];
+        if (!_rutaCalculador.EsTransitable(waypointCasilla))
+        {
+            Debug.LogWarning($"[FlotaIcono] Flota {Flota.Id} — waypoint intransitable {waypointCasilla}. Recalculando ruta.");
+            Vector3Int casillaActual = _tilemap.WorldToCell(transform.position);
+            Flota.RutaActualTilemap    = _rutaCalculador.CalcularRuta(casillaActual, Flota.CasillaDestino);
+            Flota.IndiceWaypointActual = 0;
+            return;
+        }
+
+        Vector3 objetivo = _tilemap.GetCellCenterWorld(waypointCasilla);
         transform.position = Vector3.MoveTowards(transform.position, objetivo, velocidad);
         Flota.PosicionActual = transform.position;
 

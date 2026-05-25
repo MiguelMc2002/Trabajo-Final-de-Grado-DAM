@@ -79,22 +79,76 @@ public class MapamundiController : MonoBehaviour
             sr.sortingOrder = 10;
             go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
             CircleCollider2D col = go.AddComponent<CircleCollider2D>();
-            col.radius = 0.3f;
+            col.radius = 0.6f;
 
             FlotaIconoMapamundi icono = go.AddComponent<FlotaIconoMapamundi>();
             icono.Flota = flota;
             icono.Inicializar(tilemap, rutaCalculador);
 
+            // Resolver CasillaDestino desde CiudadDestinoId para PNJs en viaje cuya casilla
+            // no está asignada (ComerciantePNJController solo guarda CiudadDestinoId, no la casilla)
+            if (flota.CasillaDestino == Vector3Int.zero &&
+                flota.EstadoActual == EstadoFlotaPNJ.Viajando &&
+                flota.CiudadDestinoId != -1 &&
+                GameManager.Instance != null)
+            {
+                CiudadData ciudadDestino = GameManager.Instance.CiudadesDisponibles
+                    .FirstOrDefault(c => c.IdCiudad == flota.CiudadDestinoId);
+                if (ciudadDestino != null)
+                    flota.CasillaDestino = ciudadDestino.CasillaMapamundi;
+            }
+
             // Calcular ruta si la flota tiene destino asignado
             if (flota.CasillaDestino != Vector3Int.zero)
             {
-                CiudadData ciudadOrigen = GameManager.Instance.CiudadesDisponibles
-                    .FirstOrDefault(c => c.IdCiudad == flota.CiudadOrigenId);
-                if (ciudadOrigen != null)
+                // Usar la posición actual de la flota como punto de inicio (puede estar a mitad de ruta)
+                Vector3Int casillaInicio;
+                if (flota.PosicionActual != Vector2.zero)
                 {
-                    flota.RutaActualTilemap = rutaCalculador.CalcularRuta(
-                        ciudadOrigen.CasillaMapamundi, flota.CasillaDestino);
+                    casillaInicio = tilemap.WorldToCell(new Vector3(flota.PosicionActual.x, flota.PosicionActual.y, 0f));
                 }
+                else
+                {
+                    CiudadData ciudadOrigen = GameManager.Instance.CiudadesDisponibles
+                        .FirstOrDefault(c => c.IdCiudad == flota.CiudadOrigenId);
+                    casillaInicio = ciudadOrigen != null
+                        ? ciudadOrigen.CasillaMapamundi
+                        : flota.CasillaDestino;
+                }
+
+                flota.RutaActualTilemap = rutaCalculador.CalcularRuta(casillaInicio, flota.CasillaDestino);
+                flota.IndiceWaypointActual = 0;
+
+                // Si la ruta falló (casilla inicio en tierra), intentar desde ciudad origen
+                if ((flota.RutaActualTilemap == null || flota.RutaActualTilemap.Count == 0) && flota.PosicionActual != Vector2.zero)
+                {
+                    CiudadData ciudadFallback = GameManager.Instance.CiudadesDisponibles
+                        .FirstOrDefault(c => c.IdCiudad == flota.CiudadOrigenId);
+                    if (ciudadFallback != null)
+                    {
+                        casillaInicio = ciudadFallback.CasillaMapamundi;
+                        Vector3 posFallback = tilemap.GetCellCenterWorld(casillaInicio);
+                        flota.PosicionActual = posFallback;
+                        go.transform.position = posFallback;
+                        flota.RutaActualTilemap = rutaCalculador.CalcularRuta(casillaInicio, flota.CasillaDestino);
+                        flota.IndiceWaypointActual = 0;
+                        Debug.LogWarning($"[SpawnFlota] Flota {flota.Id} reubicada a ciudad origen {ciudadFallback.NombreCiudad} por ruta inválida.");
+                    }
+                }
+
+                Debug.Log($"[SpawnFlota] Flota {flota.Id} ({flota.NombrePropietario}) " +
+                          $"PosicionActual={flota.PosicionActual} " +
+                          $"casillaInicio={casillaInicio} " +
+                          $"EsTransitable={rutaCalculador.EsTransitable(casillaInicio)} " +
+                          $"CasillaDestino={flota.CasillaDestino} " +
+                          $"RutaCount={flota.RutaActualTilemap?.Count ?? -1}");
+            }
+            else
+            {
+                // Sin destino: limpiar la ruta antigua que pueda haber quedado en memoria
+                // para que el PNJ no la siga con índice reseteado a 0
+                flota.RutaActualTilemap?.Clear();
+                flota.IndiceWaypointActual = 0;
             }
 
             // Posicionar icono: usar PosicionActual si es válida (distinta de zero y dentro de bounds),
@@ -188,7 +242,7 @@ public class MapamundiController : MonoBehaviour
         sr.sortingOrder = 11;
         go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
         CircleCollider2D colJugador = go.AddComponent<CircleCollider2D>();
-        colJugador.radius = 0.3f;
+        colJugador.radius = 0.6f;
 
         Vector3 posicion = tilemap.GetCellCenterWorld(ciudad.CasillaMapamundi);
         go.transform.position  = posicion;
@@ -229,6 +283,16 @@ public class MapamundiController : MonoBehaviour
     /// En la beta el traslado es instantáneo; en la release incluirá animación.
     /// </summary>
     /// <param name="ciudadDestino">Datos del puerto al que viaja el jugador.</param>
+    /// <summary>
+    /// Abre el panel de inspección de flota con los datos de la flota indicada.
+    /// Llamado desde MapamundiCamara cuando el jugador hace click sobre un icono PNJ.
+    /// </summary>
+    public void AbrirPanelInspeccion(FlotaRuntimeData flota)
+    {
+        if (panelInspeccionFlota != null)
+            panelInspeccionFlota.Mostrar(flota);
+    }
+
     public void ViajarACiudad(CiudadData ciudadDestino)
     {
         if (ciudadDestino == null) return;

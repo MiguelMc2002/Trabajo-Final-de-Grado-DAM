@@ -18,7 +18,12 @@
       "Bash(git ls-tree *)",
       "Bash(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\tfg\\\\FEATURES.md\")",
       "Bash(Measure-Object -Line)",
-      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\FEATURES.md\" | Measure-Object -Line\\).Lines)"
+      "PowerShell(\\(Get-Content \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\FEATURES.md\" | Measure-Object -Line\\).Lines)",
+      "Bash(git checkout *)",
+      "Bash(git show *)",
+      "Bash(echo \"EXIT:$?\")",
+      "Bash(Select-String -Path \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets\\\\Scenes\\\\Ciudad.unity\" -Pattern \"139585730|223446551|552311504|236826418|1701156149|463091767|1920045492|368041742\")",
+      "Bash(Select-Object -First 20)"
     ]
   }
 }
