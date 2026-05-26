@@ -5,6 +5,214 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 ---
 
+## Cambios Día 28
+
+### BarcoJugador — actualización
+**Ruta:** `Assets/Scripts/Astillero/BarcoJugador.cs`
+**Tipo:** Clase pura C#
+**Módulo:** Astillero — Tripulación
+**Descripción:** Se añade sistema de tripulación por barco. El valor por defecto de `Tripulacion` cambia de 30 a 0. `TripulacionMaxima` delega en el casco base decorado. `ContratarMarineros` y `LicenciarMarineros` devuelven el número real procesado (capped por hueco/stock).
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `TripulacionMaxima` | `int` (get) | `CascoBase?.CapacidadTripulacion ?? 0`. Capacidad total del barco según casco. |
+| `Tripulacion` | `int` (get/set) | Tripulación actual. Valor por defecto **0** (antes 30). |
+| `ContratarMarineros(int cantidad)` | `int` | Incrementa tripulación hasta el hueco disponible. Devuelve marineros realmente contratados. |
+| `LicenciarMarineros(int cantidad)` | `int` | Reduce tripulación sin bajar de 0. Devuelve marineros realmente licenciados. |
+
+---
+
+### FlotaJugador — actualización
+**Ruta:** `Assets/Scripts/Astillero/FlotaJugador.cs`
+**Tipo:** Clase pura C#
+**Módulo:** Jugador — Flota
+**Descripción:** Se añade la propiedad `ModoPirata`, la propiedad `TripulacionTotal` (suma de tripulaciones de todos los barcos), el método `LimpiarTodos()` para resetear estado en cargas, y `ComoFlotaRuntime()` ahora rellena correctamente `BarcosFlota` con la lista interna de barcos.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `ModoPirata` | `bool` (get/set) | Indica si el jugador opera como pirata. Persiste en `estadoJuego.modo_pirata`. |
+| `TripulacionTotal` | `int` (get) | Suma de `Tripulacion` de todos los barcos de la flota. |
+| `LimpiarTodos()` | `void` | Vacía la lista de barcos y resetea el estado. Llamar antes de restaurar desde BD. |
+| `ComoFlotaRuntime()` | `FlotaRuntimeData` | Construye snapshot con `BarcosFlota = new List<BarcoJugador>(_barcos)`. |
+
+---
+
+### TabernaManager — actualización
+**Ruta:** `Assets/Scripts/Taberna/TabernaManager.cs`
+**Tipo:** MonoBehaviour (singleton, DontDestroyOnLoad)
+**Módulo:** Taberna — Tripulación
+**Descripción:** `ContratarMarineros` pasa a oferta ilimitada en ciudad (sin cupo diario). El único límite es el hueco en el barco y el oro del jugador. `PrecioMarinero` sube de 5 a 50 para equilibrio económico. Se añaden helpers para gestión de capitanes en cargas de partida.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `PrecioMarinero` | `const int = 50` | Coste en oro por marinero contratado. |
+| `ContratarMarineros(BarcoJugador, int)` | `ResultadoOperacion` | Oferta ilimitada en ciudad. Falla si hueco ≤ 0 o dinero insuficiente. |
+| `ObtenerBarcosDeLaFlota()` | `IReadOnlyList<BarcoJugador>` | Delega en `GameManager.Instance.FlotaJugador.Barcos`. |
+| `LimpiarCapitanesContratados()` | `void` | Vacía `_capitanesContratados`. Llamar desde `LoadManager` antes de restaurar. |
+| `RestaurarCapitanContratado(CapitanData)` | `void` | Añade capitán sin pasar por flujo de contratación. Solo desde `LoadManager`. |
+
+---
+
+### TabernaUI — actualización
+**Ruta:** `Assets/Scripts/Taberna/TabernaUI.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — Taberna
+**Descripción:** Botones +/- de cantidad de marineros tienen aceleración en tres fases al mantener pulsado. `_textoMarinerosDisponibles` ahora muestra precio por marinero en lugar de disponibles en ciudad.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AñadirEventosPulsacion(Button, int)` | `void` (privado) | Registra `PointerDown`/`PointerUp` via `EventTrigger` para activar corrutina de aceleración. |
+| `CorrutinaCantidad(int dir)` | `IEnumerator` (privado) | Fase 1 (0–0.5 s): pasos de 1 cada 150 ms. Fase 2 (0.5–2 s): pasos de 5 cada 100 ms. Fase 3 (>2 s): pasos de 10 cada 80 ms. |
+| `DetenerAceleracion()` | `void` (privado) | Detiene corrutina de aceleración si está activa. |
+
+---
+
+### FlotaManager — actualización
+**Ruta:** `Assets/Scripts/PNJ/FlotaManager.cs`
+**Tipo:** MonoBehaviour (singleton)
+**Módulo:** PNJ — Flotas
+**Descripción:** Sistema de respawn automático de PNJs. Límite global de 20 comerciantes y 3 piratas. Pools de 60 nombres comerciales históricos (alemán/español/italiano/neerlandés/francés) y 18 nombres de piratas históricos. `EliminarFlota` borra de BD y activa respawn. Los piratas se spawnean sobre casilla marítima válida con tripulación al 100%; los comerciantes con 30–80%.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MaxComerciantesActivos` | `const int = 20` | Límite máximo de flotas comerciantes PNJ simultáneas. |
+| `MaxPiratasActivos` | `const int = 3` | Límite máximo de flotas piratas PNJ simultáneas. |
+| `EliminarFlota(int idFlota)` | `void` | Elimina flota del registro, desactiva icono, borra filas BD (MemoriaComercialPNJ, CargaFlotaPNJ, FlotaPNJ) y dispara respawn. |
+| `SpawnComercianteAleatorio()` | `void` | Crea comerciante con ID en rango 1001–1999 y nombre único del pool. Guarda en BD. |
+| `SpawnPirataAleatorio()` | `void` | Crea pirata con ID en rango 2001–2999, posición en casilla marítima aleatoria. Activa `PirataBrainBootstrapper`. |
+| `GenerarBarcosAleatorios(bool esPirata)` | `List<BarcoJugador>` | Piratas: tripulación 100%. Comerciantes: 30–80%. Piratas prefieren cascos rápidos (Galera/Cog). |
+| `InstalarModuloAleatorioSiCabe(BarcoJugador, TipoModulo)` | `void` | Instala máximo un módulo por `TipoModulo`. Filtra armas de pólvora si año de juego < 1380. |
+
+---
+
+### CombateEventos — actualización
+**Ruta:** `Assets/Scripts/Combate/CombateEventos.cs`
+**Tipo:** Clase estática
+**Módulo:** Combate — Eventos
+**Descripción:** Se añaden evento de fin de combate y flag de estado para que otros sistemas (FlotaManager, navegación) sepan si hay combate en curso con el jugador.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `OnCombateTerminado` | `static event Action` | Se dispara cuando el jugador cierra el panel de resultados de combate. |
+| `CombateJugadorEnCurso` | `static bool` (private set) | `true` desde `DispararCombate()` hasta `DispararFinCombate()`. |
+| `DispararCombate()` | `static void` | Pone `CombateJugadorEnCurso = true` e invoca `OnCombateIniciado`. |
+| `DispararFinCombate()` | `static void` | Pone `CombateJugadorEnCurso = false` e invoca `OnCombateTerminado`. |
+
+---
+
+### MapamundiController — actualización
+**Ruta:** `Assets/Scripts/Navegacion/MapamundiController.cs`
+**Tipo:** MonoBehaviour (singleton)
+**Módulo:** Mapamundi — Flotas
+**Descripción:** Se añade soporte para abrir el panel de inspección del jugador (con botón Modo Pirata), desactivar iconos de flotas eliminadas y spawnear iconos de flotas recién creadas por respawn.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirPanelJugador()` | `void` | Llama a `FlotaJugador.ComoFlotaRuntime()` y abre `PanelInspeccionFlota` con `esJugador: true`. |
+| `DesactivarIconoFlota(int idFlota)` | `void` | Desactiva el GameObject del icono y lo elimina de `_iconosPorId`. |
+| `SpawnIconoFlotaPNJ(FlotaRuntimeData)` | `void` | Instancia un icono en runtime para una flota PNJ recién respawneada. |
+| `ObtenerPosicionMarAleatoria()` | `Vector2` | Llama a `BuscarCasillaMarValida()` y devuelve posición world-space. |
+
+---
+
+### PanelInspeccionFlota — actualización
+**Ruta:** `Assets/Scripts/UI/PanelInspeccionFlota.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — Mapamundi
+**Descripción:** `Mostrar` acepta nuevo parámetro `esJugador` que controla visibilidad del botón Modo Pirata. El título refleja el modo actual ("Tu flota — Pirata" / "Tu flota — Comerciante"). El botón alterna entre "Hacerse Pirata" y "Abandonar Piratería".
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Mostrar(FlotaRuntimeData, bool esJugador)` | `void` | Muestra panel. Si `esJugador`, activa `_btnModoPirata` y título diferenciado. |
+| `Ocultar()` | `void` | Desactiva el panel. |
+| `_btnModoPirata` | `Button` (SerializeField) | Toggle Modo Pirata. Solo visible para la flota del jugador. |
+
+---
+
+### PanelFlotaUI — refactorización
+**Ruta:** `Assets/Scripts/UI/PanelFlotaUI.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — Ciudad
+**Descripción:** Panel de gestión de flota en escena Ciudad. Refactorizado completamente: navegación circular entre barcos con flechas, subpanel de bodega que lee `GameManager.GetAlmacen()` filtrando cantidad > 0, tecla F como toggle si bodega no está abierta. Botones de convoy eliminados.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_btnAnterior` / `_btnSiguiente` | `Button` | Navegación circular wrap-around entre barcos de la flota. |
+| `_txtIndiceBarco` | `TextMeshProUGUI` | Muestra "Barco X / N". |
+| `RefrescarPanel()` | `void` | Refresca todos los datos del panel. Llamado externamente por `AstilleroUI`. |
+| Tecla F | — | Toggle del panel si el subpanel de bodega no está abierto. |
+
+---
+
+### HUDDinero — clase nueva
+**Ruta:** `Assets/Scripts/UI/HUDDinero.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** UI — HUD
+**Descripción:** Componente HUD de dinero presente en escenas Ciudad y Mapamundi por separado (sin DontDestroyOnLoad). Se suscribe a `GameManager.OnDineroActualizado` en `OnEnable` y se desuscribe en `OnDisable`/`OnDestroy`. Formatea el valor con separador de miles en español.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `OnEnable()` | `void` | Suscribe a `GameManager.OnDineroActualizado` y muestra valor inicial. |
+| `OnDisable()` / `OnDestroy()` | `void` | Desuscribe del evento. |
+| `FormatearDinero(long cantidad)` | `string` (privado) | `$"{cantidad.ToString("N0", _culturaES)} ƒ"` con cultura es-ES para separador de miles. |
+
+---
+
+### DatabaseManager — actualización
+**Ruta:** `Assets/Scripts/Database/DatabaseManager.cs`
+**Tipo:** MonoBehaviour (singleton, DontDestroyOnLoad)
+**Módulo:** Persistencia — BD
+**Descripción:** Dos nuevas migraciones se añaden al flujo de `InicializarSlot`: columna `modo_pirata` en `estadoJuego` y columnas de tripulación en `Barco`. Ambas usan try/catch porque SQLite no soporta `ADD COLUMN IF NOT EXISTS`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MigrarColumnaModopirata()` | `void` (privado) | `ALTER TABLE estadoJuego ADD COLUMN modo_pirata INTEGER NOT NULL DEFAULT 0`. Silencia excepción si ya existe. |
+| `MigrarColumnasTripulacionBarco()` | `void` (privado) | Añade `tripulacion_actual INTEGER NOT NULL DEFAULT 0` y `capacidad_tripulacion INTEGER NOT NULL DEFAULT 50` a `Barco`. Dos try/catch independientes. |
+
+---
+
+### EstadoJuegoDAO — actualización
+**Ruta:** `Assets/Scripts/Database/EstadoJuegoDAO.cs`
+**Tipo:** Clase pura C#
+**Módulo:** Persistencia — DAO
+**Descripción:** `EstadoJuegoData` incluye nueva propiedad `ModoPirata`. `Guardar()` escribe `modo_pirata` en la fila de `estadoJuego`. `Cargar()` lee el campo y lo asigna al DTO.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `EstadoJuegoData.ModoPirata` | `bool` | Modo pirata del jugador. Mapeado a `modo_pirata` (INTEGER 0/1) en BD. |
+| `Guardar(EstadoJuegoData)` | `void` | Persiste todos los campos incluyendo `modo_pirata`. |
+| `Cargar()` | `EstadoJuegoData` | Devuelve DTO con `ModoPirata` restaurado de BD. |
+
+---
+
+### SaveManager — actualización
+**Ruta:** `Assets/Scripts/Database/SaveManager.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** Persistencia — Guardado
+**Descripción:** `GuardarFlotaJugador` llama a `_barcoDAO.EliminarBarcosDeFlota(0)` antes de los INSERT para evitar barcos fantasma. Guard contra `barco.CascoBase == null`. Persiste `tripulacion_actual` y `capacidad_tripulacion`. `GuardarCapitanes` elimina todos antes de reinsertar. `GuardarEstadoJuego` pasa `modoPirata` al DAO.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `GuardarFlotaJugador()` | `void` | DELETE antes de INSERT; persiste `Tripulacion` y `TripulacionMaxima` del barco. |
+| `GuardarCapitanes()` | `void` | Llama a `_capitanDAO.EliminarTodosLosCapitanes()` antes de reinsertar. |
+| `GuardarEstadoJuego()` | `void` | Incluye `FlotaJugador.ModoPirata` en el DTO pasado al DAO. |
+
+---
+
+### LoadManager — actualización
+**Ruta:** `Assets/Scripts/Database/LoadManager.cs`
+**Tipo:** MonoBehaviour
+**Módulo:** Persistencia — Carga
+**Descripción:** `CargarFlotaJugador` llama a `FlotaJugador.LimpiarTodos()` antes de restaurar y asigna `dto.TripulacionActual` a `barco.Tripulacion`. Si no se encuentra un módulo por nombre (asset renombrado), hace fallback por `TipoModulo`. `CargarCapitanes` llama a `TabernaManager.Instance.LimpiarCapitanesContratados()` antes de restaurar. `CargarPartida` restaura `ModoPirata` desde `estadoJuego`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `CargarFlotaJugador()` | `void` | `LimpiarTodos()` antes de restaurar; asigna `TripulacionActual`; fallback por `TipoModulo` si nombre de módulo no coincide. |
+| `CargarCapitanes()` | `void` | `LimpiarCapitanesContratados()` antes de restaurar para evitar duplicados. |
+| `CargarPartida()` | `void` | Paso 2b: `FlotaJugador.ModoPirata = estadoJuego.ModoPirata`. |
+
+---
+
 ## Cambios Día 26
 
 ### NavegacionJugadorController — clase nueva
@@ -3251,7 +3459,37 @@ Script creado. Pendiente de añadir el `GameObject` correspondiente en escena.
 
 ### TO-DOs abiertos tras Día 27
 
-- [ ] Añadir `GameObject` HUDDinero en escena.
-- [ ] Conectar `PanelInspeccionFlota` a clicks de iconos PNJ desde `MapamundiController`.
-- [ ] Pulido visual coherente (fuente Cinzel) en Astillero y Taberna.
+- [x] Añadir `HUDDinero` en escenas Ciudad y Mapamundi — completado Día 28.
+- [x] Conectar `PanelInspeccionFlota` a clicks de iconos PNJ desde `MapamundiController` — completado Día 28.
+- [ ] Pulido visual coherente (fuente Cinzel) en Astillero y Taberna — pendiente.
+
+---
+
+### TO-DOs abiertos tras Día 28
+
+**Completados en Día 28:**
+
+| Ítem | Estado |
+|---|---|
+| Auditoría BBDD flota jugador (6 bugs: barcos fantasma, tripulación, modo pirata) | Completado |
+| Persistencia `modo_pirata` en `estadoJuego` + migración BD | Completado |
+| Respawn de comerciantes (límite 20) y piratas (límite 3) con pools de nombres históricos | Completado |
+| Sistema de tripulación por barco (`ContratarMarineros` / `LicenciarMarineros`) | Completado |
+| `PanelFlotaUI` ciudad refactorizado (flechas circulares, bodega, sin convoy, tecla F) | Completado |
+| Panel inspección jugador en mapamundi con botón Modo Pirata | Completado |
+| `HUDDinero` en escenas Ciudad y Mapamundi | Completado |
+| Botones +/- marineros con aceleración en 3 fases | Completado |
+| Oferta de marineros ilimitada en ciudad; precio subido a 50 oro | Completado |
+
+**Pendiente:**
+
+| Ítem | Prioridad |
+|---|---|
+| Combate ofensivo del jugador (iniciar ataque desde mapa) | Alta |
+| Detener flotas PNJ durante combate con el jugador | Alta |
+| Asignar `_modulosParaPNJ` y `_cascosParaPNJ` en Inspector de `MenuPrincipal` | Media |
+| Fix columnas `PanelInspeccionFlota` (ancho fijo, no colapsan) | Media |
+| Pulido visual coherente (fuente Cinzel, colores medievales) en Astillero y Taberna | Baja |
+| Menú de opciones (volumen, resolución) | Baja |
+| Traducción al inglés | Baja |
 
