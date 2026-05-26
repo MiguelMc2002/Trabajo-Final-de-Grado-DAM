@@ -68,7 +68,48 @@ public static class ConstruirPanelInspeccionFlotaEditor
         LayoutElement leTitulo = txtTituloGO.AddComponent<LayoutElement>();
         leTitulo.flexibleWidth = 1f;
 
-        // Botón cerrar
+        // ── Botón Modo Pirata (reutilizar si ya existe para no duplicar) ─────────
+        Transform btnPirataExistente = filaHeader.transform.Find("BtnModoPirata");
+        GameObject btnModoPirataGO = btnPirataExistente != null
+            ? btnPirataExistente.gameObject
+            : new GameObject("BtnModoPirata");
+        if (btnPirataExistente == null)
+            btnModoPirataGO.transform.SetParent(filaHeader.transform, false);
+
+        Image btnPirataImg = btnModoPirataGO.GetComponent<Image>() ?? btnModoPirataGO.AddComponent<Image>();
+        btnPirataImg.color = new Color(0.545f, 0.412f, 0.078f, 1f); // #8B6914 dorado oscuro
+
+        Button btnModoPirata = btnModoPirataGO.GetComponent<Button>() ?? btnModoPirataGO.AddComponent<Button>();
+
+        LayoutElement leBtnPirata = btnModoPirataGO.GetComponent<LayoutElement>() ?? btnModoPirataGO.AddComponent<LayoutElement>();
+        leBtnPirata.preferredWidth = 160f;
+        leBtnPirata.flexibleWidth  = 0f;
+
+        // Texto interior del botón Modo Pirata
+        Transform txtPirataExistente = btnModoPirataGO.transform.Find("Text");
+        GameObject txtPirataGO = txtPirataExistente != null
+            ? txtPirataExistente.gameObject
+            : new GameObject("Text");
+        if (txtPirataExistente == null)
+            txtPirataGO.transform.SetParent(btnModoPirataGO.transform, false);
+
+        TextMeshProUGUI txtPirata = txtPirataGO.GetComponent<TextMeshProUGUI>() ?? txtPirataGO.AddComponent<TextMeshProUGUI>();
+        txtPirata.text      = "Hacerse Pirata";
+        txtPirata.fontSize  = 13;
+        txtPirata.fontStyle = FontStyles.Bold;
+        txtPirata.color     = Color.white;
+        txtPirata.alignment = TextAlignmentOptions.Center;
+
+        TMP_FontAsset cinzelPirata = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/static/Cinzel-Regular SDF.asset");
+        if (cinzelPirata != null) txtPirata.font = cinzelPirata;
+
+        RectTransform txtPirataRT = txtPirataGO.GetComponent<RectTransform>();
+        txtPirataRT.anchorMin = Vector2.zero;
+        txtPirataRT.anchorMax = Vector2.one;
+        txtPirataRT.offsetMin = Vector2.zero;
+        txtPirataRT.offsetMax = Vector2.zero;
+
+        // ── Botón cerrar ──────────────────────────────────────────────────────
         GameObject btnCerrarGO = new GameObject("BtnCerrar");
         btnCerrarGO.transform.SetParent(filaHeader.transform, false);
         Image btnImg = btnCerrarGO.AddComponent<Image>();
@@ -135,6 +176,7 @@ public static class ConstruirPanelInspeccionFlotaEditor
         so.FindProperty("contenedorFilas").objectReferenceValue  = contenedor.transform;
         so.FindProperty("prefabFila").objectReferenceValue       = prefabAsset;
         so.FindProperty("btnCerrar").objectReferenceValue        = btnCerrar;
+        so.FindProperty("_btnModoPirata").objectReferenceValue  = btnModoPirata;
         so.ApplyModifiedProperties();
 
         // ── Cablear MapamundiController ───────────────────────────────────────

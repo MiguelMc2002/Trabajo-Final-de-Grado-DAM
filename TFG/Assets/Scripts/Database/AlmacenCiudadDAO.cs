@@ -13,7 +13,7 @@ public class AlmacenCiudadDAO
     private readonly DatabaseManager _dbManager;
     private readonly SqliteConnection _conexionDirecta;
 
-    private SqliteConnection Conexion => _conexionDirecta ?? Conexion;
+    private SqliteConnection Conexion => _conexionDirecta ?? _dbManager.Conexion;
 
     /// <summary>
     /// Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.

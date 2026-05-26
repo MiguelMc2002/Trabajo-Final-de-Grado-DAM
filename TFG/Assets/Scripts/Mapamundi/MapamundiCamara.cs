@@ -74,13 +74,22 @@ public class MapamundiCamara : MonoBehaviour
                 if (hit.collider != null)
                 {
                     FlotaIconoMapamundi icono = hit.collider.GetComponent<FlotaIconoMapamundi>();
-                    if (icono != null && !icono._esJugador)
+                if (icono != null)
+                {
+                    if (icono._esJugador)
+                    {
+                        // Click en el icono del jugador: panel de inspección propia flota
+                        if (MapamundiController.Instance != null)
+                            MapamundiController.Instance.AbrirPanelJugador();
+                    }
+                    else
                     {
                         FlotaIconoMapamundi.InvocarFlotaClickada(icono.Flota);
                         if (MapamundiController.Instance != null)
                             MapamundiController.Instance.AbrirPanelInspeccion(icono.Flota);
                     }
-                    return;
+                }
+                return;
                 }
             }
             _arrastrando    = true;

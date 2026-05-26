@@ -66,6 +66,7 @@ public class ResultadoCombateUI : MonoBehaviour
             _panelResultado.SetActive(false);
 
         Time.timeScale = 1f;
+        CombateEventos.DispararFinCombate();
     }
 
     // ─── Helpers de actualización ─────────────────────────────────────────────

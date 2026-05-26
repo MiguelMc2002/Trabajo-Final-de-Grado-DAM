@@ -68,14 +68,24 @@ public class DatabaseManager : MonoBehaviour
 
         try
         {
+            // Cerrar la conexión anterior para evitar leaks si se cambia de slot
+            if (Conexion != null && Conexion.State != System.Data.ConnectionState.Closed)
+            {
+                Conexion.Close();
+                Conexion.Dispose();
+                Conexion = null;
+            }
+
             Conexion = new SqliteConnection(cadenaConexion);
             Conexion.Open();
             CrearTablasSiNoExisten();
             MigrarColumnaDineroJugador();
+            MigrarColumnaModopirata();
             new CiudadDAO(this).MigrarColumnasCasilla();
             new FlotaDAO(this).MigrarColumnasMapamundi();
             MigrarTablaAlmacenCiudad();
             MigrarTablasFlotaPNJ();
+            MigrarColumnasTripulacionBarco();
         }
         catch (Exception ex)
         {
@@ -104,6 +114,62 @@ public class DatabaseManager : MonoBehaviour
         {
             // La columna ya existe en esta BD; comportamiento esperado en bases de datos nuevas
             Debug.Log("[DatabaseManager] Columna dinero_jugador ya existe (BD nueva).");
+        }
+    }
+
+    /// <summary>
+    /// Añade la columna modo_pirata a estadoJuego en bases de datos creadas antes de esta versión.
+    /// SQLite no soporta ADD COLUMN IF NOT EXISTS, por lo que se intenta el ALTER y se atrapa
+    /// la excepción si la columna ya existe.
+    /// </summary>
+    private void MigrarColumnaModopirata()
+    {
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = "ALTER TABLE estadoJuego ADD COLUMN modo_pirata INTEGER NOT NULL DEFAULT 0;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception)
+        {
+            // La columna ya existe en esta BD; comportamiento esperado en bases de datos nuevas
+            Debug.Log("[DatabaseManager] Columna modo_pirata ya existe (BD nueva).");
+        }
+    }
+
+    /// <summary>
+    /// Añade las columnas tripulacion_actual y capacidad_tripulacion a la tabla Barco
+    /// en bases de datos creadas antes de que se implementara el sistema de tripulación.
+    /// El try/catch atrapa la excepción de SQLite cuando la columna ya existe.
+    /// </summary>
+    private void MigrarColumnasTripulacionBarco()
+    {
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = "ALTER TABLE Barco ADD COLUMN tripulacion_actual INTEGER NOT NULL DEFAULT 0;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception)
+        {
+            Debug.Log("[DatabaseManager] Columna tripulacion_actual ya existe en Barco (BD nueva).");
+        }
+
+        try
+        {
+            using (SqliteCommand cmd = Conexion.CreateCommand())
+            {
+                cmd.CommandText = "ALTER TABLE Barco ADD COLUMN capacidad_tripulacion INTEGER NOT NULL DEFAULT 50;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception)
+        {
+            Debug.Log("[DatabaseManager] Columna capacidad_tripulacion ya existe en Barco (BD nueva).");
         }
     }
 
@@ -195,7 +261,8 @@ public class DatabaseManager : MonoBehaviour
                 año_juego        INTEGER NOT NULL,
                 velocidad_tiempo INTEGER NOT NULL,
                 fecha_guardado   TIMESTAMP NOT NULL,
-                dinero_jugador   INTEGER NOT NULL DEFAULT 999999999
+                dinero_jugador   INTEGER NOT NULL DEFAULT 999999999,
+                modo_pirata      INTEGER NOT NULL DEFAULT 0
             );
 
             CREATE TABLE IF NOT EXISTS Ciudad (

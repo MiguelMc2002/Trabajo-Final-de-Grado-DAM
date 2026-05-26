@@ -86,10 +86,16 @@ public class EncuentroNavalUI : MonoBehaviour
         _panelEncuentro.SetActive(false);
         SceneController.SetPausa(false);
 
+        if (_atacante != null && _atacante.EstaDestruida() && FlotaManager.Instance != null)
+            FlotaManager.Instance.EliminarFlota(_atacante.Id);
+
         if (_resultadoCombateUI != null)
             _resultadoCombateUI.MostrarResultado(_ultimoResultado);
         else
+        {
             Debug.LogWarning("[EncuentroNavalUI] _resultadoCombateUI no asignado. Resultado solo en log.");
+            CombateEventos.DispararFinCombate();
+        }
 
         ResultadoCombate r = _ultimoResultado;
         Debug.Log($"[EncuentroNaval] {r.TextoNarrativo}");

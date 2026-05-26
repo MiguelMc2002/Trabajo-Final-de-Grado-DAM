@@ -11,10 +11,21 @@ using UnityEngine.Tilemaps;
 /// </summary>
 public class PirataBrainBootstrapper : MonoBehaviour
 {
+    /// <summary>Punto de acceso global al bootstrapper de brains pirata.</summary>
+    public static PirataBrainBootstrapper Instance { get; private set; }
+
     [SerializeField] private Tilemap              _tilemap;
     [SerializeField] private RutaCalculadorTilemap _rutaCalculador;
 
     private readonly List<PirataBrain> _brains = new();
+
+    private Dictionary<Vector3Int, List<Vector3Int>> _grafo;
+    private HashSet<Vector3Int>                       _casillasCiudad;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     private void Start()
     {
@@ -29,8 +40,8 @@ public class PirataBrainBootstrapper : MonoBehaviour
     {
         yield return null;
 
-        Dictionary<Vector3Int, List<Vector3Int>> grafo = ConstruirGrafo();
-        HashSet<Vector3Int> casillasCiudad = ObtenerCasillasCiudad();
+        _grafo          = ConstruirGrafo();
+        _casillasCiudad = ObtenerCasillasCiudad();
 
         if (FlotaManager.Instance == null)
         {
@@ -42,7 +53,7 @@ public class PirataBrainBootstrapper : MonoBehaviour
         {
             if (!flota.IsPirata) continue;
 
-            var brain = new PirataBrain(flota.Id, radioDeteccion: 2f, grafo, casillasCiudad);
+            var brain = new PirataBrain(flota.Id, radioDeteccion: 2f, _grafo, _casillasCiudad);
             brain.IniciarTasks();
             _brains.Add(brain);
             FlotaManager.Instance.RegistrarPirataBrain(flota.Id, brain);
@@ -95,8 +106,30 @@ public class PirataBrainBootstrapper : MonoBehaviour
         return set;
     }
 
+    /// <summary>
+    /// Crea y registra un <see cref="PirataBrain"/> para una flota pirata spawneada en runtime,
+    /// reutilizando el grafo de navegación ya construido en <see cref="IniciarBrainsNextFrame"/>.
+    /// No hace nada si el grafo no está disponible (la escena aún no lo ha construido).
+    /// </summary>
+    /// <param name="flota">Flota pirata recién registrada que necesita su brain.</param>
+    public void CrearBrainParaPirata(FlotaRuntimeData flota)
+    {
+        if (_grafo == null || _casillasCiudad == null)
+        {
+            Debug.LogWarning($"[PirataBrainBootstrapper] Grafo no disponible — brain no creado para pirata {flota.Id}.");
+            return;
+        }
+
+        var brain = new PirataBrain(flota.Id, radioDeteccion: 2f, _grafo, _casillasCiudad);
+        brain.IniciarTasks();
+        _brains.Add(brain);
+        FlotaManager.Instance?.RegistrarPirataBrain(flota.Id, brain);
+        Debug.Log($"[PirataBrainBootstrapper] Brain creado en runtime para pirata {flota.Id} ({flota.NombrePropietario}).");
+    }
+
     private void OnDestroy()
     {
+        Instance = null;
         foreach (PirataBrain brain in _brains)
             brain.Detener();
     }

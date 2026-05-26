@@ -204,6 +204,39 @@ public class BarcoDAO
     }
 
     /// <summary>
+    /// Borra todos los barcos asignados a la flota indicada y sus módulos asociados.
+    /// Elimina primero los registros de ModuloBarco para respetar la restricción de FK
+    /// que apunta a Barco. Usar antes de reescribir la flota completa al guardar.
+    /// </summary>
+    /// <param name="idFlota">Identificador de la flota cuyos barcos se eliminan (0 = jugador).</param>
+    public void EliminarBarcosDeFlota(int idFlota)
+    {
+        try
+        {
+            // Borrar módulos antes que barcos por la FK ModuloBarco → Barco
+            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            {
+                cmd.CommandText = @"
+                    DELETE FROM ModuloBarco
+                    WHERE id_barco IN (SELECT id_barco FROM Barco WHERE id_flota = @idFlota);";
+                cmd.Parameters.AddWithValue("@idFlota", idFlota);
+                cmd.ExecuteNonQuery();
+            }
+
+            using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM Barco WHERE id_flota = @idFlota;";
+                cmd.Parameters.AddWithValue("@idFlota", idFlota);
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"[BarcoDAO] Error al eliminar barcos de flota id={idFlota}: {ex}");
+        }
+    }
+
+    /// <summary>
     /// Inserta los 3 tipos de casco base en la tabla TipoCasco si todavía no existen.
     /// Debe llamarse antes de insertar barcos para respetar la restricción de FK.
     /// La operación es segura de llamar varias veces gracias a INSERT OR IGNORE.

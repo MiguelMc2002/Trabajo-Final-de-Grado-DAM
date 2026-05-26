@@ -179,9 +179,12 @@ public class MemoriaComercialPNJDAO
                         double precioConocido   = reader.GetDouble(0);
                         int    diaJuegoConocido = reader.GetInt32(1);
 
-                        // El dato caduca a los 7 días: el PNJ ignora precios que
-                        // observó hace una semana o más de juego.
-                        if (diaActual - diaJuegoConocido < 7)
+                        // El dato caduca a los 7 días. Corrige el desbordamiento
+                        // de fin de mes: si el día actual es menor que el registrado
+                        // se añaden 30 días (mes completo de simulación).
+                        int diasTranscurridos = diaActual - diaJuegoConocido;
+                        if (diasTranscurridos < 0) diasTranscurridos += 30;
+                        if (diasTranscurridos < 7)
                             return precioConocido;
                     }
                 }

@@ -125,6 +125,13 @@ public class FlotaJugador
     }
 
     /// <summary>
+    /// Vacía la flota eliminando todos los barcos de la lista interna.
+    /// Llamar exclusivamente desde <see cref="LoadManager"/> antes de restaurar
+    /// los barcos desde la base de datos, para evitar duplicados en partidas cargadas.
+    /// </summary>
+    public void LimpiarTodos() => _barcos.Clear();
+
+    /// <summary>
     /// Devuelve el barco con el identificador indicado.
     /// </summary>
     /// <param name="idBarco">Identificador del barco a buscar.</param>
@@ -183,6 +190,8 @@ public class FlotaJugador
         runtime.VelocidadFlota = velocidadMin == float.MaxValue ? 3f : velocidadMin;
         runtime.NumBarcos      = Barcos.Count;
         runtime.Tripulacion    = tripulacion;
+        // Poblar la lista de barcos individuales para que PanelInspeccionFlota pueda mostrarlos
+        runtime.BarcosFlota    = new List<BarcoJugador>(_barcos);
         return runtime;
     }
 }

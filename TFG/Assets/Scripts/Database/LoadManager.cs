@@ -77,6 +77,13 @@ public class LoadManager : MonoBehaviour
         if (estadoJuego != null)
             RestaurarDineroJugador(estadoJuego.DineroJugador);
 
+        // Paso 2b — ModoPirata del jugador
+        if (estadoJuego != null && GameManager.Instance?.FlotaJugador != null)
+        {
+            GameManager.Instance.FlotaJugador.ModoPirata = estadoJuego.ModoPirata;
+            Debug.Log($"[LoadManager] ModoPirata restaurado: {estadoJuego.ModoPirata}");
+        }
+
         // Paso 3 — Limpiar almacén antes de repoblarlo
         LimpiarAlmacenJugador();
 
@@ -124,8 +131,8 @@ public class LoadManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Paso 8: restaura los barcos del jugador desde la tabla Barco (id_flota = 0)
-    /// y reinstala sus módulos resolviendo los <see cref="ModuloBarcoData"/> por nombre.
+    /// Paso 8: limpia la flota del jugador en memoria y la restaura desde la tabla Barco
+    /// (id_flota = 0), reinstalando módulos por nombre con fallback por tipo de módulo.
     /// </summary>
     private void CargarFlotaJugador()
     {
@@ -135,6 +142,9 @@ public class LoadManager : MonoBehaviour
             return;
         }
 
+        // Vaciar la flota antes de restaurar para evitar barcos duplicados si el singleton persiste
+        GameManager.Instance.FlotaJugador.LimpiarTodos();
+
         List<BarcoDto> dtos = _barcoDAO.ObtenerBarcosDeFlota(0);
         if (dtos.Count == 0)
         {
@@ -142,10 +152,18 @@ public class LoadManager : MonoBehaviour
             return;
         }
 
+        // Cachear el catálogo de módulos con guard ante null (evita NRE en el foreach)
+        var modulosDisponibles = AstilleroManager.Instance.ModulosDisponibles;
+        if (modulosDisponibles == null)
+        {
+            Debug.LogWarning("[LoadManager] AstilleroManager.ModulosDisponibles es null; los módulos no se restaurarán.");
+            modulosDisponibles = new List<ModuloBarcoData>();
+        }
+
         int restaurados = 0;
         foreach (BarcoDto dto in dtos)
         {
-            // Resolver TipoCascoData
+            // Resolver TipoCascoData por id
             TipoCascoData tipoCasco = null;
             foreach (TipoCascoData t in AstilleroManager.Instance.CascosDisponibles)
             {
@@ -163,20 +181,36 @@ public class LoadManager : MonoBehaviour
             barco.Tripulacion     = dto.TripulacionActual;
             barco.EsBarcosCombate = dto.EsBarcosCombate;
 
-            // Restaurar módulos
+            // Restaurar módulos: primero por nombre, luego fallback por tipoModulo
             List<ModuloDto> modDtos = _moduloBarcoDAO.CargarModulosDeBarco(dto.IdBarco);
             foreach (ModuloDto modDto in modDtos)
             {
                 ModuloBarcoData moduloData = null;
-                foreach (ModuloBarcoData m in AstilleroManager.Instance.ModulosDisponibles)
+
+                // Búsqueda primaria por nombre exacto
+                foreach (ModuloBarcoData m in modulosDisponibles)
                 {
                     if (m.nombreModulo == modDto.NombreModulo) { moduloData = m; break; }
+                }
+
+                // Fallback: buscar por tipoModulo si el nombre ya no coincide (asset renombrado)
+                if (moduloData == null && System.Enum.TryParse(modDto.TipoModulo, out TipoModulo tipoFallback))
+                {
+                    foreach (ModuloBarcoData m in modulosDisponibles)
+                    {
+                        if (m.tipoModulo == tipoFallback) { moduloData = m; break; }
+                    }
+
+                    if (moduloData != null)
+                        Debug.LogWarning($"[LoadManager] Módulo '{modDto.NombreModulo}' no encontrado por nombre; " +
+                                         $"fallback por tipo '{tipoFallback}' → usando '{moduloData.nombreModulo}'.");
                 }
 
                 if (moduloData != null)
                     barco.InstalarModulo(moduloData);
                 else
-                    Debug.LogWarning($"[LoadManager] ModuloBarcoData '{modDto.NombreModulo}' no encontrado en catálogo; se omite.");
+                    Debug.LogWarning($"[LoadManager] ModuloBarcoData '{modDto.NombreModulo}' (tipo '{modDto.TipoModulo}') " +
+                                     $"no encontrado por nombre ni por tipo; se omite.");
             }
 
             GameManager.Instance.FlotaJugador.AñadirBarco(barco);
@@ -197,6 +231,9 @@ public class LoadManager : MonoBehaviour
             Debug.LogWarning("[LoadManager] TabernaManager no disponible; se omite la carga de capitanes.");
             return;
         }
+
+        // Vaciar primero para evitar duplicados si el singleton persiste entre cargas
+        TabernaManager.Instance.LimpiarCapitanesContratados();
 
         List<CapitanDto> dtos = _capitanDAO.CargarTodosLosCapitanes();
         int restaurados = 0;
@@ -230,6 +267,9 @@ public class LoadManager : MonoBehaviour
             return;
         }
 
+        // Limpiar flotas anteriores para evitar flotas fantasma si el singleton persiste entre cargas
+        FlotaManager.Instance.LimpiarTodasLasFlotas();
+
         Mono.Data.Sqlite.SqliteConnection conexion = DatabaseManager.Instance.Conexion;
         int cargadas = 0;
 
@@ -239,7 +279,6 @@ public class LoadManager : MonoBehaviour
                    casilla_destino_x, casilla_destino_y, casilla_destino_z
             FROM FlotaPNJ;";
 
-        var idsLeidos = new System.Collections.Generic.List<int>();
         var flotasLeidas = new System.Collections.Generic.List<FlotaRuntimeData>();
 
         try
@@ -262,7 +301,12 @@ public class LoadManager : MonoBehaviour
                         int    cDestY         = reader.GetInt32(8);
                         int    cDestZ         = reader.GetInt32(9);
 
-                        var flota = new FlotaRuntimeData(id, nombre);
+                        // Detectar piratas por rango de ID (2001-2999) para restaurar
+                        // su controlador y comportamiento correctamente al registrarlos
+                        bool esPirata = id >= 2001 && id <= 2999;
+                        var flota = esPirata
+                            ? new FlotaRuntimeData(id, nombre, esPirata: true)
+                            : new FlotaRuntimeData(id, nombre);
                         flota.CiudadOrigenId  = origenId;
                         flota.CiudadDestinoId = destinoId;
 
@@ -281,7 +325,6 @@ public class LoadManager : MonoBehaviour
                         flota.RutaActualTilemap    = new System.Collections.Generic.List<UnityEngine.Vector3Int>();
                         flota.IndiceWaypointActual = 0;
 
-                        idsLeidos.Add(id);
                         flotasLeidas.Add(flota);
                     }
                 }
@@ -321,6 +364,7 @@ public class LoadManager : MonoBehaviour
             }
 
             FlotaManager.Instance.RegistrarFlota(flota);
+            FlotaManager.Instance.RestablecerStatsParaCarga(flota);
             cargadas++;
         }
 

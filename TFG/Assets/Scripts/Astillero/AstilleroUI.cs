@@ -112,6 +112,18 @@ public class AstilleroUI : MonoBehaviour
     private int _indiceBarcoRep        = 0;
     private int _indiceBarcoVen        = 0;
 
+    // ─── Referencia lazy a PanelFlotaUI ─────────────────────────────────────
+    private PanelFlotaUI _panelFlotaRef;
+    private PanelFlotaUI PanelFlota
+    {
+        get
+        {
+            if (_panelFlotaRef == null)
+                _panelFlotaRef = FindFirstObjectByType<PanelFlotaUI>();
+            return _panelFlotaRef;
+        }
+    }
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -454,6 +466,7 @@ public class AstilleroUI : MonoBehaviour
 
         MostrarFeedback($"'{nombre}' construido.", true);
         RefrescarUIConstruir();
+        PanelFlota?.RefrescarPanel();
     }
 
     private void OnModificarConfirmar()
@@ -474,6 +487,7 @@ public class AstilleroUI : MonoBehaviour
         MostrarFeedback($"'{barco.Nombre}' modificado.", true);
         SincronizarSelectoresModificar();
         RefrescarUIModificar();
+        PanelFlota?.RefrescarPanel();
     }
 
     private void OnRepararConfirmar()
@@ -490,6 +504,7 @@ public class AstilleroUI : MonoBehaviour
         ResultadoOperacion r = AstilleroManager.Instance.RepararBarco(barco);
         MostrarFeedback(r.Exito ? $"'{barco.Nombre}' reparado." : r.MensajeError, r.Exito);
         RefrescarUIReparar();
+        PanelFlota?.RefrescarPanel();
     }
 
     private void OnVenderConfirmar()
@@ -510,6 +525,7 @@ public class AstilleroUI : MonoBehaviour
             _indiceBarcoVen = 0;
             MostrarFeedback($"'{nombreBarco}' vendido.", true);
             RefrescarUIVender();
+            PanelFlota?.RefrescarPanel();
         }
         else
         {
