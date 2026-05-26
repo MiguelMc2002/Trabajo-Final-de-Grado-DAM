@@ -111,6 +111,13 @@ public class GameManager : MonoBehaviour
     public EstadoPartida EstadoPartida => _estadoPartida;
 
     /// <summary>
+    /// Se dispara cada vez que cambia el tesoro del jugador (<see cref="SetDinero"/> o <see cref="ModificarDinero"/>).
+    /// El parámetro es el nuevo saldo en monedas. Estático para que los HUDs de distintas
+    /// escenas puedan suscribirse sin mantener una referencia a la instancia.
+    /// </summary>
+    public static event Action<long> OnDineroActualizado;
+
+    /// <summary>
     /// Se dispara cuando el mercado de una ciudad cambia (compra, venta o tick diario).
     /// El primer parámetro es el <c>IdCiudad</c> de la ciudad afectada.
     /// El segundo parámetro es el bien concreto que cambió, o <c>null</c> si cambiaron todos
@@ -199,6 +206,7 @@ public class GameManager : MonoBehaviour
     public void SetDinero(long valor)
     {
         Dinero = valor >= 0 ? valor : 0;
+        OnDineroActualizado?.Invoke(Dinero);
     }
 
     /// <summary>
@@ -213,6 +221,7 @@ public class GameManager : MonoBehaviour
         if (Dinero + cantidad < 0) return false;
 
         Dinero += cantidad;
+        OnDineroActualizado?.Invoke(Dinero);
         return true;
     }
 

@@ -190,6 +190,8 @@ public class FlotaJugador
         runtime.VelocidadFlota = velocidadMin == float.MaxValue ? 3f : velocidadMin;
         runtime.NumBarcos      = Barcos.Count;
         runtime.Tripulacion    = tripulacion;
+        // Poblar la lista de barcos individuales para que PanelInspeccionFlota pueda mostrarlos
+        runtime.BarcosFlota    = new List<BarcoJugador>(_barcos);
         return runtime;
     }
 }

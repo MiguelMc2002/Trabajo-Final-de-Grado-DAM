@@ -378,10 +378,11 @@ public static class ConstruirUIsCiudadEditor
 
     static VerticalLayoutGroup AddVLG(GameObject go, float spacing = 5f)
     {
-        var vlg = go.AddComponent<VerticalLayoutGroup>();
-        vlg.childAlignment        = TextAnchor.UpperCenter;
-        vlg.childControlWidth     = true;
-        vlg.childControlHeight    = false;
+        // GetComponent evita el NPE de DisallowMultipleComponent en re-ejecuciones sobre el root
+        var vlg = go.GetComponent<VerticalLayoutGroup>() ?? go.AddComponent<VerticalLayoutGroup>();
+        vlg.childAlignment         = TextAnchor.UpperCenter;
+        vlg.childControlWidth      = true;
+        vlg.childControlHeight     = false;
         vlg.childForceExpandWidth  = true;
         vlg.childForceExpandHeight = false;
         vlg.spacing = spacing;
@@ -391,7 +392,8 @@ public static class ConstruirUIsCiudadEditor
 
     static HorizontalLayoutGroup AddHLG(GameObject go, float spacing = 4f)
     {
-        var hlg = go.AddComponent<HorizontalLayoutGroup>();
+        // GetComponent evita el NPE de DisallowMultipleComponent en re-ejecuciones sobre el root
+        var hlg = go.GetComponent<HorizontalLayoutGroup>() ?? go.AddComponent<HorizontalLayoutGroup>();
         hlg.childAlignment         = TextAnchor.MiddleCenter;
         hlg.childControlWidth      = true;
         hlg.childControlHeight     = true;

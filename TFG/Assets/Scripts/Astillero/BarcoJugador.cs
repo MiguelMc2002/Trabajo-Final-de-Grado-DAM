@@ -37,9 +37,15 @@ public class BarcoJugador
     public int VidaActual { get; set; }
 
     /// <summary>
-    /// Número de tripulantes embarcados en este barco. Default: 30.
+    /// Número de tripulantes embarcados en este barco.
+    /// Empieza en 0; se asigna al contratar marineros en la taberna o al generar flotas PNJ.
     /// </summary>
-    public int Tripulacion { get; set; } = 30;
+    public int Tripulacion { get; set; } = 0;
+
+    /// <summary>
+    /// Capacidad máxima de tripulación determinada por el casco base.
+    /// </summary>
+    public int TripulacionMaxima => CascoBase?.CapacidadTripulacion ?? 0;
 
     // ─── Propiedades calculadas ───────────────────────────────────────────────
 
@@ -177,6 +183,31 @@ public class BarcoJugador
             return false;
 
         return true;
+    }
+
+    /// <summary>
+    /// Embarca la cantidad indicada de marineros sin superar <see cref="TripulacionMaxima"/>.
+    /// </summary>
+    /// <param name="cantidad">Marineros a contratar.</param>
+    /// <returns>Marineros realmente embarcados (puede ser menor si el barco está casi lleno).</returns>
+    public int ContratarMarineros(int cantidad)
+    {
+        int hueco  = TripulacionMaxima - Tripulacion;
+        int reales = cantidad > hueco ? hueco : (cantidad < 0 ? 0 : cantidad);
+        Tripulacion += reales;
+        return reales;
+    }
+
+    /// <summary>
+    /// Licencia la cantidad indicada de marineros sin bajar de cero tripulantes.
+    /// </summary>
+    /// <param name="cantidad">Marineros a licenciar.</param>
+    /// <returns>Marineros realmente licenciados.</returns>
+    public int LicenciarMarineros(int cantidad)
+    {
+        int reales = cantidad > Tripulacion ? Tripulacion : (cantidad < 0 ? 0 : cantidad);
+        Tripulacion -= reales;
+        return reales;
     }
 
     /// <summary>

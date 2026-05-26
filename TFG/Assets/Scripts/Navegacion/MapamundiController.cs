@@ -307,6 +307,17 @@ public class MapamundiController : MonoBehaviour
             panelInspeccionFlota.Mostrar(flota);
     }
 
+    /// <summary>
+    /// Abre el panel de inspección con los datos actuales de la flota del jugador.
+    /// Muestra el botón de Modo Pirata para que el jugador pueda cambiarlo en tiempo real.
+    /// </summary>
+    public void AbrirPanelJugador()
+    {
+        if (panelInspeccionFlota == null || GameManager.Instance == null) return;
+        FlotaRuntimeData flota = GameManager.Instance.FlotaJugador.ComoFlotaRuntime();
+        panelInspeccionFlota.Mostrar(flota, esJugador: true);
+    }
+
     public void ViajarACiudad(CiudadData ciudadDestino)
     {
         if (ciudadDestino == null) return;

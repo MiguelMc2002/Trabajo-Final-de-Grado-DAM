@@ -29,6 +29,9 @@ public class TabernaManager : MonoBehaviour
 
     private int _proximoIdCapitan = 1;
 
+    /// <summary>Coste en oro por marinero contratado en la taberna.</summary>
+    public const int PrecioMarinero = 50;
+
     private static readonly string[] _nombresMedievales =
     {
         "Hans", "Klaus", "Erik", "Pieter", "Johann", "Willem", "Dirk", "Conrad",
@@ -107,9 +110,9 @@ public class TabernaManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Contrata una cantidad de marineros para el barco indicado.
-    /// Descuenta el coste en oro (5 oro por marinero) y actualiza el stock de marineros de la ciudad.
-    /// La cantidad se recorta automáticamente si el barco ya está casi lleno.
+    /// Contrata marineros para el barco indicado. El único límite es el hueco disponible
+    /// en el barco (TripulacionMaxima − Tripulacion) y el oro del jugador.
+    /// La oferta de marineros en ciudad es ilimitada.
     /// </summary>
     /// <param name="barco">Barco al que se incorporan los marineros.</param>
     /// <param name="cantidad">Número de marineros a contratar.</param>
@@ -119,33 +122,35 @@ public class TabernaManager : MonoBehaviour
         if (barco == null)
             return Fallo("Barco no válido.");
 
-        CiudadData ciudad = GameManager.Instance.CiudadActual;
-        if (ciudad == null)
-            return Fallo("No hay ciudad activa.");
+        int hueco = barco.TripulacionMaxima - barco.Tripulacion;
 
-        int idCiudad = ciudad.IdCiudad;
-
-        if (!_marinerosDisponibles.TryGetValue(idCiudad, out int disponibles) || disponibles < cantidad)
-            return Fallo($"Solo hay {GetMarinerosDisponibles(idCiudad)} marineros disponibles en {ciudad.NombreCiudad}.");
-
-        int hueco = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
-        cantidad  = Mathf.Min(cantidad, hueco);
-
-        if (cantidad <= 0)
+        if (hueco <= 0)
             return Fallo("El barco ya tiene la tripulación completa.");
 
-        long coste = cantidad * 5L;
-        if (GameManager.Instance.Dinero < coste)
-            return Fallo($"Oro insuficiente. Necesitas {coste}, tienes {GameManager.Instance.Dinero}.");
+        // Limitar solo por hueco en el barco; la oferta de ciudad es ilimitada
+        int marionerosReales = cantidad > hueco ? hueco : cantidad;
+        if (marionerosReales <= 0)
+            return Fallo("No se pueden contratar marineros.");
 
-        GameManager.Instance.ModificarDinero(-coste);
-        barco.Tripulacion                += cantidad;
-        _marinerosDisponibles[idCiudad]  -= cantidad;
+        long costeReal = (long)marionerosReales * PrecioMarinero;
+        if (GameManager.Instance.Dinero < costeReal)
+            return Fallo($"Oro insuficiente. Necesitas {costeReal}, tienes {GameManager.Instance.Dinero}.");
 
-        Debug.Log($"[TabernaManager] {cantidad} marineros contratados para '{barco.Nombre}' por {coste} oro. " +
-                  $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.CapacidadTripulacion}.");
+        barco.ContratarMarineros(marionerosReales);
+        GameManager.Instance.ModificarDinero(-costeReal);
+
+        Debug.Log($"[TabernaManager] {marionerosReales} marineros contratados para '{barco.Nombre}' " +
+                  $"por {costeReal} ƒ. Tripulación: {barco.Tripulacion}/{barco.TripulacionMaxima}.");
         return Exito();
     }
+
+    /// <summary>
+    /// Devuelve la lista de barcos de la flota del jugador.
+    /// </summary>
+    /// <returns>Lista de solo lectura con los barcos de <see cref="FlotaJugador"/>.</returns>
+    public IReadOnlyList<BarcoJugador> ObtenerBarcosDeLaFlota()
+        => GameManager.Instance?.FlotaJugador?.Barcos
+           ?? new System.Collections.Generic.List<BarcoJugador>();
 
     /// <summary>
     /// Contrata un capitán para el barco indicado y lo mueve de la oferta de la ciudad

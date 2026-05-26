@@ -1,6 +1,8 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
@@ -41,28 +43,33 @@ public class TabernaUI : MonoBehaviour
     [SerializeField] private Button          _btnVolverDesdeCapitan;
 
     // ─── Índices de selección ─────────────────────────────────────────────────
-    private int _indiceBarcoMar = 0;
-    private int _indiceBarcoCap = 0;
+    private int _indiceBarcoMar    = 0;
+    private int _indiceBarcoCap    = 0;
     private int _cantidadMarineros = 1;
+
+    // ─── Aceleración botones +/- ──────────────────────────────────────────────
+    private Coroutine _corrutinaCantidad;
 
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Start()
     {
-        _panelTaberna.SetActive(false);
+        if (_panelTaberna != null) _panelTaberna.SetActive(false);
 
-        // Marineros
-        _btnBarcoMarIzq        .onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMar, -1, RefrescarPanelMarineros));
-        _btnBarcoMarDer        .onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMar, +1, RefrescarPanelMarineros));
-        _btnCantidadMas        .onClick.AddListener(() => CambiarCantidad(+1));
-        _btnCantidadMenos      .onClick.AddListener(() => CambiarCantidad(-1));
-        _btnContratarMarineros .onClick.AddListener(OnContratarMarineros);
-        _btnVolverDesdeMarineros.onClick.AddListener(() => MostrarPanel(0));
+        // Marineros — flechas barco y contratar usan onClick normal
+        _btnBarcoMarIzq        ?.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMar, -1, RefrescarPanelMarineros));
+        _btnBarcoMarDer        ?.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoMar, +1, RefrescarPanelMarineros));
+        _btnContratarMarineros ?.onClick.AddListener(OnContratarMarineros);
+        _btnVolverDesdeMarineros?.onClick.AddListener(() => MostrarPanel(0));
+
+        // +/- usan EventTrigger para detectar mantener pulsado con aceleración
+        if (_btnCantidadMas   != null) AñadirEventosPulsacion(_btnCantidadMas,   +1);
+        if (_btnCantidadMenos != null) AñadirEventosPulsacion(_btnCantidadMenos, -1);
 
         // Capitán
-        _btnBarcoCaplzq       .onClick.AddListener(() => CiclarBarco(ref _indiceBarcoCap, -1, RefrescarPanelCapitan));
-        _btnBarcoCapDer       .onClick.AddListener(() => CiclarBarco(ref _indiceBarcoCap, +1, RefrescarPanelCapitan));
-        _btnVolverDesdeCapitan.onClick.AddListener(() => MostrarPanel(0));
+        _btnBarcoCaplzq       ?.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoCap, -1, RefrescarPanelCapitan));
+        _btnBarcoCapDer       ?.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoCap, +1, RefrescarPanelCapitan));
+        _btnVolverDesdeCapitan?.onClick.AddListener(() => MostrarPanel(0));
     }
 
     // ─── API pública ──────────────────────────────────────────────────────────
@@ -94,12 +101,17 @@ public class TabernaUI : MonoBehaviour
         RefrescarPanelCapitan();
     }
 
+    private void OnDisable() => DetenerAceleracion();
+
     // ─── Navegación de subpaneles ─────────────────────────────────────────────
 
     /// <summary>Muestra el subpanel indicado y oculta los demás.</summary>
     /// <param name="indice">0=Menú, 1=Marineros, 2=Capitán.</param>
     public void MostrarPanel(int indice)
     {
+        // Cancelar aceleración si salimos del subpanel de marineros
+        if (indice != 1) DetenerAceleracion();
+
         _panelMenu     .SetActive(indice == 0);
         _panelMarineros.SetActive(indice == 1);
         _panelCapitan  .SetActive(indice == 2);
@@ -123,9 +135,9 @@ public class TabernaUI : MonoBehaviour
         BarcoJugador barco = ObtenerBarco(_indiceBarcoMar);
         if (barco == null) return;
 
-        int disponibles = GetMarinerosDisponibles();
-        int hueco       = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
-        int maximo      = Mathf.Max(1, Mathf.Min(disponibles, hueco));
+        // El máximo es el hueco del barco; la oferta de ciudad es ilimitada
+        int hueco  = barco.TripulacionMaxima - barco.Tripulacion;
+        int maximo = Mathf.Max(1, hueco);
 
         _cantidadMarineros = Mathf.Clamp(_cantidadMarineros + dir, 1, maximo);
         RefrescarPanelMarineros();
@@ -138,29 +150,29 @@ public class TabernaUI : MonoBehaviour
         BarcoJugador barco = ObtenerBarco(_indiceBarcoMar);
         if (barco == null)
         {
-            _textoBarcoMarineros      .text = "Sin barcos en la flota";
-            _textoTripulacion         .text = "";
-            _textoMarinerosDisponibles.text = "";
-            _textoCantidad            .text = "0";
-            _textoCosteMar            .text = "";
-            _btnContratarMarineros.interactable = false;
+            if (_textoBarcoMarineros       != null) _textoBarcoMarineros.text       = "Sin barcos en la flota";
+            if (_textoTripulacion          != null) _textoTripulacion.text          = "";
+            if (_textoMarinerosDisponibles != null) _textoMarinerosDisponibles.text = "";
+            if (_textoCantidad             != null) _textoCantidad.text             = "0";
+            if (_textoCosteMar             != null) _textoCosteMar.text             = "";
+            if (_btnContratarMarineros     != null) _btnContratarMarineros.interactable = false;
             return;
         }
 
-        int disponibles = GetMarinerosDisponibles();
-        int hueco       = barco.CascoBase.CapacidadTripulacion - barco.Tripulacion;
-        int maximo      = Mathf.Max(1, Mathf.Min(disponibles, hueco));
+        // El máximo es el hueco del barco; sin límite de oferta por ciudad
+        int hueco  = barco.TripulacionMaxima - barco.Tripulacion;
+        int maximo = Mathf.Max(1, hueco);
         _cantidadMarineros = Mathf.Clamp(_cantidadMarineros, 1, maximo);
 
-        _textoBarcoMarineros      .text = barco.Nombre;
-        _textoTripulacion         .text = $"Tripulación: {barco.Tripulacion}/{barco.CascoBase.CapacidadTripulacion}";
-        _textoMarinerosDisponibles.text = $"Marineros disponibles: {disponibles}";
-        _textoCantidad            .text = _cantidadMarineros.ToString();
-        _textoCosteMar            .text = $"Coste: {_cantidadMarineros * 5} oro";
+        if (_textoBarcoMarineros       != null) _textoBarcoMarineros.text       = barco.Nombre;
+        if (_textoTripulacion          != null) _textoTripulacion.text          = $"Tripulación: {barco.Tripulacion}/{barco.TripulacionMaxima}";
+        if (_textoMarinerosDisponibles != null) _textoMarinerosDisponibles.text = $"Precio por marinero: {TabernaManager.PrecioMarinero} ƒ";
+        if (_textoCantidad             != null) _textoCantidad.text             = _cantidadMarineros.ToString();
+        if (_textoCosteMar             != null) _textoCosteMar.text             = $"Total: {(long)_cantidadMarineros * TabernaManager.PrecioMarinero} ƒ";
 
-        bool hayHueco   = hueco > 0 && disponibles > 0;
-        bool hayDinero  = GameManager.Instance.Dinero >= _cantidadMarineros * 5L;
-        _btnContratarMarineros.interactable = hayHueco && hayDinero;
+        bool hayDinero = GameManager.Instance.Dinero >= (long)_cantidadMarineros * TabernaManager.PrecioMarinero;
+        if (_btnContratarMarineros != null)
+            _btnContratarMarineros.interactable = hueco > 0 && hayDinero;
     }
 
     private void RefrescarPanelCapitan()
@@ -234,6 +246,75 @@ public class TabernaUI : MonoBehaviour
         RefrescarUI();
     }
 
+    // ─── Aceleración botones +/- ──────────────────────────────────────────────
+
+    /// <summary>
+    /// Registra eventos PointerDown/PointerUp en el botón para activar la corrutina
+    /// de aceleración. El primer cambio es inmediato; después escala de 1→5→10 por paso.
+    /// </summary>
+    /// <param name="btn">Botón al que añadir los eventos.</param>
+    /// <param name="dir">Dirección del cambio: +1 para incrementar, -1 para decrementar.</param>
+    private void AñadirEventosPulsacion(Button btn, int dir)
+    {
+        EventTrigger trigger = btn.GetComponent<EventTrigger>() ?? btn.gameObject.AddComponent<EventTrigger>();
+
+        var abajo = new EventTrigger.Entry { eventID = EventTriggerType.PointerDown };
+        abajo.callback.AddListener(_ =>
+        {
+            if (_corrutinaCantidad != null) StopCoroutine(_corrutinaCantidad);
+            _corrutinaCantidad = StartCoroutine(CorrutinaCantidad(dir));
+        });
+        trigger.triggers.Add(abajo);
+
+        var arriba = new EventTrigger.Entry { eventID = EventTriggerType.PointerUp };
+        arriba.callback.AddListener(_ => DetenerAceleracion());
+        trigger.triggers.Add(arriba);
+    }
+
+    /// <summary>Detiene la corrutina de aceleración si está activa.</summary>
+    private void DetenerAceleracion()
+    {
+        if (_corrutinaCantidad == null) return;
+        StopCoroutine(_corrutinaCantidad);
+        _corrutinaCantidad = null;
+    }
+
+    /// <summary>
+    /// Corrutina de aceleración para los botones +/-:
+    /// fase 1 (0-0.5 s): pasos de 1 cada 150 ms,
+    /// fase 2 (0.5-2 s): pasos de 5 cada 100 ms,
+    /// fase 3 (>2 s): pasos de 10 cada 80 ms.
+    /// El clamp de CambiarCantidad garantiza que el valor no sale del rango [1, hueco].
+    /// </summary>
+    private IEnumerator CorrutinaCantidad(int dir)
+    {
+        // Primer cambio inmediato (equivale al click normal)
+        CambiarCantidad(dir);
+
+        float t0 = Time.unscaledTime;
+
+        // Fase 1: pasos de 1 hasta 0.5 s
+        while (Time.unscaledTime - t0 < 0.5f)
+        {
+            yield return new WaitForSecondsRealtime(0.15f);
+            CambiarCantidad(dir);
+        }
+
+        // Fase 2: pasos de 5 hasta 2 s
+        while (Time.unscaledTime - t0 < 2f)
+        {
+            yield return new WaitForSecondsRealtime(0.10f);
+            CambiarCantidad(5 * dir);
+        }
+
+        // Fase 3: pasos de 10 indefinidamente
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(0.08f);
+            CambiarCantidad(10 * dir);
+        }
+    }
+
     // ─── Helpers ─────────────────────────────────────────────────────────────
 
     private BarcoJugador ObtenerBarco(int indice)
@@ -241,13 +322,6 @@ public class TabernaUI : MonoBehaviour
         var barcos = GameManager.Instance.FlotaJugador.Barcos;
         if (barcos == null || barcos.Count == 0) return null;
         return barcos[Modulo(indice, barcos.Count)];
-    }
-
-    private int GetMarinerosDisponibles()
-    {
-        int idCiudad = GameManager.Instance.CiudadActual?.IdCiudad ?? -1;
-        if (idCiudad < 0) return 0;
-        return TabernaManager.Instance?.GetMarinerosDisponibles(idCiudad) ?? 0;
     }
 
     private static int Modulo(int valor, int total)

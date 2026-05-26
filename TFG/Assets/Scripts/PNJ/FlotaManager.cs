@@ -610,6 +610,12 @@ public class FlotaManager : MonoBehaviour
             InstalarModuloAleatorioSiCabe(barco, TipoModulo.Armamento);
             InstalarModuloAleatorioSiCabe(barco, TipoModulo.Velas);
             InstalarModuloAleatorioSiCabe(barco, TipoModulo.Bodega);
+
+            // Asignar tripulación: piratas al máximo, comerciantes entre 30% y 80%
+            barco.Tripulacion = esPirata
+                ? barco.TripulacionMaxima
+                : Mathf.RoundToInt(barco.TripulacionMaxima * Random.Range(0.3f, 0.8f));
+
             barcos.Add(barco);
         }
         return barcos;
