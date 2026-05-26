@@ -126,18 +126,20 @@ public class SaveManager : MonoBehaviour
     private void GuardarEstadoJuego()
     {
         SimulacionTiempo sim = SimulacionTiempo.Instance;
+        bool modoPirata = GameManager.Instance?.FlotaJugador?.ModoPirata ?? false;
+
         if (sim == null)
         {
             long dineroPorDefecto = GameManager.Instance != null ? GameManager.Instance.Dinero : 999_999_999L;
             Debug.LogWarning("[SaveManager] SimulacionTiempo no encontrado; se guarda estado de juego con valores por defecto.");
-            _estadoJuegoDAO.Guardar(1, 1, 1290, 1, dineroPorDefecto);
+            _estadoJuegoDAO.Guardar(1, 1, 1290, 1, dineroPorDefecto, modoPirata);
             return;
         }
 
         int  velocidadEntero = Mathf.RoundToInt(sim.VelocidadActual * 100f);
         long dinero          = GameManager.Instance != null ? GameManager.Instance.Dinero : 999_999_999L;
-        _estadoJuegoDAO.Guardar(sim.DiaActual, sim.MesActual, sim.AñoActual, velocidadEntero, dinero);
-        Debug.Log($"[SaveManager] EstadoJuego guardado — {sim.DiaActual}/{sim.MesActual}/{sim.AñoActual} vel={sim.VelocidadActual}x dinero={dinero:N0}");
+        _estadoJuegoDAO.Guardar(sim.DiaActual, sim.MesActual, sim.AñoActual, velocidadEntero, dinero, modoPirata);
+        Debug.Log($"[SaveManager] EstadoJuego guardado — {sim.DiaActual}/{sim.MesActual}/{sim.AñoActual} vel={sim.VelocidadActual}x dinero={dinero:N0} modoPirata={modoPirata}");
     }
 
     /// <summary>
@@ -225,9 +227,10 @@ public class SaveManager : MonoBehaviour
         {
             if (ciudad == null) continue;
 
-            Dictionary<int, int> almacen = GameManager.Instance.GetAlmacenCiudad(ciudad.IdCiudad);
-            if (almacen.Count == 0) continue;
+            // Borrar primero para que los bienes vaciados no queden como entradas huérfanas
+            _almacenCiudadDAO.LimpiarCiudad(ciudad.IdCiudad);
 
+            Dictionary<int, int> almacen = GameManager.Instance.GetAlmacenCiudad(ciudad.IdCiudad);
             foreach (KeyValuePair<int, int> par in almacen)
                 _almacenCiudadDAO.SetCantidad(ciudad.IdCiudad, par.Key, par.Value);
         }
@@ -254,17 +257,25 @@ public class SaveManager : MonoBehaviour
             FlotaManager.Instance.ObtenerTodasLasFlotas();
         int guardadas = 0;
 
+        // Vaciar las tablas antes de reescribirlas para que las flotas destruidas
+        // entre guardados no resuciten en la siguiente carga
+        try
+        {
+            using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM CargaFlotaPNJ; DELETE FROM FlotaPNJ;";
+                cmd.ExecuteNonQuery();
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"[SaveManager] Error al limpiar tablas FlotaPNJ/CargaFlotaPNJ: {ex}");
+        }
+
         foreach (FlotaRuntimeData flota in flotas)
         {
             try
             {
-                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
-                {
-                    cmd.CommandText = "DELETE FROM FlotaPNJ WHERE id = @id;";
-                    cmd.Parameters.AddWithValue("@id", flota.Id);
-                    cmd.ExecuteNonQuery();
-                }
-
                 using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
                 {
                     cmd.CommandText = @"
@@ -286,13 +297,6 @@ public class SaveManager : MonoBehaviour
                     cmd.Parameters.AddWithValue("@cDestX",  flota.CasillaDestino.x);
                     cmd.Parameters.AddWithValue("@cDestY",  flota.CasillaDestino.y);
                     cmd.Parameters.AddWithValue("@cDestZ",  flota.CasillaDestino.z);
-                    cmd.ExecuteNonQuery();
-                }
-
-                using (Mono.Data.Sqlite.SqliteCommand cmd = conexion.CreateCommand())
-                {
-                    cmd.CommandText = "DELETE FROM CargaFlotaPNJ WHERE id_flota = @id;";
-                    cmd.Parameters.AddWithValue("@id", flota.Id);
                     cmd.ExecuteNonQuery();
                 }
 
@@ -366,9 +370,19 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
+        // Borrar barcos y módulos anteriores del jugador para evitar barcos fantasma
+        _barcoDAO.EliminarBarcosDeFlota(0);
+
         int guardados = 0;
         foreach (BarcoJugador barco in flota.Barcos)
         {
+            // Protección ante CascoBase null: NRE antes de entrar en el try/catch del DAO
+            if (barco.CascoBase == null)
+            {
+                Debug.LogError($"[SaveManager] Barco id={barco.IdBarco} ('{barco.Nombre}') no tiene CascoBase; se omite.");
+                continue;
+            }
+
             _barcoDAO.InsertarBarco(
                 barco.IdBarco,
                 barco.CascoBase.IdTipoCasco,
@@ -417,10 +431,10 @@ public class SaveManager : MonoBehaviour
     /// </summary>
     private void GuardarEdificios()
     {
-        CiudadData[] ciudades = Resources.FindObjectsOfTypeAll<CiudadData>();
-        if (ciudades == null || ciudades.Length == 0)
+        IReadOnlyList<CiudadData> ciudades = GameManager.Instance?.CiudadesDisponibles;
+        if (ciudades == null || ciudades.Count == 0)
         {
-            Debug.LogWarning("[SaveManager] No se encontró ningún CiudadData en el proyecto; se omite el guardado de edificios.");
+            Debug.LogWarning("[SaveManager] GameManager.CiudadesDisponibles vacío; se omite el guardado de edificios.");
             return;
         }
 

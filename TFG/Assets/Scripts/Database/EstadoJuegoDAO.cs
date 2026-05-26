@@ -24,6 +24,12 @@ public class EstadoJuegoData
 
     /// <summary>Monedas de oro del jugador en el momento del guardado.</summary>
     public long DineroJugador { get; set; }
+
+    /// <summary>
+    /// Indica si el jugador estaba en modo pirata al guardar la partida.
+    /// Se guarda como INTEGER (0/1) en la columna modo_pirata de estadoJuego.
+    /// </summary>
+    public bool ModoPirata { get; set; }
 }
 
 /// <summary>
@@ -55,25 +61,28 @@ public class EstadoJuegoDAO
     /// <param name="añoJuego">Año del calendario del juego.</param>
     /// <param name="velocidadTiempo">Multiplicador de velocidad del tiempo activo.</param>
     /// <param name="dineroJugador">Monedas de oro del jugador en el momento del guardado.</param>
-    public void Guardar(int diaJuego, int mesJuego, int añoJuego, int velocidadTiempo, long dineroJugador = 999_999_999L)
+    /// <param name="modoPirata">Si el jugador estaba actuando como pirata al guardar.</param>
+    public void Guardar(int diaJuego, int mesJuego, int añoJuego, int velocidadTiempo,
+                        long dineroJugador = 999_999_999L, bool modoPirata = false)
     {
         const string sql = @"
             INSERT OR REPLACE INTO estadoJuego
-                (id_estado, dia_juego, mes_juego, año_juego, velocidad_tiempo, fecha_guardado, dinero_jugador)
+                (id_estado, dia_juego, mes_juego, año_juego, velocidad_tiempo, fecha_guardado, dinero_jugador, modo_pirata)
             VALUES
-                (1, @dia, @mes, @año, @velocidad, @fecha, @dinero);";
+                (1, @dia, @mes, @año, @velocidad, @fecha, @dinero, @modoPirata);";
 
         try
         {
             using (SqliteCommand cmd = _dbManager.Conexion.CreateCommand())
             {
                 cmd.CommandText = sql;
-                cmd.Parameters.AddWithValue("@dia",       diaJuego);
-                cmd.Parameters.AddWithValue("@mes",       mesJuego);
-                cmd.Parameters.AddWithValue("@año",       añoJuego);
-                cmd.Parameters.AddWithValue("@velocidad", velocidadTiempo);
-                cmd.Parameters.AddWithValue("@fecha",     DateTime.UtcNow.ToString("o"));
-                cmd.Parameters.AddWithValue("@dinero",    dineroJugador);
+                cmd.Parameters.AddWithValue("@dia",        diaJuego);
+                cmd.Parameters.AddWithValue("@mes",        mesJuego);
+                cmd.Parameters.AddWithValue("@año",        añoJuego);
+                cmd.Parameters.AddWithValue("@velocidad",  velocidadTiempo);
+                cmd.Parameters.AddWithValue("@fecha",      DateTime.UtcNow.ToString("o"));
+                cmd.Parameters.AddWithValue("@dinero",     dineroJugador);
+                cmd.Parameters.AddWithValue("@modoPirata", modoPirata ? 1 : 0);
                 cmd.ExecuteNonQuery();
             }
         }
@@ -92,7 +101,7 @@ public class EstadoJuegoDAO
     /// </returns>
     public EstadoJuegoData Cargar()
     {
-        const string sql = "SELECT dia_juego, mes_juego, año_juego, velocidad_tiempo, fecha_guardado, dinero_jugador FROM estadoJuego WHERE id_estado = 1;";
+        const string sql = "SELECT dia_juego, mes_juego, año_juego, velocidad_tiempo, fecha_guardado, dinero_jugador, modo_pirata FROM estadoJuego WHERE id_estado = 1;";
 
         try
         {
@@ -105,9 +114,12 @@ public class EstadoJuegoDAO
                     if (!reader.Read())
                         return null;
 
-                    // dinero_jugador puede faltar en BDs muy antiguas; usar default seguro
-                    long dinero = 999_999_999L;
-                    try { dinero = reader.GetInt64(5); }
+                    // dinero_jugador y modo_pirata pueden faltar en BDs muy antiguas; usar defaults seguros
+                    long dinero      = 999_999_999L;
+                    bool modoPirata  = false;
+                    try { dinero     = reader.GetInt64(5); }
+                    catch (Exception) { /* columna ausente en BD antigua */ }
+                    try { modoPirata = reader.GetInt32(6) == 1; }
                     catch (Exception) { /* columna ausente en BD antigua */ }
 
                     return new EstadoJuegoData
@@ -117,7 +129,8 @@ public class EstadoJuegoDAO
                         AñoJuego        = reader.GetInt32(2),
                         VelocidadTiempo = reader.GetInt32(3),
                         FechaGuardado   = DateTime.Parse(reader.GetString(4)),
-                        DineroJugador   = dinero
+                        DineroJugador   = dinero,
+                        ModoPirata      = modoPirata
                     };
                 }
             }

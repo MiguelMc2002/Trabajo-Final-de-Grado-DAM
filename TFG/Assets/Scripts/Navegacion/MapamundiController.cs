@@ -195,6 +195,20 @@ public class MapamundiController : MonoBehaviour
     /// Prueba hasta 200 posiciones aleatorias dentro de cellBounds.
     /// Una casilla es válida si su sprite es mar abierto o costa.
     /// </summary>
+    /// <summary>
+    /// Devuelve una posición de mundo en una casilla de mar aleatoria válida.
+    /// Devuelve <see cref="Vector2.zero"/> si no se encontró ninguna casilla en 200 intentos.
+    /// Usar desde sistemas externos (p. ej. <see cref="FlotaManager"/>) para posicionar
+    /// flotas piratas recién creadas lejos de la costa.
+    /// </summary>
+    public Vector2 ObtenerPosicionMarAleatoria()
+    {
+        Vector3Int casilla = BuscarCasillaMarValida();
+        if (casilla == Vector3Int.zero) return Vector2.zero;
+        Vector3 worldPos = tilemap.GetCellCenterWorld(casilla);
+        return new Vector2(worldPos.x, worldPos.y);
+    }
+
     private Vector3Int BuscarCasillaMarValida()
     {
         BoundsInt bounds = tilemap.cellBounds;
@@ -309,6 +323,72 @@ public class MapamundiController : MonoBehaviour
         SceneController.IrAMenuPrincipal();
     }
 
+    /// <summary>
+    /// Desactiva y elimina del índice el icono de mapamundi de la flota indicada.
+    /// Si la flota no tiene icono registrado, la llamada se ignora sin error.
+    /// </summary>
+    /// <param name="idFlota">Identificador de la flota cuyo icono se debe eliminar.</param>
+    public void DesactivarIconoFlota(int idFlota)
+    {
+        if (_iconosPorId.TryGetValue(idFlota, out FlotaIconoMapamundi icono))
+        {
+            if (icono != null)
+                icono.gameObject.SetActive(false);
+            _iconosPorId.Remove(idFlota);
+        }
+    }
+
+    /// <summary>
+    /// Instancia un icono de mapamundi para una flota PNJ recién creada (respawn)
+    /// y lo posiciona en la ciudad origen de la flota. Registra el icono en
+    /// <see cref="_iconosPorId"/> para que pueda ser localizado por otros sistemas.
+    /// </summary>
+    /// <param name="flota">Datos de la flota PNJ a representar en el mapa.</param>
+    public void SpawnIconoFlotaPNJ(FlotaRuntimeData flota)
+    {
+        if (flota == null) return;
+
+        GameObject go = new GameObject("FlotaIcono_" + flota.Id);
+
+        SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite       = spriteBarco;
+        sr.color        = flota.IsPirata ? colorFlotaPirata : Color.white;
+        sr.sortingOrder = 10;
+        go.transform.localScale = new Vector3(0.5f, 0.5f, 1f);
+        CircleCollider2D col = go.AddComponent<CircleCollider2D>();
+        col.radius = 0.6f;
+
+        Vector3 posInicial;
+        if (flota.PosicionActual != Vector2.zero)
+        {
+            // Respetar posición ya asignada (p. ej. piratas reubicados antes del spawn)
+            posInicial = new Vector3(flota.PosicionActual.x, flota.PosicionActual.y, 0f);
+        }
+        else if (GameManager.Instance != null)
+        {
+            CiudadData ciudadOrigen = GameManager.Instance.CiudadesDisponibles
+                .FirstOrDefault(c => c.IdCiudad == flota.CiudadOrigenId);
+            if (ciudadOrigen == null && GameManager.Instance.CiudadesDisponibles.Count > 0)
+                ciudadOrigen = GameManager.Instance.CiudadesDisponibles[0];
+            posInicial = ciudadOrigen != null
+                ? tilemap.GetCellCenterWorld(ciudadOrigen.CasillaMapamundi)
+                : Vector3.zero;
+        }
+        else
+        {
+            posInicial = Vector3.zero;
+        }
+        go.transform.position = posInicial;
+        flota.PosicionActual  = posInicial;
+
+        FlotaIconoMapamundi icono = go.AddComponent<FlotaIconoMapamundi>();
+        icono.Flota = flota;
+        icono.Inicializar(tilemap, rutaCalculador);
+        icono.InicializarIcono();
+
+        _iconosPorId[flota.Id] = icono;
+    }
+
     // ─── Helpers internos ────────────────────────────────────────────────────
 
     /// <summary>
@@ -376,23 +456,25 @@ public class MapamundiController : MonoBehaviour
                 Debug.Log($"[Combate PNJ] {atacante.NombrePropietario} vs " +
                           $"{defensor.NombrePropietario} — {resultado.TextoNarrativo}");
 
-                // Pirata vuelve a patrullar; el brain lo retomará
-                if (iconoAtacante != null)
+                if (atacante.EstaDestruida())
                 {
+                    FlotaManager.Instance?.EliminarFlota(atacante.Id);
+                }
+                else if (iconoAtacante != null)
+                {
+                    // Pirata vuelve a patrullar; el brain lo retomará
                     iconoAtacante.EnCombate = false;
                     atacante.EstadoActual = EstadoFlotaPNJ.Patrullando;
                     atacante.RutaActualTilemap?.Clear();
                 }
 
-                if (iconoDefensor != null)
+                if (defensor.EstaDestruida())
                 {
-                    if (!defensor.EstaDestruida())
-                        iconoDefensor.HuirAlPuertoMasCercano();
-                    else
-                    {
-                        iconoDefensor.EnCombate = false;
-                        iconoDefensor.gameObject.SetActive(false);
-                    }
+                    FlotaManager.Instance?.EliminarFlota(defensor.Id);
+                }
+                else if (iconoDefensor != null)
+                {
+                    iconoDefensor.HuirAlPuertoMasCercano();
                 }
             }
 

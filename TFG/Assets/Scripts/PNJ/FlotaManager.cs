@@ -24,7 +24,12 @@ public class FlotaManager : MonoBehaviour
     private readonly Dictionary<int, PirataPNJController>     _controladores_pirata = new();
     private readonly Dictionary<int, PirataBrain>             _brainsPirata         = new();
 
-    private int _diasDesdeUltimoReabastecimientoPirata = 0;
+    private int  _diasDesdeUltimoReabastecimientoPirata = 0;
+    private bool _respawnPendiente                      = false;
+    private bool _respawnPirataPendiente                = false;
+
+    private const int MaxComerciantesActivos = 20;
+    private const int MaxPiratasActivos      = 3;
 
     /// <summary>
     /// Cascos del patrón Decorator disponibles para generar flotas PNJ.
@@ -38,6 +43,42 @@ public class FlotaManager : MonoBehaviour
     /// Asignar desde el Inspector con todos los ModuloBarcoData del proyecto.
     /// </summary>
     [SerializeField] private List<ModuloBarcoData> _modulosParaPNJ = new List<ModuloBarcoData>();
+
+    // ─── Pools de nombres ────────────────────────────────────────────────────
+
+    private static readonly string[] _nombresComerciantesPool = new string[]
+    {
+        // Alemanes (Haus / Kontor)
+        "Haus Becker", "Haus Richter", "Kontor Bremen", "Haus Steinhoff",
+        "Kontor Lübeck", "Haus Meissner", "Kontor Danzig", "Haus Braun",
+        "Kontor Hamburg", "Haus Schreiber", "Kontor Rostock", "Haus Vogel",
+        // Españoles (Casa / Compañía)
+        "Casa Mendoza", "Compañía Castilla", "Casa Fernández", "Compañía del Mar",
+        "Casa Gutiérrez", "Compañía Ibérica", "Casa Álvarez", "Compañía Aragón",
+        "Casa Morales", "Compañía de Levante", "Casa Herrero", "Compañía del Norte",
+        // Italianos (Compagnia / Banco / Casa)
+        "Compagnia Rossi", "Banco Fiorentino", "Casa Lombardi", "Compagnia del Porto",
+        "Banco Veneziano", "Casa Genovese", "Compagnia Marinara", "Banco Adriatico",
+        "Casa Toscana", "Compagnia Medici", "Banco Ligure", "Casa Visconti",
+        // Holandeses (Huis / Maatschappij)
+        "Huis Van der Berg", "Maatschappij Noord", "Huis De Groot", "Maatschappij Zeeland",
+        "Huis Janssen", "Maatschappij Holland", "Huis Vermeer", "Maatschappij Vlissingen",
+        "Huis De Vries", "Maatschappij Brugge", "Huis Baaker", "Maatschappij Antwerpen",
+        // Franceses (Maison / Compagnie / Société)
+        "Maison Dupont", "Compagnie du Nord", "Société Maritime", "Maison Leblanc",
+        "Compagnie de Rouen", "Maison Bernard", "Société des Mers", "Compagnie Normande",
+        "Maison Girard", "Société Atlantique", "Maison Fournier", "Compagnie du Ponant",
+    };
+
+    private static readonly string[] _nombresPiratasPool = new string[]
+    {
+        "Pirata Störtebeker", "Pirata Gödeke Michels", "Pirata Klaus Scheld",
+        "Pirata Klaus Mewes", "Pirata Heinrich Garvermann", "Pirata Simon de Utrecht",
+        "Pirata Arend Dikke", "Pirata Wigbold von Ruinen", "Pirata Herman de Spelde",
+        "Pirata Albert van der Vere", "Pirata Cord Widenfelt", "Pirata Hannes von Rostock",
+        "Pirata Niklaus van der Berg", "Pirata Johann Moltke", "Pirata Bernd Hollenbeke",
+        "Pirata Friedrich von Hagen", "Pirata Wilhelm Schulte", "Pirata Dietrich der Schwarze",
+    };
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -54,6 +95,11 @@ public class FlotaManager : MonoBehaviour
 
         SimulacionTiempo.OnNuevoDia += TickTodosLosControladores;
 
+        if (_cascosParaPNJ == null || _cascosParaPNJ.Count == 0)
+            Debug.LogError("[FlotaManager] _cascosParaPNJ no asignado — hay que asignarlos en el Inspector de MenuPrincipal.");
+
+        if (_modulosParaPNJ == null || _modulosParaPNJ.Count == 0)
+            Debug.LogError("[FlotaManager] _modulosParaPNJ no asignado — hay que asignarlos en el Inspector de MenuPrincipal.");
     }
 
     // ─── API pública ─────────────────────────────────────────────────────────
@@ -78,7 +124,6 @@ public class FlotaManager : MonoBehaviour
         {
             _controladores[flota.Id] = new ComerciantePNJController(flota, this);
         }
-
     }
 
     /// <summary>
@@ -104,6 +149,87 @@ public class FlotaManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Elimina todas las flotas PNJ, sus controladores y sus brains del registro activo.
+    /// Llamar exclusivamente desde <see cref="LoadManager"/> antes de restaurar
+    /// las flotas desde la base de datos, para evitar flotas fantasma cuando el singleton
+    /// persiste entre cargas.
+    /// </summary>
+    public void LimpiarTodasLasFlotas()
+    {
+        FlotasPorId.Clear();
+        _controladores.Clear();
+        _controladores_pirata.Clear();
+        _brainsPirata.Clear();
+    }
+
+    /// <summary>
+    /// Restablece los stats de combate de una flota cargada desde BD llamando al mismo
+    /// proceso de aleatorización que se usa al crear flotas nuevas. Llamar desde
+    /// <see cref="LoadManager"/> tras registrar cada flota para evitar que las flotas
+    /// cargadas tengan siempre los valores por defecto del constructor.
+    /// </summary>
+    /// <param name="flota">Flota recién registrada cuyas stats se van a restablecer.</param>
+    public void RestablecerStatsParaCarga(FlotaRuntimeData flota)
+    {
+        if (flota != null)
+            AleatoriarStatsFlota(flota);
+    }
+
+    /// <summary>
+    /// Elimina una flota del registro activo, limpia su icono en el mapamundi
+    /// y borra sus filas de la base de datos. Si la flota eliminada era un comerciante,
+    /// activa el proceso de respawn de comerciantes; si era un pirata, activa el de piratas.
+    /// </summary>
+    /// <param name="idFlota">Identificador de la flota a eliminar.</param>
+    public void EliminarFlota(int idFlota)
+    {
+        if (!FlotasPorId.TryGetValue(idFlota, out FlotaRuntimeData flota)) return;
+
+        bool eraComerciant = !flota.IsPirata;
+
+        MapamundiController.Instance?.DesactivarIconoFlota(idFlota);
+
+        if (DatabaseManager.Instance?.Conexion != null)
+        {
+            try
+            {
+                using (var cmd = DatabaseManager.Instance.Conexion.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM MemoriaComercialPNJ WHERE id_flota = @id;";
+                    cmd.Parameters.Add(new Mono.Data.Sqlite.SqliteParameter("@id", idFlota));
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = DatabaseManager.Instance.Conexion.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM CargaFlotaPNJ WHERE id_flota = @id;";
+                    cmd.Parameters.Add(new Mono.Data.Sqlite.SqliteParameter("@id", idFlota));
+                    cmd.ExecuteNonQuery();
+                }
+                using (var cmd = DatabaseManager.Instance.Conexion.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM FlotaPNJ WHERE id = @id;";
+                    cmd.Parameters.Add(new Mono.Data.Sqlite.SqliteParameter("@id", idFlota));
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning($"[FlotaManager] Error al limpiar BD de flota {idFlota}: {ex.Message}");
+            }
+        }
+
+        FlotasPorId.Remove(idFlota);
+        _controladores.Remove(idFlota);
+        _controladores_pirata.Remove(idFlota);
+        _brainsPirata.Remove(idFlota);
+
+        if (eraComerciant)
+            RespawnComercianteSiNecesario();
+        else
+            RespawnPirataSiNecesario();
+    }
+
+    /// <summary>
     /// Avanza un día de simulación en todos los controladores de comportamiento PNJ registrados.
     /// Suscrito a <see cref="SimulacionTiempo.OnNuevoDia"/> en <c>Awake</c>.
     /// </summary>
@@ -120,19 +246,6 @@ public class FlotaManager : MonoBehaviour
         {
             _diasDesdeUltimoReabastecimientoPirata = 0;
             ReabastecerPiratas();
-        }
-    }
-
-    /// <summary>
-    /// Restaura vida, tripulación y barcos de todas las flotas pirata activas.
-    /// Se llama automáticamente cada 7 días de juego desde <see cref="TickTodosLosControladores"/>.
-    /// </summary>
-    private void ReabastecerPiratas()
-    {
-        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
-        {
-            if (!flota.IsPirata) continue;
-            flota.ResetearParaReabastecimiento();
         }
     }
 
@@ -164,10 +277,9 @@ public class FlotaManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Crea y registra los 18 comerciantes PNJ iniciales al comenzar una partida nueva.
-    /// Garantiza que las 6 ciudades tienen mercado inicializado antes de crear las flotas.
-    /// Los IDs van del 1001 al 1018 y se distribuyen 3 por ciudad de origen;
-    /// el índice se resuelve con módulo para evitar desbordamiento si hay menos de 6 ciudades.
+    /// Crea y registra los 20 comerciantes y 3 piratas PNJ iniciales al comenzar una partida nueva.
+    /// Garantiza que las ciudades tienen mercado inicializado antes de crear las flotas.
+    /// Los IDs de comerciantes van del 1001 al 1020; los de piratas del 2001 al 2003.
     /// </summary>
     /// <param name="ciudades">
     /// Lista de ciudades disponibles en la partida. Debe contener al menos una entrada.
@@ -199,6 +311,8 @@ public class FlotaManager : MonoBehaviour
             (1016, "Comerciante Dietrich",  3),
             (1017, "Comerciante Kaspar",    4),
             (1018, "Comerciante Ludolf",    5),
+            (1019, "Comerciante Burkhard",  0),
+            (1020, "Comerciante Volker",    1),
         };
 
         foreach (var (id, nombre, idxCiudad) in definiciones)
@@ -212,7 +326,6 @@ public class FlotaManager : MonoBehaviour
             AleatoriarStatsFlota(flota);
             RegistrarFlota(flota);
         }
-
 
         var defPiratas = new (int id, string nombre)[]
         {
@@ -233,8 +346,211 @@ public class FlotaManager : MonoBehaviour
             AleatoriarStatsFlota(flota);
             RegistrarFlota(flota);
         }
-
     }
+
+    /// <summary>
+    /// Cuenta cuántas flotas PNJ viajan actualmente hacia la ciudad indicada
+    /// transportando el bien indicado. Usado por <see cref="ComerciantePNJController"/> para
+    /// evitar saturación de rutas cuando demasiados comerciantes eligen el mismo destino.
+    /// </summary>
+    /// <param name="idCiudad">Ciudad destino a comprobar.</param>
+    /// <param name="idBien">Identificador del bien transportado.</param>
+    /// <returns>Número de flotas en ruta hacia esa ciudad con ese bien.</returns>
+    public int ContarFlotasEnRutaHacia(int idCiudad, int idBien)
+    {
+        int count = 0;
+        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
+        {
+            if (flota.EstadoActual == EstadoFlotaPNJ.Viajando &&
+                flota.CiudadDestinoId == idCiudad &&
+                flota.Carga.ContainsKey(idBien))
+                count++;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// Realiza una transición de estado en la flota indicada y registra el cambio en el log.
+    /// No realiza ninguna acción si la flota no existe en el registro.
+    /// </summary>
+    /// <param name="flotaId">Identificador de la flota cuyo estado se cambia.</param>
+    /// <param name="nuevoEstado">Nuevo estado de la máquina de estados PNJ.</param>
+    public void CambiarEstado(int flotaId, EstadoFlotaPNJ nuevoEstado)
+    {
+        FlotaRuntimeData flota = ObtenerFlota(flotaId);
+        if (flota == null) return;
+
+        flota.EstadoActual = nuevoEstado;
+    }
+
+    // ─── Respawn de comerciantes ──────────────────────────────────────────────
+
+    private int ContarComerciantesActivos()
+    {
+        int count = 0;
+        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
+            if (!flota.IsPirata && flota.Id != -1)
+                count++;
+        return count;
+    }
+
+    private void RespawnComercianteSiNecesario()
+    {
+        if (ContarComerciantesActivos() >= MaxComerciantesActivos) return;
+
+        if (!CombateEventos.CombateJugadorEnCurso)
+        {
+            SpawnComercianteAleatorio();
+        }
+        else if (!_respawnPendiente)
+        {
+            _respawnPendiente = true;
+            CombateEventos.OnCombateTerminado += EjecutarRespawnDiferido;
+        }
+    }
+
+    private void EjecutarRespawnDiferido()
+    {
+        CombateEventos.OnCombateTerminado -= EjecutarRespawnDiferido;
+        _respawnPendiente = false;
+        SpawnComercianteAleatorio();
+    }
+
+    private void SpawnComercianteAleatorio()
+    {
+        IReadOnlyList<CiudadData> ciudades = GameManager.Instance?.CiudadesDisponibles;
+        if (ciudades == null || ciudades.Count == 0) return;
+
+        // Nuevo ID en rango de comerciantes (1001-1999), por encima del máximo existente en ese rango
+        int nuevoId = 1001;
+        foreach (int id in FlotasPorId.Keys)
+            if (id < 2000 && id >= nuevoId)
+                nuevoId = id + 1;
+
+        if (nuevoId > 1999)
+        {
+            Debug.LogWarning("[FlotaManager] Rango de IDs de comerciantes agotado (1001-1999).");
+            return;
+        }
+
+        CiudadData ciudad = ciudades[Random.Range(0, ciudades.Count)];
+        string nombre = GenerarNombreComercianteUnico(nuevoId);
+
+        FlotaRuntimeData flota = new FlotaRuntimeData(nuevoId, nombre);
+        flota.CiudadOrigenId = ciudad.IdCiudad;
+        AleatoriarStatsFlota(flota);
+        RegistrarFlota(flota);
+        MapamundiController.Instance?.SpawnIconoFlotaPNJ(flota);
+
+        Debug.Log($"[FlotaManager] Respawn comerciante: {nombre} (id={nuevoId}) en {ciudad.NombreCiudad}.");
+    }
+
+    private string GenerarNombreComercianteUnico(int idFallback)
+    {
+        var nombresUsados = new HashSet<string>();
+        foreach (FlotaRuntimeData f in FlotasPorId.Values)
+            nombresUsados.Add(f.NombrePropietario);
+
+        for (int i = 0; i < 15; i++)
+        {
+            string candidato = _nombresComerciantesPool[Random.Range(0, _nombresComerciantesPool.Length)];
+            if (!nombresUsados.Contains(candidato))
+                return candidato;
+        }
+        return "Mercader_" + idFallback;
+    }
+
+    // ─── Respawn de piratas ───────────────────────────────────────────────────
+
+    private int ContarPiratasActivos()
+    {
+        int count = 0;
+        foreach (FlotaRuntimeData flota in FlotasPorId.Values)
+            if (flota.IsPirata)
+                count++;
+        return count;
+    }
+
+    private void RespawnPirataSiNecesario()
+    {
+        if (ContarPiratasActivos() >= MaxPiratasActivos) return;
+
+        if (!CombateEventos.CombateJugadorEnCurso)
+        {
+            SpawnPirataAleatorio();
+        }
+        else if (!_respawnPirataPendiente)
+        {
+            _respawnPirataPendiente = true;
+            CombateEventos.OnCombateTerminado += EjecutarRespawnPirataDiferido;
+        }
+    }
+
+    private void EjecutarRespawnPirataDiferido()
+    {
+        CombateEventos.OnCombateTerminado -= EjecutarRespawnPirataDiferido;
+        _respawnPirataPendiente = false;
+        SpawnPirataAleatorio();
+    }
+
+    private void SpawnPirataAleatorio()
+    {
+        // Nuevo ID en rango de piratas (2001-2999)
+        int nuevoId = 2001;
+        foreach (int id in FlotasPorId.Keys)
+            if (id >= 2001 && id < 3000 && id >= nuevoId)
+                nuevoId = id + 1;
+
+        if (nuevoId >= 3000)
+        {
+            Debug.LogWarning("[FlotaManager] Rango de IDs de piratas agotado (2001-2999).");
+            return;
+        }
+
+        string nombre = GenerarNombrePirataUnico(nuevoId);
+
+        FlotaRuntimeData flota = new FlotaRuntimeData(nuevoId, nombre, esPirata: true);
+        flota.CiudadOrigenId  = -1;
+        flota.CiudadDestinoId = -1;
+        flota.EstadoActual    = EstadoFlotaPNJ.Patrullando;
+
+        // Posicionar en casilla de mar válida; fallback a posición aleatoria simple
+        if (MapamundiController.Instance != null)
+        {
+            Vector2 posMar = MapamundiController.Instance.ObtenerPosicionMarAleatoria();
+            flota.PosicionActual = posMar != Vector2.zero
+                ? posMar
+                : new Vector2(Random.Range(-5f, 5f), Random.Range(-5f, 5f));
+        }
+        else
+        {
+            flota.PosicionActual = new Vector2(Random.Range(-5f, 5f), Random.Range(-5f, 5f));
+        }
+
+        AleatoriarStatsFlota(flota);
+        RegistrarFlota(flota);
+        MapamundiController.Instance?.SpawnIconoFlotaPNJ(flota);
+        PirataBrainBootstrapper.Instance?.CrearBrainParaPirata(flota);
+
+        Debug.Log($"[FlotaManager] Respawn pirata: {nombre} (id={nuevoId}) en {flota.PosicionActual}.");
+    }
+
+    private string GenerarNombrePirataUnico(int idFallback)
+    {
+        var nombresUsados = new HashSet<string>();
+        foreach (FlotaRuntimeData f in FlotasPorId.Values)
+            nombresUsados.Add(f.NombrePropietario);
+
+        for (int i = 0; i < 15; i++)
+        {
+            string candidato = _nombresPiratasPool[Random.Range(0, _nombresPiratasPool.Length)];
+            if (!nombresUsados.Contains(candidato))
+                return candidato;
+        }
+        return "Pirata_" + idFallback;
+    }
+
+    // ─── Generación de flotas ─────────────────────────────────────────────────
 
     /// <summary>
     /// Genera entre 3 y 5 BarcoJugador con cascos aleatorios del patrón Decorator.
@@ -303,10 +619,23 @@ public class FlotaManager : MonoBehaviour
     {
         if (_modulosParaPNJ == null || _modulosParaPNJ.Count == 0) return;
 
+        int anioActual = SimulacionTiempo.Instance != null
+            ? SimulacionTiempo.Instance.AñoActual
+            : ModuloBarcoData.AnioDesbloqueoPolvoraJuego - 1;
+
+        // Un solo módulo por tipo por barco
+        foreach (ModuloBarcoData instalado in barco.ModulosInstalados)
+            if (instalado.tipoModulo == tipo) return;
+
         var candidatos = new List<ModuloBarcoData>();
         foreach (ModuloBarcoData m in _modulosParaPNJ)
-            if (m != null && m.tipoModulo == tipo && m.slotsCosto <= barco.SlotsDisponibles)
-                candidatos.Add(m);
+        {
+            if (m == null) continue;
+            if (m.tipoModulo != tipo) continue;
+            if (m.slotsCosto > barco.SlotsDisponibles) continue;
+            if (m.requierePolvora && anioActual < ModuloBarcoData.AnioDesbloqueoPolvoraJuego) continue;
+            candidatos.Add(m);
+        }
 
         if (candidatos.Count == 0) return;
         barco.InstalarModulo(candidatos[Random.Range(0, candidatos.Count)]);
@@ -378,43 +707,29 @@ public class FlotaManager : MonoBehaviour
         }
     }
 
+    // ─── Internos ─────────────────────────────────────────────────────────────
+
     /// <summary>
-    /// Cuenta cuántas flotas PNJ viajan actualmente hacia la ciudad indicada
-    /// transportando el bien indicado. Usado por <see cref="ComerciantePNJController"/> para
-    /// evitar saturación de rutas cuando demasiados comerciantes eligen el mismo destino.
+    /// Restaura vida, tripulación y barcos de todas las flotas pirata activas.
+    /// Se llama automáticamente cada 7 días de juego desde <see cref="TickTodosLosControladores"/>.
     /// </summary>
-    /// <param name="idCiudad">Ciudad destino a comprobar.</param>
-    /// <param name="idBien">Identificador del bien transportado.</param>
-    /// <returns>Número de flotas en ruta hacia esa ciudad con ese bien.</returns>
-    public int ContarFlotasEnRutaHacia(int idCiudad, int idBien)
+    private void ReabastecerPiratas()
     {
-        int count = 0;
         foreach (FlotaRuntimeData flota in FlotasPorId.Values)
         {
-            if (flota.EstadoActual == EstadoFlotaPNJ.Viajando &&
-                flota.CiudadDestinoId == idCiudad &&
-                flota.Carga.ContainsKey(idBien))
-                count++;
+            if (!flota.IsPirata) continue;
+            flota.ResetearParaReabastecimiento();
         }
-        return count;
-    }
-
-    /// <summary>
-    /// Realiza una transición de estado en la flota indicada y registra el cambio en el log.
-    /// No realiza ninguna acción si la flota no existe en el registro.
-    /// </summary>
-    /// <param name="flotaId">Identificador de la flota cuyo estado se cambia.</param>
-    /// <param name="nuevoEstado">Nuevo estado de la máquina de estados PNJ.</param>
-    public void CambiarEstado(int flotaId, EstadoFlotaPNJ nuevoEstado)
-    {
-        FlotaRuntimeData flota = ObtenerFlota(flotaId);
-        if (flota == null) return;
-
-        flota.EstadoActual = nuevoEstado;
     }
 
     private void OnDestroy()
     {
         SimulacionTiempo.OnNuevoDia -= TickTodosLosControladores;
+
+        if (_respawnPendiente)
+            CombateEventos.OnCombateTerminado -= EjecutarRespawnDiferido;
+
+        if (_respawnPirataPendiente)
+            CombateEventos.OnCombateTerminado -= EjecutarRespawnPirataDiferido;
     }
 }

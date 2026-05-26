@@ -216,6 +216,13 @@ public class TabernaManager : MonoBehaviour
             _capitanesContratados.Add(capitan);
     }
 
+    /// <summary>
+    /// Vacía la lista de capitanes contratados. Llamar exclusivamente desde
+    /// <see cref="LoadManager"/> antes de restaurar capitanes desde la base de datos,
+    /// para evitar duplicados cuando el singleton persiste entre cargas.
+    /// </summary>
+    public void LimpiarCapitanesContratados() => _capitanesContratados.Clear();
+
     // ─── Helpers ──────────────────────────────────────────────────────────────
 
     private static ResultadoOperacion Exito()
