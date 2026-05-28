@@ -10,6 +10,11 @@ using UnityEngine;
 /// </summary>
 public class CiudadController : MonoBehaviour
 {
+    // ─── Singleton ───────────────────────────────────────────────────────────
+
+    /// <summary>Punto de acceso global al controlador de ciudad activo.</summary>
+    public static CiudadController Instance { get; private set; }
+
     // ─── Referencias UI ──────────────────────────────────────────────────────
 
     /// <summary>
@@ -53,6 +58,11 @@ public class CiudadController : MonoBehaviour
 
     // Momento en que se cargó la escena, para bloquear input accidental al inicio
     private float _tiempoCargaEscena;
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     /// <summary>
     /// Inicializa la pantalla de ciudad: sincroniza <see cref="DatosCiudad"/> con el puerto
@@ -107,6 +117,12 @@ public class CiudadController : MonoBehaviour
     }
 
     // ─── API pública para edificios clickables ────────────────────────────────
+
+    /// <summary>Reactiva el botón de mapa. Llamado por TabernaUI y AstilleroUI al cerrarse.</summary>
+    public void ReactivarBotonMapa()
+    {
+        if (BotonMapa != null) BotonMapa.SetActive(true);
+    }
 
     /// <summary>Abre directamente el panel del mercado.</summary>
     public void AbrirMercado() => AbrirEdificio(TipoEdificio.Mercado);

@@ -199,7 +199,15 @@ public class ComerciantePNJController
             return;
         }
 
-        int cantidad = Mathf.Min(entrada.StockActual, 10);
+        // Calcular hueco libre: capacidad total de bodega menos lo ya cargado
+        int cargaActual  = 0;
+        foreach (int v in _flota.Carga.Values) cargaActual += v;
+        int espacioLibre = Mathf.Max(0, _flota.CargaMaximaTotal - cargaActual);
+
+        // Si la bodega ya está llena no tiene sentido comprar
+        if (espacioLibre <= 0) return;
+
+        int cantidad = Mathf.Min(entrada.StockActual, espacioLibre);
 
         // ── PASO 3: Compra simulada ───────────────────────────────────────────
 

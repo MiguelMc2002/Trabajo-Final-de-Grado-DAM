@@ -183,6 +183,26 @@ public class FlotaRuntimeData
     [System.NonSerialized] public int IndiceWaypointActual;
     [System.NonSerialized] public List<BarcoJugador> BarcosFlota = new List<BarcoJugador>();
 
+    /// <summary>
+    /// Capacidad máxima de carga de toda la flota: suma de <see cref="BarcoJugador.CargaMaximaTotal"/>
+    /// de cada barco en <see cref="BarcosFlota"/>. Si la lista no tiene datos individuales,
+    /// devuelve una estimación de <see cref="NumBarcos"/> × 50 (bodega base de un Cog).
+    /// </summary>
+    public int CargaMaximaTotal
+    {
+        get
+        {
+            if (BarcosFlota != null && BarcosFlota.Count > 0)
+            {
+                int total = 0;
+                foreach (BarcoJugador barco in BarcosFlota)
+                    total += barco.CargaMaximaTotal;
+                return total;
+            }
+            return Mathf.Max(1, _numBarcos) * 50;
+        }
+    }
+
 
     /// <summary>
     /// Reduce la vida de la flota en la cantidad indicada, sin bajar de cero.
