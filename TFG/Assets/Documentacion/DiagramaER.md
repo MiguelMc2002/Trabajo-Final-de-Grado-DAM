@@ -1,4 +1,4 @@
-# Diagrama Entidad-Relación — HanseBeta
+# Diagrama ER — HanseBeta
 
 > **Nota `ESTADO_JUEGO`:** Por diseño explícito, esta entidad no tiene ninguna FK con el resto
 > del esquema. Es el snapshot global de la partida (fecha, velocidad, dinero, modoPirata) y se
@@ -10,7 +10,8 @@
 > neutrales; `FLOTA_PNJ` almacena exclusivamente los PNJ activos en el mapamundi
 > (comerciantes id 1000-1999, piratas id 2001-2999).
 
-```erDiagram
+```mermaid
+erDiagram
 
     %% ═══════════════════════════════════════════════════════════════════
     %% ENTIDAD GLOBAL — snapshot de partida, SIN FKs por diseño
@@ -250,7 +251,7 @@
     BIEN  ||--o{ CARGA_BARCO : "embarcado como"
 
     %% Asignación lógica capitán → barco concreto (sin FK formal en BD)
-    CAPITAN }o--o| BARCO : "asignado a"
+    CAPITAN }o--|| BARCO : "asignado a"
 
     %% ── Módulo PNJ ──────────────────────────────────────────────────────
 
