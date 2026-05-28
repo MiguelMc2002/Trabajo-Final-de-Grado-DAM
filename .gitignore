@@ -110,3 +110,5 @@ TFG/Build/
 # Archivos de partida SQLite generados en tiempo de ejecución (Application.persistentDataPath)
 # Cada slot genera un slot_N.db con el estado completo de la partida; no deben versionarse.
 *.db
+MÓDULOS_DEL_PROYECTO.pdf
+ModulosProyecto.md
