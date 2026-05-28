@@ -132,6 +132,28 @@ public class FlotaJugador
     public void LimpiarTodos() => _barcos.Clear();
 
     /// <summary>
+    /// Aplica el resultado de un combate naval a los barcos reales de la flota.
+    /// Elimina los barcos perdidos (los últimos de la lista) y distribuye el daño
+    /// restante entre los supervivientes, actualizando <see cref="BarcoJugador.VidaActual"/>.
+    /// </summary>
+    /// <param name="barcosPerdidos">Número de barcos a eliminar.</param>
+    /// <param name="danioTotal">Daño total recibido por la flota en el combate.</param>
+    public void AplicarDanioCombate(int barcosPerdidos, float danioTotal)
+    {
+        // Eliminar barcos hundidos del final de la lista
+        for (int i = 0; i < barcosPerdidos && _barcos.Count > 0; i++)
+            _barcos.RemoveAt(_barcos.Count - 1);
+
+        // Distribuir el daño restante entre los supervivientes
+        if (_barcos.Count > 0 && danioTotal > 0f)
+        {
+            float danioPerBarco = danioTotal / _barcos.Count;
+            foreach (BarcoJugador b in _barcos)
+                b.VidaActual = Mathf.Max(0, Mathf.RoundToInt(b.VidaActual - danioPerBarco));
+        }
+    }
+
+    /// <summary>
     /// Devuelve el barco con el identificador indicado.
     /// </summary>
     /// <param name="idBarco">Identificador del barco a buscar.</param>

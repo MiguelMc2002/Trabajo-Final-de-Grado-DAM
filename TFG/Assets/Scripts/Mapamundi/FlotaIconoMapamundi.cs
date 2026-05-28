@@ -8,8 +8,14 @@ public class FlotaIconoMapamundi : MonoBehaviour
     private Tilemap _tilemap;
     private RutaCalculadorTilemap _rutaCalculador;
     private SpriteRenderer _sr;
+    private Color _colorOriginal;
 
-    [SerializeField] private float velocidadBase = 2f;
+    /// <summary>
+    /// Convierte la velocidad de juego (stat entero de barco) a unidades de mundo por segundo.
+    /// Calibrado para que una flota con VelocidadFlota=3 (Cog base) se mueva a ~2 u/s,
+    /// igual que la antigua velocidadBase fija.
+    /// </summary>
+    private const float FactorEscalaVelocidad = 0.667f;
 
     public FlotaRuntimeData Flota;
 
@@ -47,12 +53,14 @@ public class FlotaIconoMapamundi : MonoBehaviour
     {
         _sr = GetComponent<SpriteRenderer>();
         if (_sr == null) _sr = gameObject.AddComponent<SpriteRenderer>();
+        if (_sr != null) _colorOriginal = _sr.color;
         Flota.IndiceWaypointActual = 0;
 
         if (Flota.IsPirata)
             _coroutineDeteccion = StartCoroutine(BucleDeteccionContinua());
 
-        _esJugador = Flota != null && !Flota.IsPirata && Flota.Id == -1;
+        // El icono pertenece al jugador si y solo si su Id es -1, independientemente del modo pirata
+        _esJugador = Flota != null && Flota.Id == -1;
 
         _collider = gameObject.GetComponent<Collider2D>();
         if (_collider == null)
@@ -65,6 +73,18 @@ public class FlotaIconoMapamundi : MonoBehaviour
 
     /// <summary>Permite invocar OnFlotaClickada desde fuera de la clase.</summary>
     public static void InvocarFlotaClickada(FlotaRuntimeData flota) => OnFlotaClickada?.Invoke(flota);
+
+    /// <summary>Colorea el icono en naranja para indicar que está en combate.</summary>
+    public void ColorearEnCombate()
+    {
+        if (_sr != null) _sr.color = new Color(1f, 0.5f, 0f, 1f);
+    }
+
+    /// <summary>Restaura el color original del icono tras salir de combate.</summary>
+    public void RestaurarColor()
+    {
+        if (_sr != null) _sr.color = _colorOriginal;
+    }
 
     /// <summary>
     /// Asigna una nueva ruta al icono, cancelando la ruta anterior inmediatamente.
@@ -144,7 +164,9 @@ public class FlotaIconoMapamundi : MonoBehaviour
             }
         }
 
-        float velocidad = velocidadBase * Time.deltaTime *
+        // Velocidad real: stat de flota → unidades mundo/s, con clamp de seguridad
+        float velMundo  = Mathf.Clamp(Flota.VelocidadFlota * FactorEscalaVelocidad, 0.5f, 10f);
+        float velocidad = velMundo * Time.deltaTime *
             (SimulacionTiempo.Instance != null ? SimulacionTiempo.Instance.VelocidadActual : 1f);
 
         // Si no hay ruta pero está viajando, calcularla
@@ -227,6 +249,7 @@ public class FlotaIconoMapamundi : MonoBehaviour
         {
             if (Flota != null
                 && Flota.EstadoActual == EstadoFlotaPNJ.Patrullando
+                && !EnCombate
                 && (SimulacionTiempo.Instance == null || !SimulacionTiempo.Instance.EstaPausado))
             {
                 float            radioMundo  = 3f;
@@ -254,10 +277,10 @@ public class FlotaIconoMapamundi : MonoBehaviour
                     if (MapamundiController.Instance != null)
                         MapamundiController.Instance.ComprobarProximidadCombate(Flota);
 
-                    // Suspender detección hasta volver a Patrullando
+                    // Suspender detección hasta volver a Patrullando y haber salido del combate
                     yield return new WaitUntil(() =>
                         Flota == null ||
-                        Flota.EstadoActual == EstadoFlotaPNJ.Patrullando);
+                        (Flota.EstadoActual == EstadoFlotaPNJ.Patrullando && !EnCombate));
                 }
             }
 
@@ -298,8 +321,9 @@ public class FlotaIconoMapamundi : MonoBehaviour
         Flota.IndiceWaypointActual = 0;
         Flota.CasillaDestino       = ciudadMasCercana.CasillaMapamundi;
         Flota.CiudadDestinoId      = ciudadMasCercana.IdCiudad;
-        Flota.EstadoActual         = EstadoFlotaPNJ.HuyendoAPuerto;
-        EnCombate                  = false;
+        Flota.EstadoActual = EstadoFlotaPNJ.HuyendoAPuerto;
+        EnCombate          = false;
+        RestaurarColor();
     }
 
     private void OnDestroy()

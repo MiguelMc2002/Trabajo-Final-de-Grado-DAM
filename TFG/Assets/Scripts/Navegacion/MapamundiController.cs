@@ -20,6 +20,12 @@ public class MapamundiController : MonoBehaviour
     private void Awake()
     {
         _instance = this;
+        CombateEventos.OnCombateTerminado += AlTerminarCombate;
+    }
+
+    private void OnDestroy()
+    {
+        CombateEventos.OnCombateTerminado -= AlTerminarCombate;
     }
 
     // ─── Ciudades del mapa ────────────────────────────────────────────────────
@@ -45,6 +51,10 @@ public class MapamundiController : MonoBehaviour
 
     /// <summary>Índice de iconos por Id de flota para pausarlos o redirigirlos durante combates.</summary>
     private readonly Dictionary<int, FlotaIconoMapamundi> _iconosPorId = new();
+
+    // Iconos de las dos flotas involucradas en el combate actual del jugador
+    private FlotaIconoMapamundi _iconoCombateAtacante;
+    private FlotaIconoMapamundi _iconoCombateDefensor;
 
     // ─────────────────────────────────────────────────────────────────────────
 
@@ -410,6 +420,93 @@ public class MapamundiController : MonoBehaviour
     private FlotaIconoMapamundi ObtenerIcono(int flotaId)
         => _iconosPorId.TryGetValue(flotaId, out var icono) ? icono : null;
 
+    /// <summary>
+    /// Detiene el movimiento del icono de la flota indicada y lo colorea en naranja
+    /// para indicar que está en combate.
+    /// </summary>
+    /// <param name="flotaId">Id de la flota a pausar (-1 para el jugador).</param>
+    public void PausarIcono(int flotaId)
+    {
+        FlotaIconoMapamundi icono = flotaId == -1 ? _iconoFlotaJugador : ObtenerIcono(flotaId);
+        if (icono == null) return;
+        icono.EnCombate = true;
+        icono.ColorearEnCombate();
+    }
+
+    /// <summary>
+    /// Reanuda el movimiento del icono de la flota indicada y restaura su color original.
+    /// </summary>
+    /// <param name="flotaId">Id de la flota a reanudar (-1 para el jugador).</param>
+    public void ReanudarIcono(int flotaId)
+    {
+        FlotaIconoMapamundi icono = flotaId == -1 ? _iconoFlotaJugador : ObtenerIcono(flotaId);
+        if (icono == null) return;
+        icono.EnCombate = false;
+        icono.RestaurarColor();
+    }
+
+    /// <summary>
+    /// Restaura el color original del icono de la flota indicada sin cambiar EnCombate.
+    /// </summary>
+    /// <param name="flotaId">Id de la flota.</param>
+    public void RestaurarColorIcono(int flotaId)
+    {
+        FlotaIconoMapamundi icono = flotaId == -1 ? _iconoFlotaJugador : ObtenerIcono(flotaId);
+        icono?.RestaurarColor();
+    }
+
+    /// <summary>
+    /// Ordena al icono de la flota indicada huir al puerto más cercano tras un combate.
+    /// Si la flota no tiene icono registrado la llamada se ignora.
+    /// </summary>
+    /// <param name="flotaId">Identificador de la flota a enviar a puerto.</param>
+    public void HuirAlPuerto(int flotaId)
+    {
+        FlotaIconoMapamundi icono = ObtenerIcono(flotaId);
+        icono?.HuirAlPuertoMasCercano();
+    }
+
+    /// <summary>
+    /// Dispara un encuentro naval con el jugador como atacante (modo pirata).
+    /// Bloquea el movimiento de ambos iconos y lanza <see cref="CombateEventos.DispararCombate"/>.
+    /// Llamar desde <see cref="NavegacionJugadorController"/> cuando el jugador alcanza al objetivo perseguido.
+    /// </summary>
+    /// <param name="objetivo">Flota PNJ que el jugador perseguía.</param>
+    public void IniciarCombateJugadorAtaca(FlotaRuntimeData objetivo)
+    {
+        if (objetivo == null || _iconoFlotaJugador == null) return;
+
+        FlotaIconoMapamundi iconoObjetivo = ObtenerIcono(objetivo.Id);
+
+        // Bloquear movimiento de ambas flotas durante el combate
+        _iconoCombateAtacante          = _iconoFlotaJugador;
+        _iconoFlotaJugador.EnCombate   = true;
+        _iconoCombateDefensor          = iconoObjetivo;
+        if (iconoObjetivo != null) iconoObjetivo.EnCombate = true;
+
+        // Crear snapshot del jugador como atacante con stats actuales y modo pirata activo
+        FlotaRuntimeData flotaJugador = GameManager.Instance.FlotaJugador.ComoFlotaRuntime();
+        CombateEventos.DispararCombate(flotaJugador, objetivo);
+    }
+
+    /// <summary>
+    /// Suscrito a <see cref="CombateEventos.OnCombateTerminado"/>.
+    /// Desbloquea el movimiento de los iconos que estaban en combate.
+    /// </summary>
+    private void AlTerminarCombate()
+    {
+        if (_iconoCombateAtacante != null)
+        {
+            _iconoCombateAtacante.EnCombate = false;
+            _iconoCombateAtacante           = null;
+        }
+        if (_iconoCombateDefensor != null)
+        {
+            _iconoCombateDefensor.EnCombate = false;
+            _iconoCombateDefensor           = null;
+        }
+    }
+
     // ─── Detección y resolución de combate ───────────────────────────────────
 
     /// <summary>
@@ -434,10 +531,22 @@ public class MapamundiController : MonoBehaviour
     {
         if (FlotaManager.Instance == null) return;
 
+        // Ignorar si la flota que se movió ya está en combate
+        FlotaIconoMapamundi iconoMovida = flotaQueSeMovio.Id == -1
+            ? _iconoFlotaJugador
+            : ObtenerIcono(flotaQueSeMovio.Id);
+        if (iconoMovida != null && iconoMovida.EnCombate) return;
+
         foreach (FlotaRuntimeData otra in FlotaManager.Instance.ObtenerTodasLasFlotas())
         {
             if (otra.Id == flotaQueSeMovio.Id) continue;
             if (flotaQueSeMovio.IsPirata == otra.IsPirata) continue;
+
+            // Ignorar flotas que ya están en un combate activo
+            FlotaIconoMapamundi iconoOtra = otra.Id == -1
+                ? _iconoFlotaJugador
+                : ObtenerIcono(otra.Id);
+            if (iconoOtra != null && iconoOtra.EnCombate) continue;
 
             float distancia = Vector2.Distance(flotaQueSeMovio.PosicionActual, otra.PosicionActual);
             if (distancia > 1.5f) continue;
@@ -452,41 +561,19 @@ public class MapamundiController : MonoBehaviour
 
             if (jugadorInvolucrado)
             {
+                // Bloquear movimiento de las dos flotas involucradas durante el combate
+                FlotaIconoMapamundi iconoAt = atacante.Id == -1 ? _iconoFlotaJugador : ObtenerIcono(atacante.Id);
+                FlotaIconoMapamundi iconoDf = defensor.Id == -1 ? _iconoFlotaJugador : ObtenerIcono(defensor.Id);
+
+                if (iconoAt != null) { iconoAt.EnCombate = true;  _iconoCombateAtacante = iconoAt; }
+                if (iconoDf != null) { iconoDf.EnCombate = true;  _iconoCombateDefensor = iconoDf; }
+
                 CombateEventos.DispararCombate(atacante, defensor);
             }
             else
             {
-                // Pausar movimiento de ambas flotas durante la resolución
-                FlotaIconoMapamundi iconoAtacante = ObtenerIcono(atacante.Id);
-                FlotaIconoMapamundi iconoDefensor = ObtenerIcono(defensor.Id);
-                if (iconoAtacante != null) iconoAtacante.EnCombate = true;
-                if (iconoDefensor != null) iconoDefensor.EnCombate = true;
-
-                ResultadoCombate resultado = CombateNavalResolver.Resolver(
-                    atacante, defensor, jugadorEsAtacante: false);
-                Debug.Log($"[Combate PNJ] {atacante.NombrePropietario} vs " +
-                          $"{defensor.NombrePropietario} — {resultado.TextoNarrativo}");
-
-                if (atacante.EstaDestruida())
-                {
-                    FlotaManager.Instance?.EliminarFlota(atacante.Id);
-                }
-                else if (iconoAtacante != null)
-                {
-                    // Pirata vuelve a patrullar; el brain lo retomará
-                    iconoAtacante.EnCombate = false;
-                    atacante.EstadoActual = EstadoFlotaPNJ.Patrullando;
-                    atacante.RutaActualTilemap?.Clear();
-                }
-
-                if (defensor.EstaDestruida())
-                {
-                    FlotaManager.Instance?.EliminarFlota(defensor.Id);
-                }
-                else if (iconoDefensor != null)
-                {
-                    iconoDefensor.HuirAlPuertoMasCercano();
-                }
+                // Combate PNJ vs PNJ: delegar en GestorCombatesActivos (turno a turno)
+                GestorCombatesActivos.Instance?.IniciarCombate(atacante, defensor, esDelJugador: false);
             }
 
             break;

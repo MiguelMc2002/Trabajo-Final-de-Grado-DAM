@@ -43,6 +43,7 @@ public class SimulacionTiempo : MonoBehaviour
     private int _añoActual;
 
     private float _acumulador;
+    private float _acumuladorHora;
 
     // Delay de 0.5s para evitar input fantasma al cargar escena (mismo patrón que CiudadController)
     private float _tiempoDesdeInicio;
@@ -66,6 +67,9 @@ public class SimulacionTiempo : MonoBehaviour
     public bool EstaPausado => VelocidadActual == 0f;
 
     // ─── Eventos estáticos ────────────────────────────────────────────────────
+
+    /// <summary>Se dispara cada vez que avanza una hora de juego (24 veces por día).</summary>
+    public static event Action OnNuevaHora;
 
     /// <summary>Se dispara cada vez que avanza un día de juego.</summary>
     public static event Action OnNuevoDia;
@@ -93,7 +97,16 @@ public class SimulacionTiempo : MonoBehaviour
         // El menú de pausa congela Time.timeScale → no acumular tiempo de juego
         if (Time.timeScale == 0f) return;
 
-        _acumulador += Time.deltaTime * VelocidadActual;
+        float dt = Time.deltaTime * VelocidadActual;
+        _acumulador     += dt;
+        _acumuladorHora += dt;
+
+        float segundosPorHora = _segundosRealPorDiaJuego / 24f;
+        while (_acumuladorHora >= segundosPorHora)
+        {
+            _acumuladorHora -= segundosPorHora;
+            OnNuevaHora?.Invoke();
+        }
 
         if (_acumulador >= _segundosRealPorDiaJuego)
         {
