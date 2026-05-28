@@ -163,16 +163,16 @@ public class LoadManager : MonoBehaviour
         int restaurados = 0;
         foreach (BarcoDto dto in dtos)
         {
-            // Resolver TipoCascoData por id
-            TipoCascoData tipoCasco = null;
-            foreach (TipoCascoData t in AstilleroManager.Instance.CascosDisponibles)
+            // Resolver IBarco por IdTipoCasco — funciona tanto con TipoCascoData como con CascoDecorador
+            IBarco tipoCasco = null;
+            foreach (IBarco t in AstilleroManager.Instance.CascosDisponibles)
             {
-                if (t.idTipoCasco == dto.IdTipoCasco) { tipoCasco = t; break; }
+                if (t.IdTipoCasco == dto.IdTipoCasco) { tipoCasco = t; break; }
             }
 
             if (tipoCasco == null)
             {
-                Debug.LogWarning($"[LoadManager] TipoCascoData no encontrado para id={dto.IdTipoCasco}; se omite el barco '{dto.NombreBarco}'.");
+                Debug.LogWarning($"[LoadManager] Casco con id={dto.IdTipoCasco} no encontrado en CascosDisponibles; se omite el barco '{dto.NombreBarco}'.");
                 continue;
             }
 

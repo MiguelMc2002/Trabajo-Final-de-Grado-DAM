@@ -22,6 +22,7 @@ public class SaveManager : MonoBehaviour
     private BienDAO                 _bienDAO;
     private EdificiosCiudadDAO      _edificiosDAO;
     private BarcoDAO                _barcoDAO;
+    private FlotaDAO                _flotaDAO;
     private EstadoMercadoCiudadDAO  _mercadoDAO;
     private AlmacenJugadorDAO       _almacenJugadorDAO;
     private AlmacenCiudadDAO        _almacenCiudadDAO;
@@ -111,6 +112,7 @@ public class SaveManager : MonoBehaviour
         _bienDAO           = new BienDAO(db);
         _edificiosDAO      = new EdificiosCiudadDAO(db);
         _barcoDAO          = new BarcoDAO(db);
+        _flotaDAO          = new FlotaDAO(db);
         _mercadoDAO        = new EstadoMercadoCiudadDAO(db);
         _almacenJugadorDAO = new AlmacenJugadorDAO(db);
         _almacenCiudadDAO  = new AlmacenCiudadDAO(db);
@@ -369,6 +371,12 @@ public class SaveManager : MonoBehaviour
             Debug.Log("[SaveManager] Flota del jugador vacía; se omite el guardado.");
             return;
         }
+
+        // Garantizar que existe la fila Flota con id=0 (jugador) antes de insertar barcos:
+        // la tabla Barco tiene FK id_flota → Flota(id_flota), por lo que sin esta fila
+        // SQLite lanza FOREIGN KEY constraint failed al hacer INSERT en Barco.
+        int? idCiudadJugador = GameManager.Instance?.CiudadActual?.IdCiudad;
+        _flotaDAO.InsertarFlota(0, "jugador", idCiudadJugador, 0f, 0f, null, "EnPuerto", null);
 
         // Borrar barcos y módulos anteriores del jugador para evitar barcos fantasma
         _barcoDAO.EliminarBarcosDeFlota(0);

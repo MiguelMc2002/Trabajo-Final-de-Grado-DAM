@@ -36,6 +36,17 @@ public class ResultadoCombateUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _txtInfoCaptura;
     [SerializeField] private Button          _btnConfirmarCaptura;
 
+    // ─── Constantes de captura ────────────────────────────────────────────────
+
+    /// <summary>Probabilidad base de captura por barco cuando la tripulación enemiga es mínima.</summary>
+    private const float ProbabilidadCapturaBase = 0.30f;
+
+    /// <summary>Probabilidad máxima de captura por barco, alcanzada con tripulación al máximo.</summary>
+    private const float ProbabilidadCapturaMax  = 0.50f;
+
+    /// <summary>Tripulación de referencia (capacidad_tripulacion por defecto) para interpolar la probabilidad.</summary>
+    private const int TripulacionMaxReferencia = 50;
+
     private CombateEnCurso _combate;
 
     private void Awake()
@@ -150,11 +161,12 @@ public class ResultadoCombateUI : MonoBehaviour
         if (_btnContinuar != null)
             _btnContinuar.gameObject.SetActive(!mostrarAcciones);
 
-        // Ocultar botón Capturar si la flota ya está al límite
+        // Ocultar Capturar si la flota ya está al límite O si todos los barcos enemigos fueron destruidos
         if (_btnCapturar != null && mostrarAcciones)
         {
-            int slotsLibres = FlotaJugador.MaxBarcos - (GameManager.Instance?.FlotaJugador?.Barcos.Count ?? 0);
-            _btnCapturar.gameObject.SetActive(slotsLibres > 0);
+            int  slotsLibres    = FlotaJugador.MaxBarcos - (GameManager.Instance?.FlotaJugador?.Barcos.Count ?? 0);
+            bool todosDestruidos = _combate.FlotaEnemiga.NumBarcos <= 0;
+            _btnCapturar.gameObject.SetActive(slotsLibres > 0 && !todosDestruidos);
         }
     }
 
@@ -268,57 +280,98 @@ public class ResultadoCombateUI : MonoBehaviour
         return bien != null ? bien.nombre : $"Bien #{idBien}";
     }
 
+    /// <summary>
+    /// Muestra el sub-panel de captura con la probabilidad calculada y los slots disponibles.
+    /// El botón Confirmar queda desactivado si no hay slots libres.
+    /// </summary>
     private void OnCapturar()
     {
         if (_panelAccionesVictoria != null) _panelAccionesVictoria.SetActive(false);
         if (_panelCaptura          != null) _panelCaptura.SetActive(true);
 
-        int barcosCapturaDisponibles = Mathf.Min(
-            _combate.FlotaEnemiga.NumBarcos,
-            FlotaJugador.MaxBarcos - (GameManager.Instance?.FlotaJugador?.Barcos.Count ?? 0));
+        int   slotsLibres  = FlotaJugador.MaxBarcos - (GameManager.Instance?.FlotaJugador?.Barcos.Count ?? 0);
+        float probabilidad = CalcularProbabilidadCaptura();
+        int   porcentaje   = Mathf.RoundToInt(probabilidad * 100f);
 
         if (_txtInfoCaptura != null)
         {
-            if (barcosCapturaDisponibles <= 0)
+            if (slotsLibres <= 0)
                 _txtInfoCaptura.text = "Tu flota ya está al límite (5 barcos). No puedes capturar más barcos.";
             else
                 _txtInfoCaptura.text =
-                    $"Puedes capturar hasta {barcosCapturaDisponibles} barco(s) enemigo(s).\n" +
-                    $"Se añadirán a tu flota con el daño recibido.";
+                    $"Probabilidad de captura por barco: {porcentaje}%\n" +
+                    $"Los barcos capturados quedan con 1 de vida.\n" +
+                    $"Slots libres en tu flota: {slotsLibres}";
         }
 
         if (_btnConfirmarCaptura != null)
-            _btnConfirmarCaptura.interactable = barcosCapturaDisponibles > 0;
+            _btnConfirmarCaptura.interactable = slotsLibres > 0;
     }
 
+    /// <summary>
+    /// Por cada barco enemigo lanza una tirada aleatoria contra <see cref="CalcularProbabilidadCaptura"/>.
+    /// Los que superen la tirada se capturan con 1 de vida; los demás se hunden.
+    /// Se respeta siempre el límite de slots de la flota del jugador.
+    /// </summary>
     private void OnConfirmarCaptura()
     {
         FlotaJugador flotaJugador = GameManager.Instance?.FlotaJugador;
         if (flotaJugador == null) { OcultarResultado(); return; }
 
-        int slots    = FlotaJugador.MaxBarcos - flotaJugador.Barcos.Count;
-        int capturar = Mathf.Min(slots, _combate.FlotaEnemiga.NumBarcos);
+        float probabilidad  = CalcularProbabilidadCaptura();
+        int   numEnemigos   = _combate.FlotaEnemiga.NumBarcos;
+        int   slotsLibres   = FlotaJugador.MaxBarcos - flotaJugador.Barcos.Count;
+        int   capturados    = 0;
+        int   tripMediaEnem = Mathf.RoundToInt(
+            _combate.FlotaEnemiga.Tripulacion / Mathf.Max(1f, numEnemigos));
 
-        // Vida por barco capturado: proporcional al daño recibido por la flota enemiga
-        int vidaPorBarco = Mathf.Max(10,
-            Mathf.RoundToInt(_combate.FlotaEnemiga.VidaActual
-                             / Mathf.Max(1f, _combate.FlotaEnemiga.NumBarcos)));
-
-        for (int i = 0; i < capturar; i++)
+        for (int i = 0; i < numEnemigos && capturados < slotsLibres; i++)
         {
-            var casco = new CascoCapturado(vidaPorBarco);
+            // Tirada independiente por barco; si no entra en el umbral, el barco se hunde
+            if (Random.value > probabilidad) continue;
+
+            var casco = new CascoCapturado(1);
             var barco = new BarcoJugador(
-                idBarco: 1000 + i,
-                nombre:  $"Presa {i + 1} ({_combate.FlotaEnemiga.NombrePropietario})",
+                idBarco: 1000 + capturados,
+                nombre:  $"Presa {capturados + 1} ({_combate.FlotaEnemiga.NombrePropietario})",
                 casco:   casco);
-            barco.VidaActual  = vidaPorBarco;
-            barco.Tripulacion = Mathf.RoundToInt(
-                _combate.FlotaEnemiga.Tripulacion / Mathf.Max(1f, _combate.FlotaEnemiga.NumBarcos));
+            barco.VidaActual  = 1;
+            barco.Tripulacion = tripMediaEnem;
             flotaJugador.AñadirBarco(barco);
+            capturados++;
         }
 
         if (_panelCaptura  != null) _panelCaptura.SetActive(false);
         if (_btnContinuar  != null) _btnContinuar.gameObject.SetActive(true);
+    }
+
+    /// <summary>
+    /// Calcula la probabilidad de captura por barco interpolando entre
+    /// <see cref="ProbabilidadCapturaBase"/> (30 %) y <see cref="ProbabilidadCapturaMax"/> (50 %)
+    /// según la tripulación del barco enemigo mejor dotado.
+    /// Si la flota no tiene datos individuales por barco, usa la media de tripulación.
+    /// </summary>
+    /// <returns>Valor en [0.30, 0.50] que representa la probabilidad de captura por barco.</returns>
+    private float CalcularProbabilidadCaptura()
+    {
+        int maxTripulacion;
+
+        // Usar datos individuales si están disponibles (p.ej. flotas enemigas ricas)
+        if (_combate.FlotaEnemiga.BarcosFlota != null && _combate.FlotaEnemiga.BarcosFlota.Count > 0)
+        {
+            maxTripulacion = 0;
+            foreach (BarcoJugador barco in _combate.FlotaEnemiga.BarcosFlota)
+                maxTripulacion = Mathf.Max(maxTripulacion, barco.Tripulacion);
+        }
+        else
+        {
+            // Sin desglose por barco: media como proxy del barco mejor dotado
+            maxTripulacion = Mathf.RoundToInt(
+                _combate.FlotaEnemiga.Tripulacion / Mathf.Max(1f, _combate.FlotaEnemiga.NumBarcos));
+        }
+
+        float t = Mathf.Clamp01((float)maxTripulacion / TripulacionMaxReferencia);
+        return Mathf.Lerp(ProbabilidadCapturaBase, ProbabilidadCapturaMax, t);
     }
 
     // ─── Casco mínimo para barcos capturados ─────────────────────────────────

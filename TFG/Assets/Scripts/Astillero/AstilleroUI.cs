@@ -167,13 +167,13 @@ public class AstilleroUI : MonoBehaviour
         _btnModificarConfirmar.onClick.AddListener(OnModificarConfirmar);
 
         // Reparar
-        _btnBarcoRepIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, -1, null));
-        _btnBarcoRepDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, +1, null));
+        _btnBarcoRepIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, -1, RefrescarUIReparar));
+        _btnBarcoRepDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoRep, +1, RefrescarUIReparar));
         _btnRepararConfirmar.onClick.AddListener(OnRepararConfirmar);
 
         // Vender
-        _btnBarcoVenIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, -1, null));
-        _btnBarcoVenDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, +1, null));
+        _btnBarcoVenIzq.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, -1, RefrescarUIVender));
+        _btnBarcoVenDer.onClick.AddListener(() => CiclarBarco(ref _indiceBarcoVen, +1, RefrescarUIVender));
         _btnVenderConfirmar.onClick.AddListener(OnVenderConfirmar);
     }
 
@@ -182,21 +182,23 @@ public class AstilleroUI : MonoBehaviour
     // ─── API pública ──────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Abre el panel del astillero y muestra el menú principal.
+    /// Abre el panel del astillero mostrando directamente el panel de construcción
+    /// con las stats del Cog (primer casco) ya visibles.
     /// </summary>
     public void AbrirAstillero()
     {
         _panelAstillero.SetActive(true);
+        _indiceCasco = 0;
         MostrarPanel(0);
     }
 
     /// <summary>
-    /// Cierra el panel del astillero y restaura el botón de mapa en la pantalla de ciudad.
+    /// Cierra el panel del astillero y reactiva el botón de mapa en la pantalla de ciudad.
     /// </summary>
     public void CerrarAstillero()
     {
         _panelAstillero.SetActive(false);
-        FindFirstObjectByType<CiudadController>()?.CerrarTodosPaneles();
+        CiudadController.Instance?.ReactivarBotonMapa();
     }
 
     /// <summary>Muestra el subpanel indicado y oculta los demás.</summary>
@@ -288,22 +290,28 @@ public class AstilleroUI : MonoBehaviour
 
         IBarco casco = cascos[_indiceCasco];
         _txtCascoSeleccionado.text = casco.NombreCasco;
-        if (_txtVidaCasco  != null) _txtVidaCasco.text  = $"Vida: {casco.VidaBase}";
-        if (_txtVelCasco   != null) _txtVelCasco.text   = $"Vel: {casco.VelocidadBase}";
-        if (_txtManCasco   != null) _txtManCasco.text   = $"Man: {casco.ManiobrabilidadBase}";
-        if (_txtCargaCasco != null) _txtCargaCasco.text = $"Carga: {casco.CapacidadCargaBase}";
-        int slotsUsados = 0;
-        ModuloBarcoData mArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
-        ModuloBarcoData mVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
-        ModuloBarcoData mBod = ModuloSeleccionadoConstruir(TipoModulo.Bodega);
-        if (mArm != null) slotsUsados += mArm.slotsCosto;
-        if (mVel != null) slotsUsados += mVel.slotsCosto;
-        if (mBod != null) slotsUsados += mBod.slotsCosto;
-        if (_txtSlotsCasco != null) _txtSlotsCasco.text = $"Módulos: {slotsUsados}/{casco.CapacidadModulos}";
 
+        // Módulos seleccionados (se usan para stats y slots)
         ModuloBarcoData modArm = ModuloSeleccionadoConstruir(TipoModulo.Armamento);
         ModuloBarcoData modVel = ModuloSeleccionadoConstruir(TipoModulo.Velas);
         ModuloBarcoData modBod = ModuloSeleccionadoConstruir(TipoModulo.Bodega);
+
+        // Stats dinámicas: base del casco + deltas de módulos seleccionados
+        int vidaTotal  = casco.VidaBase            + (modArm?.deltaVida            ?? 0) + (modVel?.deltaVida            ?? 0) + (modBod?.deltaVida            ?? 0);
+        int velTotal   = casco.VelocidadBase        + (modArm?.deltaVelocidad       ?? 0) + (modVel?.deltaVelocidad       ?? 0) + (modBod?.deltaVelocidad       ?? 0);
+        int manTotal   = casco.ManiobrabilidadBase  + (modArm?.deltaManiobrabilidad ?? 0) + (modVel?.deltaManiobrabilidad ?? 0) + (modBod?.deltaManiobrabilidad ?? 0);
+        int cargaTotal = casco.CapacidadCargaBase   + (modArm?.deltaCargaMaxima     ?? 0) + (modVel?.deltaCargaMaxima     ?? 0) + (modBod?.deltaCargaMaxima     ?? 0);
+
+        if (_txtVidaCasco  != null) _txtVidaCasco.text  = $"Vida: {vidaTotal}";
+        if (_txtVelCasco   != null) _txtVelCasco.text   = $"Vel: {velTotal}";
+        if (_txtManCasco   != null) _txtManCasco.text   = $"Man: {manTotal}";
+        if (_txtCargaCasco != null) _txtCargaCasco.text = $"Carga: {cargaTotal}";
+
+        int slotsUsados = 0;
+        if (modArm != null) slotsUsados += modArm.slotsCosto;
+        if (modVel != null) slotsUsados += modVel.slotsCosto;
+        if (modBod != null) slotsUsados += modBod.slotsCosto;
+        if (_txtSlotsCasco != null) _txtSlotsCasco.text = $"Módulos: {slotsUsados}/{casco.CapacidadModulos}";
 
         _txtModuloArmamento.text = modArm != null ? modArm.nombreModulo : "Ninguno";
         _txtModuloVelas.text     = modVel != null ? modVel.nombreModulo : "Ninguno";

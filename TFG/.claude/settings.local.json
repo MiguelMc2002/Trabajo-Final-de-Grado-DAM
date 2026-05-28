@@ -23,7 +23,14 @@
       "Bash(git show *)",
       "Bash(echo \"EXIT:$?\")",
       "Bash(Select-String -Path \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets\\\\Scenes\\\\Ciudad.unity\" -Pattern \"139585730|223446551|552311504|236826418|1701156149|463091767|1920045492|368041742\")",
-      "Bash(Select-Object -First 20)"
+      "Bash(Select-Object -First 20)",
+      "Bash(xargs grep -l \"CascoCapturado\\\\|BarcoCapturado\\\\|Presa\")",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets\\\\Scripts\" -Recurse -Filter \"*.cs\")",
+      "Bash(Select-Object FullName)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets\\\\Scripts\" -Recurse -Directory)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }

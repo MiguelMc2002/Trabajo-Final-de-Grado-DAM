@@ -607,7 +607,9 @@ public class FlotaManager : MonoBehaviour
             }
             string nombre = nombresLista[Random.Range(0, nombresLista.Length)];
             var barco = new BarcoJugador(idBase + i, nombre, casco);
-            InstalarModuloAleatorioSiCabe(barco, TipoModulo.Armamento);
+            // Piratas arman todos sus barcos; comerciantes solo tienen armamento el 20% de las veces
+            if (esPirata || Random.value < 0.20f)
+                InstalarModuloAleatorioSiCabe(barco, TipoModulo.Armamento);
             InstalarModuloAleatorioSiCabe(barco, TipoModulo.Velas);
             InstalarModuloAleatorioSiCabe(barco, TipoModulo.Bodega);
 
@@ -706,7 +708,7 @@ public class FlotaManager : MonoBehaviour
         {
             flota.VidaMax        = Random.Range(60f,  120f);
             flota.VidaActual     = flota.VidaMax;
-            flota.FuerzaCanhones = Random.Range(3f,   12f);
+            flota.FuerzaCanhones = Random.Range(0f,   2f);
             flota.VelocidadFlota = Random.Range(2f,   5f);
             flota.NumBarcos      = Random.Range(1,    4);
             flota.Tripulacion    = Random.Range(15,   50);

@@ -174,32 +174,13 @@ public class DatabaseManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Crea la tabla AlmacenCiudadJugador en bases de datos guardadas antes del Día 18,
-    /// cuando dicha tabla aún no existía. La instrucción IF NOT EXISTS hace que sea
-    /// seguro ejecutarla siempre, sin riesgo de perder datos existentes.
+    /// AlmacenCiudadJugador ya está incluida en CrearTablasSiNoExisten(); este método
+    /// existe únicamente como compatibilidad hacia atrás para partidas guardadas antes
+    /// del Día 18 y se mantiene vacío de forma segura.
     /// </summary>
     private void MigrarTablaAlmacenCiudad()
     {
-        const string sql = @"
-            CREATE TABLE IF NOT EXISTS AlmacenCiudadJugador (
-                id_ciudad INTEGER NOT NULL,
-                id_bien   INTEGER NOT NULL,
-                cantidad  INTEGER NOT NULL DEFAULT 0,
-                PRIMARY KEY (id_ciudad, id_bien)
-            );";
-
-        try
-        {
-            using (SqliteCommand cmd = Conexion.CreateCommand())
-            {
-                cmd.CommandText = sql;
-                cmd.ExecuteNonQuery();
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError($"[DatabaseManager] Error al migrar tabla AlmacenCiudadJugador: {ex}");
-        }
+        // Tabla ya creada en el DDL principal con IF NOT EXISTS — nada que hacer aquí
     }
 
     /// <summary>
