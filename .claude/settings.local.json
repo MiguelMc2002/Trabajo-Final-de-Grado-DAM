@@ -3,7 +3,8 @@
     "allow": [
       "Bash(mkdir *)",
       "Bash(xargs grep -l \"PanelInspeccionFlota\")",
-      "Bash(xargs grep -l \"InspeccionFlota\")"
+      "Bash(xargs grep -l \"InspeccionFlota\")",
+      "PowerShell(Test-Path *)"
     ]
   }
 }
