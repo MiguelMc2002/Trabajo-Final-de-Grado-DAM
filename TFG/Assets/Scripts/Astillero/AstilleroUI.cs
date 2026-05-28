@@ -191,11 +191,12 @@ public class AstilleroUI : MonoBehaviour
     }
 
     /// <summary>
-    /// Cierra el panel del astillero.
+    /// Cierra el panel del astillero y restaura el botón de mapa en la pantalla de ciudad.
     /// </summary>
     public void CerrarAstillero()
     {
         _panelAstillero.SetActive(false);
+        FindFirstObjectByType<CiudadController>()?.CerrarTodosPaneles();
     }
 
     /// <summary>Muestra el subpanel indicado y oculta los demás.</summary>
@@ -380,7 +381,14 @@ public class AstilleroUI : MonoBehaviour
 
         int costeNeto = CalcularCosteNetoModificacion(barco);
 
-        _txtDeltaStats.text = FormatearDeltas(dVida, dVel, dMan, dCarga, "vs. actual")
+        int vidaFinal   = barco.CascoBase.VidaBase            + (selArm?.deltaVida ?? 0)            + (selVel?.deltaVida ?? 0)            + (selBod?.deltaVida ?? 0);
+        int velFinal    = barco.CascoBase.VelocidadBase        + (selArm?.deltaVelocidad ?? 0)        + (selVel?.deltaVelocidad ?? 0)        + (selBod?.deltaVelocidad ?? 0);
+        int manFinal    = barco.CascoBase.ManiobrabilidadBase  + (selArm?.deltaManiobrabilidad ?? 0)  + (selVel?.deltaManiobrabilidad ?? 0)  + (selBod?.deltaManiobrabilidad ?? 0);
+        int cargaFinal  = barco.CascoBase.CapacidadCargaBase   + (selArm?.deltaCargaMaxima ?? 0)      + (selVel?.deltaCargaMaxima ?? 0)      + (selBod?.deltaCargaMaxima ?? 0);
+        int fuerzaFinal = (selArm?.deltaFuerzaCombate ?? 0)   + (selVel?.deltaFuerzaCombate ?? 0)   + (selBod?.deltaFuerzaCombate ?? 0);
+
+        _txtDeltaStats.text = $"Proyectado: Vida {vidaFinal} | Vel {velFinal} | Man {manFinal} | Carga {cargaFinal} | Fuerza {fuerzaFinal}\n"
+                            + FormatearDeltas(dVida, dVel, dMan, dCarga, "vs. actual")
                             + $"\nCoste neto: {(costeNeto >= 0 ? $"{costeNeto} oro" : $"Recibirás {-costeNeto} oro")}";
     }
 

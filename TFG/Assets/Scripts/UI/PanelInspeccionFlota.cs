@@ -54,15 +54,56 @@ public class PanelInspeccionFlota : MonoBehaviour
         if (flota.BarcosFlota == null || flota.BarcosFlota.Count == 0)
         {
             GameObject filaVacia = Instantiate(prefabFila, contenedorFilas);
+            HorizontalLayoutGroup hlgVacia = filaVacia.GetComponent<HorizontalLayoutGroup>();
+            if (hlgVacia != null) { hlgVacia.childControlWidth = false; hlgVacia.childForceExpandWidth = false; }
+
             TextMeshProUGUI[] tv = filaVacia.GetComponentsInChildren<TextMeshProUGUI>();
-            if (tv.Length > 0) tv[0].text = "Sin datos de barcos";
+            float[] anchos = { 100f, 60f, 65f, 45f, 45f, 50f, 45f };
+            for (int i = 0; i < tv.Length && i < anchos.Length; i++)
+            {
+                tv[i].alignment = TextAlignmentOptions.MidlineLeft;
+                tv[i].overflowMode = TextOverflowModes.Ellipsis;
+                tv[i].enableWordWrapping = false;
+                tv[i].margin = new Vector4(4f, 0f, 0f, 0f);
+                LayoutElement le = tv[i].GetComponent<LayoutElement>() ?? tv[i].gameObject.AddComponent<LayoutElement>();
+                le.preferredWidth = anchos[i]; le.flexibleWidth = 0f;
+            }
+
+            if (!esJugador && tv.Length >= 7)
+            {
+                // Mostrar stats agregados actualizados de la flota PNJ (reflejan el daño del combate)
+                tv[0].text = $"{flota.NumBarcos} barcos";
+                tv[1].text = "-";
+                tv[2].text = $"{flota.VidaActual:F0}/{flota.VidaMax:F0}";
+                tv[3].text = $"{flota.VelocidadFlota:F1}";
+                tv[4].text = $"{flota.ManiobrabilidadFlota:F1}";
+                tv[5].text = "-";
+                tv[6].text = $"{flota.FuerzaCanhones:F0}";
+            }
+            else if (tv.Length > 0)
+            {
+                tv[0].text = "Sin barcos en la flota";
+            }
+
             gameObject.SetActive(true);
             return;
         }
 
+        // Anchos fijos idénticos a las cabeceras: Nombre, Casco, Vida, Velocidad, Maniobra, Carga, Fuerza
+        float[] anchosCeldas = { 100f, 60f, 65f, 45f, 45f, 50f, 45f };
+
         foreach (BarcoJugador barco in flota.BarcosFlota)
         {
             GameObject fila = Instantiate(prefabFila, contenedorFilas);
+
+            // El HLG debe respetar LayoutElement; desactivar expansión automática
+            HorizontalLayoutGroup hlg = fila.GetComponent<HorizontalLayoutGroup>();
+            if (hlg != null)
+            {
+                hlg.childControlWidth     = false;
+                hlg.childForceExpandWidth = false;
+            }
+
             TextMeshProUGUI[] t = fila.GetComponentsInChildren<TextMeshProUGUI>(true);
             if (t.Length >= 7)
             {
@@ -73,6 +114,18 @@ public class PanelInspeccionFlota : MonoBehaviour
                 t[4].text = barco.ManiobrabilidadTotal.ToString();
                 t[5].text = barco.CargaMaximaTotal.ToString();
                 t[6].text = barco.FuerzaCombateTotal.ToString();
+
+                // Alineación, desbordamiento, padding izquierdo y ancho fijo en cada celda
+                for (int i = 0; i < 7; i++)
+                {
+                    t[i].alignment          = TextAlignmentOptions.MidlineLeft;
+                    t[i].overflowMode       = TextOverflowModes.Ellipsis;
+                    t[i].enableWordWrapping = false;
+                    t[i].margin             = new Vector4(4f, 0f, 0f, 0f);
+                    LayoutElement le = t[i].GetComponent<LayoutElement>() ?? t[i].gameObject.AddComponent<LayoutElement>();
+                    le.preferredWidth = anchosCeldas[i];
+                    le.flexibleWidth  = 0f;
+                }
             }
         }
 

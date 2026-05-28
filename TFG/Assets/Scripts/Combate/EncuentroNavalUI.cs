@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,15 +17,11 @@ public class EncuentroNavalUI : MonoBehaviour
     [SerializeField] private Button              _btnLuchar;
     [SerializeField] private Button              _btnHuir;
 
-    /// <summary>
-    /// Panel de resultados post-combate. Cuando está asignado, <see cref="MostrarResultado"/>
-    /// delega en él en lugar de limitarse al log de diagnóstico.
-    /// </summary>
-    [SerializeField] private ResultadoCombateUI  _resultadoCombateUI;
+    [SerializeField] private TextMeshProUGUI _textoHuida;
 
     private FlotaRuntimeData _atacante;
     private FlotaRuntimeData _defensor;
-    private ResultadoCombate _ultimoResultado;
+    private bool             _jugadorEsAtacante;
 
     private void Start()
     {
@@ -49,13 +46,22 @@ public class EncuentroNavalUI : MonoBehaviour
 
     private void OnCombateIniciado(FlotaRuntimeData atacante, FlotaRuntimeData defensor)
     {
-        _atacante = atacante;
-        _defensor = defensor;
+        _atacante          = atacante;
+        _defensor          = defensor;
+        // El jugador tiene id -1; si es el atacante, él inició la persecución en modo pirata
+        _jugadorEsAtacante = (atacante.Id == -1);
 
         _panelEncuentro.SetActive(true);
         SceneController.SetPausa(true);
 
-        _textoNarrativo.text = $"Una flota pirata de {atacante.NombrePropietario} os intercepta. ¿Combatís o huís, capitán?";
+        _textoNarrativo.text = _jugadorEsAtacante
+            ? $"Habéis interceptado a la flota de {defensor.NombrePropietario}. ¿Atacáis o la dejáis pasar, capitán?"
+            : $"Una flota pirata de {atacante.NombrePropietario} os intercepta. ¿Combatís o huís, capitán?";
+
+        // Renombrar el botón secundario según el rol del jugador
+        TextMeshProUGUI txtHuir = _btnHuir.GetComponentInChildren<TextMeshProUGUI>();
+        if (txtHuir != null) txtHuir.text = _jugadorEsAtacante ? "Dejar Pasar" : "Huir";
+
         _btnLuchar.gameObject.SetActive(true);
         _btnHuir.gameObject.SetActive(true);
     }
@@ -64,44 +70,59 @@ public class EncuentroNavalUI : MonoBehaviour
 
     private void OnLuchar()
     {
-        _ultimoResultado = CombateNavalResolver.Resolver(_atacante, _defensor, jugadorEsAtacante: false);
-        MostrarResultado();
+        _panelEncuentro.SetActive(false);
+        SceneController.SetPausa(false);
+
+        // Iniciar combate asíncrono en el gestor; el resultado llegará por OnCombateJugadorTerminado
+        GestorCombatesActivos.Instance?.IniciarCombate(_atacante, _defensor, esDelJugador: true);
     }
 
     private void OnHuir()
     {
-        _ultimoResultado = CombateNavalResolver.Resolver(_atacante, _defensor, jugadorEsAtacante: true, jugadorIntentaHuir: true);
-        MostrarResultado();
-    }
-
-    // ─── Resultado ────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Cierra el panel de encuentro, reanuda el tiempo y delega el resultado en
-    /// <see cref="ResultadoCombateUI"/> si está asignado; si no, vuelca al log como
-    /// fallback de diagnóstico.
-    /// </summary>
-    private void MostrarResultado()
-    {
-        _panelEncuentro.SetActive(false);
-        SceneController.SetPausa(false);
-
-        if (_atacante != null && _atacante.EstaDestruida() && FlotaManager.Instance != null)
-            FlotaManager.Instance.EliminarFlota(_atacante.Id);
-
-        if (_resultadoCombateUI != null)
-            _resultadoCombateUI.MostrarResultado(_ultimoResultado);
-        else
+        if (_jugadorEsAtacante)
         {
-            Debug.LogWarning("[EncuentroNavalUI] _resultadoCombateUI no asignado. Resultado solo en log.");
+            // "Dejar Pasar": el jugador decide no atacar
+            _panelEncuentro.SetActive(false);
+            SceneController.SetPausa(false);
+            MapamundiController.Instance?.ReanudarIcono(_atacante.Id);
+            MapamundiController.Instance?.ReanudarIcono(_defensor.Id);
             CombateEventos.DispararFinCombate();
+            return;
         }
 
-        ResultadoCombate r = _ultimoResultado;
-        Debug.Log($"[EncuentroNaval] {r.TextoNarrativo}");
-        Debug.Log($"[EncuentroNaval] JugadorGana={r.JugadorGana} | JugadorHuyo={r.JugadorHuyo}");
-        Debug.Log($"[EncuentroNaval] Daño atacante={r.DanioRecibidoAtacante:F1} ({r.BarcosPerdidosAtacante} barcos) " +
-                  $"| Daño defensor={r.DanioRecibidoDefensor:F1} ({r.BarcosPerdidosDefensor} barcos)");
-        Debug.Log($"[EncuentroNaval] BotínOro={r.BotinOro} | Mercancías capturadas={r.BotinMercancia.Count} tipos");
+        // Intentar huir: comparar velocidades
+        FlotaRuntimeData flotaJugador = GameManager.Instance?.FlotaJugador?.ComoFlotaRuntime();
+        float velJugador = flotaJugador?.VelocidadFlota ?? 0f;
+        float velEnemigo = _atacante.VelocidadFlota;
+
+        if (velJugador > velEnemigo)
+        {
+            // Huida exitosa
+            _panelEncuentro.SetActive(false);
+            SceneController.SetPausa(false);
+            MapamundiController.Instance?.ReanudarIcono(_atacante.Id);
+            MapamundiController.Instance?.ReanudarIcono(_defensor.Id);
+            CombateEventos.DispararFinCombate();
+        }
+        else
+        {
+            // Huida fallida: avisar y combate automático tras 2s
+            _btnLuchar.gameObject.SetActive(false);
+            _btnHuir.gameObject.SetActive(false);
+            if (_textoHuida != null)
+                _textoHuida.text = "¡No podéis escapar! El enemigo es más rápido. El combate comienza...";
+            else
+                _textoNarrativo.text = "¡No podéis escapar! El combate comienza...";
+            StartCoroutine(IniciarCombateTrasEspera());
+        }
     }
+
+    private IEnumerator IniciarCombateTrasEspera()
+    {
+        yield return new WaitForSecondsRealtime(2f);
+        _panelEncuentro.SetActive(false);
+        SceneController.SetPausa(false);
+        GestorCombatesActivos.Instance?.IniciarCombate(_atacante, _defensor, esDelJugador: true);
+    }
+
 }

@@ -104,7 +104,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 **Ruta:** `Assets/Scripts/Navegacion/MapamundiController.cs`
 **Tipo:** MonoBehaviour (singleton)
 **Módulo:** Mapamundi — Flotas
-**Descripción:** Se añade soporte para abrir el panel de inspección del jugador (con botón Modo Pirata), desactivar iconos de flotas eliminadas y spawnear iconos de flotas recién creadas por respawn.
+**Descripción:** Soporte para abrir el panel de inspección del jugador, desactivar/spawnear iconos de flotas, pausar/reanudar iconos en combate e iniciar combate cuando el jugador es atacante (modo pirata).
 
 | Miembro | Tipo | Descripción |
 |---|---|---|
@@ -112,6 +112,11 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 | `DesactivarIconoFlota(int idFlota)` | `void` | Desactiva el GameObject del icono y lo elimina de `_iconosPorId`. |
 | `SpawnIconoFlotaPNJ(FlotaRuntimeData)` | `void` | Instancia un icono en runtime para una flota PNJ recién respawneada. |
 | `ObtenerPosicionMarAleatoria()` | `Vector2` | Llama a `BuscarCasillaMarValida()` y devuelve posición world-space. |
+| `PausarIcono(int flotaId)` | `void` | Activa `EnCombate = true` en el icono y lo colorea en naranja. `-1` para el jugador. |
+| `ReanudarIcono(int flotaId)` | `void` | Activa `EnCombate = false` y restaura el color original del icono. |
+| `RestaurarColorIcono(int flotaId)` | `void` | Restaura color sin tocar `EnCombate`. |
+| `HuirAlPuerto(int flotaId)` | `void` | Ordena al icono de la flota navegar al puerto más cercano tras perder combate PNJ. |
+| `IniciarCombateJugadorAtaca(FlotaRuntimeData objetivo)` | `void` | Bloquea ambos iconos, crea snapshot del jugador como atacante y dispara `CombateEventos.DispararCombate`. Llamado desde `NavegacionJugadorController` cuando el jugador alcanza al objetivo. |
 
 ---
 
@@ -213,6 +218,167 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 
 ---
 
+### SimulacionTiempo — actualización
+**Ruta:** `Assets/Scripts/Core/SimulacionTiempo.cs`
+**Tipo:** MonoBehaviour (singleton)
+**Módulo:** Core — Tiempo
+**Descripción:** Se añade el evento `OnNuevaHora` y el acumulador `_acumuladorHora` para disparar una señal 24 veces por día. `GestorCombatesActivos` se suscribe a él para avanzar los combates turno a turno sin modificar `Time.timeScale`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `OnNuevaHora` | `static event Action` | Se dispara cada vez que avanza una hora de juego (24 veces por día). |
+| `_acumuladorHora` | `float` (privado) | Acumula tiempo escalado; dispara `OnNuevaHora` al superar `_segundosRealPorDiaJuego / 24f`. |
+
+---
+
+### CombateEnCurso — clase nueva
+**Ruta:** `Assets/Scripts/Combate/CombateEnCurso.cs`
+**Tipo:** Clase pura C# (no MonoBehaviour)
+**Módulo:** Combate — Resolución asíncrona
+**Descripción:** Representa un combate naval resuelto de forma asíncrona, turno a turno. Cada turno equivale a una hora de juego. Distribuye el daño entre barcos individuales de `FlotaRuntimeData.BarcosFlota`; un barco con `VidaActual == 0` queda inutilizado y es potencialmente capturable. Timeout de 5 días (120 turnos) interpretado como evasión del defensor.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Atacante` | `FlotaRuntimeData` (get) | Flota que inició el encuentro. |
+| `Defensor` | `FlotaRuntimeData` (get) | Flota que recibió el ataque. |
+| `TurnoActual` | `int` (get) | Número de turno completado. Un turno = una hora de juego. |
+| `EsDelJugador` | `bool` (get) | `true` si alguna flota tiene `Id == -1`. |
+| `TerminoPorTimeout` | `bool` (get) | `true` si el combate terminó por alcanzar 120 turnos (evasión). |
+| `NumBarcosInicialAtacante` | `int` (get) | Barcos activos al inicio en la flota atacante. |
+| `NumBarcosInicialDefensor` | `int` (get) | Barcos activos al inicio en la flota defensora. |
+| `FlotaEnemiga` | `FlotaRuntimeData` (get) | Flota enemiga del jugador (la que no tiene `Id == -1`). |
+| `JugadorGano` | `bool` (get) | `true` si la flota del jugador sobrevive y la enemiga fue destruida. |
+| `Ganador` | `FlotaRuntimeData` (get) | Flota superviviente; `null` si ambas destruidas. |
+| `CombateEnCurso(atacante, defensor, esDelJugador)` | constructor | Inicializa el combate guardando stats iniciales de barcos. |
+| `ResolverTurno()` | `bool` | Avanza un turno: calcula fuerzas con varianza aleatoria ±30 %, aplica daño barco a barco, recalcula stats. Devuelve `true` si el combate ha terminado. |
+
+**Constantes internas:**
+- `MaxTurnos = 120` — 5 días × 24 h antes de forzar timeout.
+- `FuerzaBaseXBarco = 5f` — fuerza base por barco activo (armas ligeras, abordaje).
+- `MultiplicadorDanio = 0.15f` — fracción de fuerza que se convierte en daño por turno.
+
+---
+
+### GestorCombatesActivos — clase nueva
+**Ruta:** `Assets/Scripts/Combate/GestorCombatesActivos.cs`
+**Tipo:** MonoBehaviour (singleton)
+**Módulo:** Combate — Gestión asíncrona
+**Descripción:** Singleton que gestiona todos los combates navales activos en el mapamundi. Se suscribe a `SimulacionTiempo.OnNuevaHora` y avanza cada combate un turno por hora. Los combates PNJ vs PNJ se resuelven en silencio; los del jugador disparan `OnCombateJugadorTerminado` para que `ResultadoCombateUI` muestre el panel. Rechaza iniciar un combate si alguna flota ya está involucrada.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `static GestorCombatesActivos` | Punto de acceso global. |
+| `OnCombateJugadorTerminado` | `static event Action<CombateEnCurso>` | Disparado al terminar un combate con el jugador. `ResultadoCombateUI` se suscribe. |
+| `IniciarCombate(atacante, defensor, esDelJugador)` | `void` | Registra el combate, llama `PausarIcono` en ambas flotas. Rechaza si alguna ya está en combate. |
+
+**Comportamiento al finalizar (privado `FinalizarCombate`):**
+- Si `EsDelJugador`: elimina barcos hundidos de `FlotaJugador`, elimina la flota enemiga destruida de `FlotaManager`, restaura iconos e invoca `OnCombateJugadorTerminado`.
+- Si PNJ vs PNJ: el ganador puede capturar barcos inutilizados del perdedor (`IntentarCapturaPNJ`); el perdedor es eliminado; el superviviente huye a puerto.
+
+---
+
+### FlotaIconoMapamundi — actualización Día 28
+**Ruta:** `Assets/Scripts/Mapamundi/FlotaIconoMapamundi.cs`
+**Módulo:** Mapamundi — Iconos
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `EnCombate` | `bool` (get/set) | Cuando `true`, detiene el movimiento del icono. Activado por `GestorCombatesActivos` / `MapamundiController`. |
+| `_colorOriginal` | `Color` (privado) | Color capturado en `InicializarIcono()` para poder restaurarlo tras el combate. |
+| `ColorearEnCombate()` | `void` | Colorea el sprite en naranja (`1f, 0.5f, 0f`) para indicar combate activo. |
+| `RestaurarColor()` | `void` | Restaura `_colorOriginal` al SpriteRenderer. |
+| `HuirAlPuertoMasCercano()` | `void` | Calcula ruta A* a la ciudad más cercana, pone `EstadoActual = HuyendoAPuerto` y desactiva `EnCombate`. Llamado por `MapamundiController.HuirAlPuerto`. |
+| `BucleDeteccionContinua()` | `IEnumerator` (privado) | Coroutine exclusiva de piratas. Comprueba proximidad con flotas enemigas cada 0,1 s mientras el estado es `Patrullando`. Al detectar presa dispara `ComprobarProximidadCombate` y se suspende hasta volver a patrullar. |
+
+---
+
+### EncuentroNavalUI — actualización Día 28
+**Ruta:** `Assets/Scripts/Combate/EncuentroNavalUI.cs`
+**Módulo:** UI — Combate
+
+**Cambios respecto a día 25:**
+- `OnLuchar()`: ya no llama a `CombateNavalResolver`; delega en `GestorCombatesActivos.Instance.IniciarCombate(esDelJugador: true)`. El resultado llega por evento asíncrono.
+- `OnHuir()`: si el jugador es atacante el botón se llama **"Dejar Pasar"** y libera a ambas flotas sin combate. Si es defensor, compara `VelocidadFlota` del jugador vs. el atacante: si el jugador es más rápido, huida exitosa; si no, muestra mensaje y lanza `IniciarCombateTrasEspera`.
+- Texto del botón secundario determinado en `OnCombateIniciado()`: `"Dejar Pasar"` si `_jugadorEsAtacante`, `"Huir"` en caso contrario.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_textoHuida` | `TextMeshProUGUI` (SerializeField) | Texto de estado de huida fallida. Si no está asignado, usa `_textoNarrativo`. |
+| `IniciarCombateTrasEspera()` | `IEnumerator` (privado) | Espera 2 s reales (`WaitForSecondsRealtime`) antes de lanzar el combate asíncrono. |
+
+---
+
+### ResultadoCombateUI — actualización Día 28
+**Ruta:** `Assets/Scripts/Combate/ResultadoCombateUI.cs`
+**Módulo:** UI — Combate
+**Descripción:** Panel modal que muestra el resultado de un combate naval. Suscrito a `GestorCombatesActivos.OnCombateJugadorTerminado`. Pausa el tiempo con `Time.timeScale = 0f` mientras está visible. Post-victoria: tres acciones exclusivas (Destruir, Saquear, Capturar). El botón **Continuar** solo aparece cuando no hay acciones pendientes.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_panelAccionesVictoria` | `GameObject` (SerializeField) | Panel con botones Destruir/Saquear/Capturar. Solo visible en victoria. |
+| `_btnDestruir` | `Button` | Cierra el panel de acciones y muestra Continuar (la flota ya fue eliminada por `GestorCombatesActivos`). |
+| `_btnSaquear` | `Button` | Abre `_panelSaqueo` con desglose del botín: oro estimado + hasta 40% de cada bien de la carga enemiga. |
+| `_btnCapturar` | `Button` | Abre `_panelCaptura`. Oculto si la flota ya tiene `MaxBarcos`. |
+| `_panelSaqueo` | `GameObject` | Sub-panel con `_txtBotinSaqueo` y botón Confirmar Saqueo. |
+| `_panelCaptura` | `GameObject` | Sub-panel con `_txtInfoCaptura` y botón Confirmar Captura. |
+| `OcultarResultado()` | `void` | Cierra todos los sub-paneles, restaura `Time.timeScale = 1f` y dispara `CombateEventos.DispararFinCombate()`. |
+
+**Inner class `CascoCapturado`** (privada, implementa `IBarco`):
+Casco mínimo asignado a barcos capturados: `IdTipoCasco = -1`, `NombreCasco = "Capturado"`, velocidad 3, maniobra 3, carga 50, tripulación 20, coste 0.
+
+---
+
+### NavegacionJugadorController — actualización Día 28
+**Ruta:** `Assets/Scripts/Jugador/NavegacionJugadorController.cs`
+**Módulo:** Jugador — Navegación
+
+**Cambios respecto a día 26:**
+- Click **izquierdo** sobre icono PNJ: invoca `FlotaIconoMapamundi.InvocarFlotaClickada`.
+- Click **derecho** delegado a `MapamundiCamara.GestionarClickDerecho` (que tiene la cámara correcta).
+- Nuevo método público `CancelarPersecucionYNavegar(Vector2)`: cancela persecución activa y procesa navegación normal.
+- Sistema de persecución (modo pirata):
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_flotaObjetivo` | `FlotaRuntimeData` (privado) | Flota PNJ siendo perseguida. |
+| `_coroutinePersecucion` | `Coroutine` (privado) | Referencia a `BuclePersecucion` para poder cancelarla. |
+| `IniciarPersecucion(FlotaRuntimeData objetivo)` | `void` | Cancela persecución previa e inicia `BuclePersecucion`. |
+| `CancelarPersecucion()` | `void` (privado) | Detiene la coroutine, limpia `_flotaObjetivo` y vacía la ruta del jugador. |
+| `CancelarPersecucionYNavegar(Vector2 posicionPantalla)` | `void` | Cancela persecución y llama `ProcesarClick`. Llamado desde `MapamundiCamara`. |
+| `BuclePersecucion()` | `IEnumerator` (privado) | Recalcula ruta hacia el objetivo cada 0,5 s. Se detiene si el objetivo entra en puerto, es destruido o el jugador lo alcanza (disparando `IniciarCombateJugadorAtaca`). |
+
+---
+
+### MapamundiCamara — actualización Día 28
+**Ruta:** `Assets/Scripts/Mapamundi/MapamundiCamara.cs`
+**Módulo:** Mapamundi — Cámara
+
+**Cambios respecto a día 26:**
+- `GestionarArrastre()`: click izquierdo sobre icono del jugador abre `AbrirPanelJugador()`; sobre icono PNJ abre `AbrirPanelInspeccion()`.
+- Nuevo método privado `GestionarClickDerecho()`:
+
+| Comportamiento | Condición |
+|---|---|
+| Click derecho sobre icono PNJ (no en puerto) con `ModoPirata == true` | Llama `NavegacionJugadorController.Instance.IniciarPersecucion(icono.Flota)`. |
+| Click derecho en cualquier otra casilla | Llama `NavegacionJugadorController.Instance.CancelarPersecucionYNavegar(Input.mousePosition)`. |
+
+---
+
+### TODOs actualizados tras Día 28
+
+**Completados:**
+- [x] Fix `InvocarFlotaClickada` en `FlotaIconoMapamundi` — panel de inspección operativo
+- [x] Aumentar radio `CircleCollider2D` de 0.3f a 0.6f
+- [x] Sistema de combate asíncrono turno a turno (`CombateEnCurso` + `GestorCombatesActivos`)
+- [x] Persecución en modo pirata (`NavegacionJugadorController.BuclePersecucion`)
+- [x] Panel de resultado post-victoria con Destruir / Saquear / Capturar
+
+**Pendientes:**
+- [ ] Astillero — construir barco funcional (deuda desde Día 22)
+- [ ] Asignar `_cascosParaPNJ` en Inspector del `FlotaManager` (MenuPrincipal) con los 4 `CascoDecorador`
+
+---
+
 ## Cambios Día 26
 
 ### NavegacionJugadorController — clase nueva
@@ -243,7 +409,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 **Tipo:** MonoBehaviour
 **Módulo:** UI — Mapamundi
 **Descripción:** Panel de inspección/debug que muestra los `BarcoJugador` de una flota PNJ. Se suscribe a `FlotaIconoMapamundi.OnFlotaClickada` en `Awake` (no `OnEnable`) para recibir eventos aunque esté inactivo. Genera una fila por barco con 7 columnas: Nombre, Casco, Vida, Velocidad, Maniobra, Carga, Fuerza.
-**⚠️ TODO PRIORITARIO:** el método `InvocarFlotaClickada` en `FlotaIconoMapamundi` no está disparando el evento correctamente — panel no se abre al clickar iconos. Pendiente fix Día 27.
+**✅ Resuelto Día 28:** `InvocarFlotaClickada` ahora dispara correctamente — el panel se abre al clickar iconos.
 **API pública:**
 - `Mostrar(FlotaRuntimeData)` — genera filas y activa panel
 - `Ocultar()` — desactiva panel
@@ -270,7 +436,7 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 - Añadido método `AsignarRuta(List<Vector3Int>)` — redirige flota del jugador cancelando ruta anterior
 - Añadido método estático `InvocarFlotaClickada(FlotaRuntimeData)` — permite disparar el evento desde fuera de la clase
 - Añadido `CircleCollider2D` en `InicializarIcono` (radio 0.3f) para detección de click
-- **⚠️ TODO PRIORITARIO:** `InvocarFlotaClickada` no dispara el evento al clickar — pendiente fix Día 27
+- **✅ Resuelto Día 28:** `InvocarFlotaClickada` dispara correctamente
 
 ### MapamundiController — cambios Día 26
 - Añadida propiedad pública `IconoFlotaJugador`
@@ -297,8 +463,8 @@ Actualizar este fichero cada vez que se añada o modifique una clase con miembro
 ---
 
 ### TODO PRIORITARIO Día 27
-- [ ] Fix `InvocarFlotaClickada` en `FlotaIconoMapamundi` — el panel de inspección no se abre al clickar iconos
-- [ ] Aumentar radio `CircleCollider2D` de 0.3f a 0.6f para área de click más generosa
+- [x] Fix `InvocarFlotaClickada` en `FlotaIconoMapamundi` — resuelto en Día 28
+- [x] Aumentar radio `CircleCollider2D` de 0.3f a 0.6f — resuelto en Día 28
 - [ ] Asignar `_cascosParaPNJ` en Inspector del `FlotaManager` (MenuPrincipal) con los 4 `CascoDecorador`
 - [ ] Astillero — construir barco funcional (deuda desde Día 22)
 

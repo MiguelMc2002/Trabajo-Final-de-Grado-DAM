@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -40,6 +41,10 @@ public class NavegacionJugadorController : MonoBehaviour
     /// </summary>
     private bool _recienSalidoDeCiudad;
 
+    // ── Persecución (modo pirata) ─────────────────────────────────────────────
+    private FlotaRuntimeData _flotaObjetivo;
+    private Coroutine        _coroutinePersecucion;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     private void Awake()
@@ -56,20 +61,38 @@ public class NavegacionJugadorController : MonoBehaviour
     private void OnEnable()
     {
         FlotaIconoMapamundi.OnWaypointJugadorCruzado += AlCruzarWaypoint;
+        CombateEventos.OnCombateTerminado            += AlTerminarCombateJugador;
     }
 
     private void OnDisable()
     {
         FlotaIconoMapamundi.OnWaypointJugadorCruzado -= AlCruzarWaypoint;
+        CombateEventos.OnCombateTerminado            -= AlTerminarCombateJugador;
     }
 
     private void Update()
     {
-        // Tecla M → navegar a la última ciudad visitada
+        // Tecla M → alternar entre mapamundi y ciudad si la flota está en puerto
         if (Input.GetKeyDown(KeyCode.M))
         {
-            if (GameManager.Instance?.UltimaCiudad != null)
-                IniciarNavegacion(GameManager.Instance.UltimaCiudad.CasillaMapamundi);
+            FlotaIconoMapamundi icono = MapamundiController.Instance?.IconoFlotaJugador;
+            if (icono?.Flota?.EstadoActual == EstadoFlotaPNJ.EnPuerto && GameManager.Instance != null)
+            {
+                // Buscar la ciudad actual por CiudadOrigenId; si no, usar CiudadActual como fallback
+                CiudadData ciudad = null;
+                int idCiudad = icono.Flota.CiudadOrigenId;
+                if (idCiudad != -1)
+                    foreach (CiudadData c in GameManager.Instance.CiudadesDisponibles)
+                        if (c.IdCiudad == idCiudad) { ciudad = c; break; }
+                if (ciudad == null)
+                    ciudad = GameManager.Instance.CiudadActual;
+
+                if (ciudad != null)
+                {
+                    GameManager.Instance.EstablecerCiudadActual(ciudad);
+                    SceneController.IrACiudad();
+                }
+            }
             return;
         }
 
@@ -94,12 +117,20 @@ public class NavegacionJugadorController : MonoBehaviour
             }
         }
 
-        // Click derecho → mover flota
-        if (Input.GetMouseButtonDown(1))
-            ProcesarClick(Input.mousePosition);
+        // El click derecho lo gestiona MapamundiCamara (tiene la referencia de cámara correcta)
     }
 
     // ── Navegación ────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Cancela la persecución activa e inicia navegación hacia la posición de pantalla dada.
+    /// Llamar desde <see cref="MapamundiCamara"/> cuando el jugador hace click derecho en una casilla vacía.
+    /// </summary>
+    public void CancelarPersecucionYNavegar(Vector2 posicionPantalla)
+    {
+        CancelarPersecucion();
+        ProcesarClick(posicionPantalla);
+    }
 
     /// <summary>
     /// Convierte la posición de pantalla a casilla de tilemap y, si es navegable,
@@ -218,5 +249,117 @@ public class NavegacionJugadorController : MonoBehaviour
             popUpEntradaCiudad.Mostrar(ciudad);
         else
             Debug.LogWarning("[NavegacionJugador] PopUpEntradaCiudad no asignado en el Inspector.");
+    }
+
+    // ── Persecución (modo pirata) ─────────────────────────────────────────────
+
+    /// <summary>
+    /// Inicia la persecución de una flota PNJ en modo pirata.
+    /// Cancela cualquier persecución previa y lanza la coroutine de recálculo de ruta.
+    /// </summary>
+    /// <param name="objetivo">Flota PNJ que se perseguirá.</param>
+    public void IniciarPersecucion(FlotaRuntimeData objetivo)
+    {
+        if (objetivo == null) return;
+        CancelarPersecucion();
+        _flotaObjetivo        = objetivo;
+        _coroutinePersecucion = StartCoroutine(BuclePersecucion());
+        Debug.Log($"[NavegacionJugador] Persecución iniciada hacia {objetivo.NombrePropietario}");
+    }
+
+    /// <summary>Cancela la persecución activa y detiene al jugador en su posición actual.</summary>
+    private void CancelarPersecucion()
+    {
+        if (_coroutinePersecucion != null)
+        {
+            StopCoroutine(_coroutinePersecucion);
+            _coroutinePersecucion = null;
+        }
+        _flotaObjetivo = null;
+
+        // Limpiar ruta y destino para que el jugador se detenga
+        FlotaIconoMapamundi icono = MapamundiController.Instance?.IconoFlotaJugador;
+        if (icono?.Flota != null)
+        {
+            icono.Flota.RutaActualTilemap?.Clear();
+            icono.Flota.IndiceWaypointActual = 0;
+            icono.Flota.CasillaDestino       = Vector3Int.zero;
+        }
+    }
+
+    /// <summary>
+    /// Recalcula la ruta hacia el objetivo cada 0,5 segundos.
+    /// Se detiene si el objetivo entra en puerto, es destruido o el jugador lo alcanza.
+    /// </summary>
+    private IEnumerator BuclePersecucion()
+    {
+        var espera = new WaitForSeconds(0.5f);
+
+        while (_flotaObjetivo != null)
+        {
+            // Objetivo destruido: ya no está en FlotaManager
+            if (FlotaManager.Instance == null ||
+                FlotaManager.Instance.ObtenerFlota(_flotaObjetivo.Id) == null)
+            {
+                Debug.Log("[NavegacionJugador] Objetivo destruido, persecución cancelada.");
+                CancelarPersecucion();
+                yield break;
+            }
+
+            // Objetivo en puerto: dejar de perseguir
+            if (_flotaObjetivo.EstadoActual == EstadoFlotaPNJ.EnPuerto)
+            {
+                Debug.Log("[NavegacionJugador] Objetivo en puerto, persecución cancelada.");
+                CancelarPersecucion();
+                yield break;
+            }
+
+            FlotaIconoMapamundi iconoJugador = MapamundiController.Instance?.IconoFlotaJugador;
+            if (iconoJugador == null) { CancelarPersecucion(); yield break; }
+
+            Vector3Int casillaJugador  = tilemap.WorldToCell(iconoJugador.transform.position);
+            Vector3Int casillaObjetivo = tilemap.WorldToCell(
+                new Vector3(_flotaObjetivo.PosicionActual.x, _flotaObjetivo.PosicionActual.y, 0f));
+
+            // Jugador alcanzó al objetivo: disparar combate con el jugador como atacante
+            if (casillaJugador == casillaObjetivo)
+            {
+                Debug.Log($"[NavegacionJugador] Jugador alcanzó a {_flotaObjetivo.NombrePropietario}. Iniciando combate.");
+                FlotaRuntimeData objetivoCapturado = _flotaObjetivo;
+                CancelarPersecucion();
+                MapamundiController.Instance?.IniciarCombateJugadorAtaca(objetivoCapturado);
+                yield break;
+            }
+
+            // Recalcular ruta hacia la posición actual del objetivo
+            IniciarNavegacion(casillaObjetivo);
+
+            yield return espera;
+        }
+    }
+
+    /// <summary>
+    /// Suscrito a <see cref="CombateEventos.OnCombateTerminado"/>.
+    /// Si el jugador sale del combate sin barcos, navega automáticamente a la ciudad más cercana.
+    /// </summary>
+    private void AlTerminarCombateJugador()
+    {
+        FlotaJugador flota = GameManager.Instance?.FlotaJugador;
+        if (flota == null || flota.Barcos.Count > 0) return;
+
+        FlotaIconoMapamundi icono = MapamundiController.Instance?.IconoFlotaJugador;
+        if (icono == null || GameManager.Instance == null) return;
+
+        Vector3Int casillaJugador  = tilemap.WorldToCell(icono.transform.position);
+        CiudadData ciudadMasCercana = null;
+        float      distMin          = float.MaxValue;
+        foreach (CiudadData ciudad in GameManager.Instance.CiudadesDisponibles)
+        {
+            float dist = Vector3Int.Distance(casillaJugador, ciudad.CasillaMapamundi);
+            if (dist < distMin) { distMin = dist; ciudadMasCercana = ciudad; }
+        }
+
+        if (ciudadMasCercana != null)
+            SolicitarEntradaCiudad(ciudadMasCercana);
     }
 }

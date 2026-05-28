@@ -85,10 +85,11 @@ public class TabernaUI : MonoBehaviour
         RefrescarUI();
     }
 
-    /// <summary>Cierra el panel de la taberna.</summary>
+    /// <summary>Cierra el panel de la taberna y restaura el botón de mapa en la pantalla de ciudad.</summary>
     public void CerrarTaberna()
     {
         _panelTaberna.SetActive(false);
+        FindFirstObjectByType<CiudadController>()?.CerrarTodosPaneles();
     }
 
     /// <summary>

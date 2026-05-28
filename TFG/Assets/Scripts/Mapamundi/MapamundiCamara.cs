@@ -41,6 +41,7 @@ public class MapamundiCamara : MonoBehaviour
     {
         GestionarZoom();
         GestionarArrastre();
+        GestionarClickDerecho();
         if (!_arrastrando)
         {
             GestionarWASD();
@@ -126,6 +127,38 @@ public class MapamundiCamara : MonoBehaviour
         if (posRaton.y > Screen.height - ZonaBorde) direccion.y =  1f;
         if (direccion == Vector3.zero) return;
         transform.position += direccion * VelocidadScroll * Time.deltaTime;
+    }
+
+    /// <summary>
+    /// Gestiona el click derecho: en modo pirata sobre un icono PNJ inicia la persecución;
+    /// en cualquier otro caso ordena al jugador navegar hacia la casilla clickada.
+    /// Usa <see cref="_camara"/> para garantizar que ScreenToWorldPoint sea coherente
+    /// con el resto de raycasts de esta clase.
+    /// </summary>
+    private void GestionarClickDerecho()
+    {
+        if (!Input.GetMouseButtonDown(1)) return;
+
+        Vector3 posM = _camara.ScreenToWorldPoint(Input.mousePosition);
+        posM.z = 0f;
+
+        if (GameManager.Instance?.FlotaJugador?.ModoPirata == true)
+        {
+            RaycastHit2D hit = Physics2D.Raycast(posM, Vector2.zero);
+            if (hit.collider != null)
+            {
+                FlotaIconoMapamundi icono = hit.collider.GetComponent<FlotaIconoMapamundi>();
+                if (icono != null && !icono._esJugador &&
+                    icono.Flota != null && icono.Flota.EstadoActual != EstadoFlotaPNJ.EnPuerto)
+                {
+                    NavegacionJugadorController.Instance?.IniciarPersecucion(icono.Flota);
+                    return;
+                }
+            }
+        }
+
+        // Click en casilla vacía o fuera de modo pirata: navegar
+        NavegacionJugadorController.Instance?.CancelarPersecucionYNavegar(Input.mousePosition);
     }
 
     private void ClampPosicion()

@@ -124,10 +124,11 @@ public class PanelFlotaUI : MonoBehaviour
         RefrescarUI();
     }
 
-    /// <summary>Oculta el panel de flota completo.</summary>
+    /// <summary>Oculta el panel de flota completo y restaura el botón de mapa.</summary>
     public void OcultarPanel()
     {
         if (_panelFlota != null) _panelFlota.SetActive(false);
+        FindFirstObjectByType<CiudadController>()?.CerrarTodosPaneles();
     }
 
     /// <summary>

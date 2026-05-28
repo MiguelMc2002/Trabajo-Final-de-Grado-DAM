@@ -43,6 +43,12 @@ public class CiudadController : MonoBehaviour
     /// <summary>Botón que regresa al mapamundi. Se oculta mientras hay un panel abierto.</summary>
     public GameObject BotonMapa;
 
+    /// <summary>
+    /// Panel de aviso que se muestra cuando el jugador intenta ir al mapamundi sin barcos en la flota.
+    /// Opcional: si no está asignado, la acción simplemente se bloquea en silencio.
+    /// </summary>
+    [SerializeField] private GameObject _panelSinBarcos;
+
     // ─────────────────────────────────────────────────────────────────────────
 
     // Momento en que se cargó la escena, para bloquear input accidental al inicio
@@ -129,12 +135,18 @@ public class CiudadController : MonoBehaviour
 
     /// <summary>
     /// Cierra los paneles abiertos y regresa al mapamundi.
+    /// Bloqueado si la flota del jugador no tiene ningún barco: muestra
+    /// <see cref="_panelSinBarcos"/> si está asignado.
     /// También se activa al pulsar la tecla M.
     /// </summary>
     public void IrAMapamundi()
     {
-        Debug.Log("[CiudadController] IrAMapamundi() llamado desde: " +
-                  new System.Diagnostics.StackTrace().ToString());
+        if (GameManager.Instance?.FlotaJugador?.Barcos.Count == 0)
+        {
+            if (_panelSinBarcos != null) _panelSinBarcos.SetActive(true);
+            return;
+        }
+        if (_panelSinBarcos != null) _panelSinBarcos.SetActive(false);
         CerrarTodosPaneles();
         SceneController.IrAMapamundi();
     }
@@ -143,7 +155,7 @@ public class CiudadController : MonoBehaviour
 
     /// <summary>
     /// Detecta atajos de teclado de la pantalla de ciudad.
-    /// M → vuelve al mapamundi.
+    /// M → vuelve al mapamundi (requiere al menos un barco en la flota).
     /// </summary>
     private void Update()
     {
@@ -162,27 +174,35 @@ public class CiudadController : MonoBehaviour
     public void AbrirEdificio(TipoEdificio tipo)
     {
         CerrarTodosPaneles();
-        if (BotonMapa != null) BotonMapa.SetActive(false);
 
         switch (tipo)
         {
             case TipoEdificio.Mercado:
                 if (PanelMercado != null)
+                {
                     PanelMercado.SetActive(true);
+                    if (BotonMapa != null) BotonMapa.SetActive(false);
+                }
                 else
                     Debug.LogWarning("[CiudadController] PanelMercado no asignado en el Inspector.");
                 break;
 
             case TipoEdificio.Astillero:
                 if (PanelAstillero != null)
+                {
                     PanelAstillero.SetActive(true);
+                    if (BotonMapa != null) BotonMapa.SetActive(false);
+                }
                 else
                     Debug.LogWarning("[CiudadController] PanelAstillero no asignado en el Inspector.");
                 break;
 
             case TipoEdificio.Taberna:
                 if (PanelTaberna != null)
+                {
                     PanelTaberna.SetActive(true);
+                    if (BotonMapa != null) BotonMapa.SetActive(false);
+                }
                 else
                     Debug.LogWarning("[CiudadController] PanelTaberna no asignado en el Inspector.");
                 break;
@@ -191,6 +211,7 @@ public class CiudadController : MonoBehaviour
                 if (PanelFlota != null)
                 {
                     PanelFlota.SetActive(true);
+                    if (BotonMapa != null) BotonMapa.SetActive(false);
                     PanelFlota.GetComponent<PanelFlotaUI>()?.AbrirPanel();
                 }
                 else

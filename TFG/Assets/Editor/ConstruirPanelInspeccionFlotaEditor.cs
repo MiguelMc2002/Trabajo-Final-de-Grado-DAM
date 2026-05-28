@@ -202,28 +202,38 @@ public static class ConstruirPanelInspeccionFlotaEditor
 
     private static GameObject CrearFilaTextos(Transform padre, string nombre, string[] textos, int fontSize, Color color, float altura, FontStyles style)
     {
+        // Anchos fijos: Nombre, Casco, Vida, Velocidad, Maniobra, Carga, Fuerza
+        float[] anchos = { 100f, 60f, 65f, 45f, 45f, 50f, 45f };
+
         GameObject fila = new GameObject(nombre);
         if (padre != null) fila.transform.SetParent(padre, false);
         HorizontalLayoutGroup hlg = fila.AddComponent<HorizontalLayoutGroup>();
-        hlg.childControlWidth  = true;
-        hlg.childControlHeight = true;
-        hlg.childForceExpandWidth = true;
+        hlg.childControlWidth     = false; // respetar LayoutElement.preferredWidth
+        hlg.childControlHeight    = true;
+        hlg.childForceExpandWidth = false;
         hlg.spacing = 4f;
 
         LayoutElement le = fila.AddComponent<LayoutElement>();
         le.preferredHeight = altura;
 
-        foreach (string texto in textos)
+        for (int i = 0; i < textos.Length; i++)
         {
-            GameObject col = new GameObject(texto);
+            GameObject col = new GameObject(textos[i]);
             col.transform.SetParent(fila.transform, false);
             TextMeshProUGUI tmp = col.AddComponent<TextMeshProUGUI>();
-            tmp.text      = texto;
-            tmp.fontSize  = fontSize;
-            tmp.color     = color;
-            tmp.fontStyle = style;
-            tmp.alignment = TextAlignmentOptions.Center;
+            tmp.text               = textos[i];
+            tmp.fontSize           = fontSize;
+            tmp.color              = color;
+            tmp.fontStyle          = style;
+            tmp.alignment          = TextAlignmentOptions.MidlineLeft;
+            tmp.overflowMode       = TextOverflowModes.Ellipsis;
             tmp.enableWordWrapping = false;
+            tmp.margin             = new Vector4(4f, 0f, 0f, 0f);
+
+            // Ancho fijo para alinear cabeceras y datos perfectamente
+            LayoutElement leCol = col.AddComponent<LayoutElement>();
+            leCol.preferredWidth = i < anchos.Length ? anchos[i] : 60f;
+            leCol.flexibleWidth  = 0f;
         }
         return fila;
     }
