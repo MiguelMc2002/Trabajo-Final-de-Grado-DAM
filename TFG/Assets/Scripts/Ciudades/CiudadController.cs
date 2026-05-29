@@ -15,6 +15,12 @@ public class CiudadController : MonoBehaviour
     /// <summary>Punto de acceso global al controlador de ciudad activo.</summary>
     public static CiudadController Instance { get; private set; }
 
+    /// <summary>Se dispara cuando se abre cualquier panel de edificio (Mercado, Astillero, Puerto, Taberna).</summary>
+    public static event System.Action OnPanelCiudadAbierto;
+
+    /// <summary>Se dispara al final de <see cref="CerrarTodosPaneles"/>, una vez todos los paneles están ocultos.</summary>
+    public static event System.Action OnPanelCiudadCerrado;
+
     // ─── Referencias UI ──────────────────────────────────────────────────────
 
     /// <summary>
@@ -147,6 +153,7 @@ public class CiudadController : MonoBehaviour
         if (PanelTaberna   != null) PanelTaberna.SetActive(false);
         if (PanelFlota     != null) PanelFlota.SetActive(false);
         if (BotonMapa      != null) BotonMapa.SetActive(true);
+        OnPanelCiudadCerrado?.Invoke();
     }
 
     /// <summary>
@@ -236,8 +243,9 @@ public class CiudadController : MonoBehaviour
 
             default:
                 Debug.LogWarning($"[CiudadController] TipoEdificio desconocido: {tipo}.");
-                break;
+                return;
         }
+        OnPanelCiudadAbierto?.Invoke();
     }
 }
 

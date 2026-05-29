@@ -74,11 +74,28 @@ public class HUDTiempo : MonoBehaviour
     private void OnEnable()
     {
         SceneManager.sceneLoaded += OnScenaCargada;
+        CiudadController.OnPanelCiudadAbierto += OnPanelCiudadAbierto;
+        CiudadController.OnPanelCiudadCerrado += OnPanelCiudadCerrado;
     }
 
     private void OnDisable()
     {
         SceneManager.sceneLoaded -= OnScenaCargada;
+        CiudadController.OnPanelCiudadAbierto -= OnPanelCiudadAbierto;
+        CiudadController.OnPanelCiudadCerrado -= OnPanelCiudadCerrado;
+    }
+
+    private void OnPanelCiudadAbierto()
+    {
+        if (_panelVisible == null) return;
+        if (SceneManager.GetActiveScene().name == "Ciudad")
+            _panelVisible.SetActive(false);
+    }
+
+    private void OnPanelCiudadCerrado()
+    {
+        if (_panelVisible != null)
+            _panelVisible.SetActive(System.Array.IndexOf(_escenasVisibles, SceneManager.GetActiveScene().name) >= 0);
     }
 
     private void Start()

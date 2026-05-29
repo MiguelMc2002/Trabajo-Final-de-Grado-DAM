@@ -61,6 +61,7 @@ public class PanelInspeccionFlota : MonoBehaviour
             float[] anchos = { 100f, 60f, 65f, 45f, 45f, 50f, 45f };
             for (int i = 0; i < tv.Length && i < anchos.Length; i++)
             {
+                tv[i].fontSize = 18f;
                 tv[i].alignment = TextAlignmentOptions.MidlineLeft;
                 tv[i].overflowMode = TextOverflowModes.Ellipsis;
                 tv[i].enableWordWrapping = false;
@@ -118,6 +119,7 @@ public class PanelInspeccionFlota : MonoBehaviour
                 // Alineación, desbordamiento, padding izquierdo y ancho fijo en cada celda
                 for (int i = 0; i < 7; i++)
                 {
+                    t[i].fontSize           = 18f;
                     t[i].alignment          = TextAlignmentOptions.MidlineLeft;
                     t[i].overflowMode       = TextOverflowModes.Ellipsis;
                     t[i].enableWordWrapping = false;
