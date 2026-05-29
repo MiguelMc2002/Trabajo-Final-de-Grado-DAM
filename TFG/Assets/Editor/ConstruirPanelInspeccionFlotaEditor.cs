@@ -164,7 +164,7 @@ public static class ConstruirPanelInspeccionFlotaEditor
         System.IO.Directory.CreateDirectory("Assets/Prefabs/UI");
         GameObject filaTemplate = CrearFilaTextos(null, "FilaBarcoInspeccion",
             new string[]{ "Barco_X", "Cog", "100/100", "3", "2", "200", "0" },
-            12, Color.white, 28f, FontStyles.Normal);
+            18, Color.white, 28f, FontStyles.Normal);
 
         GameObject prefabAsset = PrefabUtility.SaveAsPrefabAsset(filaTemplate, prefabPath);
         Object.DestroyImmediate(filaTemplate);

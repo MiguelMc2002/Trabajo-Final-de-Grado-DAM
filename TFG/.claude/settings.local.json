@@ -30,7 +30,9 @@
       "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\migue\\\\Desktop\\\\TFG\\\\TFG\\\\Assets\\\\Scripts\" -Recurse -Directory)",
       "Bash(Select-Object -ExpandProperty FullName)",
       "Bash(Sort-Object)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git add *)",
+      "Bash(git push *)"
     ]
   }
 }
