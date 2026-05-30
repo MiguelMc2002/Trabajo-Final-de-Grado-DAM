@@ -319,15 +319,13 @@ Patrón Decorator sobre `IBarco`. Cuatro cascos base + módulos de armamento, ve
 ### AstilleroUI *(MonoBehaviour)*
 `Assets/Scripts/Astillero/AstilleroUI.cs`
 
-Panel de astillero con cinco subpaneles: Menú, Construir, Modificar, Reparar, Vender.
+Panel de astillero con cinco subpaneles: Menú, Construir, Modificar, Reparar, Vender. Solo un subpanel es visible a la vez. El panel Construir muestra stats dinámicas (base del casco + deltas de módulos seleccionados en tiempo real).
 
-| Método | Descripción |
-|---|---|
-| `AbrirAstillero()` | Abre el panel mostrando el menú principal. |
-| `CerrarAstillero()` | Cierra el panel y reactiva el botón de mapa. |
-| `MostrarPanel(int)` | 0=Menú · 1=Construir · 2=Modificar · 3=Reparar · 4=Vender. |
-
-Stats en panel Construir: dinámicas (base casco + deltas de módulos seleccionados en tiempo real).
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirAstillero()` | `void` | Abre el panel raíz y muestra el subpanel Menú. Inicializa el selector de cascos en el índice 0. |
+| `CerrarAstillero()` | `void` | Cierra el panel y reactiva el botón de mapa llamando a `CiudadController.ReactivarBotonMapa()`. |
+| `MostrarPanel(int indice)` | `void` | Activa el subpanel indicado y oculta el resto. `0`=Menú · `1`=Construir · `2`=Modificar · `3`=Reparar · `4`=Vender. Refresca la UI del subpanel activado. |
 
 ---
 
@@ -491,12 +489,15 @@ Stats en panel Construir: dinámicas (base casco + deltas de módulos selecciona
 ### PanelFlotaUI *(MonoBehaviour)*
 `Assets/Scripts/UI/PanelFlotaUI.cs`
 
-Panel de gestión de flota en escena Ciudad. Navegación circular entre barcos con flechas.  
-Tecla **F** como toggle (si el subpanel de bodega no está abierto).
+Panel lateral en la escena Ciudad que muestra los datos del barco seleccionado. Navegación circular entre barcos con flechas. Tecla **F** como toggle (ignorada si el subpanel de bodega está abierto). Incluye subpanel de bodega con inventario del jugador generado dinámicamente.
 
-| Método | Descripción |
-|---|---|
-| `RefrescarPanel()` | Refresca todos los datos. Llamado externamente por `AstilleroUI`. |
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirPanel()` | `void` | Cierra los demás paneles de ciudad, auto-selecciona el primer barco si ninguno estaba seleccionado y muestra el panel. |
+| `MostrarBarco(BarcoJugador barco)` | `void` | Abre el panel con el barco indicado ya seleccionado. |
+| `OcultarPanel()` | `void` | Desactiva el panel y restaura el botón de mapa. |
+| `RefrescarPanel()` | `void` | Refresca todos los datos tras una operación del astillero. Si el barco fue vendido, cambia al primer barco disponible. |
+| `RefrescarUI()` | `void` | Actualiza todos los textos con los datos del barco seleccionado. Si la flota está vacía, muestra el estado vacío y desactiva los botones. |
 
 ---
 
@@ -562,18 +563,30 @@ Estado completo de una flota PNJ en memoria. Gestionado por `FlotaManager`.
 ### ComerciantePNJController *(clase pura C#)*
 `Assets/Scripts/PNJ/ComerciantePNJController.cs`
 
-Máquina de estados del comerciante PNJ. Ciclo: EnPuerto → Viajando → Comerciando → EnPuerto.
+Máquina de estados del comerciante PNJ. Ciclo: `EnPuerto → Viajando → Comerciando → EnPuerto`.
+Instanciada por `FlotaManager` para cada flota comerciante. Avanza un paso por día de juego vía `Tick()`.
 
-- **EnPuerto:** Evalúa márgenes de ganancia en todas las ciudades disponibles (con precios desactualizados 7 días). Compra hasta llenar la bodega (`CargaMaximaTotal - cargaActual`). Inicia viaje A*.  
-- **Viajando:** Descuenta `_diasRestantesViaje` cada tick. Al llegar transiciona a Comerciando.  
-- **Comerciando:** Vende toda la carga al precio de destino.
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `ComerciantePNJController(FlotaRuntimeData, FlotaManager)` | constructor | Inicializa el controlador vinculando la flota y el gestor de flotas. |
+| `Tick()` | `void` | Avanza la máquina de estados un día de juego. Delega en el método privado del estado actual. |
+| `IniciarViaje(int ciudadDestinoId, Dictionary<int,double> preciosCompra, int diasViaje)` | `void` | Fija el destino, registra los precios de compra y transiciona a `Viajando`. |
 
 ---
 
-### PirataBrain *(MonoBehaviour)*
+### PirataBrain *(clase pura C#)*
 `Assets/Scripts/PNJ/PirataBrain.cs`
 
-Comportamiento asíncrono de pirata. Patrulla zonas marítimas, detecta flotas en radio de visión e inicia combate con comerciantes cercanos.
+Cerebro asíncrono de una flota pirata. Ejecuta dos `Task` en background: `BucleDeteccion` (detecta comerciantes en radio y decide interceptar o patrullar) y `BucleNavegacion` (calcula rutas A* hexagonales sin bloquear el hilo principal). El hilo principal envía snapshots de posición y consume `ColaSalida` en `Update`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `PirataBrain(int flotaId, float radioDeteccion, Dictionary<Vector3Int, List<Vector3Int>> grafo, HashSet<Vector3Int> casillasCiudad)` | constructor | Crea el brain. No inicia los Tasks hasta llamar a `IniciarTasks()`. |
+| `ColaSalida` | `ConcurrentQueue<ComandoPirata>` | Cola de comandos (`NuevaRuta`, `InterceptarObjetivo`, `Patrullar`) consumida en `FlotaIconoMapamundi.Update()`, máx. 1 por frame. |
+| `IniciarTasks()` | `void` | Lanza `BucleDeteccion` y `BucleNavegacion` con un `CancellationToken` compartido. Llamar desde el hilo principal tras construir el brain. |
+| `Detener()` | `void` | Cancela los dos Tasks. Llamar desde `OnDestroy` de `PirataBrainBootstrapper`. |
+| `EnviarSnapshot(FlotaSnapshot[])` | `void` | Encola un array de posiciones de todas las flotas para que `BucleDeteccion` lo procese. Descarta entradas antiguas si la cola supera 3 elementos. |
+| `ActualizarPosPropia(Vector2 posicion, Vector3Int casilla)` | `void` | Actualiza la posición propia del pirata en el brain. Llamar desde `Update` en el hilo principal. |
 
 ---
 
@@ -632,37 +645,48 @@ Comportamiento asíncrono de pirata. Patrulla zonas marítimas, detecta flotas e
 ### HUDDinero *(MonoBehaviour)*
 `Assets/Scripts/UI/HUDDinero.cs`
 
-Componente HUD presente en escenas Ciudad y Mapamundi. Se suscribe a `GameManager.OnDineroActualizado` en `OnEnable` y desuscribe en `OnDisable`/`OnDestroy`. Formato con separador de miles en español.
+Muestra el dinero del jugador en el HUD. Se actualiza reactivamente mediante `GameManager.OnDineroActualizado`; nunca hace polling en `Update`. Se desuscribe automáticamente en `OnDisable` y `OnDestroy`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `FormatearDinero(long cantidad)` | `static string` | Formatea una cantidad con separador de miles (es-ES) y símbolo ƒ. Ejemplo: `999999` → `"999.999 ƒ"`. Pública para reutilizarse en otros paneles. |
 
 ---
 
-### HUDTiempo *(MonoBehaviour)*
+### HUDTiempo *(MonoBehaviour singleton)*
 `Assets/Scripts/UI/HUDTiempo.cs`
 
-| Miembro | Descripción |
-|---|---|
-| `Instance` | Singleton ligero para la escena activa. |
-| `ActualizarUI()` | Refresca texto de fecha y velocidad. |
+HUD persistente (`DontDestroyOnLoad`) que muestra la fecha y la velocidad de simulación. Se auto-destruye si detecta un duplicado al cargar una escena. Se oculta automáticamente en escenas no jugables mediante `SceneManager.sceneLoaded`. Los botones +/- son acceso alternativo al ratón; el teclado lo gestiona `SimulacionTiempo`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `HUDTiempo` | Punto de acceso global al HUD de tiempo persistente. |
+| `ActualizarUI()` | `void` | Refresca los textos de fecha y velocidad, y el estado `interactable` de los botones +/-. Se llama al inicio y cada vez que cambia la fecha o la velocidad. |
 
 ---
 
 ### PanelInspeccionFlota *(MonoBehaviour)*
 `Assets/Scripts/UI/PanelInspeccionFlota.cs`
 
-Panel informativo de flota en el mapamundi.
+Panel informativo de flota en el mapamundi. Genera una fila por barco con nombre, casco, vida, velocidad, maniobrabilidad, carga y fuerza de combate. Para flotas PNJ sin barcos individuales muestra stats agregados. Para el jugador activa el botón Modo Pirata.
 
-| Método | Descripción |
-|---|---|
-| `Mostrar(FlotaRuntimeData, bool esJugador)` | Muestra panel. Si `esJugador`, activa botón Modo Pirata y título diferenciado. |
-| `Ocultar()` | Desactiva el panel. |
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Mostrar(FlotaRuntimeData flota, bool esJugador)` | `void` | Muestra el panel con los datos de la flota. Si `esJugador == true`, el título indica "Tu flota" y se activa el botón Modo Pirata. |
+| `Ocultar()` | `void` | Desactiva el `GameObject` del panel. |
 
 ---
 
 ### EncuentroNavalUI *(MonoBehaviour)*
 `Assets/Scripts/Combate/EncuentroNavalUI.cs`
 
-Panel de decisión al interceptar una flota enemiga. Opciones: Luchar / Huir.  
-Al pulsar Luchar delega en `GestorCombatesActivos.IniciarCombate(esDelJugador: true)`.
+Panel de decisión al interceptar una flota enemiga. Opciones: Luchar / Huir. Componente puramente reactivo: no expone métodos públicos; se activa mediante `CombateEventos.OnCombateIniciado`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| *(suscripción a `CombateEventos.OnCombateIniciado`)* | `event` | Activa el panel cuando el jugador entra en un encuentro naval. |
+| Botón **Luchar** | `Button` | Delega en `GestorCombatesActivos.IniciarCombate(esDelJugador: true)` y oculta el panel. |
+| Botón **Huir** | `Button` | Compara velocidad del jugador con la del pirata; si es mayor, escapa sin combate; si no, inicia combate igualmente. |
 
 ---
 
@@ -672,12 +696,12 @@ Al pulsar Luchar delega en `GestorCombatesActivos.IniciarCombate(esDelJugador: t
 Tres subpaneles: Menú · Contratar Marineros · Contratar Capitán.  
 Botones +/- con aceleración en tres fases al mantener pulsado (1→5→10 unidades/paso).
 
-| Método | Descripción |
-|---|---|
-| `AbrirTaberna()` | Abre panel y muestra menú principal. |
-| `CerrarTaberna()` | Cierra panel y reactiva botón mapa. |
-| `MostrarPanel(int)` | 0=Menú · 1=Marineros · 2=Capitán. |
-| `RefrescarUI()` | Actualiza todos los textos y estados. |
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `AbrirTaberna()` | `void` | Abre el panel y muestra el subpanel de menú principal. |
+| `CerrarTaberna()` | `void` | Cierra el panel y reactiva el botón de regreso al mapa. |
+| `MostrarPanel(int indice)` | `void` | Activa el subpanel indicado: 0=Menú · 1=Marineros · 2=Capitán. |
+| `RefrescarUI()` | `void` | Actualiza todos los textos, costes y estados de botones según el estado actual del juego. |
 
 ---
 
@@ -710,11 +734,15 @@ Persistencia incluye: estado global · mercados · almacenes ciudad · flota jug
 
 ---
 
-### LoadManager *(MonoBehaviour)*
+### LoadManager *(MonoBehaviour singleton)*
 `Assets/Scripts/Database/LoadManager.cs`
 
-Restaura el estado completo desde el slot indicado, en orden topológico (tablas padre antes que hijo).  
-Fallback por `TipoModulo` si el nombre del módulo no coincide (asset renombrado).
+Restaura el estado completo en 9 pasos ordenados (tiempo → dinero → almacenes → mercados → flotas PNJ → flota jugador → capitanes). Usa fallback por `TipoModulo` si el nombre del módulo no coincide con el asset guardado.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `LoadManager` | Punto de acceso global. Persiste entre escenas con `DontDestroyOnLoad`. |
+| `CargarPartida(int slotIndex)` | `void` | Carga el estado completo desde el slot indicado (1–5). Abre el `.db`, instancia los DAOs y restaura cada subsistema en orden topológico. |
 
 ---
 
