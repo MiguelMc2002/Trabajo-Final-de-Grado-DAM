@@ -105,6 +105,29 @@ Intermediario que abstrae el origen/destino de mercancías (mercado, almacén ci
 
 ---
 
+### MercadoUI *(MonoBehaviour)*
+`Assets/Scripts/UI/MercadoUI.cs`
+
+Panel modal del mercado en la escena Ciudad. Instancia una fila `MarketRowUI` por bien al activarse, refresca la cabecera con el nombre de ciudad y el uso de bodega, y destruye las filas al desactivarse para evitar acumulación. Se suscribe a `MarketManager.OnMercadoActualizado`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `BotonCerrar` | `Button` | Botón que cierra el panel delegando en `CiudadController.CerrarTodosPaneles()`. |
+| `Cerrar()` | `void` | Cierra el panel del mercado. Registrado como listener de `BotonCerrar` en `Awake`. |
+
+---
+
+### MarketRowUI *(MonoBehaviour)*
+`Assets/Scripts/UI/MarketRowUI.cs`
+
+Fila de la pantalla de mercado. Muestra nombre del bien, precio, stocks de dos columnas ciclables (Mercado ciudad / Almacén ciudad / Bodega barco) e indicador de color reactivo al precio. Se suscribe a `MarketManager.OnMercadoActualizado` para actualizarse sin polling. Indicador: verde = precio ≤ base (vender aquí), amarillo = normal, rojo = precio > 2× base (comprar aquí).
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Inicializar(BienData bien, MarketManager marketManager, OficinaComercial oficina)` | `void` | Enlaza la fila con su bien y gestores, registra los listeners de los 6 botones (+1/+10/+100 comprar y vender) y pinta datos iniciales. Idempotente: limpia listeners previos antes de añadir nuevos. |
+
+---
+
 ## Módulo 2: Producción y Cadenas
 **Estado:** ⚠️ Parcial  
 **Dependencias:** Módulo Económico, Módulo de Ciudades
@@ -329,6 +352,36 @@ Panel de astillero con cinco subpaneles: Menú, Construir, Modificar, Reparar, V
 
 ---
 
+### TipoCascoData *(ScriptableObject)*
+`Assets/Scripts/Astillero/TipoCascoData.cs`
+
+Implementación concreta de `IBarco` como ScriptableObject editable desde el Inspector. Es el ConcreteComponent del patrón Decorator: las subclases `CascoDecorador` lo envuelven, aunque en la práctica los decoradores concretos sobreescriben todos los valores con stats hardcoded.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `idTipoCasco` | `int` | Identificador único del tipo de casco. |
+| `nombreCasco` | `string` | Nombre visible (ej: "Cog"). |
+| `vidaBase` / `velocidadBase` / `maniobrabilidadBase` / `capacidadCargaBase` | `int` | Stats base del casco. |
+| `capacidadModulos` / `capacidadTripulacion` | `int` | Slots de módulos y tripulantes máximos. |
+| `costeMadera` / `costeHierro` / `costeHerramientas` / `costeOro` | `int` | Coste de construcción por recurso. |
+| `iconoCasco` | `Sprite` | Icono del casco en la interfaz del astillero. |
+
+---
+
+### CascoDecorador *(ScriptableObject abstracto)*
+`Assets/Scripts/Astillero/CascoDecorador.cs`
+
+Decorator abstracto que envuelve un `TipoCascoData` e implementa `IBarco` delegando en él. Las subclases concretas (`CascoCog`, `CascoHulk`, `CascoCarraca`, `CascoGalera`) sobreescriben todas las propiedades con stats hardcoded en lugar de modificar los del `_cascoBase`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `_cascoBase` | `TipoCascoData` | Casco envuelto. `protected`, asignable desde el Inspector de la subclase. |
+| Propiedades `IBarco` | `int` | Todas delegadas en `_cascoBase` como implementación base; las subclases las sobreescriben. |
+
+**Subclases concretas:** `CascoCog` (id=1, vida=100, vel=3) · `CascoHulk` (id=2, vida=150, vel=2) · `CascoCarraca` (id=3, vida=200, vel=2) · `CascoGalera` (id=4, vida=80, vel=5)
+
+---
+
 ## Módulo 5: Ciudades
 **Estado:** ✅ Implementado  
 **Dependencias:** Todos los módulos verticales
@@ -363,6 +416,42 @@ Panel de astillero con cinco subpaneles: Menú, Construir, Modificar, Reparar, V
 | `AbrirEdificio(TipoEdificio)` | `void` | Dispatcher: cierra todo y activa el panel del edificio. |
 
 **Enum:** `TipoEdificio { Mercado, Astillero, Taberna, Puerto }`
+
+---
+
+### EdificioClickable *(MonoBehaviour)*
+`Assets/Scripts/Ciudades/EdificioClickable.cs`
+
+Botón de edificio en la pantalla de ciudad. Al pulsarlo notifica a `CiudadController.AbrirEdificio(Tipo)` para abrir el panel correspondiente.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Tipo` | `TipoEdificio` | Tipo de edificio que representa este botón (Mercado, Astillero, Taberna, Puerto). |
+| `OnClick()` | `void` | Abre el panel del edificio. Asignar al evento OnClick del Button en el Inspector. |
+
+---
+
+### PanelAstilleroUI *(MonoBehaviour — stub beta)*
+`Assets/Scripts/Ciudades/PanelAstilleroUI.cs`
+
+Panel de astillero de la escena Ciudad (stub de la beta). En la versión release quedó sustituido por `AstilleroUI`. Actualmente solo expone el botón de cierre.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `BotonCerrar` | `Button` | Botón que cierra el panel delegando en `CiudadController.CerrarTodosPaneles()`. |
+| `Cerrar()` | `void` | Cierra el panel. Registrado como listener de `BotonCerrar` en `Awake`. |
+
+---
+
+### PanelTabernaUI *(MonoBehaviour — stub beta)*
+`Assets/Scripts/Ciudades/PanelTabernaUI.cs`
+
+Panel de taberna de la escena Ciudad (stub de la beta). En la versión release quedó sustituido por `TabernaUI`. Actualmente solo expone el botón de cierre.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `BotonCerrar` | `Button` | Botón que cierra el panel delegando en `CiudadController.CerrarTodosPaneles()`. |
+| `Cerrar()` | `void` | Cierra el panel. Registrado como listener de `BotonCerrar` en `Awake`. |
 
 ---
 
@@ -426,6 +515,61 @@ Panel de astillero con cinco subpaneles: Menú, Construir, Modificar, Reparar, V
 |---|---|---|
 | `costeMovimiento` | `float` | Coste A* de esta casilla. |
 | `esTransitable` | `bool` | Si `false`, la casilla bloquea el paso. |
+
+---
+
+### MapamundiCamara *(MonoBehaviour)*
+`Assets/Scripts/Mapamundi/MapamundiCamara.cs`
+
+Controla la cámara de la escena Mapamundi: zoom con rueda del ratón, desplazamiento por bordes de pantalla y WASD, y arrastre con clic. Gestiona click derecho (navegar o iniciar persecución en modo pirata) y click izquierdo sobre flotas (abrir panel de inspección). Adjuntar a la Main Camera de la escena Mapamundi.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `MinZoom` / `MaxZoom` | `float` | Límites del tamaño ortográfico de la cámara (3–15 por defecto). |
+| `VelocidadZoom` | `float` | Factor de zoom por unidad de rueda del ratón. |
+| `ZonaBorde` | `float` | Píxeles de margen de pantalla que activan el scroll automático. |
+| `VelocidadScroll` | `float` | Velocidad de desplazamiento por bordes. |
+| `VelocidadWASD` | `float` | Velocidad de desplazamiento con teclado. |
+| `LimiteIzquierdo` / `LimiteDerecho` / `LimiteInferior` / `LimiteSuperior` | `float` | Bordes del mapa que impiden que la cámara salga del área jugable. |
+
+---
+
+### MarcadorCiudad *(MonoBehaviour)*
+`Assets/Scripts/Navegacion/MarcadorCiudad.cs`
+
+Sprite interactuable adjunto a cada ciudad en el tilemap. Escala al 120 % al hacer hover. Al hacer clic delega en `NavegacionJugadorController.SolicitarEntradaCiudad`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `DatosCiudad` | `CiudadData` | Ciudad representada por este marcador. Asignable desde el Inspector. |
+| `TextoNombre` | `TextMeshPro` | Etiqueta opcional con el nombre de la ciudad sobre el marcador. |
+| `Inicializar(MapamundiController controlador)` | `void` | Enlaza el marcador con el controlador y escribe el nombre de ciudad en la etiqueta. Llamado por `MapamundiController.Start()`. |
+
+---
+
+### NavegacionJugadorController *(MonoBehaviour singleton)*
+`Assets/Scripts/Jugador/NavegacionJugadorController.cs`
+
+Gestiona toda la navegación del jugador en el mapamundi. Click derecho calcula ruta A* y mueve la flota; un nuevo click cancela la anterior (redirección). Al cruzar una casilla de ciudad detiene la flota y muestra `PopUpEntradaCiudad`. En modo pirata gestiona persecución activa con recálculo de ruta cada 0,5 s via coroutine.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `NavegacionJugadorController` | Punto de acceso global. Sin `DontDestroyOnLoad`: vive solo en la escena Mapamundi. |
+| `CancelarPersecucionYNavegar(Vector2 posicionPantalla)` | `void` | Cancela persecución activa e inicia navegación hacia la casilla clickada. Llamado por `MapamundiCamara` al recibir click derecho. |
+| `SolicitarEntradaCiudad(CiudadData ciudad)` | `void` | Si la flota ya está en la casilla de la ciudad muestra el pop-up; si no, navega hasta allí primero. |
+| `MarcarSalidaDeCiudad()` | `void` | Indica que el jugador acaba de rechazar entrar a una ciudad. Evita que el pop-up se re-dispare en la misma casilla. |
+| `IniciarPersecucion(FlotaRuntimeData objetivo)` | `void` | Inicia coroutine de persecución en modo pirata. Cancela cualquier persecución previa y dispara combate al alcanzar al objetivo. |
+
+---
+
+### CamaraFija *(MonoBehaviour)*
+`Assets/Scripts/Core/CamaraFija.cs`
+
+Fija el tamaño ortográfico de la cámara para impedir zoom accidental. Reaplica el valor cada frame. Sin API pública relevante: el tamaño se asigna desde el Inspector vía el campo serializado `_size`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| *(sin miembros públicos)* | — | Configuración exclusiva por Inspector (`_size: float`, defecto `0.71f`). |
 
 ---
 
@@ -498,6 +642,45 @@ Panel lateral en la escena Ciudad que muestra los datos del barco seleccionado. 
 | `OcultarPanel()` | `void` | Desactiva el panel y restaura el botón de mapa. |
 | `RefrescarPanel()` | `void` | Refresca todos los datos tras una operación del astillero. Si el barco fue vendido, cambia al primer barco disponible. |
 | `RefrescarUI()` | `void` | Actualiza todos los textos con los datos del barco seleccionado. Si la flota está vacía, muestra el estado vacío y desactiva los botones. |
+
+---
+
+### ConvoyData *(clase pura C#)*
+`Assets/Scripts/Taberna/ConvoyData.cs`
+
+Agrupa hasta 5 barcos del jugador en una formación navegable. El barco líder no puede abandonar la formación. Calcula stats agregados (velocidad mínima, carga máxima, fuerza de combate) y puede exportarse como `FlotaRuntimeData` para el sistema de combate.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `NombreConvoy` | `string` | Nombre del convoy, igual al nombre del barco líder. |
+| `BarcoLider` | `BarcoJugador` | Barco que encabeza la formación. No puede eliminarse. |
+| `Miembros` | `IReadOnlyList<BarcoJugador>` | Barcos del convoy, incluyendo al líder. |
+| `ModoPirata` | `bool` | Si `true`, el convoy actúa como pirata en el mapa. |
+| `TripulacionTotal` | `int` | Suma de tripulantes de todos los barcos. |
+| `VelocidadConvoy` | `float` | Velocidad del barco más lento (cuello de botella de la formación). |
+| `FuerzaCombateTotal` | `int` | Suma de fuerzas de combate de todos los barcos. |
+| `CargaMaximaTotal` | `int` | Suma de capacidades de carga máxima. |
+| `ConvoyData(BarcoJugador barcoLider)` | constructor | Crea el convoy con el barco indicado como líder. Lo añade automáticamente a `Miembros`. |
+| `AñadirMiembro(BarcoJugador barco)` | `bool` | Incorpora un barco si no supera los 5 miembros y no es duplicado. |
+| `EliminarMiembro(BarcoJugador barco)` | `bool` | Elimina un barco; devuelve `false` si era el líder o no pertenecía. |
+| `ComoFlotaRuntime()` | `FlotaRuntimeData` | Snapshot del convoy para el sistema de combate naval. |
+
+---
+
+### ConvoyManager *(MonoBehaviour singleton)*
+`Assets/Scripts/Taberna/ConvoyManager.cs`
+
+Gestiona todos los convoyes activos del jugador. Persiste entre escenas con `DontDestroyOnLoad`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `ConvoyManager` | Punto de acceso global. |
+| `ConvoysActivos` | `IReadOnlyList<ConvoyData>` | Convoyes activos en este momento. |
+| `CrearConvoy(BarcoJugador barcoLider)` | `ConvoyData` | Crea convoy para el barco dado. Si ya lidera uno, devuelve el existente. |
+| `UnirseAConvoy(ConvoyData convoy, BarcoJugador barco)` | `bool` | Añade el barco al convoy. Falla si ya es miembro o el convoy está lleno (5). |
+| `AbandonarConvoy(ConvoyData convoy, BarcoJugador barco)` | `bool` | Saca el barco. Si el convoy queda vacío lo disuelve automáticamente. |
+| `GetConvoyDeBarco(BarcoJugador barco)` | `ConvoyData` | Devuelve el convoy al que pertenece el barco; `null` si ninguno. |
+| `DisolverConvoy(ConvoyData convoy)` | `void` | Elimina el convoy de la lista de activos. |
 
 ---
 
@@ -590,6 +773,31 @@ Cerebro asíncrono de una flota pirata. Ejecuta dos `Task` en background: `Bucle
 
 ---
 
+### PirataPNJController *(clase pura C#)*
+`Assets/Scripts/PNJ/PirataPNJController.cs`
+
+Máquina de estados del pirata PNJ. Gestiona únicamente el estado `Huyendo` post-combate (cooldown de 2 días). La detección de presas y la navegación las delega en `PirataBrain`. Instanciada por `FlotaManager` al registrar una flota con `IsPirata = true`.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `PirataPNJController(FlotaRuntimeData flota, FlotaManager manager, RutaCalculadorTilemap rutaCalculador)` | constructor | Crea el controlador vinculando la flota, el gestor y el calculador A*. `rutaCalculador` puede ser `null` si la escena Mapamundi no está cargada. |
+| `Tick()` | `void` | Avanza un día de juego. Solo actúa en estado `Huyendo`: calcula ruta al waypoint de huida más cercano, decrementa contador y transiciona a `Patrullando` tras 2 días. |
+| `AsignarRutaCalculador(RutaCalculadorTilemap rutaCalculador)` | `void` | Reasigna el calculador A*. Llamar desde `MapamundiController.Start()` tras cargar la escena. |
+
+---
+
+### PirataBrainBootstrapper *(MonoBehaviour singleton)*
+`Assets/Scripts/PNJ/PirataBrainBootstrapper.cs`
+
+Construye el grafo de navegación en el hilo principal (donde `Tilemap.GetSprite` es seguro) y arranca un `PirataBrain` por cada flota pirata registrada. Espera un frame tras `Start` para que `FlotaManager` haya registrado todas las flotas.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Instance` | `PirataBrainBootstrapper` | Punto de acceso global. |
+| `CrearBrainParaPirata(FlotaRuntimeData flota)` | `void` | Crea y registra un `PirataBrain` para una flota pirata spawneada en runtime, reutilizando el grafo ya construido. No hace nada si el grafo aún no está disponible. |
+
+---
+
 ## Módulo 9: Tiempo y Simulación
 **Estado:** ✅ Implementado  
 **Dependencias:** Todos los módulos
@@ -619,6 +827,22 @@ Cerebro asíncrono de una flota pirata. Ejecuta dos `Task` en background: `Bucle
 | `OnNuevoMes` | `static event Action` | Dispara cada mes de juego. |
 | `OnNuevaHora` | `static event Action` | 24 veces por día. Usado por `GestorCombatesActivos`. |
 | `OnVelocidadCambiada` | `static event Action<float>` | Al cambiar velocidad o pausa. |
+
+---
+
+### EstadoPartida *(clase serializable C#)*
+`Assets/Scripts/Core/EstadoPartida.cs`
+
+Contenedor serializable del estado completo de una partida en curso. `GameManager` es su único propietario y lo expone a través de métodos controlados. Agrupa mercados, flotas, barcos, edificios y memoria comercial en colecciones indexadas por ID.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `DiaJuego` | `int` | Día actual de la simulación. Incrementado en cada tick diario. |
+| `MercadosPorCiudad` | `Dictionary<int, List<EntradaMercado>>` | Estado de los mercados de todas las ciudades, indexado por `IdCiudad`. |
+| `FlotasPorId` | `Dictionary<int, FlotaRuntimeData>` | Estado de cada flota PNJ y del jugador, indexado por `id_flota`. |
+| `BarcosPorId` | `Dictionary<int, object>` | Estado de cada barco por `id_barco`. *(tipo concreto pendiente de definir en release)* |
+| `EdificiosPorCiudad` | `Dictionary<int, List<object>>` | Edificios activos por ciudad. *(tipo pendiente)* |
+| `MemoriaComercialPorFlota` | `Dictionary<int, object>` | Memoria comercial de cada flota PNJ. *(tipo pendiente)* |
 
 ---
 
@@ -705,6 +929,59 @@ Botones +/- con aceleración en tres fases al mantener pulsado (1→5→10 unida
 
 ---
 
+### MenuPrincipalUI *(MonoBehaviour)*
+`Assets/Scripts/UI/MenuPrincipalUI.cs`
+
+Controla los paneles del menú principal (menú raíz / pantalla de slots). Gestiona la visibilidad excluyente entre el menú de botones y la pantalla de slots y delega en `PantallaSlotsUI` para cargar partidas. Tecla Escape cierra el panel de selección de ciudad si está abierto.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `panelSeleccionCiudad` | `GameObject` | Panel con los botones de ciudad para iniciar una nueva partida. |
+| `IniciarNuevaPartida()` | `void` | Muestra el panel de selección de ciudad. Asignar al botón "Nueva Partida". |
+| `CerrarPanelSeleccion()` | `void` | Oculta el panel de selección y vuelve al menú raíz. Activado también por Escape. |
+| `CargarPartida()` | `void` | Abre la pantalla de slots en modo Cargar. Asignar al botón "Cargar Partida". |
+| `MostrarMenuPrincipal()` | `void` | Reactiva el menú raíz. Llamado por `PantallaSlotsUI` al cerrarse. |
+| `Salir()` | `void` | Cierra la aplicación (`Application.Quit()`). |
+
+---
+
+### MenuPausa *(MonoBehaviour)*
+`Assets/Scripts/UI/MenuPausa.cs`
+
+Menú de pausa in-game. La tecla Escape alterna visibilidad del panel. Delega en `SimulacionTiempo.PausarPorMenu` / `ReanudarDesdMenu`; en escenas sin simulación activa no toca el tiempo. Accede a `PantallaSlotsUI` para guardar y cargar partidas desde pausa.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Continuar()` | `void` | Cierra el panel y reanuda la simulación. Asignar al botón "Continuar". |
+| `IrAMenuPrincipal()` | `void` | Reanuda la simulación y carga la escena MenuPrincipal, abandonando la partida. |
+| `SalirAlEscritorio()` | `void` | Cierra la aplicación (detiene el Play en editor). |
+
+---
+
+### PopUpEntradaCiudad *(MonoBehaviour)*
+`Assets/Scripts/UI/PopUpEntradaCiudad.cs`
+
+Modal que aparece cuando la flota del jugador llega a una casilla de ciudad. Pausa la simulación mientras el jugador decide. Opción Entrar establece la ciudad en `GameManager` y carga la escena Ciudad. Opción Continuar cierra el panel y llama a `NavegacionJugadorController.MarcarSalidaDeCiudad` para evitar re-disparo inmediato.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Mostrar(CiudadData ciudad)` | `void` | Activa el panel con el nombre de la ciudad y pausa la simulación. Llamado por `NavegacionJugadorController`. |
+| `Ocultar()` | `void` | Desactiva el panel y reanuda la simulación. |
+
+---
+
+### SeleccionCiudadUI *(MonoBehaviour)*
+`Assets/Scripts/UI/SeleccionCiudadUI.cs`
+
+Botón de ciudad en el panel de nueva partida del menú principal. Al pulsarlo inicializa el slot 0 de la base de datos, carga todos los mercados desde assets y navega a la escena Ciudad.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `datosCiudad` | `CiudadData` | Ciudad asociada a este botón. Asignable desde el Inspector. |
+| `SeleccionarCiudad()` | `void` | Inicializa el slot 0, carga mercados desde assets y navega a la escena Ciudad. Asignar al evento OnClick del Button. |
+
+---
+
 ## Módulo 11: Guardado y Carga
 **Estado:** ✅ Implementado  
 **Dependencias:** Todos los módulos
@@ -743,6 +1020,50 @@ Restaura el estado completo en 9 pasos ordenados (tiempo → dinero → almacene
 |---|---|---|
 | `Instance` | `LoadManager` | Punto de acceso global. Persiste entre escenas con `DontDestroyOnLoad`. |
 | `CargarPartida(int slotIndex)` | `void` | Carga el estado completo desde el slot indicado (1–5). Abre el `.db`, instancia los DAOs y restaura cada subsistema en orden topológico. |
+
+---
+
+### PantallaSlotsUI *(MonoBehaviour)*
+`Assets/Scripts/Database/PantallaSlotsUI.cs`
+
+Panel completo de selección de slots de guardado y carga. Al abrirse escanea los cinco archivos `slot_N.db` en disco mediante una conexión SQLite temporal de solo lectura y rellena cada `SlotUI`. Incluye panel de confirmación modal para sobrescritura y borrado.
+
+**Enum:** `SlotModo { Guardar, Cargar }` — determina qué acción y qué botones muestra cada fila.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Abrir(SlotModo modo)` | `void` | Abre el panel en el modo indicado y escanea los archivos de partida en disco. |
+| `OnGuardar(SlotUI slotUI)` | `void` | Guarda en el slot. Si está ocupado muestra confirmación de sobrescritura antes de proceder. |
+| `OnCargar(SlotUI slotUI)` | `void` | Carga la partida del slot y navega al mapamundi. |
+| `OnBorrar(SlotUI slotUI)` | `void` | Elimina el archivo `slot_N.db` tras confirmación. |
+| `CerrarPanel()` | `void` | Cierra el panel y notifica a `MenuPrincipalUI.MostrarMenuPrincipal()` si procede. |
+
+---
+
+### SlotData *(clase pura C#)*
+`Assets/Scripts/Database/SlotData.cs`
+
+Metadatos de un slot de guardado. Instanciado por `PantallaSlotsUI` al escanear los archivos de partida. Contiene solo lo que se muestra en la fila de la interfaz.
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `NumeroSlot` | `int` | Número de slot (1–5). Determina el nombre del archivo: `slot_N.db`. |
+| `EstaOcupado` | `bool` | `true` si el archivo `.db` existe y contiene una partida guardada. |
+| `NombrePartida` | `string` | Nombre visible del slot (p. ej. `"Partida 2"`). |
+| `FechaGuardado` | `string` | Fecha y hora del último guardado (`"dd/MM/yyyy HH:mm"`). Vacío si no ocupado. |
+| `DiasJugados` | `int` | Días de juego transcurridos desde el inicio, leídos de `estadoJuego`. Cero si no ocupado. |
+
+---
+
+### SlotUI *(MonoBehaviour)*
+`Assets/Scripts/Database/SlotUI.cs`
+
+Prefab de fila de slot. Rellena textos, aplica colores y activa o desactiva los botones según el modo del panel (Guardar → solo botón Guardar; Cargar → botones Cargar y Borrar si está ocupado).
+
+| Miembro | Tipo | Descripción |
+|---|---|---|
+| `Datos` | `SlotData` | Metadatos del slot que representa esta fila. Accesible desde `PantallaSlotsUI` para identificar sobre qué slot actuar. |
+| `Inicializar(SlotData datos, SlotModo modo, PantallaSlotsUI pantalla)` | `void` | Rellena textos, colores y botones, y registra listeners que delegan en `pantalla`. Limpia listeners previos para evitar duplicados al reutilizar el prefab. |
 
 ---
 
