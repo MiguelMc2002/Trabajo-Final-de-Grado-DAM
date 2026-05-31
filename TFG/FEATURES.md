@@ -1,7 +1,7 @@
-# FEATURES.md — HanseBeta TFG
+# FEATURES.md — TFG
 
 Documentación de la API pública organizada según la estructura de módulos oficial (`ModulosProyecto.md`).  
-Actualizar este fichero cada vez que se añada o modifique un miembro público relevante.
+
 
 ---
 
