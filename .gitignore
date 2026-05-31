@@ -114,6 +114,8 @@ TFG/Logs/
 TFG/obj/
 TFG/Build/
 .claude/
+TFG/.claude/
+**/settings.local.json
 
 # Archivos de partida SQLite generados en tiempo de ejecución (Application.persistentDataPath)
 # Cada slot genera un slot_N.db con el estado completo de la partida; no deben versionarse.

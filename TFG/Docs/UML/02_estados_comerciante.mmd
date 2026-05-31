@@ -1,0 +1,37 @@
+---
+title: Máquina de Estados — Comerciante PNJ (ComerciantePNJController)
+---
+stateDiagram-v2
+    [*] --> EnPuerto : FlotaManager.SpawnComercianteAleatorio()
+
+    EnPuerto --> Comerciando : TieneCarga() == true\n(llegó con mercancía cargada)
+
+    EnPuerto --> Viajando : Análisis de margen rentable:\n1) Estimar precios con ruido según InteligenciaComercial\n2) Descartar rutas saturadas (≥ 2 flotas en ruta)\n3) Compra simulada en mercado origen\n4) IniciarViaje(destino, preciosCompra, diasViaje)\nRuta A* con ruido via RutaCalculadorTilemap
+
+    EnPuerto --> Viajando : Sin ruta rentable:\nViaje en vacío a ciudad aleatoria\n(sin carga, sin precio de compra)
+
+    EnPuerto --> Viajando : Stock 0 en ciudad actual:\nbusca ciudad con stock del bien\ny viaja hacia ella
+
+    Viajando --> Comerciando : diasRestantesViaje-- == 0\nCiudadOrigenId = CiudadDestinoId\nHistorial de ciudades actualizado
+
+    Comerciando --> EnPuerto : Vende toda la carga al mercado destino\n(entrada.StockActual += cantidad por bien)\nNotifica OnMercadoCiudadActualizado
+
+    Huyendo --> EnPuerto : Tick único —\nestado transitorio post-combate
+
+    note left of EnPuerto
+        Historial de últimas 2 ciudades
+        visitadas: evita ciclos A→B→A
+    end note
+
+    note right of Viajando
+        diasRestantesViaje = Max(1, ruta.Count / 5)
+        Mínimo garantizado: 3 días si
+        RutaCalculadorTilemap no disponible
+    end note
+
+    note right of Huyendo
+        Entrada desde GestorCombatesActivos
+        al finalizar combate con daño recibido.
+        Estados HuyendoAPuerto y EsperandoEnPuerto
+        están reservados para implementación futura.
+    end note

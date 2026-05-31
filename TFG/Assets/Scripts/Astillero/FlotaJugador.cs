@@ -166,24 +166,15 @@ public class FlotaJugador
     }
 
     /// <summary>
-    /// Convierte la flota del jugador en un <see cref="FlotaRuntimeData"/> para que
-    /// <see cref="CombateNavalResolver"/> pueda procesarla igual que cualquier otra flota.
-    /// Usa id=-1 y nombre="Jugador".
-    /// Nota: FuerzaCanhones y VelocidadFlota no tienen setter público en FlotaRuntimeData;
-    /// se usan los valores por defecto del constructor hasta que se añadan dichos setters.
+    /// Convierte la flota del jugador a <see cref="FlotaRuntimeData"/> para el sistema de combate.
+    /// Los stats se calculan en tiempo real desde los barcos actuales:
+    /// VidaActual/VidaMax es la suma de vida de todos los barcos,
+    /// FuerzaCanhones es la suma de FuerzaCombateTotal,
+    /// VelocidadFlota es el mínimo de VelocidadTotal (el más lento limita a toda la flota).
+    /// Si la flota está vacía usa valores por defecto mínimos para evitar
+    /// división por cero en <see cref="CombateNavalResolver"/>.
     /// </summary>
     /// <returns>Instancia de <see cref="FlotaRuntimeData"/> con los stats agregados de la flota.</returns>
-    /// <summary>
-    /// Convierte la flota del jugador a FlotaRuntimeData para el sistema de combate.
-    /// Los stats se calculan en tiempo real desde los barcos actuales:
-    /// - VidaActual/VidaMax: suma de vida de todos los barcos
-    /// - FuerzaCanhones: suma de FuerzaCombateTotal de todos los barcos
-    /// - VelocidadFlota: MIN de VelocidadTotal (el más lento limita)
-    /// - NumBarcos: número de barcos operativos
-    /// - Tripulacion: suma de tripulación de todos los barcos
-    /// Si la flota está vacía usa valores por defecto mínimos para evitar
-    /// división por cero en CombateNavalResolver.
-    /// </summary>
     public FlotaRuntimeData ComoFlotaRuntime()
     {
         var runtime = new FlotaRuntimeData(-1, "Jugador", ModoPirata);

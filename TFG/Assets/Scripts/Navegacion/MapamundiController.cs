@@ -302,15 +302,10 @@ public class MapamundiController : MonoBehaviour
     // ─── API pública ─────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Registra la ciudad de destino en el estado de la partida y carga
-    /// la pantalla de ciudad para que el jugador interactúe con el puerto.
-    /// En la beta el traslado es instantáneo; en la release incluirá animación.
-    /// </summary>
-    /// <param name="ciudadDestino">Datos del puerto al que viaja el jugador.</param>
-    /// <summary>
     /// Abre el panel de inspección de flota con los datos de la flota indicada.
     /// Llamado desde MapamundiCamara cuando el jugador hace click sobre un icono PNJ.
     /// </summary>
+    /// <param name="flota">Datos de la flota cuya información se mostrará en el panel.</param>
     public void AbrirPanelInspeccion(FlotaRuntimeData flota)
     {
         if (panelInspeccionFlota != null)
@@ -328,6 +323,12 @@ public class MapamundiController : MonoBehaviour
         panelInspeccionFlota.Mostrar(flota, esJugador: true);
     }
 
+    /// <summary>
+    /// Registra la ciudad de destino en el estado de la partida y carga
+    /// la pantalla de ciudad para que el jugador interactúe con el puerto.
+    /// En la beta el traslado es instantáneo; en la release incluirá animación.
+    /// </summary>
+    /// <param name="ciudadDestino">Datos del puerto al que viaja el jugador.</param>
     public void ViajarACiudad(CiudadData ciudadDestino)
     {
         if (ciudadDestino == null) return;

@@ -219,6 +219,14 @@ public class RutaCalculadorTilemap : MonoBehaviour
     }
 
     /// <summary>
+    /// Convierte una posición en coordenadas de mundo a coordenadas offset del Tilemap.
+    /// </summary>
+    /// <param name="posicionMundo">Posición world-space a convertir.</param>
+    /// <returns>Coordenadas offset de la casilla que contiene esa posición.</returns>
+    public Vector3Int MundoACasilla(Vector2 posicionMundo)
+        => tilemap.WorldToCell(posicionMundo);
+
+    /// <summary>
     /// Calcula la ruta óptima entre dos casillas del tilemap usando A* hexagonal.
     /// </summary>
     /// <param name="origen">Casilla de inicio en coordenadas offset del Tilemap.</param>
@@ -228,14 +236,6 @@ public class RutaCalculadorTilemap : MonoBehaviour
     /// en orden de recorrido. Devuelve lista con un único elemento si origen == destino,
     /// o lista vacía si no existe ruta.
     /// </returns>
-    /// <summary>
-    /// Convierte una posición en coordenadas de mundo a coordenadas offset del Tilemap.
-    /// </summary>
-    /// <param name="posicionMundo">Posición world-space a convertir.</param>
-    /// <returns>Coordenadas offset de la casilla que contiene esa posición.</returns>
-    public Vector3Int MundoACasilla(Vector2 posicionMundo)
-        => tilemap.WorldToCell(posicionMundo);
-
     public List<Vector3Int> CalcularRuta(Vector3Int origen, Vector3Int destino)
         => CalcularRutaInterna(origen, destino, conRuido: false);
 

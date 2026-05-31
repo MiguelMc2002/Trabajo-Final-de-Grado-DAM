@@ -1,0 +1,49 @@
+---
+title: Navegación entre Escenas
+---
+flowchart TD
+    Start([Inicio aplicación]) --> MenuPrincipal
+
+    subgraph Persistentes["DontDestroyOnLoad (singleton persistentes)"]
+        GM[GameManager]
+        SM[SaveManager]
+        LM[LoadManager]
+        DB[DatabaseManager]
+    end
+
+    MenuPrincipal["🏠 MenuPrincipal"]
+    Mapamundi["🗺️ Mapamundi"]
+    Ciudad["🏙️ Ciudad"]
+    Mercado["🛒 Mercado"]
+
+    MenuPrincipal -->|"Nueva partida\nSceneController.IrAMapamundi()"| Mapamundi
+    MenuPrincipal -->|"Cargar slot → LoadManager.CargarPartida(slot)\nSceneController.IrAMapamundi()"| Mapamundi
+
+    Mapamundi -->|"Click en ciudad → PopUpEntradaCiudad\nSceneController.IrACiudad(nombre)\nGameManager.CiudadActual = ciudad"| Ciudad
+
+    subgraph CiudadPaneles["Ciudad — paneles internos (sin cambio de escena)"]
+        PanelMercado[Panel Mercado]
+        PanelAstillero[Panel Astillero]
+        PanelTaberna[Panel Taberna]
+        PanelFlota[Panel Flota / Puerto]
+    end
+
+    Ciudad --> PanelMercado
+    Ciudad --> PanelAstillero
+    Ciudad --> PanelTaberna
+    Ciudad --> PanelFlota
+
+    PanelMercado -->|"SceneController.IrAMercado()"| Mercado
+    Mercado -->|"Volver\nSceneController.IrACiudad()"| Ciudad
+
+    Ciudad -->|"CiudadController.IrAMapamundi()\n[requiere ≥ 1 barco en FlotaJugador]"| Mapamundi
+
+    MenuPrincipal -.->|"SceneController.IrAMenuPrincipal()\n(desde MenuPausa)"| MenuPrincipal
+    Mapamundi -->|"MenuPausa → IrAMenuPrincipal()"| MenuPrincipal
+    Ciudad -->|"MenuPausa → IrAMenuPrincipal()"| MenuPrincipal
+    Mercado -->|"MenuPausa → IrAMenuPrincipal()"| MenuPrincipal
+
+    Mapamundi -.->|"SceneController.RecargarEscenaActual()"| Mapamundi
+
+    style Persistentes fill:#f0f4ff,stroke:#6b7fad,stroke-dasharray: 5 5
+    style CiudadPaneles fill:#fff7e6,stroke:#c9943a,stroke-dasharray: 4 4

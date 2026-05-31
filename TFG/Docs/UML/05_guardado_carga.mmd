@@ -1,0 +1,42 @@
+---
+title: Flujo de Guardado y Carga (SaveManager / LoadManager)
+---
+flowchart LR
+
+    subgraph GUARDAR["💾 GUARDAR — SaveManager.GuardarPartida(slotIndex)"]
+        direction TB
+        S0([Llamada desde\nPantallaSlotsUI])
+        --> S1["DatabaseManager.InicializarSlot(slot)\nAbre o crea slot_N.db\nEjecuta DDL + migraciones"]
+        --> S2["InicializarDAOs(db)\nInstancia los 11 DAOs"]
+        --> S3["Paso 1 — EstadoJuego\nDía/Mes/Año + VelocidadActual×100\nDinero + ModoPirata"]
+        --> S4["Pasos 2-5 — Catálogos\nCiudad · Bien · TipoEdificio · TipoCasco\n(INSERT OR IGNORE — idempotente)"]
+        --> S5["Paso 6 — AlmacenJugador\nGameManager.GetAlmacen()\n→ idBien, cantidad"]
+        --> S6["Paso 6b — AlmacenCiudad\nPor cada ciudad: LimpiarCiudad()\nluego SetCantidad(idCiudad, idBien, cant)"]
+        --> S7["Paso 6c — FlotasPNJ\nDELETE FlotaPNJ + CargaFlotaPNJ\nREINSERT todas las flotas activas\n(FlotaManager.ObtenerTodasLasFlotas)"]
+        --> S8["Paso 7 — EstadoMercadoCiudad\nPor cada ciudad en MercadosPorCiudad:\nGuardarTodoElMercado(idCiudad, entradas)"]
+        --> S9["Paso 8 — EdificiosCiudad\nInsertarEdificiosInicialesCiudad(idCiudad)"]
+        --> S10["Paso 9 — FlotaJugador\nInsertarFlota(id=0 jugador)\nEliminarBarcosDeFlota(0)\nInsertarBarco + GuardarModulos\npor cada BarcoJugador"]
+        --> S11["Paso 10 — Capitanes\nEliminarTodosLosCapitanes()\nGuardarCapitan por cada\nTabernaManager.CapitanesContratados"]
+        --> SEnd([Guardado completado])
+    end
+
+    subgraph CARGAR["📂 CARGAR — LoadManager.CargarPartida(slotIndex)"]
+        direction TB
+        L0([Llamada desde\nPantallaSlotsUI])
+        --> L1["DatabaseManager.InicializarSlot(slot)\nAbre slot_N.db existente"]
+        --> L2["InicializarDAOs(db)\nInstancia los 8 DAOs"]
+        --> L3["Paso 1 — SimulacionTiempo\nEstadoJuegoDAO.Cargar()\nSetEstado(dia, mes, año, vel/100f)"]
+        --> L4["Paso 2 — Dinero jugador\nGameManager.SetDinero(estadoJuego.Dinero)"]
+        --> L4b["Paso 2b — ModoPirata\nFlotaJugador.ModoPirata = estadoJuego.ModoPirata"]
+        --> L5["Paso 3 — Limpiar almacén\nModificarCantidadBien(bien, -cantidad)\npara cada entrada existente"]
+        --> L6["Paso 4 — Restaurar AlmacenJugador\nPor id_bien → nombre → BienData\nModificarCantidadBien(+cantidad)"]
+        --> L7["Paso 5 — Restaurar Mercados\nLimpiarMercados()\nCargarEstadoMercado(idCiudad)\nDTO → EntradaMercado via BienData\nRegistrarMercadoCiudad(id, entradas)"]
+        --> L8["Paso 6 — AlmacenCiudad\nLimpiarAlmacenCiudades()\nCargarAlmacenCiudadesDesdeDAO()"]
+        --> L9["Paso 7 — FlotasPNJ\nLimpiarTodasLasFlotas()\nSELECT FlotaPNJ + CargaFlotaPNJ\nIDs 2001-2999 → esPirata=true\nRegistrarFlota + RestablecerStats"]
+        --> L10["Paso 8 — FlotaJugador\nFlotaJugador.LimpiarTodos()\nBarcoDAO.ObtenerBarcosDeFlota(0)\nResolver IBarco por IdTipoCasco\nInstalarModulo (nombre → tipo fallback)\nAñadirBarco a FlotaJugador"]
+        --> L11["Paso 9 — Capitanes\nLimpiarCapitanesContratados()\nCapitanDAO.CargarTodosLosCapitanes()\nRestaurarCapitanContratado(capitan)"]
+        --> LEnd([Carga completada\nSceneController.IrAMapamundi()])
+    end
+
+    style GUARDAR fill:#e8f5e9,stroke:#4caf50
+    style CARGAR fill:#e3f2fd,stroke:#2196f3

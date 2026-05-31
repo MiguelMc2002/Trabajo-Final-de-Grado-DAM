@@ -15,7 +15,10 @@ public class CiudadDto
     /// <summary>Nombre de la ciudad tal como aparece en la interfaz.</summary>
     public string Nombre { get; set; }
 
+    /// <summary>Coordenada X de la casilla del tilemap donde está situada la ciudad.</summary>
     public int CasillaX { get; set; }
+
+    /// <summary>Coordenada Y de la casilla del tilemap donde está situada la ciudad.</summary>
     public int CasillaY { get; set; }
 }
 

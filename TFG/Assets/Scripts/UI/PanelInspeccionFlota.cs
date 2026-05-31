@@ -3,6 +3,11 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Panel de UI que muestra el listado de barcos de una flota (jugador o PNJ).
+/// Incluye columnas con nombre, casco, vida, velocidad, maniobrabilidad, carga y fuerza.
+/// Para la flota del jugador expone además el botón de cambio de Modo Pirata.
+/// </summary>
 public class PanelInspeccionFlota : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI txtTituloFlota;

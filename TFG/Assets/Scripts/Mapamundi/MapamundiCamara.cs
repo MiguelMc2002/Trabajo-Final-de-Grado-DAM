@@ -11,21 +11,37 @@ using UnityEngine;
 public class MapamundiCamara : MonoBehaviour
 {
     [Header("Zoom")]
+    /// <summary>Tamaño ortográfico mínimo de la cámara (máximo acercamiento).</summary>
     public float MinZoom = 3f;
+
+    /// <summary>Tamaño ortográfico máximo de la cámara (máximo alejamiento).</summary>
     public float MaxZoom = 15f;
+
+    /// <summary>Multiplicador de velocidad aplicado al delta de la rueda del ratón al hacer zoom.</summary>
     public float VelocidadZoom = 2f;
 
     [Header("Desplazamiento por bordes")]
+    /// <summary>Anchura en píxeles del margen de pantalla que activa el desplazamiento automático.</summary>
     public float ZonaBorde = 50f;
+
+    /// <summary>Velocidad de desplazamiento (u/s) al llevar el ratón a los bordes de pantalla.</summary>
     public float VelocidadScroll = 5f;
 
     [Header("Desplazamiento WASD")]
+    /// <summary>Velocidad de desplazamiento (u/s) con las teclas WASD.</summary>
     public float VelocidadWASD = 8f;
 
     [Header("Límites del mapa")]
+    /// <summary>Coordenada X mínima a la que puede llegar el centro de la cámara.</summary>
     public float LimiteIzquierdo = -30f;
+
+    /// <summary>Coordenada X máxima a la que puede llegar el centro de la cámara.</summary>
     public float LimiteDerecho   =  10f;
+
+    /// <summary>Coordenada Y mínima a la que puede llegar el centro de la cámara.</summary>
     public float LimiteInferior  = -30f;
+
+    /// <summary>Coordenada Y máxima a la que puede llegar el centro de la cámara.</summary>
     public float LimiteSuperior  =  10f;
 
     private Camera  _camara;

@@ -12,8 +12,6 @@ items:
   nameWithType: HansaTrader.Mapamundi
   fullName: HansaTrader.Mapamundi
   type: Namespace
-  assemblies:
-  - MareImperium.Docs
 references:
 - uid: HansaTrader.Mapamundi.TileNavegable
   commentId: T:HansaTrader.Mapamundi.TileNavegable
