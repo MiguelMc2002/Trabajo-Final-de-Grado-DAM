@@ -16,6 +16,58 @@
   line-height: 20px !important;
 }
 
+/* Forzar siempre modo colapsado */
+.navbar-collapse {
+  display: none !important;
+}
+
+.navbar-collapse.in,
+.navbar-collapse.collapsing {
+  display: block !important;
+}
+
+.navbar-toggle {
+  display: block !important;
+  float: right !important;
+  margin-top: 8px !important;
+  margin-bottom: 8px !important;
+}
+
+/*
+  Bootstrap 3 fuerza .navbar-collapse.collapse { display:block !important }
+  dentro de @media (min-width:768px). Esta regla lo anula con igual
+  especificidad pero declarada después, por lo que gana.
+*/
+@media (min-width: 768px) {
+  .navbar-toggle {
+    display: block !important;
+  }
+
+  .navbar-header {
+    float: none !important;
+  }
+
+  .navbar-collapse.collapse {
+    display: none !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .navbar-collapse.collapse.in {
+    display: block !important;
+    height: auto !important;
+  }
+
+  .navbar-nav {
+    float: none !important;
+    margin: 0 !important;
+  }
+
+  .navbar-nav > li {
+    float: none !important;
+  }
+}
+
 /* Fix barra lateral — evitar truncado y añadir scroll */
 .sideaffix {
   max-height: calc(100vh - 50px) !important;
