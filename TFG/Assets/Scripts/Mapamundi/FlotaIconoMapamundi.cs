@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
+/// <summary>
+/// Icono visual que representa una flota (jugador o PNJ) sobre el tilemap del mapamundi.
+/// Gestiona el movimiento interpolado a lo largo de una ruta de casillas, la detección de
+/// waypoints cruzados y los cambios de color durante estados especiales como el combate.
+/// </summary>
 public class FlotaIconoMapamundi : MonoBehaviour
 {
     private Tilemap _tilemap;
@@ -17,6 +22,7 @@ public class FlotaIconoMapamundi : MonoBehaviour
     /// </summary>
     private const float FactorEscalaVelocidad = 0.667f;
 
+    /// <summary>Datos en tiempo de ejecución de la flota que representa este icono.</summary>
     public FlotaRuntimeData Flota;
 
     /// <summary>
@@ -25,6 +31,7 @@ public class FlotaIconoMapamundi : MonoBehaviour
     /// </summary>
     public bool EnCombate { get; set; }
 
+    /// <summary>Indica si este icono pertenece a la flota controlada por el jugador.</summary>
     public bool _esJugador;
 
     /// <summary>

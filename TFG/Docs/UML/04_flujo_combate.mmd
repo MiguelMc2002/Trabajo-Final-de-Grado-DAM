@@ -1,0 +1,49 @@
+---
+title: Flujo del Sistema de Combate Naval
+---
+flowchart TD
+    Encuentro([Encuentro naval\nFlotaIconoMapamundi.BucleDeteccionContinua\npirata a ≤ 3 unidades del comerciante])
+    --> IniciarCombate["GestorCombatesActivos.IniciarCombate(atacante, defensor, esDelJugador)"]
+
+    IniciarCombate --> YaEnCombate{"¿Alguna de las dos flotas\nya está en _combatesActivos?"}
+    YaEnCombate -->|Sí| Descartar([Ignorar — sin duplicados])
+    YaEnCombate -->|No| CrearCombate["Crear CombateEnCurso\nBloquear iconos: MapamundiController.PausarIcono()"]
+
+    CrearCombate --> BucleTurno
+
+    subgraph BucleCombate["Bucle turno a turno — suscrito a SimulacionTiempo.OnNuevaHora"]
+        BucleTurno["Por cada hora de juego"]
+        --> ResolverTurno["CombateEnCurso.ResolverTurno()\n• fuerzaAtacante = NumBarcos×5 + FuerzaCañones × (Tripulacion/40) × rand(0.7–1.3)\n• fuerzaDefensor = ídem\n• Daño al atacante = fuerzaDefensor × 0.15\n• Daño al defensor = fuerzaAtacante × 0.15\n• Distribuir daño entre barcos activos individualmente\n• RecalcularStatsDesdeBarcos()"]
+        --> Condicion{"¿Alguna flota destruida\no TurnoActual ≥ 120 (5 días)?"}
+        Condicion -->|No| BucleTurno
+    end
+
+    Condicion -->|Sí| FinalizarCombate["GestorCombatesActivos.FinalizarCombate(c)"]
+
+    FinalizarCombate --> EsJugador{"¿c.EsDelJugador?"}
+
+    EsJugador -->|Sí| FlujoCombateJugador
+    EsJugador -->|No| FlujoPNJvsPNJ
+
+    subgraph FlujoCombateJugador["Combate del jugador"]
+        J1["Eliminar barcos hundidos (VidaActual ≤ 0)\nde FlotaJugador._barcos"]
+        --> J2{"¿Flota enemiga destruida?"}
+        J2 -->|Sí| J3["FlotaManager.EliminarFlota(enemigoId)\n→ respawn automático"]
+        J2 -->|No| J4["MapamundiController.ReanudarIcono(enemigoId)"]
+        J3 --> J5["MapamundiController.ReanudarIcono(-1)\nOnCombateJugadorTerminado → ResultadoCombateUI"]
+        J4 --> J5
+    end
+
+    subgraph FlujoPNJvsPNJ["Combate PNJ vs PNJ (silencioso)"]
+        P1{"¿Atacante destruido?"}
+        P1 -->|Sí| P2["FlotaManager.EliminarFlota(atacante)\n→ spawn respawn"]
+        P1 -->|No| P3["ReanudarIcono(atacante)\nEstadoActual → Patrullando"]
+        P2 --> P4{"¿Defensor destruido?"}
+        P3 --> P4
+        P4 -->|Sí| P5["IntentarCapturaPNJ(ganador, defensor)\nBarcos hundidos absorbidos al 25% vida\nsi ganador tiene hueco (< 5 barcos)\nFlotaManager.EliminarFlota(defensor)"]
+        P4 -->|No| P6["MapamundiController.HuirAlPuerto(defensor)"]
+    end
+
+    style BucleCombate fill:#fff3cd,stroke:#ffc107
+    style FlujoCombateJugador fill:#d4edda,stroke:#28a745
+    style FlujoPNJvsPNJ fill:#d1ecf1,stroke:#17a2b8

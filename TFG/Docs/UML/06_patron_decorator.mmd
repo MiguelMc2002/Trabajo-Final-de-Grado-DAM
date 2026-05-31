@@ -1,0 +1,220 @@
+---
+title: Patrón Decorator — Sistema de Barcos (Astillero)
+---
+classDiagram
+    direction TB
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  COMPONENT — Interfaz raíz del patrón Decorator
+    %% ══════════════════════════════════════════════════════════════
+    class IBarco {
+        <<interface>>
+        +IdTipoCasco int
+        +NombreCasco string
+        +VidaBase int
+        +VelocidadBase int
+        +ManiobrabilidadBase int
+        +CapacidadCargaBase int
+        +CapacidadModulos int
+        +CapacidadTripulacion int
+        +CosteOro int
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  CONCRETE COMPONENT — Casco genérico editable desde Inspector
+    %% ══════════════════════════════════════════════════════════════
+    class TipoCascoData {
+        <<ScriptableObject>>
+        +idTipoCasco int
+        +nombreCasco string
+        +vidaBase int
+        +velocidadBase int
+        +maniobrabilidadBase int
+        +capacidadCargaBase int
+        +capacidadModulos int
+        +capacidadTripulacion int
+        +costeMadera int
+        +costeHierro int
+        +costeHerramientas int
+        +costeOro int
+        +iconoCasco Sprite
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  DECORATOR ABSTRACTO — Envuelve TipoCascoData y delega en él
+    %% ══════════════════════════════════════════════════════════════
+    class CascoDecorador {
+        <<abstract>>
+        #_cascoBase TipoCascoData
+        +IdTipoCasco int
+        +NombreCasco string
+        +VidaBase int
+        +VelocidadBase int
+        +ManiobrabilidadBase int
+        +CapacidadCargaBase int
+        +CapacidadModulos int
+        +CapacidadTripulacion int
+        +CosteOro int
+        #OnValidate() void
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  DECORADORES CONCRETOS — Cascos con stats hardcoded
+    %% ══════════════════════════════════════════════════════════════
+    class CascoCog {
+        <<ScriptableObject>>
+        +IdTipoCasco int = 1
+        +NombreCasco string = Cog
+        +VidaBase int = 100
+        +VelocidadBase int = 3
+        +ManiobrabilidadBase int = 2
+        +CapacidadCargaBase int = 200
+        +CapacidadModulos int = 4
+        +CapacidadTripulacion int = 40
+        +CosteOro int = 800
+    }
+
+    class CascoHulk {
+        <<ScriptableObject>>
+        +IdTipoCasco int = 2
+        +NombreCasco string = Hulk
+        +VidaBase int = 150
+        +VelocidadBase int = 2
+        +ManiobrabilidadBase int = 1
+        +CapacidadCargaBase int = 350
+        +CapacidadModulos int = 6
+        +CapacidadTripulacion int = 60
+        +CosteOro int = 1200
+    }
+
+    class CascoCarraca {
+        <<ScriptableObject>>
+        +IdTipoCasco int = 3
+        +NombreCasco string = Carraca
+        +VidaBase int = 200
+        +VelocidadBase int = 2
+        +ManiobrabilidadBase int = 2
+        +CapacidadCargaBase int = 300
+        +CapacidadModulos int = 5
+        +CapacidadTripulacion int = 80
+        +CosteOro int = 1800
+    }
+
+    class CascoGalera {
+        <<ScriptableObject>>
+        +IdTipoCasco int = 4
+        +NombreCasco string = Galera
+        +VidaBase int = 80
+        +VelocidadBase int = 5
+        +ManiobrabilidadBase int = 4
+        +CapacidadCargaBase int = 150
+        +CapacidadModulos int = 3
+        +CapacidadTripulacion int = 50
+        +CosteOro int = 1500
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  MÓDULOS — Aplican deltas de stats sobre el casco base
+    %%  La composición en BarcoJugador hace las veces de Decorator
+    %%  de segundo nivel: stat_total = base + Σ(delta_módulos)
+    %% ══════════════════════════════════════════════════════════════
+    class TipoModulo {
+        <<enumeration>>
+        Armamento
+        Velas
+        Bodega
+    }
+
+    class ModuloBarcoData {
+        <<ScriptableObject>>
+        +nombreModulo string
+        +tipoModulo TipoModulo
+        +slotsCosto int
+        +deltaVida int
+        +deltaVelocidad int
+        +deltaManiobrabilidad int
+        +deltaCargaMaxima int
+        +deltaFuerzaCombate int
+        +costeMadera int
+        +costeHierro int
+        +costeHerramientas int
+        +costeOro int
+        +requierePolvora bool
+        +iconoModulo Sprite
+        AnioDesbloqueoPolvoraJuego$ int = 1380
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  CLIENT — Agrega IBarco + lista de módulos y calcula stats
+    %% ══════════════════════════════════════════════════════════════
+    class BarcoJugador {
+        -_modulos List~ModuloBarcoData~
+        +IdBarco int
+        +Nombre string
+        +CascoBase IBarco
+        +EsBarcosCombate bool
+        +VidaActual int
+        +Tripulacion int
+        +TripulacionMaxima int
+        +VidaTotal int
+        +VelocidadTotal int
+        +ManiobrabilidadTotal int
+        +CargaMaximaTotal int
+        +FuerzaCombateTotal int
+        +SlotsUsados int
+        +SlotsDisponibles int
+        +ModulosInstalados IReadOnlyList~ModuloBarcoData~
+        +InstalarModulo(modulo) bool
+        +DesinstalarModulo(modulo) bool
+        +PuedeInstalar(modulo) bool
+        +ContratarMarineros(cantidad) int
+        +LicenciarMarineros(cantidad) int
+        +ObtenerModuloPorTipo(tipo) ModuloBarcoData
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  ASTILLERO — Factoría y gestor de operaciones sobre barcos
+    %% ══════════════════════════════════════════════════════════════
+    class AstilleroManager {
+        <<MonoBehaviour Singleton>>
+        -_cascosBases List~TipoCascoData~
+        -_cascosDecoradores List~CascoDecorador~
+        +ModulosDisponibles List~ModuloBarcoData~
+        +CascosDisponibles IReadOnlyList~IBarco~
+        +ComprarBarco(casco, nombre) ResultadoOperacion
+        +InstalarModulo(barco, modulo) ResultadoOperacion
+        +RepararBarco(barco) ResultadoOperacion
+        +VenderBarco(barco) ResultadoOperacion
+    }
+
+    %% ══════════════════════════════════════════════════════════════
+    %%  RELACIONES
+    %% ══════════════════════════════════════════════════════════════
+
+    %% Implementación de la interfaz (Component)
+    TipoCascoData  ..|> IBarco : implements
+    CascoDecorador ..|> IBarco : implements
+
+    %% CascoDecorador envuelve opcionalmente un TipoCascoData
+    %% (en la práctica los concretos sobreescriben todos los valores)
+    CascoDecorador o-- TipoCascoData : _cascoBase\n«wraps»
+
+    %% Herencia de los decoradores concretos
+    CascoCog    --|> CascoDecorador : extends
+    CascoHulk   --|> CascoDecorador : extends
+    CascoCarraca --|> CascoDecorador : extends
+    CascoGalera --|> CascoDecorador : extends
+
+    %% BarcoJugador como cliente que agrega IBarco + módulos
+    BarcoJugador --> IBarco         : CascoBase\n«usa»
+    BarcoJugador *-- ModuloBarcoData : _modulos\n«composición 0..*»
+
+    %% ModuloBarcoData referencia el enum de categoría
+    ModuloBarcoData --> TipoModulo : tipoModulo
+
+    %% AstilleroManager como factoría y gestor
+    AstilleroManager --> IBarco         : CascosDisponibles
+    AstilleroManager --> BarcoJugador   : opera sobre
+    AstilleroManager --> ModuloBarcoData : ModulosDisponibles
+    AstilleroManager o-- TipoCascoData  : _cascosBases
+    AstilleroManager o-- CascoDecorador : _cascosDecoradores

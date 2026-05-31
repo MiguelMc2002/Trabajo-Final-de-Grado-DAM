@@ -1,0 +1,74 @@
+/* =====================================================
+   Fix navbar height — reducir padding vertical excesivo
+   ===================================================== */
+
+header,
+.navbar,
+nav.navbar {
+  min-height: 44px !important;
+  max-height: 60px !important;
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+}
+
+.navbar-brand,
+.navbar-brand img {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  height: 36px !important;
+}
+
+.navbar-nav .nav-link,
+.navbar .nav-item a {
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
+  line-height: 1.4 !important;
+}
+
+/* =====================================================
+   Fix sidebar izquierda — evitar truncado de contenido
+   ===================================================== */
+
+#toc,
+.sidetoc,
+aside.toc,
+.toc-panel,
+[class*="sidebar"],
+nav[role="navigation"],
+.sidefilter,
+.sidetoc .nav {
+  overflow: visible !important;
+  overflow-y: auto !important;
+  max-height: none !important;
+  min-width: 220px !important;
+  width: auto !important;
+  white-space: normal !important;
+}
+
+/* Asegurar que los textos de la sidebar no se cortan */
+#toc .nav-item a,
+.sidetoc .nav-item a,
+#toc li a,
+.toc-panel li a {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word !important;
+  display: block !important;
+}
+
+/* Scroll en sidebar cuando el contenido es largo */
+.sidetoc,
+#toc {
+  overflow-y: auto !important;
+  height: calc(100vh - 60px) !important;
+  position: sticky !important;
+  top: 60px !important;
+}
+
+/* Evitar que el contenedor principal limite la sidebar */
+.container-fluid .row > .col-md-3,
+.container-fluid .row > [class*="col-"][class*="-3"],
+.body-content .row > div:first-child {
+  overflow: visible !important;
+}

@@ -3,35 +3,31 @@
     {
       "src": [
         {
-          "files": ["docs-project/MareImperium.Docs.csproj"]
+          "files": ["TFG/Assets/Scripts/**/*.cs"],
+          "exclude": ["**/obj/**", "**/bin/**", "**/Editor/**"]
         }
       ],
       "dest": "docs/api",
-      "allowCompilationErrors": true,
-      "globalNamespaceId": "MareImperium"
+      "disableGitFeatures": false,
+      "disableDefaultFilter": false,
+      "allowCompilationErrors": true
     }
   ],
   "build": {
+    "template": ["default", "docs/templates/custom"],
     "content": [
       {
-        "files": ["**.yml", "**.md"],
-        "src": "docs/api",
-        "dest": "api"
+        "files": ["docs/api/**.yml", "docs/api/index.md"]
       },
       {
-        "files": [
-          "index.md",
-          "toc.yml",
-          "modulos/*.md",
-          "modulos/toc.yml"
-        ],
-        "src": "docs"
+        "files": ["docs/toc.yml", "docs/index.md", "docs/modulos/**.md"]
       }
     ],
     "dest": "docs/_site",
     "globalMetadata": {
       "_appTitle": "Mare Imperium — Documentación Técnica",
-      "_appFooter": "Miguel Menéndez Caro · TFG 2º DAM · Colegios Marianistas"
+      "_appFooter": "Miguel Menéndez Caro · TFG 2º DAM · Colegios Marianistas",
+      "_enableSearch": true
     }
   }
 }

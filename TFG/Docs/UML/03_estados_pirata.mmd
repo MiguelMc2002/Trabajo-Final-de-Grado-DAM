@@ -1,0 +1,40 @@
+---
+title: Máquina de Estados — Pirata PNJ (PirataPNJController + PirataBrain)
+---
+stateDiagram-v2
+    [*] --> Patrullando : FlotaManager.SpawnPirataAleatorio()\nPirataBrainBootstrapper.CrearBrainParaPirata()
+
+    Patrullando --> Interceptando : BucleDeteccion (Task async, cada 150ms)\nComerciante no-pirata detectado\na distancia ≤ radioDeteccion unidades\n→ ColaSalida: ComandoPirataTipo.InterceptarObjetivo
+
+    Interceptando --> Patrullando : BucleDeteccion comprueba objetivo actual:\n• objetivo.EstaDestruida == true, O\n• distancia al objetivo > 12 unidades\n→ ColaSalida: ComandoPirataTipo.Patrullar
+
+    Interceptando --> Huyendo : Combate naval finalizado\ncon pérdidas (GestorCombatesActivos.FinalizarCombate)\n→ FlotaIconoMapamundi asigna estado Huyendo
+
+    Huyendo --> Patrullando : PirataPNJController.TickHuyendo()\ntickHuyendo++ → a los 2 días de juego\ncalcula ruta A* al waypoint de huida\nmás cercano (zonas marítimas alejadas)
+
+    state Patrullando {
+        [*] --> ElegirDestino
+        ElegirDestino : BucleNavegacion elige casilla\nde mar aleatoria del grafo\n(excluye casillas de ciudad)
+        ElegirDestino --> NavegandoPatrulla : A* hexagonal sobre grafo\npre-calculado (sin Unity API)
+        NavegandoPatrulla --> ElegirDestino : Ruta completada\n(sleep proporcional a ruta.Count × 200ms)
+    }
+
+    state Interceptando {
+        [*] --> PersiguiendoObjetivo
+        PersiguiendoObjetivo : BucleNavegacion recalcula ruta A*\nhacia posición actual del objetivo\ncada 300ms
+        PersiguiendoObjetivo : Cola de rutas obsoletas se limpia\nantes de encolar nueva ruta
+    }
+
+    note left of Huyendo
+        4 waypoints de huida hardcoded
+        en zonas marítimas alejadas
+        de rutas comerciales.
+        PirataPNJController.WaypointsHuida
+    end note
+
+    note right of Patrullando
+        Comandos consumidos en
+        FlotaIconoMapamundi.Update()
+        (máx. 1 comando por frame)
+        vía PirataBrain.ColaSalida
+    end note
