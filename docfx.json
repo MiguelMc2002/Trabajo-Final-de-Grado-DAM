@@ -17,10 +17,13 @@
     "template": ["default", "docs/templates/custom"],
     "content": [
       {
-        "files": ["docs/api/**.yml", "docs/api/index.md"]
+        "files": ["**.yml", "**.md"],
+        "src": "docs/api",
+        "dest": "api"
       },
       {
-        "files": ["docs/toc.yml", "docs/index.md", "docs/modulos/**.md"]
+        "files": ["index.md", "toc.yml", "modulos/*.md", "modulos/toc.yml"],
+        "src": "docs"
       }
     ],
     "dest": "docs/_site",
