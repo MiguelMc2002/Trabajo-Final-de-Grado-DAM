@@ -14,7 +14,7 @@
     }
   ],
   "build": {
-    "template": ["default", "docs/templates/custom"],
+    "template": ["default", "templates/custom"],
     "content": [
       {
         "files": ["**.yml", "**.md"],

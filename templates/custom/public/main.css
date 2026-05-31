@@ -1,0 +1,42 @@
+/* Fix barra superior — reducir altura */
+.navbar {
+  min-height: 40px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.navbar-brand {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+}
+
+.navbar-nav > li > a {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+  line-height: 20px !important;
+}
+
+/* Fix barra lateral — evitar truncado y añadir scroll */
+.sideaffix {
+  max-height: calc(100vh - 50px) !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  width: 260px !important;
+}
+
+.sidetoc {
+  width: 260px !important;
+  min-width: 260px !important;
+}
+
+.sidetoc .nav > li > a {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+  word-break: break-word !important;
+}
+
+/* Fix contenido principal para compensar el ancho del sidebar */
+.article.grid-right {
+  margin-left: 280px !important;
+}
