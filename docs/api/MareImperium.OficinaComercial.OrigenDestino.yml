@@ -1,0 +1,160 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.OficinaComercial.OrigenDestino
+  commentId: T:MareImperium.OficinaComercial.OrigenDestino
+  id: OficinaComercial.OrigenDestino
+  parent: MareImperium
+  children:
+  - MareImperium.OficinaComercial.OrigenDestino.AlmacenCiudad
+  - MareImperium.OficinaComercial.OrigenDestino.BodegaBarco
+  - MareImperium.OficinaComercial.OrigenDestino.Mercado
+  langs:
+  - csharp
+  - vb
+  name: OficinaComercial.OrigenDestino
+  nameWithType: OficinaComercial.OrigenDestino
+  fullName: OficinaComercial.OrigenDestino
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: OrigenDestino
+    path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Indica el almacén de origen o destino de una operación comercial.
+
+    <xref href="OficinaComercial.OrigenDestino.Mercado" data-throw-if-not-resolved="false"></xref> representa el mercado de la ciudad activa;
+
+    <xref href="OficinaComercial.OrigenDestino.AlmacenCiudad" data-throw-if-not-resolved="false"></xref> el depósito del jugador en la ciudad;
+
+    <xref href="OficinaComercial.OrigenDestino.BodegaBarco" data-throw-if-not-resolved="false"></xref> el inventario a bordo del barco.
+  example: []
+  syntax:
+    content: public enum OficinaComercial.OrigenDestino
+    content.vb: Public Enum OficinaComercial.OrigenDestino
+- uid: MareImperium.OficinaComercial.OrigenDestino.Mercado
+  commentId: F:MareImperium.OficinaComercial.OrigenDestino.Mercado
+  id: Mercado
+  parent: MareImperium.OficinaComercial.OrigenDestino
+  langs:
+  - csharp
+  - vb
+  name: Mercado
+  nameWithType: OficinaComercial.OrigenDestino.Mercado
+  fullName: OficinaComercial.OrigenDestino.Mercado
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Mercado
+    path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: Mercado = 0
+    return:
+      type: MareImperium.OficinaComercial.OrigenDestino
+- uid: MareImperium.OficinaComercial.OrigenDestino.AlmacenCiudad
+  commentId: F:MareImperium.OficinaComercial.OrigenDestino.AlmacenCiudad
+  id: AlmacenCiudad
+  parent: MareImperium.OficinaComercial.OrigenDestino
+  langs:
+  - csharp
+  - vb
+  name: AlmacenCiudad
+  nameWithType: OficinaComercial.OrigenDestino.AlmacenCiudad
+  fullName: OficinaComercial.OrigenDestino.AlmacenCiudad
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: AlmacenCiudad
+    path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: AlmacenCiudad = 1
+    return:
+      type: MareImperium.OficinaComercial.OrigenDestino
+- uid: MareImperium.OficinaComercial.OrigenDestino.BodegaBarco
+  commentId: F:MareImperium.OficinaComercial.OrigenDestino.BodegaBarco
+  id: BodegaBarco
+  parent: MareImperium.OficinaComercial.OrigenDestino
+  langs:
+  - csharp
+  - vb
+  name: BodegaBarco
+  nameWithType: OficinaComercial.OrigenDestino.BodegaBarco
+  fullName: OficinaComercial.OrigenDestino.BodegaBarco
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: BodegaBarco
+    path: TFG/Assets/Scripts/Economico/OficinaComercial.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: BodegaBarco = 2
+    return:
+      type: MareImperium.OficinaComercial.OrigenDestino
+references:
+- uid: OficinaComercial.OrigenDestino.Mercado
+  commentId: F:OficinaComercial.OrigenDestino.Mercado
+  href: MareImperium.OficinaComercial.OrigenDestino.html#OficinaComercial_OrigenDestino_Mercado
+  name: Mercado
+  nameWithType: OficinaComercial.OrigenDestino.Mercado
+  fullName: OficinaComercial.OrigenDestino.Mercado
+- uid: OficinaComercial.OrigenDestino.AlmacenCiudad
+  commentId: F:OficinaComercial.OrigenDestino.AlmacenCiudad
+  href: MareImperium.OficinaComercial.OrigenDestino.html#OficinaComercial_OrigenDestino_AlmacenCiudad
+  name: AlmacenCiudad
+  nameWithType: OficinaComercial.OrigenDestino.AlmacenCiudad
+  fullName: OficinaComercial.OrigenDestino.AlmacenCiudad
+- uid: OficinaComercial.OrigenDestino.BodegaBarco
+  commentId: F:OficinaComercial.OrigenDestino.BodegaBarco
+  href: MareImperium.OficinaComercial.OrigenDestino.html#OficinaComercial_OrigenDestino_BodegaBarco
+  name: BodegaBarco
+  nameWithType: OficinaComercial.OrigenDestino.BodegaBarco
+  fullName: OficinaComercial.OrigenDestino.BodegaBarco
+- uid: MareImperium
+- uid: MareImperium.OficinaComercial.OrigenDestino
+  commentId: T:MareImperium.OficinaComercial.OrigenDestino
+  href: OficinaComercial.html
+  name: OficinaComercial.OrigenDestino
+  nameWithType: OficinaComercial.OrigenDestino
+  fullName: OficinaComercial.OrigenDestino
+  spec.csharp:
+  - uid: MareImperium.OficinaComercial
+    name: OficinaComercial
+    href: OficinaComercial.html
+  - name: .
+  - uid: MareImperium.OficinaComercial.OrigenDestino
+    name: OrigenDestino
+    href: OficinaComercial.OrigenDestino.html
+  spec.vb:
+  - uid: MareImperium.OficinaComercial
+    name: OficinaComercial
+    href: OficinaComercial.html
+  - name: .
+  - uid: MareImperium.OficinaComercial.OrigenDestino
+    name: OrigenDestino
+    href: OficinaComercial.OrigenDestino.html

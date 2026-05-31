@@ -76,6 +76,14 @@ mono_crash.*
 # Crashlytics generated file
 crashlytics-build.properties
 
+# DocFX — sitio generado (se regenera en cada push via GitHub Actions)
+docs/_site/
+# docs/api/ se commitea: los YAML son generados localmente y se usan en CI
+# Artefactos de compilación del proyecto de documentación
+docs-project/obj/
+# El csproj de documentación es manual (no generado por Unity), se versiona
+!docs-project/MareImperium.Docs.csproj
+
 # TestRunner generated files
 InitTestScene*.unity*
 

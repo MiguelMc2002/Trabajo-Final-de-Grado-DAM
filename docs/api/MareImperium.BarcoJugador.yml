@@ -1,0 +1,1388 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.BarcoJugador
+  commentId: T:MareImperium.BarcoJugador
+  id: BarcoJugador
+  parent: MareImperium
+  children:
+  - MareImperium.BarcoJugador.#ctor(System.Int32,System.String,IBarco)
+  - MareImperium.BarcoJugador.CargaMaximaTotal
+  - MareImperium.BarcoJugador.CascoBase
+  - MareImperium.BarcoJugador.ContratarMarineros(System.Int32)
+  - MareImperium.BarcoJugador.DesinstalarModulo(ModuloBarcoData)
+  - MareImperium.BarcoJugador.EsBarcosCombate
+  - MareImperium.BarcoJugador.FuerzaCombateTotal
+  - MareImperium.BarcoJugador.IdBarco
+  - MareImperium.BarcoJugador.InstalarModulo(ModuloBarcoData)
+  - MareImperium.BarcoJugador.LicenciarMarineros(System.Int32)
+  - MareImperium.BarcoJugador.ManiobrabilidadTotal
+  - MareImperium.BarcoJugador.ModulosInstalados
+  - MareImperium.BarcoJugador.Nombre
+  - MareImperium.BarcoJugador.ObtenerModuloPorTipo(TipoModulo)
+  - MareImperium.BarcoJugador.PuedeInstalar(ModuloBarcoData)
+  - MareImperium.BarcoJugador.SlotsDisponibles
+  - MareImperium.BarcoJugador.SlotsUsados
+  - MareImperium.BarcoJugador.Tripulacion
+  - MareImperium.BarcoJugador.TripulacionMaxima
+  - MareImperium.BarcoJugador.VelocidadTotal
+  - MareImperium.BarcoJugador.VidaActual
+  - MareImperium.BarcoJugador.VidaTotal
+  langs:
+  - csharp
+  - vb
+  name: BarcoJugador
+  nameWithType: BarcoJugador
+  fullName: BarcoJugador
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: BarcoJugador
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 8
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Representa un barco propiedad del jugador con su casco base y los módulos instalados.
+
+    Aplica el patrón Decorator: las propiedades calculadas suman el valor base del casco
+
+    con los deltas de todos los módulos instalados.
+
+    Clase pura C# — no hereda de MonoBehaviour.
+  example: []
+  syntax:
+    content: public class BarcoJugador
+    content.vb: Public Class BarcoJugador
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.BarcoJugador.IdBarco
+  commentId: P:MareImperium.BarcoJugador.IdBarco
+  id: IdBarco
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: IdBarco
+  nameWithType: BarcoJugador.IdBarco
+  fullName: BarcoJugador.IdBarco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdBarco
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único del barco. Usado para buscarlo en <xref href="FlotaJugador" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public int IdBarco { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property IdBarco As Integer
+  overload: MareImperium.BarcoJugador.IdBarco*
+- uid: MareImperium.BarcoJugador.Nombre
+  commentId: P:MareImperium.BarcoJugador.Nombre
+  id: Nombre
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: Nombre
+  nameWithType: BarcoJugador.Nombre
+  fullName: BarcoJugador.Nombre
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Nombre
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre propio del barco asignado por el jugador.
+  example: []
+  syntax:
+    content: public string Nombre { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property Nombre As String
+  overload: MareImperium.BarcoJugador.Nombre*
+- uid: MareImperium.BarcoJugador.CascoBase
+  commentId: P:MareImperium.BarcoJugador.CascoBase
+  id: CascoBase
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: CascoBase
+  nameWithType: BarcoJugador.CascoBase
+  fullName: BarcoJugador.CascoBase
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CascoBase
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 21
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Casco base del barco. Puede ser un <xref href="TipoCascoData" data-throw-if-not-resolved="false"></xref> o cualquier <xref href="CascoDecorador" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public IBarco CascoBase { get; }
+    parameters: []
+    return:
+      type: MareImperium.IBarco
+    content.vb: Public ReadOnly Property CascoBase As IBarco
+  overload: MareImperium.BarcoJugador.CascoBase*
+- uid: MareImperium.BarcoJugador.ModulosInstalados
+  commentId: P:MareImperium.BarcoJugador.ModulosInstalados
+  id: ModulosInstalados
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: ModulosInstalados
+  nameWithType: BarcoJugador.ModulosInstalados
+  fullName: BarcoJugador.ModulosInstalados
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ModulosInstalados
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Lista de módulos actualmente instalados. Solo lectura desde fuera.
+  example: []
+  syntax:
+    content: public IReadOnlyList<ModuloBarcoData> ModulosInstalados { get; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+    content.vb: Public ReadOnly Property ModulosInstalados As IReadOnlyList(Of ModuloBarcoData)
+  overload: MareImperium.BarcoJugador.ModulosInstalados*
+- uid: MareImperium.BarcoJugador.EsBarcosCombate
+  commentId: P:MareImperium.BarcoJugador.EsBarcosCombate
+  id: EsBarcosCombate
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: EsBarcosCombate
+  nameWithType: BarcoJugador.EsBarcosCombate
+  fullName: BarcoJugador.EsBarcosCombate
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EsBarcosCombate
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 30
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Indica si este barco es una unidad de combate activa.
+
+    Los barcos de carga no participan directamente en el combate naval.
+  example: []
+  syntax:
+    content: public bool EsBarcosCombate { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EsBarcosCombate As Boolean
+  overload: MareImperium.BarcoJugador.EsBarcosCombate*
+- uid: MareImperium.BarcoJugador.VidaActual
+  commentId: P:MareImperium.BarcoJugador.VidaActual
+  id: VidaActual
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: VidaActual
+  nameWithType: BarcoJugador.VidaActual
+  fullName: BarcoJugador.VidaActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaActual
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 36
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Puntos de vida actuales del barco. Se inicializa a <xref href="BarcoJugador.VidaTotal" data-throw-if-not-resolved="false"></xref> al construir.
+
+    Se reduce al recibir daño y se restaura al reparar en el astillero.
+  example: []
+  syntax:
+    content: public int VidaActual { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property VidaActual As Integer
+  overload: MareImperium.BarcoJugador.VidaActual*
+- uid: MareImperium.BarcoJugador.Tripulacion
+  commentId: P:MareImperium.BarcoJugador.Tripulacion
+  id: Tripulacion
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: Tripulacion
+  nameWithType: BarcoJugador.Tripulacion
+  fullName: BarcoJugador.Tripulacion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Tripulacion
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 42
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Número de tripulantes embarcados en este barco.
+
+    Empieza en 0; se asigna al contratar marineros en la taberna o al generar flotas PNJ.
+  example: []
+  syntax:
+    content: public int Tripulacion { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Tripulacion As Integer
+  overload: MareImperium.BarcoJugador.Tripulacion*
+- uid: MareImperium.BarcoJugador.TripulacionMaxima
+  commentId: P:MareImperium.BarcoJugador.TripulacionMaxima
+  id: TripulacionMaxima
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: TripulacionMaxima
+  nameWithType: BarcoJugador.TripulacionMaxima
+  fullName: BarcoJugador.TripulacionMaxima
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TripulacionMaxima
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 47
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Capacidad máxima de tripulación determinada por el casco base.
+  example: []
+  syntax:
+    content: public int TripulacionMaxima { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property TripulacionMaxima As Integer
+  overload: MareImperium.BarcoJugador.TripulacionMaxima*
+- uid: MareImperium.BarcoJugador.VidaTotal
+  commentId: P:MareImperium.BarcoJugador.VidaTotal
+  id: VidaTotal
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: VidaTotal
+  nameWithType: BarcoJugador.VidaTotal
+  fullName: BarcoJugador.VidaTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaTotal
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 52
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Puntos de vida máximos: base del casco más suma de deltaVida de los módulos.'
+  example: []
+  syntax:
+    content: public int VidaTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property VidaTotal As Integer
+  overload: MareImperium.BarcoJugador.VidaTotal*
+- uid: MareImperium.BarcoJugador.VelocidadTotal
+  commentId: P:MareImperium.BarcoJugador.VelocidadTotal
+  id: VelocidadTotal
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: VelocidadTotal
+  nameWithType: BarcoJugador.VelocidadTotal
+  fullName: BarcoJugador.VelocidadTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VelocidadTotal
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 63
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Velocidad total: base del casco más suma de deltaVelocidad de los módulos.'
+  example: []
+  syntax:
+    content: public int VelocidadTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property VelocidadTotal As Integer
+  overload: MareImperium.BarcoJugador.VelocidadTotal*
+- uid: MareImperium.BarcoJugador.ManiobrabilidadTotal
+  commentId: P:MareImperium.BarcoJugador.ManiobrabilidadTotal
+  id: ManiobrabilidadTotal
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: ManiobrabilidadTotal
+  nameWithType: BarcoJugador.ManiobrabilidadTotal
+  fullName: BarcoJugador.ManiobrabilidadTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ManiobrabilidadTotal
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 74
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Maniobrabilidad total: base del casco más suma de deltaManiobrabilidad de los módulos.'
+  example: []
+  syntax:
+    content: public int ManiobrabilidadTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property ManiobrabilidadTotal As Integer
+  overload: MareImperium.BarcoJugador.ManiobrabilidadTotal*
+- uid: MareImperium.BarcoJugador.CargaMaximaTotal
+  commentId: P:MareImperium.BarcoJugador.CargaMaximaTotal
+  id: CargaMaximaTotal
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: CargaMaximaTotal
+  nameWithType: BarcoJugador.CargaMaximaTotal
+  fullName: BarcoJugador.CargaMaximaTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargaMaximaTotal
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 85
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Capacidad de carga total: base del casco más suma de deltaCargaMaxima de los módulos.'
+  example: []
+  syntax:
+    content: public int CargaMaximaTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property CargaMaximaTotal As Integer
+  overload: MareImperium.BarcoJugador.CargaMaximaTotal*
+- uid: MareImperium.BarcoJugador.FuerzaCombateTotal
+  commentId: P:MareImperium.BarcoJugador.FuerzaCombateTotal
+  id: FuerzaCombateTotal
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: FuerzaCombateTotal
+  nameWithType: BarcoJugador.FuerzaCombateTotal
+  fullName: BarcoJugador.FuerzaCombateTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FuerzaCombateTotal
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 99
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Fuerza de combate total: suma de deltaFuerzaCombate de todos los módulos instalados.
+
+    Vale 0 si no hay ningún módulo de armamento.
+  example: []
+  syntax:
+    content: public int FuerzaCombateTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property FuerzaCombateTotal As Integer
+  overload: MareImperium.BarcoJugador.FuerzaCombateTotal*
+- uid: MareImperium.BarcoJugador.SlotsUsados
+  commentId: P:MareImperium.BarcoJugador.SlotsUsados
+  id: SlotsUsados
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: SlotsUsados
+  nameWithType: BarcoJugador.SlotsUsados
+  fullName: BarcoJugador.SlotsUsados
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: SlotsUsados
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 110
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número de slots ocupados por los módulos instalados.
+  example: []
+  syntax:
+    content: public int SlotsUsados { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property SlotsUsados As Integer
+  overload: MareImperium.BarcoJugador.SlotsUsados*
+- uid: MareImperium.BarcoJugador.SlotsDisponibles
+  commentId: P:MareImperium.BarcoJugador.SlotsDisponibles
+  id: SlotsDisponibles
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: SlotsDisponibles
+  nameWithType: BarcoJugador.SlotsDisponibles
+  fullName: BarcoJugador.SlotsDisponibles
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: SlotsDisponibles
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 121
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Slots libres restantes en este casco.
+  example: []
+  syntax:
+    content: public int SlotsDisponibles { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property SlotsDisponibles As Integer
+  overload: MareImperium.BarcoJugador.SlotsDisponibles*
+- uid: MareImperium.BarcoJugador.#ctor(System.Int32,System.String,IBarco)
+  commentId: M:MareImperium.BarcoJugador.#ctor(System.Int32,System.String,IBarco)
+  id: '#ctor(System.Int32,System.String,IBarco)'
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: BarcoJugador(int, string, IBarco)
+  nameWithType: BarcoJugador.BarcoJugador(int, string, IBarco)
+  fullName: BarcoJugador.BarcoJugador(int, string, IBarco)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 132
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inicializa un barco nuevo con su identificador, nombre y casco base.
+
+    <xref href="BarcoJugador.VidaActual" data-throw-if-not-resolved="false"></xref> se fija al valor de <xref href="BarcoJugador.VidaTotal" data-throw-if-not-resolved="false"></xref> en el momento de la construcción.
+  example: []
+  syntax:
+    content: public BarcoJugador(int idBarco, string nombre, IBarco casco)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador único del barco.
+    - id: nombre
+      type: System.String
+      description: Nombre propio asignado por el jugador.
+    - id: casco
+      type: MareImperium.IBarco
+      description: ScriptableObject con las estadísticas base del casco.
+    content.vb: Public Sub New(idBarco As Integer, nombre As String, casco As IBarco)
+  overload: MareImperium.BarcoJugador.#ctor*
+  nameWithType.vb: BarcoJugador.New(Integer, String, IBarco)
+  fullName.vb: BarcoJugador.New(Integer, String, IBarco)
+  name.vb: New(Integer, String, IBarco)
+- uid: MareImperium.BarcoJugador.InstalarModulo(ModuloBarcoData)
+  commentId: M:MareImperium.BarcoJugador.InstalarModulo(ModuloBarcoData)
+  id: InstalarModulo(ModuloBarcoData)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: InstalarModulo(ModuloBarcoData)
+  nameWithType: BarcoJugador.InstalarModulo(ModuloBarcoData)
+  fullName: BarcoJugador.InstalarModulo(ModuloBarcoData)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InstalarModulo
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 149
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Intenta instalar un módulo en el barco.
+
+    Falla si no hay slots suficientes, si hay un módulo con el mismo nombre
+
+    o si el módulo requiere pólvora y el año de juego aún no la ha desbloqueado.
+  example: []
+  syntax:
+    content: public bool InstalarModulo(ModuloBarcoData modulo)
+    parameters:
+    - id: modulo
+      type: MareImperium.ModuloBarcoData
+      description: Módulo a instalar.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si la instalación tuvo éxito; <code>false</code> en caso contrario.
+    content.vb: Public Function InstalarModulo(modulo As ModuloBarcoData) As Boolean
+  overload: MareImperium.BarcoJugador.InstalarModulo*
+- uid: MareImperium.BarcoJugador.DesinstalarModulo(ModuloBarcoData)
+  commentId: M:MareImperium.BarcoJugador.DesinstalarModulo(ModuloBarcoData)
+  id: DesinstalarModulo(ModuloBarcoData)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: DesinstalarModulo(ModuloBarcoData)
+  nameWithType: BarcoJugador.DesinstalarModulo(ModuloBarcoData)
+  fullName: BarcoJugador.DesinstalarModulo(ModuloBarcoData)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: DesinstalarModulo
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 161
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Desinstala un módulo previamente instalado en el barco.
+  example: []
+  syntax:
+    content: public bool DesinstalarModulo(ModuloBarcoData modulo)
+    parameters:
+    - id: modulo
+      type: MareImperium.ModuloBarcoData
+      description: Módulo a desinstalar.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si el módulo estaba instalado y se eliminó; <code>false</code> si no estaba.
+    content.vb: Public Function DesinstalarModulo(modulo As ModuloBarcoData) As Boolean
+  overload: MareImperium.BarcoJugador.DesinstalarModulo*
+- uid: MareImperium.BarcoJugador.PuedeInstalar(ModuloBarcoData)
+  commentId: M:MareImperium.BarcoJugador.PuedeInstalar(ModuloBarcoData)
+  id: PuedeInstalar(ModuloBarcoData)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: PuedeInstalar(ModuloBarcoData)
+  nameWithType: BarcoJugador.PuedeInstalar(ModuloBarcoData)
+  fullName: BarcoJugador.PuedeInstalar(ModuloBarcoData)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: PuedeInstalar
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 172
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Comprueba si un módulo puede instalarse en el barco según slots disponibles,
+
+    ausencia de duplicado por nombre y requisito de pólvora.
+  example: []
+  syntax:
+    content: public bool PuedeInstalar(ModuloBarcoData modulo)
+    parameters:
+    - id: modulo
+      type: MareImperium.ModuloBarcoData
+      description: Módulo candidato.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si el módulo se puede instalar.
+    content.vb: Public Function PuedeInstalar(modulo As ModuloBarcoData) As Boolean
+  overload: MareImperium.BarcoJugador.PuedeInstalar*
+- uid: MareImperium.BarcoJugador.ContratarMarineros(System.Int32)
+  commentId: M:MareImperium.BarcoJugador.ContratarMarineros(System.Int32)
+  id: ContratarMarineros(System.Int32)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: ContratarMarineros(int)
+  nameWithType: BarcoJugador.ContratarMarineros(int)
+  fullName: BarcoJugador.ContratarMarineros(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ContratarMarineros
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 192
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Embarca la cantidad indicada de marineros sin superar <xref href="BarcoJugador.TripulacionMaxima" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public int ContratarMarineros(int cantidad)
+    parameters:
+    - id: cantidad
+      type: System.Int32
+      description: Marineros a contratar.
+    return:
+      type: System.Int32
+      description: Marineros realmente embarcados (puede ser menor si el barco está casi lleno).
+    content.vb: Public Function ContratarMarineros(cantidad As Integer) As Integer
+  overload: MareImperium.BarcoJugador.ContratarMarineros*
+  nameWithType.vb: BarcoJugador.ContratarMarineros(Integer)
+  fullName.vb: BarcoJugador.ContratarMarineros(Integer)
+  name.vb: ContratarMarineros(Integer)
+- uid: MareImperium.BarcoJugador.LicenciarMarineros(System.Int32)
+  commentId: M:MareImperium.BarcoJugador.LicenciarMarineros(System.Int32)
+  id: LicenciarMarineros(System.Int32)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: LicenciarMarineros(int)
+  nameWithType: BarcoJugador.LicenciarMarineros(int)
+  fullName: BarcoJugador.LicenciarMarineros(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: LicenciarMarineros
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 205
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Licencia la cantidad indicada de marineros sin bajar de cero tripulantes.
+  example: []
+  syntax:
+    content: public int LicenciarMarineros(int cantidad)
+    parameters:
+    - id: cantidad
+      type: System.Int32
+      description: Marineros a licenciar.
+    return:
+      type: System.Int32
+      description: Marineros realmente licenciados.
+    content.vb: Public Function LicenciarMarineros(cantidad As Integer) As Integer
+  overload: MareImperium.BarcoJugador.LicenciarMarineros*
+  nameWithType.vb: BarcoJugador.LicenciarMarineros(Integer)
+  fullName.vb: BarcoJugador.LicenciarMarineros(Integer)
+  name.vb: LicenciarMarineros(Integer)
+- uid: MareImperium.BarcoJugador.ObtenerModuloPorTipo(TipoModulo)
+  commentId: M:MareImperium.BarcoJugador.ObtenerModuloPorTipo(TipoModulo)
+  id: ObtenerModuloPorTipo(TipoModulo)
+  parent: MareImperium.BarcoJugador
+  langs:
+  - csharp
+  - vb
+  name: ObtenerModuloPorTipo(TipoModulo)
+  nameWithType: BarcoJugador.ObtenerModuloPorTipo(TipoModulo)
+  fullName: BarcoJugador.ObtenerModuloPorTipo(TipoModulo)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerModuloPorTipo
+    path: TFG/Assets/Scripts/Astillero/BarcoJugador.cs
+    startLine: 218
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Devuelve el primer módulo instalado cuyo <xref href="ModuloBarcoData.tipoModulo" data-throw-if-not-resolved="false"></xref>
+
+    coincida con el tipo indicado. Solo puede haber un módulo por tipo.
+  example: []
+  syntax:
+    content: public ModuloBarcoData ObtenerModuloPorTipo(TipoModulo tipo)
+    parameters:
+    - id: tipo
+      type: MareImperium.TipoModulo
+      description: Categoría funcional buscada (Armamento, Velas o Bodega).
+    return:
+      type: MareImperium.ModuloBarcoData
+      description: El <xref href="ModuloBarcoData" data-throw-if-not-resolved="false"></xref> encontrado, o <code>null</code> si no hay ninguno de ese tipo.
+    content.vb: Public Function ObtenerModuloPorTipo(tipo As TipoModulo) As ModuloBarcoData
+  overload: MareImperium.BarcoJugador.ObtenerModuloPorTipo*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: FlotaJugador
+  commentId: T:FlotaJugador
+  href: FlotaJugador.html
+  name: FlotaJugador
+  nameWithType: FlotaJugador
+  fullName: FlotaJugador
+- uid: MareImperium.BarcoJugador.IdBarco*
+  commentId: Overload:MareImperium.BarcoJugador.IdBarco
+  href: MareImperium.BarcoJugador.html#BarcoJugador_IdBarco
+  name: IdBarco
+  nameWithType: BarcoJugador.IdBarco
+  fullName: BarcoJugador.IdBarco
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.BarcoJugador.Nombre*
+  commentId: Overload:MareImperium.BarcoJugador.Nombre
+  href: MareImperium.BarcoJugador.html#BarcoJugador_Nombre
+  name: Nombre
+  nameWithType: BarcoJugador.Nombre
+  fullName: BarcoJugador.Nombre
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: TipoCascoData
+  commentId: T:TipoCascoData
+  href: TipoCascoData.html
+  name: TipoCascoData
+  nameWithType: TipoCascoData
+  fullName: TipoCascoData
+- uid: CascoDecorador
+  commentId: T:CascoDecorador
+  href: CascoDecorador.html
+  name: CascoDecorador
+  nameWithType: CascoDecorador
+  fullName: CascoDecorador
+- uid: MareImperium.BarcoJugador.CascoBase*
+  commentId: Overload:MareImperium.BarcoJugador.CascoBase
+  href: MareImperium.BarcoJugador.html#BarcoJugador_CascoBase
+  name: CascoBase
+  nameWithType: BarcoJugador.CascoBase
+  fullName: BarcoJugador.CascoBase
+- uid: MareImperium.IBarco
+  commentId: T:MareImperium.IBarco
+  href: IBarco.html
+  name: IBarco
+  nameWithType: IBarco
+  fullName: IBarco
+- uid: MareImperium.BarcoJugador.ModulosInstalados*
+  commentId: Overload:MareImperium.BarcoJugador.ModulosInstalados
+  href: MareImperium.BarcoJugador.html#BarcoJugador_ModulosInstalados
+  name: ModulosInstalados
+  nameWithType: BarcoJugador.ModulosInstalados
+  fullName: BarcoJugador.ModulosInstalados
+- uid: System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+  commentId: T:System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<ModuloBarcoData>
+  nameWithType: IReadOnlyList<ModuloBarcoData>
+  fullName: System.Collections.Generic.IReadOnlyList<ModuloBarcoData>
+  nameWithType.vb: IReadOnlyList(Of ModuloBarcoData)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of ModuloBarcoData)
+  name.vb: IReadOnlyList(Of ModuloBarcoData)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: MareImperium.ModuloBarcoData
+    name: ModuloBarcoData
+    href: ModuloBarcoData.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.ModuloBarcoData
+    name: ModuloBarcoData
+    href: ModuloBarcoData.html
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.BarcoJugador.EsBarcosCombate*
+  commentId: Overload:MareImperium.BarcoJugador.EsBarcosCombate
+  href: MareImperium.BarcoJugador.html#BarcoJugador_EsBarcosCombate
+  name: EsBarcosCombate
+  nameWithType: BarcoJugador.EsBarcosCombate
+  fullName: BarcoJugador.EsBarcosCombate
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: BarcoJugador.VidaTotal
+  commentId: P:BarcoJugador.VidaTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_VidaTotal
+  name: VidaTotal
+  nameWithType: BarcoJugador.VidaTotal
+  fullName: BarcoJugador.VidaTotal
+- uid: MareImperium.BarcoJugador.VidaActual*
+  commentId: Overload:MareImperium.BarcoJugador.VidaActual
+  href: MareImperium.BarcoJugador.html#BarcoJugador_VidaActual
+  name: VidaActual
+  nameWithType: BarcoJugador.VidaActual
+  fullName: BarcoJugador.VidaActual
+- uid: MareImperium.BarcoJugador.Tripulacion*
+  commentId: Overload:MareImperium.BarcoJugador.Tripulacion
+  href: MareImperium.BarcoJugador.html#BarcoJugador_Tripulacion
+  name: Tripulacion
+  nameWithType: BarcoJugador.Tripulacion
+  fullName: BarcoJugador.Tripulacion
+- uid: MareImperium.BarcoJugador.TripulacionMaxima*
+  commentId: Overload:MareImperium.BarcoJugador.TripulacionMaxima
+  href: MareImperium.BarcoJugador.html#BarcoJugador_TripulacionMaxima
+  name: TripulacionMaxima
+  nameWithType: BarcoJugador.TripulacionMaxima
+  fullName: BarcoJugador.TripulacionMaxima
+- uid: MareImperium.BarcoJugador.VidaTotal*
+  commentId: Overload:MareImperium.BarcoJugador.VidaTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_VidaTotal
+  name: VidaTotal
+  nameWithType: BarcoJugador.VidaTotal
+  fullName: BarcoJugador.VidaTotal
+- uid: MareImperium.BarcoJugador.VelocidadTotal*
+  commentId: Overload:MareImperium.BarcoJugador.VelocidadTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_VelocidadTotal
+  name: VelocidadTotal
+  nameWithType: BarcoJugador.VelocidadTotal
+  fullName: BarcoJugador.VelocidadTotal
+- uid: MareImperium.BarcoJugador.ManiobrabilidadTotal*
+  commentId: Overload:MareImperium.BarcoJugador.ManiobrabilidadTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_ManiobrabilidadTotal
+  name: ManiobrabilidadTotal
+  nameWithType: BarcoJugador.ManiobrabilidadTotal
+  fullName: BarcoJugador.ManiobrabilidadTotal
+- uid: MareImperium.BarcoJugador.CargaMaximaTotal*
+  commentId: Overload:MareImperium.BarcoJugador.CargaMaximaTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_CargaMaximaTotal
+  name: CargaMaximaTotal
+  nameWithType: BarcoJugador.CargaMaximaTotal
+  fullName: BarcoJugador.CargaMaximaTotal
+- uid: MareImperium.BarcoJugador.FuerzaCombateTotal*
+  commentId: Overload:MareImperium.BarcoJugador.FuerzaCombateTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_FuerzaCombateTotal
+  name: FuerzaCombateTotal
+  nameWithType: BarcoJugador.FuerzaCombateTotal
+  fullName: BarcoJugador.FuerzaCombateTotal
+- uid: MareImperium.BarcoJugador.SlotsUsados*
+  commentId: Overload:MareImperium.BarcoJugador.SlotsUsados
+  href: MareImperium.BarcoJugador.html#BarcoJugador_SlotsUsados
+  name: SlotsUsados
+  nameWithType: BarcoJugador.SlotsUsados
+  fullName: BarcoJugador.SlotsUsados
+- uid: MareImperium.BarcoJugador.SlotsDisponibles*
+  commentId: Overload:MareImperium.BarcoJugador.SlotsDisponibles
+  href: MareImperium.BarcoJugador.html#BarcoJugador_SlotsDisponibles
+  name: SlotsDisponibles
+  nameWithType: BarcoJugador.SlotsDisponibles
+  fullName: BarcoJugador.SlotsDisponibles
+- uid: BarcoJugador.VidaActual
+  commentId: P:BarcoJugador.VidaActual
+  href: MareImperium.BarcoJugador.html#BarcoJugador_VidaActual
+  name: VidaActual
+  nameWithType: BarcoJugador.VidaActual
+  fullName: BarcoJugador.VidaActual
+- uid: MareImperium.BarcoJugador.#ctor*
+  commentId: Overload:MareImperium.BarcoJugador.#ctor
+  href: MareImperium.BarcoJugador.html#BarcoJugador__ctor_System_Int32_System_String_IBarco_
+  name: BarcoJugador
+  nameWithType: BarcoJugador.BarcoJugador
+  fullName: BarcoJugador.BarcoJugador
+  nameWithType.vb: BarcoJugador.New
+  fullName.vb: BarcoJugador.New
+  name.vb: New
+- uid: MareImperium.BarcoJugador.InstalarModulo*
+  commentId: Overload:MareImperium.BarcoJugador.InstalarModulo
+  href: MareImperium.BarcoJugador.html#BarcoJugador_InstalarModulo_ModuloBarcoData_
+  name: InstalarModulo
+  nameWithType: BarcoJugador.InstalarModulo
+  fullName: BarcoJugador.InstalarModulo
+- uid: MareImperium.ModuloBarcoData
+  commentId: T:MareImperium.ModuloBarcoData
+  href: ModuloBarcoData.html
+  name: ModuloBarcoData
+  nameWithType: ModuloBarcoData
+  fullName: ModuloBarcoData
+- uid: MareImperium.BarcoJugador.DesinstalarModulo*
+  commentId: Overload:MareImperium.BarcoJugador.DesinstalarModulo
+  href: MareImperium.BarcoJugador.html#BarcoJugador_DesinstalarModulo_ModuloBarcoData_
+  name: DesinstalarModulo
+  nameWithType: BarcoJugador.DesinstalarModulo
+  fullName: BarcoJugador.DesinstalarModulo
+- uid: MareImperium.BarcoJugador.PuedeInstalar*
+  commentId: Overload:MareImperium.BarcoJugador.PuedeInstalar
+  href: MareImperium.BarcoJugador.html#BarcoJugador_PuedeInstalar_ModuloBarcoData_
+  name: PuedeInstalar
+  nameWithType: BarcoJugador.PuedeInstalar
+  fullName: BarcoJugador.PuedeInstalar
+- uid: BarcoJugador.TripulacionMaxima
+  commentId: P:BarcoJugador.TripulacionMaxima
+  href: MareImperium.BarcoJugador.html#BarcoJugador_TripulacionMaxima
+  name: TripulacionMaxima
+  nameWithType: BarcoJugador.TripulacionMaxima
+  fullName: BarcoJugador.TripulacionMaxima
+- uid: MareImperium.BarcoJugador.ContratarMarineros*
+  commentId: Overload:MareImperium.BarcoJugador.ContratarMarineros
+  href: MareImperium.BarcoJugador.html#BarcoJugador_ContratarMarineros_System_Int32_
+  name: ContratarMarineros
+  nameWithType: BarcoJugador.ContratarMarineros
+  fullName: BarcoJugador.ContratarMarineros
+- uid: MareImperium.BarcoJugador.LicenciarMarineros*
+  commentId: Overload:MareImperium.BarcoJugador.LicenciarMarineros
+  href: MareImperium.BarcoJugador.html#BarcoJugador_LicenciarMarineros_System_Int32_
+  name: LicenciarMarineros
+  nameWithType: BarcoJugador.LicenciarMarineros
+  fullName: BarcoJugador.LicenciarMarineros
+- uid: ModuloBarcoData.tipoModulo
+  commentId: F:ModuloBarcoData.tipoModulo
+  href: MareImperium.ModuloBarcoData.html#ModuloBarcoData_tipoModulo
+  name: tipoModulo
+  nameWithType: ModuloBarcoData.tipoModulo
+  fullName: ModuloBarcoData.tipoModulo
+- uid: ModuloBarcoData
+  commentId: T:ModuloBarcoData
+  href: ModuloBarcoData.html
+  name: ModuloBarcoData
+  nameWithType: ModuloBarcoData
+  fullName: ModuloBarcoData
+- uid: MareImperium.BarcoJugador.ObtenerModuloPorTipo*
+  commentId: Overload:MareImperium.BarcoJugador.ObtenerModuloPorTipo
+  href: MareImperium.BarcoJugador.html#BarcoJugador_ObtenerModuloPorTipo_TipoModulo_
+  name: ObtenerModuloPorTipo
+  nameWithType: BarcoJugador.ObtenerModuloPorTipo
+  fullName: BarcoJugador.ObtenerModuloPorTipo
+- uid: MareImperium.TipoModulo
+  commentId: T:MareImperium.TipoModulo
+  href: TipoModulo.html
+  name: TipoModulo
+  nameWithType: TipoModulo
+  fullName: TipoModulo

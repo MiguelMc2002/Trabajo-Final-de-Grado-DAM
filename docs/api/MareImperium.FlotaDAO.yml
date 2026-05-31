@@ -1,0 +1,835 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.FlotaDAO
+  commentId: T:MareImperium.FlotaDAO
+  id: FlotaDAO
+  parent: MareImperium
+  children:
+  - MareImperium.FlotaDAO.#ctor(DatabaseManager)
+  - MareImperium.FlotaDAO.ActualizarPosicionFlota(System.Int32,System.Single,System.Single,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  - MareImperium.FlotaDAO.EliminarFlota(System.Int32)
+  - MareImperium.FlotaDAO.InsertarFlota(System.Int32,System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Int32,System.Int32)
+  - MareImperium.FlotaDAO.MigrarColumnasMapamundi
+  - MareImperium.FlotaDAO.ObtenerFlotasPorTipo(System.String)
+  - MareImperium.FlotaDAO.ObtenerTodasLasFlotas
+  langs:
+  - csharp
+  - vb
+  name: FlotaDAO
+  nameWithType: FlotaDAO
+  fullName: FlotaDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FlotaDAO
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 70
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla Flota. Permite persistir y recuperar el estado
+
+    de todas las flotas del mapamundi — jugador, comerciantes PNJ, piratas y
+
+    neutrales — para que al cargar una partida cada flota retome exactamente
+
+    la posición y el estado que tenía al guardar.
+  example: []
+  syntax:
+    content: public class FlotaDAO
+    content.vb: Public Class FlotaDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.FlotaDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.FlotaDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: FlotaDAO(DatabaseManager)
+  nameWithType: FlotaDAO.FlotaDAO(DatabaseManager)
+  fullName: FlotaDAO.FlotaDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 78
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public FlotaDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.FlotaDAO.#ctor*
+  nameWithType.vb: FlotaDAO.New(DatabaseManager)
+  fullName.vb: FlotaDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.FlotaDAO.InsertarFlota(System.Int32,System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Int32,System.Int32)
+  commentId: M:MareImperium.FlotaDAO.InsertarFlota(System.Int32,System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Int32,System.Int32)
+  id: InsertarFlota(System.Int32,System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Nullable{System.Int32},System.String,System.Nullable{System.Int32},System.Single,System.Single,System.Int32,System.Int32)
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: InsertarFlota(int, string, int?, float, float, int?, string, int?, float, float, int, int)
+  nameWithType: FlotaDAO.InsertarFlota(int, string, int?, float, float, int?, string, int?, float, float, int, int)
+  fullName: FlotaDAO.InsertarFlota(int, string, int?, float, float, int?, string, int?, float, float, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InsertarFlota
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 96
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inserta o sobreescribe una flota completa en la tabla Flota.
+
+    Usa INSERT OR REPLACE para que la operación sea idempotente.
+
+    Los parámetros nullable se insertan como NULL en la BD cuando son <code>null</code>.
+  example: []
+  syntax:
+    content: public void InsertarFlota(int idFlota, string tipoPropietario, int? idCiudadActual, float posX, float posY, int? idCapitan, string estadoActual, int? idCiudadDestino, float posActualX = 0, float posActualY = 0, int casillaDestinoX = 0, int casillaDestinoY = 0)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador único de la flota.
+    - id: tipoPropietario
+      type: System.String
+      description: "Tipo de propietario: 'jugador', 'comerciante', 'pirata' o 'neutral'."
+    - id: idCiudadActual
+      type: System.Nullable{System.Int32}
+      description: Ciudad en la que está atracada, o <code>null</code> si navega en mar abierto.
+    - id: posX
+      type: System.Single
+      description: Coordenada X en el mapamundi.
+    - id: posY
+      type: System.Single
+      description: Coordenada Y en el mapamundi.
+    - id: idCapitan
+      type: System.Nullable{System.Int32}
+      description: Identificador del capitán asignado, o <code>null</code> si no tiene.
+    - id: estadoActual
+      type: System.String
+      description: Estado de movimiento actual de la flota.
+    - id: idCiudadDestino
+      type: System.Nullable{System.Int32}
+      description: Ciudad de destino si está navegando, o <code>null</code> si no tiene destino activo.
+    - id: posActualX
+      type: System.Single
+    - id: posActualY
+      type: System.Single
+    - id: casillaDestinoX
+      type: System.Int32
+    - id: casillaDestinoY
+      type: System.Int32
+    content.vb: Public Sub InsertarFlota(idFlota As Integer, tipoPropietario As String, idCiudadActual As Integer?, posX As Single, posY As Single, idCapitan As Integer?, estadoActual As String, idCiudadDestino As Integer?, posActualX As Single = 0, posActualY As Single = 0, casillaDestinoX As Integer = 0, casillaDestinoY As Integer = 0)
+  overload: MareImperium.FlotaDAO.InsertarFlota*
+  nameWithType.vb: FlotaDAO.InsertarFlota(Integer, String, Integer?, Single, Single, Integer?, String, Integer?, Single, Single, Integer, Integer)
+  fullName.vb: FlotaDAO.InsertarFlota(Integer, String, Integer?, Single, Single, Integer?, String, Integer?, Single, Single, Integer, Integer)
+  name.vb: InsertarFlota(Integer, String, Integer?, Single, Single, Integer?, String, Integer?, Single, Single, Integer, Integer)
+- uid: MareImperium.FlotaDAO.ActualizarPosicionFlota(System.Int32,System.Single,System.Single,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  commentId: M:MareImperium.FlotaDAO.ActualizarPosicionFlota(System.Int32,System.Single,System.Single,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  id: ActualizarPosicionFlota(System.Int32,System.Single,System.Single,System.String,System.Nullable{System.Int32},System.Nullable{System.Int32})
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: ActualizarPosicionFlota(int, float, float, string, int?, int?)
+  nameWithType: FlotaDAO.ActualizarPosicionFlota(int, float, float, string, int?, int?)
+  fullName: FlotaDAO.ActualizarPosicionFlota(int, float, float, string, int?, int?)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ActualizarPosicionFlota
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 149
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Actualiza la posición y el estado de movimiento de una flota existente.
+
+    Solo modifica los campos de navegación; no toca <code>tipo_propietario</code>
+
+    ni <code>id_capitan</code>.
+  example: []
+  syntax:
+    content: public void ActualizarPosicionFlota(int idFlota, float posX, float posY, string estadoActual, int? idCiudadActual, int? idCiudadDestino)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota a actualizar.
+    - id: posX
+      type: System.Single
+      description: Nueva coordenada X en el mapamundi.
+    - id: posY
+      type: System.Single
+      description: Nueva coordenada Y en el mapamundi.
+    - id: estadoActual
+      type: System.String
+      description: Nuevo estado de movimiento.
+    - id: idCiudadActual
+      type: System.Nullable{System.Int32}
+      description: Ciudad en la que está atracada, o <code>null</code> si está en ruta.
+    - id: idCiudadDestino
+      type: System.Nullable{System.Int32}
+      description: Ciudad de destino activa, o <code>null</code> si no tiene destino.
+    content.vb: Public Sub ActualizarPosicionFlota(idFlota As Integer, posX As Single, posY As Single, estadoActual As String, idCiudadActual As Integer?, idCiudadDestino As Integer?)
+  overload: MareImperium.FlotaDAO.ActualizarPosicionFlota*
+  nameWithType.vb: FlotaDAO.ActualizarPosicionFlota(Integer, Single, Single, String, Integer?, Integer?)
+  fullName.vb: FlotaDAO.ActualizarPosicionFlota(Integer, Single, Single, String, Integer?, Integer?)
+  name.vb: ActualizarPosicionFlota(Integer, Single, Single, String, Integer?, Integer?)
+- uid: MareImperium.FlotaDAO.ObtenerTodasLasFlotas
+  commentId: M:MareImperium.FlotaDAO.ObtenerTodasLasFlotas
+  id: ObtenerTodasLasFlotas
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerTodasLasFlotas()
+  nameWithType: FlotaDAO.ObtenerTodasLasFlotas()
+  fullName: FlotaDAO.ObtenerTodasLasFlotas()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerTodasLasFlotas
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 189
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todas las flotas almacenadas en la tabla Flota.
+  example: []
+  syntax:
+    content: public List<FlotaDto> ObtenerTodasLasFlotas()
+    return:
+      type: System.Collections.Generic.List{FlotaDto}
+      description: >-
+        Lista de <xref href="FlotaDto" data-throw-if-not-resolved="false"></xref> con todas las flotas. Vacía si no hay
+
+        datos o si ocurre un error.
+    content.vb: Public Function ObtenerTodasLasFlotas() As List(Of FlotaDto)
+  overload: MareImperium.FlotaDAO.ObtenerTodasLasFlotas*
+- uid: MareImperium.FlotaDAO.ObtenerFlotasPorTipo(System.String)
+  commentId: M:MareImperium.FlotaDAO.ObtenerFlotasPorTipo(System.String)
+  id: ObtenerFlotasPorTipo(System.String)
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerFlotasPorTipo(string)
+  nameWithType: FlotaDAO.ObtenerFlotasPorTipo(string)
+  fullName: FlotaDAO.ObtenerFlotasPorTipo(string)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerFlotasPorTipo
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 227
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todas las flotas de un tipo de propietario concreto.
+  example: []
+  syntax:
+    content: public List<FlotaDto> ObtenerFlotasPorTipo(string tipoPropietario)
+    parameters:
+    - id: tipoPropietario
+      type: System.String
+      description: "Tipo a filtrar: 'jugador', 'comerciante', 'pirata' o 'neutral'."
+    return:
+      type: System.Collections.Generic.List{FlotaDto}
+      description: >-
+        Lista de <xref href="FlotaDto" data-throw-if-not-resolved="false"></xref> que coinciden con el tipo indicado. Vacía si no
+
+        hay resultados o si ocurre un error.
+    content.vb: Public Function ObtenerFlotasPorTipo(tipoPropietario As String) As List(Of FlotaDto)
+  overload: MareImperium.FlotaDAO.ObtenerFlotasPorTipo*
+  nameWithType.vb: FlotaDAO.ObtenerFlotasPorTipo(String)
+  fullName.vb: FlotaDAO.ObtenerFlotasPorTipo(String)
+  name.vb: ObtenerFlotasPorTipo(String)
+- uid: MareImperium.FlotaDAO.EliminarFlota(System.Int32)
+  commentId: M:MareImperium.FlotaDAO.EliminarFlota(System.Int32)
+  id: EliminarFlota(System.Int32)
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: EliminarFlota(int)
+  nameWithType: FlotaDAO.EliminarFlota(int)
+  fullName: FlotaDAO.EliminarFlota(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EliminarFlota
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 264
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Elimina una flota de la tabla Flota. Se usa cuando la flota es destruida
+
+    en combate y debe desaparecer permanentemente del mundo.
+  example: []
+  syntax:
+    content: public void EliminarFlota(int idFlota)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota a eliminar.
+    content.vb: Public Sub EliminarFlota(idFlota As Integer)
+  overload: MareImperium.FlotaDAO.EliminarFlota*
+  nameWithType.vb: FlotaDAO.EliminarFlota(Integer)
+  fullName.vb: FlotaDAO.EliminarFlota(Integer)
+  name.vb: EliminarFlota(Integer)
+- uid: MareImperium.FlotaDAO.MigrarColumnasMapamundi
+  commentId: M:MareImperium.FlotaDAO.MigrarColumnasMapamundi
+  id: MigrarColumnasMapamundi
+  parent: MareImperium.FlotaDAO
+  langs:
+  - csharp
+  - vb
+  name: MigrarColumnasMapamundi()
+  nameWithType: FlotaDAO.MigrarColumnasMapamundi()
+  fullName: FlotaDAO.MigrarColumnasMapamundi()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: MigrarColumnasMapamundi
+    path: TFG/Assets/Scripts/Database/FlotaDAO.cs
+    startLine: 287
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Migración: añade las 4 columnas de posición en tilemap a la tabla Flota si no existen.
+
+    Seguro de llamar varias veces — usa try/catch por columna.
+  example: []
+  syntax:
+    content: public void MigrarColumnasMapamundi()
+    content.vb: Public Sub MigrarColumnasMapamundi()
+  overload: MareImperium.FlotaDAO.MigrarColumnasMapamundi*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.FlotaDAO.#ctor*
+  commentId: Overload:MareImperium.FlotaDAO.#ctor
+  href: MareImperium.FlotaDAO.html#FlotaDAO__ctor_DatabaseManager_
+  name: FlotaDAO
+  nameWithType: FlotaDAO.FlotaDAO
+  fullName: FlotaDAO.FlotaDAO
+  nameWithType.vb: FlotaDAO.New
+  fullName.vb: FlotaDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: MareImperium.FlotaDAO.InsertarFlota*
+  commentId: Overload:MareImperium.FlotaDAO.InsertarFlota
+  href: MareImperium.FlotaDAO.html#FlotaDAO_InsertarFlota_System_Int32_System_String_System_Nullable_System_Int32__System_Single_System_Single_System_Nullable_System_Int32__System_String_System_Nullable_System_Int32__System_Single_System_Single_System_Int32_System_Int32_
+  name: InsertarFlota
+  nameWithType: FlotaDAO.InsertarFlota
+  fullName: FlotaDAO.InsertarFlota
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: MareImperium.FlotaDAO.ActualizarPosicionFlota*
+  commentId: Overload:MareImperium.FlotaDAO.ActualizarPosicionFlota
+  href: MareImperium.FlotaDAO.html#FlotaDAO_ActualizarPosicionFlota_System_Int32_System_Single_System_Single_System_String_System_Nullable_System_Int32__System_Nullable_System_Int32__
+  name: ActualizarPosicionFlota
+  nameWithType: FlotaDAO.ActualizarPosicionFlota
+  fullName: FlotaDAO.ActualizarPosicionFlota
+- uid: FlotaDto
+  commentId: T:FlotaDto
+  href: FlotaDto.html
+  name: FlotaDto
+  nameWithType: FlotaDto
+  fullName: FlotaDto
+- uid: MareImperium.FlotaDAO.ObtenerTodasLasFlotas*
+  commentId: Overload:MareImperium.FlotaDAO.ObtenerTodasLasFlotas
+  href: MareImperium.FlotaDAO.html#FlotaDAO_ObtenerTodasLasFlotas
+  name: ObtenerTodasLasFlotas
+  nameWithType: FlotaDAO.ObtenerTodasLasFlotas
+  fullName: FlotaDAO.ObtenerTodasLasFlotas
+- uid: System.Collections.Generic.List{FlotaDto}
+  commentId: T:System.Collections.Generic.List{FlotaDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<FlotaDto>
+  nameWithType: List<FlotaDto>
+  fullName: System.Collections.Generic.List<FlotaDto>
+  nameWithType.vb: List(Of FlotaDto)
+  fullName.vb: System.Collections.Generic.List(Of FlotaDto)
+  name.vb: List(Of FlotaDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.FlotaDto
+    name: FlotaDto
+    href: FlotaDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.FlotaDto
+    name: FlotaDto
+    href: FlotaDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.FlotaDAO.ObtenerFlotasPorTipo*
+  commentId: Overload:MareImperium.FlotaDAO.ObtenerFlotasPorTipo
+  href: MareImperium.FlotaDAO.html#FlotaDAO_ObtenerFlotasPorTipo_System_String_
+  name: ObtenerFlotasPorTipo
+  nameWithType: FlotaDAO.ObtenerFlotasPorTipo
+  fullName: FlotaDAO.ObtenerFlotasPorTipo
+- uid: MareImperium.FlotaDAO.EliminarFlota*
+  commentId: Overload:MareImperium.FlotaDAO.EliminarFlota
+  href: MareImperium.FlotaDAO.html#FlotaDAO_EliminarFlota_System_Int32_
+  name: EliminarFlota
+  nameWithType: FlotaDAO.EliminarFlota
+  fullName: FlotaDAO.EliminarFlota
+- uid: MareImperium.FlotaDAO.MigrarColumnasMapamundi*
+  commentId: Overload:MareImperium.FlotaDAO.MigrarColumnasMapamundi
+  href: MareImperium.FlotaDAO.html#FlotaDAO_MigrarColumnasMapamundi
+  name: MigrarColumnasMapamundi
+  nameWithType: FlotaDAO.MigrarColumnasMapamundi
+  fullName: FlotaDAO.MigrarColumnasMapamundi

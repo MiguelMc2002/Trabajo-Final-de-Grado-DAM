@@ -1,0 +1,311 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.EstadoFlotaPNJ
+  commentId: T:MareImperium.EstadoFlotaPNJ
+  id: EstadoFlotaPNJ
+  parent: MareImperium
+  children:
+  - MareImperium.EstadoFlotaPNJ.Comerciando
+  - MareImperium.EstadoFlotaPNJ.EnPuerto
+  - MareImperium.EstadoFlotaPNJ.EsperandoEnPuerto
+  - MareImperium.EstadoFlotaPNJ.Huyendo
+  - MareImperium.EstadoFlotaPNJ.HuyendoAPuerto
+  - MareImperium.EstadoFlotaPNJ.Interceptando
+  - MareImperium.EstadoFlotaPNJ.Patrullando
+  - MareImperium.EstadoFlotaPNJ.Viajando
+  langs:
+  - csharp
+  - vb
+  name: EstadoFlotaPNJ
+  nameWithType: EstadoFlotaPNJ
+  fullName: EstadoFlotaPNJ
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstadoFlotaPNJ
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 5
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Estados posibles de una flota PNJ comerciante durante la simulación.
+
+    La máquina de estados de <xref href="FlotaManager" data-throw-if-not-resolved="false"></xref> hace transiciones
+
+    entre estos valores en función de las acciones de la flota.
+  example: []
+  syntax:
+    content: public enum EstadoFlotaPNJ
+    content.vb: Public Enum EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.EnPuerto
+  commentId: F:MareImperium.EstadoFlotaPNJ.EnPuerto
+  id: EnPuerto
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: EnPuerto
+  nameWithType: EstadoFlotaPNJ.EnPuerto
+  fullName: EstadoFlotaPNJ.EnPuerto
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EnPuerto
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 11
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    La flota está atracada en un puerto.
+
+    En este estado puede comprar o vender mercancías en el mercado de la ciudad.
+  example: []
+  syntax:
+    content: EnPuerto = 0
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.Viajando
+  commentId: F:MareImperium.EstadoFlotaPNJ.Viajando
+  id: Viajando
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: Viajando
+  nameWithType: EstadoFlotaPNJ.Viajando
+  fullName: EstadoFlotaPNJ.Viajando
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Viajando
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 17
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    La flota navega por el mapamundi hacia su ciudad de destino.
+
+    No puede interactuar con mercados hasta llegar al puerto.
+  example: []
+  syntax:
+    content: Viajando = 1
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.Comerciando
+  commentId: F:MareImperium.EstadoFlotaPNJ.Comerciando
+  id: Comerciando
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: Comerciando
+  nameWithType: EstadoFlotaPNJ.Comerciando
+  fullName: EstadoFlotaPNJ.Comerciando
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Comerciando
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 23
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    La flota está ejecutando una operación comercial en el mercado de su ciudad actual.
+
+    Estado transitorio entre <xref href="EstadoFlotaPNJ.EnPuerto" data-throw-if-not-resolved="false"></xref> y <xref href="EstadoFlotaPNJ.Viajando" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: Comerciando = 2
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.Huyendo
+  commentId: F:MareImperium.EstadoFlotaPNJ.Huyendo
+  id: Huyendo
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: Huyendo
+  nameWithType: EstadoFlotaPNJ.Huyendo
+  fullName: EstadoFlotaPNJ.Huyendo
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Huyendo
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    La flota huye tras recibir daño en combate. Implementación abstracta; en Día 21 se añade
+
+    movimiento real hacia puerto de refugio.
+  example: []
+  syntax:
+    content: Huyendo = 3
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.Patrullando
+  commentId: F:MareImperium.EstadoFlotaPNJ.Patrullando
+  id: Patrullando
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: Patrullando
+  nameWithType: EstadoFlotaPNJ.Patrullando
+  fullName: EstadoFlotaPNJ.Patrullando
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Patrullando
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 34
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Pirata moviéndose por el mar en busca de presas. Implementación real en Día 21.
+  example: []
+  syntax:
+    content: Patrullando = 4
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.Interceptando
+  commentId: F:MareImperium.EstadoFlotaPNJ.Interceptando
+  id: Interceptando
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: Interceptando
+  nameWithType: EstadoFlotaPNJ.Interceptando
+  fullName: EstadoFlotaPNJ.Interceptando
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Interceptando
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 39
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Pirata persiguiendo activamente a un comerciante detectado. Implementación real en Día 21.
+  example: []
+  syntax:
+    content: Interceptando = 5
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.HuyendoAPuerto
+  commentId: F:MareImperium.EstadoFlotaPNJ.HuyendoAPuerto
+  id: HuyendoAPuerto
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: HuyendoAPuerto
+  nameWithType: EstadoFlotaPNJ.HuyendoAPuerto
+  fullName: EstadoFlotaPNJ.HuyendoAPuerto
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: HuyendoAPuerto
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 45
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Comerciante que detectó un pirata cercano y busca el puerto más próximo como refugio.
+
+    Implementación real en Día 21.
+  example: []
+  syntax:
+    content: HuyendoAPuerto = 6
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+- uid: MareImperium.EstadoFlotaPNJ.EsperandoEnPuerto
+  commentId: F:MareImperium.EstadoFlotaPNJ.EsperandoEnPuerto
+  id: EsperandoEnPuerto
+  parent: MareImperium.EstadoFlotaPNJ
+  langs:
+  - csharp
+  - vb
+  name: EsperandoEnPuerto
+  nameWithType: EstadoFlotaPNJ.EsperandoEnPuerto
+  fullName: EstadoFlotaPNJ.EsperandoEnPuerto
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EsperandoEnPuerto
+    path: TFG/Assets/Scripts/PNJ/EstadoFlotaPNJ.cs
+    startLine: 51
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Comerciante refugiado en puerto esperando que el peligro pirata desaparezca.
+
+    Implementación real en Día 21.
+  example: []
+  syntax:
+    content: EsperandoEnPuerto = 7
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+references:
+- uid: FlotaManager
+  commentId: T:FlotaManager
+  href: FlotaManager.html
+  name: FlotaManager
+  nameWithType: FlotaManager
+  fullName: FlotaManager
+- uid: MareImperium
+- uid: MareImperium.EstadoFlotaPNJ
+  commentId: T:MareImperium.EstadoFlotaPNJ
+  href: EstadoFlotaPNJ.html
+  name: EstadoFlotaPNJ
+  nameWithType: EstadoFlotaPNJ
+  fullName: EstadoFlotaPNJ
+- uid: EstadoFlotaPNJ.EnPuerto
+  commentId: F:EstadoFlotaPNJ.EnPuerto
+  href: MareImperium.EstadoFlotaPNJ.html#EstadoFlotaPNJ_EnPuerto
+  name: EnPuerto
+  nameWithType: EstadoFlotaPNJ.EnPuerto
+  fullName: EstadoFlotaPNJ.EnPuerto
+- uid: EstadoFlotaPNJ.Viajando
+  commentId: F:EstadoFlotaPNJ.Viajando
+  href: MareImperium.EstadoFlotaPNJ.html#EstadoFlotaPNJ_Viajando
+  name: Viajando
+  nameWithType: EstadoFlotaPNJ.Viajando
+  fullName: EstadoFlotaPNJ.Viajando

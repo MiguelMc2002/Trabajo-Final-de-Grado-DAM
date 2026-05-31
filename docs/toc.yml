@@ -1,0 +1,32 @@
+- name: Inicio
+  href: index.md
+- name: Referencia de API
+  href: api/
+- name: Módulos Verticales
+  items:
+    - name: "1 — Económico"
+      href: modulos/economico.md
+    - name: "2 — Producción y Cadenas"
+      href: modulos/produccion.md
+    - name: "3 — Combate Naval"
+      href: modulos/combate-naval.md
+    - name: "4 — Construcción de Navíos"
+      href: modulos/construccion-navios.md
+    - name: "5 — Ciudades"
+      href: modulos/ciudades.md
+- name: Módulos Transversales
+  items:
+    - name: "6 — Mundo y Navegación"
+      href: modulos/mundo-navegacion.md
+    - name: "7 — Flotas y Tripulación"
+      href: modulos/flotas-tripulacion.md
+    - name: "8 — Comportamiento de PNJs"
+      href: modulos/pnjs.md
+    - name: "9 — Tiempo y Simulación"
+      href: modulos/tiempo-simulacion.md
+    - name: "10 — Interfaz de Usuario"
+      href: modulos/interfaz-usuario.md
+    - name: "11 — Guardado y Carga"
+      href: modulos/guardado-carga.md
+    - name: "12 — Audio y Feedback Visual"
+      href: modulos/audio-feedback.md

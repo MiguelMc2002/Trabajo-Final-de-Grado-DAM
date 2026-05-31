@@ -1,0 +1,37 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "files": ["docs-project/MareImperium.Docs.csproj"]
+        }
+      ],
+      "dest": "docs/api",
+      "allowCompilationErrors": true,
+      "globalNamespaceId": "MareImperium"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": ["**.yml", "**.md"],
+        "src": "docs/api",
+        "dest": "api"
+      },
+      {
+        "files": [
+          "index.md",
+          "toc.yml",
+          "modulos/*.md",
+          "modulos/toc.yml"
+        ],
+        "src": "docs"
+      }
+    ],
+    "dest": "docs/_site",
+    "globalMetadata": {
+      "_appTitle": "Mare Imperium — Documentación Técnica",
+      "_appFooter": "Miguel Menéndez Caro · TFG 2º DAM · Colegios Marianistas"
+    }
+  }
+}

@@ -1,0 +1,458 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CiudadDto
+  commentId: T:MareImperium.CiudadDto
+  id: CiudadDto
+  parent: MareImperium
+  children:
+  - MareImperium.CiudadDto.CasillaX
+  - MareImperium.CiudadDto.CasillaY
+  - MareImperium.CiudadDto.IdCiudad
+  - MareImperium.CiudadDto.Nombre
+  langs:
+  - csharp
+  - vb
+  name: CiudadDto
+  nameWithType: CiudadDto
+  fullName: CiudadDto
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CiudadDto
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 9
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Fila de la tabla Ciudad mapeada desde SQLite.
+
+    Distinta de <xref href="CiudadData" data-throw-if-not-resolved="false"></xref> (ScriptableObject del Inspector).
+  example: []
+  syntax:
+    content: public class CiudadDto
+    content.vb: Public Class CiudadDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CiudadDto.IdCiudad
+  commentId: P:MareImperium.CiudadDto.IdCiudad
+  id: IdCiudad
+  parent: MareImperium.CiudadDto
+  langs:
+  - csharp
+  - vb
+  name: IdCiudad
+  nameWithType: CiudadDto.IdCiudad
+  fullName: CiudadDto.IdCiudad
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdCiudad
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único de la ciudad (clave primaria en BD).
+  example: []
+  syntax:
+    content: public int IdCiudad { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdCiudad As Integer
+  overload: MareImperium.CiudadDto.IdCiudad*
+- uid: MareImperium.CiudadDto.Nombre
+  commentId: P:MareImperium.CiudadDto.Nombre
+  id: Nombre
+  parent: MareImperium.CiudadDto
+  langs:
+  - csharp
+  - vb
+  name: Nombre
+  nameWithType: CiudadDto.Nombre
+  fullName: CiudadDto.Nombre
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Nombre
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre de la ciudad tal como aparece en la interfaz.
+  example: []
+  syntax:
+    content: public string Nombre { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property Nombre As String
+  overload: MareImperium.CiudadDto.Nombre*
+- uid: MareImperium.CiudadDto.CasillaX
+  commentId: P:MareImperium.CiudadDto.CasillaX
+  id: CasillaX
+  parent: MareImperium.CiudadDto
+  langs:
+  - csharp
+  - vb
+  name: CasillaX
+  nameWithType: CiudadDto.CasillaX
+  fullName: CiudadDto.CasillaX
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CasillaX
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 17
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: public int CasillaX { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CasillaX As Integer
+  overload: MareImperium.CiudadDto.CasillaX*
+- uid: MareImperium.CiudadDto.CasillaY
+  commentId: P:MareImperium.CiudadDto.CasillaY
+  id: CasillaY
+  parent: MareImperium.CiudadDto
+  langs:
+  - csharp
+  - vb
+  name: CasillaY
+  nameWithType: CiudadDto.CasillaY
+  fullName: CiudadDto.CasillaY
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CasillaY
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: public int CasillaY { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CasillaY As Integer
+  overload: MareImperium.CiudadDto.CasillaY*
+references:
+- uid: CiudadData
+  commentId: T:CiudadData
+  href: CiudadData.html
+  name: CiudadData
+  nameWithType: CiudadData
+  fullName: CiudadData
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CiudadDto.IdCiudad*
+  commentId: Overload:MareImperium.CiudadDto.IdCiudad
+  href: MareImperium.CiudadDto.html#CiudadDto_IdCiudad
+  name: IdCiudad
+  nameWithType: CiudadDto.IdCiudad
+  fullName: CiudadDto.IdCiudad
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.CiudadDto.Nombre*
+  commentId: Overload:MareImperium.CiudadDto.Nombre
+  href: MareImperium.CiudadDto.html#CiudadDto_Nombre
+  name: Nombre
+  nameWithType: CiudadDto.Nombre
+  fullName: CiudadDto.Nombre
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.CiudadDto.CasillaX*
+  commentId: Overload:MareImperium.CiudadDto.CasillaX
+  href: MareImperium.CiudadDto.html#CiudadDto_CasillaX
+  name: CasillaX
+  nameWithType: CiudadDto.CasillaX
+  fullName: CiudadDto.CasillaX
+- uid: MareImperium.CiudadDto.CasillaY*
+  commentId: Overload:MareImperium.CiudadDto.CasillaY
+  href: MareImperium.CiudadDto.html#CiudadDto_CasillaY
+  name: CasillaY
+  nameWithType: CiudadDto.CasillaY
+  fullName: CiudadDto.CasillaY

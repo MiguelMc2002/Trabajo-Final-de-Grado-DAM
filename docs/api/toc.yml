@@ -1,0 +1,317 @@
+### YamlMime:TableOfContent
+items:
+- uid: HansaTrader.Mapamundi
+  name: HansaTrader.Mapamundi
+  type: Namespace
+  items:
+  - uid: HansaTrader.Mapamundi.TileNavegable
+    name: TileNavegable
+    type: Class
+- uid: MareImperium
+  name: ''
+  type: Namespace
+  items:
+  - uid: MareImperium.AlmacenCiudadDAO
+    name: AlmacenCiudadDAO
+    type: Class
+  - uid: MareImperium.AlmacenJugadorDAO
+    name: AlmacenJugadorDAO
+    type: Class
+  - uid: MareImperium.AstilleroManager
+    name: AstilleroManager
+    type: Class
+  - uid: MareImperium.AstilleroUI
+    name: AstilleroUI
+    type: Class
+  - uid: MareImperium.BarcoDAO
+    name: BarcoDAO
+    type: Class
+  - uid: MareImperium.BarcoDto
+    name: BarcoDto
+    type: Class
+  - uid: MareImperium.BarcoJugador
+    name: BarcoJugador
+    type: Class
+  - uid: MareImperium.BienDAO
+    name: BienDAO
+    type: Class
+  - uid: MareImperium.BienData
+    name: BienData
+    type: Class
+  - uid: MareImperium.BienDto
+    name: BienDto
+    type: Class
+  - uid: MareImperium.CamaraFija
+    name: CamaraFija
+    type: Class
+  - uid: MareImperium.CapitanDAO
+    name: CapitanDAO
+    type: Class
+  - uid: MareImperium.CapitanData
+    name: CapitanData
+    type: Class
+  - uid: MareImperium.CapitanDto
+    name: CapitanDto
+    type: Class
+  - uid: MareImperium.CargaBarcoDAO
+    name: CargaBarcoDAO
+    type: Class
+  - uid: MareImperium.CargaBarcoDto
+    name: CargaBarcoDto
+    type: Class
+  - uid: MareImperium.CascoCarraca
+    name: CascoCarraca
+    type: Class
+  - uid: MareImperium.CascoCog
+    name: CascoCog
+    type: Class
+  - uid: MareImperium.CascoDecorador
+    name: CascoDecorador
+    type: Class
+  - uid: MareImperium.CascoGalera
+    name: CascoGalera
+    type: Class
+  - uid: MareImperium.CascoHulk
+    name: CascoHulk
+    type: Class
+  - uid: MareImperium.CategoriaBien
+    name: CategoriaBien
+    type: Enum
+  - uid: MareImperium.CiudadController
+    name: CiudadController
+    type: Class
+  - uid: MareImperium.CiudadDAO
+    name: CiudadDAO
+    type: Class
+  - uid: MareImperium.CiudadData
+    name: CiudadData
+    type: Class
+  - uid: MareImperium.CiudadDto
+    name: CiudadDto
+    type: Class
+  - uid: MareImperium.ComandoPirata
+    name: ComandoPirata
+    type: Struct
+  - uid: MareImperium.ComandoPirataTipo
+    name: ComandoPirataTipo
+    type: Enum
+  - uid: MareImperium.CombateEnCurso
+    name: CombateEnCurso
+    type: Class
+  - uid: MareImperium.CombateEventos
+    name: CombateEventos
+    type: Class
+  - uid: MareImperium.CombateNavalResolver
+    name: CombateNavalResolver
+    type: Class
+  - uid: MareImperium.ComerciantePNJController
+    name: ComerciantePNJController
+    type: Class
+  - uid: MareImperium.ConvoyData
+    name: ConvoyData
+    type: Class
+  - uid: MareImperium.ConvoyManager
+    name: ConvoyManager
+    type: Class
+  - uid: MareImperium.DatabaseManager
+    name: DatabaseManager
+    type: Class
+  - uid: MareImperium.DebugRutaCalculador
+    name: DebugRutaCalculador
+    type: Class
+  - uid: MareImperium.EdificioClickable
+    name: EdificioClickable
+    type: Class
+  - uid: MareImperium.EdificiosCiudadDAO
+    name: EdificiosCiudadDAO
+    type: Class
+  - uid: MareImperium.EdificiosCiudadDto
+    name: EdificiosCiudadDto
+    type: Class
+  - uid: MareImperium.EncuentroNavalUI
+    name: EncuentroNavalUI
+    type: Class
+  - uid: MareImperium.EntradaMercado
+    name: EntradaMercado
+    type: Class
+  - uid: MareImperium.EstadoFlotaPNJ
+    name: EstadoFlotaPNJ
+    type: Enum
+  - uid: MareImperium.EstadoJuegoDAO
+    name: EstadoJuegoDAO
+    type: Class
+  - uid: MareImperium.EstadoJuegoData
+    name: EstadoJuegoData
+    type: Class
+  - uid: MareImperium.EstadoMercadoCiudadDAO
+    name: EstadoMercadoCiudadDAO
+    type: Class
+  - uid: MareImperium.EstadoMercadoDto
+    name: EstadoMercadoDto
+    type: Class
+  - uid: MareImperium.EstadoPartida
+    name: EstadoPartida
+    type: Class
+  - uid: MareImperium.FlotaDAO
+    name: FlotaDAO
+    type: Class
+  - uid: MareImperium.FlotaDto
+    name: FlotaDto
+    type: Class
+  - uid: MareImperium.FlotaIconoMapamundi
+    name: FlotaIconoMapamundi
+    type: Class
+  - uid: MareImperium.FlotaJugador
+    name: FlotaJugador
+    type: Class
+  - uid: MareImperium.FlotaManager
+    name: FlotaManager
+    type: Class
+  - uid: MareImperium.FlotaRuntimeData
+    name: FlotaRuntimeData
+    type: Class
+  - uid: MareImperium.FlotaSnapshot
+    name: FlotaSnapshot
+    type: Struct
+  - uid: MareImperium.GameManager
+    name: GameManager
+    type: Class
+  - uid: MareImperium.GestorCombatesActivos
+    name: GestorCombatesActivos
+    type: Class
+  - uid: MareImperium.HUDDinero
+    name: HUDDinero
+    type: Class
+  - uid: MareImperium.HUDTiempo
+    name: HUDTiempo
+    type: Class
+  - uid: MareImperium.IBarco
+    name: IBarco
+    type: Interface
+  - uid: MareImperium.LoadManager
+    name: LoadManager
+    type: Class
+  - uid: MareImperium.MapamundiCamara
+    name: MapamundiCamara
+    type: Class
+  - uid: MareImperium.MapamundiController
+    name: MapamundiController
+    type: Class
+  - uid: MareImperium.MarcadorCiudad
+    name: MarcadorCiudad
+    type: Class
+  - uid: MareImperium.MarketManager
+    name: MarketManager
+    type: Class
+  - uid: MareImperium.MarketRowUI
+    name: MarketRowUI
+    type: Class
+  - uid: MareImperium.MemoriaComercialPNJDAO
+    name: MemoriaComercialPNJDAO
+    type: Class
+  - uid: MareImperium.MemoriaComercialPNJDto
+    name: MemoriaComercialPNJDto
+    type: Class
+  - uid: MareImperium.MenuPausa
+    name: MenuPausa
+    type: Class
+  - uid: MareImperium.MenuPrincipalUI
+    name: MenuPrincipalUI
+    type: Class
+  - uid: MareImperium.MercadoUI
+    name: MercadoUI
+    type: Class
+  - uid: MareImperium.ModuloBarcoDAO
+    name: ModuloBarcoDAO
+    type: Class
+  - uid: MareImperium.ModuloBarcoData
+    name: ModuloBarcoData
+    type: Class
+  - uid: MareImperium.ModuloDto
+    name: ModuloDto
+    type: Class
+  - uid: MareImperium.NavegacionJugadorController
+    name: NavegacionJugadorController
+    type: Class
+  - uid: MareImperium.OficinaComercial
+    name: OficinaComercial
+    type: Class
+  - uid: MareImperium.OficinaComercial.OrigenDestino
+    name: OficinaComercial.OrigenDestino
+    type: Enum
+  - uid: MareImperium.PanelAstilleroUI
+    name: PanelAstilleroUI
+    type: Class
+  - uid: MareImperium.PanelFlotaUI
+    name: PanelFlotaUI
+    type: Class
+  - uid: MareImperium.PanelInspeccionFlota
+    name: PanelInspeccionFlota
+    type: Class
+  - uid: MareImperium.PanelTabernaUI
+    name: PanelTabernaUI
+    type: Class
+  - uid: MareImperium.PantallaSlotsUI
+    name: PantallaSlotsUI
+    type: Class
+  - uid: MareImperium.PirataBrain
+    name: PirataBrain
+    type: Class
+  - uid: MareImperium.PirataBrainBootstrapper
+    name: PirataBrainBootstrapper
+    type: Class
+  - uid: MareImperium.PirataPNJController
+    name: PirataPNJController
+    type: Class
+  - uid: MareImperium.PopUpEntradaCiudad
+    name: PopUpEntradaCiudad
+    type: Class
+  - uid: MareImperium.ResultadoCombate
+    name: ResultadoCombate
+    type: Class
+  - uid: MareImperium.ResultadoCombateUI
+    name: ResultadoCombateUI
+    type: Class
+  - uid: MareImperium.ResultadoOperacion
+    name: ResultadoOperacion
+    type: Struct
+  - uid: MareImperium.RutaCalculadorTilemap
+    name: RutaCalculadorTilemap
+    type: Class
+  - uid: MareImperium.SaveManager
+    name: SaveManager
+    type: Class
+  - uid: MareImperium.SceneController
+    name: SceneController
+    type: Class
+  - uid: MareImperium.SeleccionCiudadUI
+    name: SeleccionCiudadUI
+    type: Class
+  - uid: MareImperium.SimulacionTiempo
+    name: SimulacionTiempo
+    type: Class
+  - uid: MareImperium.SlotData
+    name: SlotData
+    type: Class
+  - uid: MareImperium.SlotModo
+    name: SlotModo
+    type: Enum
+  - uid: MareImperium.SlotUI
+    name: SlotUI
+    type: Class
+  - uid: MareImperium.TabernaManager
+    name: TabernaManager
+    type: Class
+  - uid: MareImperium.TabernaUI
+    name: TabernaUI
+    type: Class
+  - uid: MareImperium.TipoCascoData
+    name: TipoCascoData
+    type: Class
+  - uid: MareImperium.TipoEdificio
+    name: TipoEdificio
+    type: Enum
+  - uid: MareImperium.TipoModulo
+    name: TipoModulo
+    type: Enum
+memberLayout: SamePage

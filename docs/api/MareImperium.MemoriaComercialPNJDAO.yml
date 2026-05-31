@@ -1,0 +1,820 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.MemoriaComercialPNJDAO
+  commentId: T:MareImperium.MemoriaComercialPNJDAO
+  id: MemoriaComercialPNJDAO
+  parent: MareImperium
+  children:
+  - MareImperium.MemoriaComercialPNJDAO.#ctor(DatabaseManager)
+  - MareImperium.MemoriaComercialPNJDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  - MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(System.Int32)
+  - MareImperium.MemoriaComercialPNJDAO.GuardarMemoria(System.Int32,System.Int32,System.Int32,System.Double,System.Int32)
+  - MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(System.Int32)
+  - MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido(System.Int32,System.Int32,System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: MemoriaComercialPNJDAO
+  nameWithType: MemoriaComercialPNJDAO
+  fullName: MemoriaComercialPNJDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: MemoriaComercialPNJDAO
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 35
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla MemoriaComercialPNJ. Representa el conocimiento de
+
+    mercado que acumulan los comerciantes PNJ: cada flota recuerda el último precio
+
+    que observó para cada bien, pero ese dato caduca a los 7 días de juego, lo que
+
+    obliga a los PNJ a visitar ciudades con regularidad para mantener información
+
+    comercial fiable.
+  example: []
+  syntax:
+    content: public class MemoriaComercialPNJDAO
+    content.vb: Public Class MemoriaComercialPNJDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.MemoriaComercialPNJDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: MemoriaComercialPNJDAO(DatabaseManager)
+  nameWithType: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO(DatabaseManager)
+  fullName: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 43
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public MemoriaComercialPNJDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.MemoriaComercialPNJDAO.#ctor*
+  nameWithType.vb: MemoriaComercialPNJDAO.New(DatabaseManager)
+  fullName.vb: MemoriaComercialPNJDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.MemoriaComercialPNJDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  id: '#ctor(Mono.Data.Sqlite.SqliteConnection)'
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: MemoriaComercialPNJDAO(SqliteConnection)
+  nameWithType: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO(SqliteConnection)
+  fullName: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO(Mono.Data.Sqlite.SqliteConnection)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 53
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Constructor alternativo para tests de EditMode: recibe la conexión SQLite directamente,
+
+    sin necesitar un MonoBehaviour de Unity. No debe usarse en código de juego.
+  example: []
+  syntax:
+    content: public MemoriaComercialPNJDAO(SqliteConnection conexion)
+    parameters:
+    - id: conexion
+      type: Mono.Data.Sqlite.SqliteConnection
+      description: Conexión SQLite ya abierta (p. ej. una BD en memoria).
+    content.vb: Public Sub New(conexion As SqliteConnection)
+  overload: MareImperium.MemoriaComercialPNJDAO.#ctor*
+  nameWithType.vb: MemoriaComercialPNJDAO.New(SqliteConnection)
+  fullName.vb: MemoriaComercialPNJDAO.New(Mono.Data.Sqlite.SqliteConnection)
+  name.vb: New(SqliteConnection)
+- uid: MareImperium.MemoriaComercialPNJDAO.GuardarMemoria(System.Int32,System.Int32,System.Int32,System.Double,System.Int32)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.GuardarMemoria(System.Int32,System.Int32,System.Int32,System.Double,System.Int32)
+  id: GuardarMemoria(System.Int32,System.Int32,System.Int32,System.Double,System.Int32)
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarMemoria(int, int, int, double, int)
+  nameWithType: MemoriaComercialPNJDAO.GuardarMemoria(int, int, int, double, int)
+  fullName: MemoriaComercialPNJDAO.GuardarMemoria(int, int, int, double, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarMemoria
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 67
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Registra o actualiza el precio que una flota PNJ ha observado para un bien en una ciudad concreta.
+
+    Si ya existía un registro previo para la misma combinación de flota, bien y ciudad, se sobreescribe.
+  example: []
+  syntax:
+    content: public void GuardarMemoria(int idFlota, int idBien, int idCiudad, double precioConocido, int diaJuegoActual)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota que anota el precio. Usar 0 para el snapshot global.
+    - id: idBien
+      type: System.Int32
+      description: Índice del bien en el catálogo de <xref href="GameManager.CatalogoBienes" data-throw-if-not-resolved="false"></xref>.
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad donde se observó el precio.
+    - id: precioConocido
+      type: System.Double
+      description: Precio de mercado observado en la visita.
+    - id: diaJuegoActual
+      type: System.Int32
+      description: Día de juego actual en el momento de la observación.
+    content.vb: Public Sub GuardarMemoria(idFlota As Integer, idBien As Integer, idCiudad As Integer, precioConocido As Double, diaJuegoActual As Integer)
+  overload: MareImperium.MemoriaComercialPNJDAO.GuardarMemoria*
+  nameWithType.vb: MemoriaComercialPNJDAO.GuardarMemoria(Integer, Integer, Integer, Double, Integer)
+  fullName.vb: MemoriaComercialPNJDAO.GuardarMemoria(Integer, Integer, Integer, Double, Integer)
+  name.vb: GuardarMemoria(Integer, Integer, Integer, Double, Integer)
+- uid: MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(System.Int32)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(System.Int32)
+  id: ObtenerMemoriaDeFlota(System.Int32)
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerMemoriaDeFlota(int)
+  nameWithType: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(int)
+  fullName: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerMemoriaDeFlota
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 105
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Devuelve toda la memoria comercial registrada para una flota, sin filtrar
+
+    por antigüedad. Incluye la ciudad donde se observó cada precio.
+
+    Útil para inspeccionar o serializar el estado completo de un PNJ comerciante,
+
+    y para obtener el snapshot global usando <code>idFlota = 0</code>.
+  example: []
+  syntax:
+    content: public List<MemoriaComercialPNJDto> ObtenerMemoriaDeFlota(int idFlota)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota a consultar. Usar 0 para el snapshot global.
+    return:
+      type: System.Collections.Generic.List{MemoriaComercialPNJDto}
+      description: >-
+        Lista de <xref href="MemoriaComercialPNJDto" data-throw-if-not-resolved="false"></xref> con un registro por combinación bien-ciudad conocida.
+
+        Vacía si la flota no tiene memoria guardada o si ocurre un error.
+    content.vb: Public Function ObtenerMemoriaDeFlota(idFlota As Integer) As List(Of MemoriaComercialPNJDto)
+  overload: MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota*
+  nameWithType.vb: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(Integer)
+  fullName.vb: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota(Integer)
+  name.vb: ObtenerMemoriaDeFlota(Integer)
+- uid: MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido(System.Int32,System.Int32,System.Int32)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido(System.Int32,System.Int32,System.Int32)
+  id: ObtenerPrecioConocido(System.Int32,System.Int32,System.Int32)
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerPrecioConocido(int, int, int)
+  nameWithType: MemoriaComercialPNJDAO.ObtenerPrecioConocido(int, int, int)
+  fullName: MemoriaComercialPNJDAO.ObtenerPrecioConocido(int, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerPrecioConocido
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 158
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Consulta el precio que una flota PNJ recuerda para un bien concreto,
+
+    aplicando la regla de los 7 días: si han transcurrido 7 o más días desde
+
+    que se anotó el precio, se considera información obsoleta y se devuelve
+
+    <code>null</code>. Así los PNJ comerciantes actúan con datos de mercado retrasados,
+
+    igual que ocurría en la Liga Hanseática real.
+  example: []
+  syntax:
+    content: public double? ObtenerPrecioConocido(int idFlota, int idBien, int diaActual)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota que consulta su memoria.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien cuyo precio se busca.
+    - id: diaActual
+      type: System.Int32
+      description: Día de juego actual para calcular la antigüedad del dato.
+    return:
+      type: System.Nullable{System.Double}
+      description: >-
+        El precio memorizado si existe y tiene menos de 7 días de antigüedad;
+
+        <code>null</code> si no existe registro o si el dato ha caducado.
+    content.vb: Public Function ObtenerPrecioConocido(idFlota As Integer, idBien As Integer, diaActual As Integer) As Double?
+  overload: MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido*
+  nameWithType.vb: MemoriaComercialPNJDAO.ObtenerPrecioConocido(Integer, Integer, Integer)
+  fullName.vb: MemoriaComercialPNJDAO.ObtenerPrecioConocido(Integer, Integer, Integer)
+  name.vb: ObtenerPrecioConocido(Integer, Integer, Integer)
+- uid: MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(System.Int32)
+  commentId: M:MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(System.Int32)
+  id: EliminarMemoriaDeFlota(System.Int32)
+  parent: MareImperium.MemoriaComercialPNJDAO
+  langs:
+  - csharp
+  - vb
+  name: EliminarMemoriaDeFlota(int)
+  nameWithType: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(int)
+  fullName: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EliminarMemoriaDeFlota
+    path: TFG/Assets/Scripts/Database/MemoriaComercialPNJDAO.cs
+    startLine: 206
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Elimina toda la memoria comercial de una flota. Se llama cuando el PNJ es
+
+    destruido o su flota se disuelve, evitando que queden registros huérfanos
+
+    en la base de datos.
+  example: []
+  syntax:
+    content: public void EliminarMemoriaDeFlota(int idFlota)
+    parameters:
+    - id: idFlota
+      type: System.Int32
+      description: Identificador de la flota cuya memoria se borra por completo.
+    content.vb: Public Sub EliminarMemoriaDeFlota(idFlota As Integer)
+  overload: MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota*
+  nameWithType.vb: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(Integer)
+  fullName.vb: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota(Integer)
+  name.vb: EliminarMemoriaDeFlota(Integer)
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.MemoriaComercialPNJDAO.#ctor*
+  commentId: Overload:MareImperium.MemoriaComercialPNJDAO.#ctor
+  href: MareImperium.MemoriaComercialPNJDAO.html#MemoriaComercialPNJDAO__ctor_DatabaseManager_
+  name: MemoriaComercialPNJDAO
+  nameWithType: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO
+  fullName: MemoriaComercialPNJDAO.MemoriaComercialPNJDAO
+  nameWithType.vb: MemoriaComercialPNJDAO.New
+  fullName.vb: MemoriaComercialPNJDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: Mono.Data.Sqlite.SqliteConnection
+  commentId: T:Mono.Data.Sqlite.SqliteConnection
+  parent: Mono.Data.Sqlite
+  isExternal: true
+  name: SqliteConnection
+  nameWithType: SqliteConnection
+  fullName: Mono.Data.Sqlite.SqliteConnection
+- uid: Mono.Data.Sqlite
+  commentId: N:Mono.Data.Sqlite
+  isExternal: true
+  name: Mono.Data.Sqlite
+  nameWithType: Mono.Data.Sqlite
+  fullName: Mono.Data.Sqlite
+  spec.csharp:
+  - uid: Mono
+    name: Mono
+    isExternal: true
+  - name: .
+  - uid: Mono.Data
+    name: Data
+    isExternal: true
+  - name: .
+  - uid: Mono.Data.Sqlite
+    name: Sqlite
+    isExternal: true
+  spec.vb:
+  - uid: Mono
+    name: Mono
+    isExternal: true
+  - name: .
+  - uid: Mono.Data
+    name: Data
+    isExternal: true
+  - name: .
+  - uid: Mono.Data.Sqlite
+    name: Sqlite
+    isExternal: true
+- uid: GameManager.CatalogoBienes
+  commentId: P:GameManager.CatalogoBienes
+  href: MareImperium.GameManager.html#GameManager_CatalogoBienes
+  name: CatalogoBienes
+  nameWithType: GameManager.CatalogoBienes
+  fullName: GameManager.CatalogoBienes
+- uid: MareImperium.MemoriaComercialPNJDAO.GuardarMemoria*
+  commentId: Overload:MareImperium.MemoriaComercialPNJDAO.GuardarMemoria
+  href: MareImperium.MemoriaComercialPNJDAO.html#MemoriaComercialPNJDAO_GuardarMemoria_System_Int32_System_Int32_System_Int32_System_Double_System_Int32_
+  name: GuardarMemoria
+  nameWithType: MemoriaComercialPNJDAO.GuardarMemoria
+  fullName: MemoriaComercialPNJDAO.GuardarMemoria
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Double
+  commentId: T:System.Double
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double
+  nameWithType: double
+  fullName: double
+  nameWithType.vb: Double
+  fullName.vb: Double
+  name.vb: Double
+- uid: MemoriaComercialPNJDto
+  commentId: T:MemoriaComercialPNJDto
+  href: MemoriaComercialPNJDto.html
+  name: MemoriaComercialPNJDto
+  nameWithType: MemoriaComercialPNJDto
+  fullName: MemoriaComercialPNJDto
+- uid: MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota*
+  commentId: Overload:MareImperium.MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota
+  href: MareImperium.MemoriaComercialPNJDAO.html#MemoriaComercialPNJDAO_ObtenerMemoriaDeFlota_System_Int32_
+  name: ObtenerMemoriaDeFlota
+  nameWithType: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota
+  fullName: MemoriaComercialPNJDAO.ObtenerMemoriaDeFlota
+- uid: System.Collections.Generic.List{MemoriaComercialPNJDto}
+  commentId: T:System.Collections.Generic.List{MemoriaComercialPNJDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<MemoriaComercialPNJDto>
+  nameWithType: List<MemoriaComercialPNJDto>
+  fullName: System.Collections.Generic.List<MemoriaComercialPNJDto>
+  nameWithType.vb: List(Of MemoriaComercialPNJDto)
+  fullName.vb: System.Collections.Generic.List(Of MemoriaComercialPNJDto)
+  name.vb: List(Of MemoriaComercialPNJDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.MemoriaComercialPNJDto
+    name: MemoriaComercialPNJDto
+    href: MemoriaComercialPNJDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.MemoriaComercialPNJDto
+    name: MemoriaComercialPNJDto
+    href: MemoriaComercialPNJDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido*
+  commentId: Overload:MareImperium.MemoriaComercialPNJDAO.ObtenerPrecioConocido
+  href: MareImperium.MemoriaComercialPNJDAO.html#MemoriaComercialPNJDAO_ObtenerPrecioConocido_System_Int32_System_Int32_System_Int32_
+  name: ObtenerPrecioConocido
+  nameWithType: MemoriaComercialPNJDAO.ObtenerPrecioConocido
+  fullName: MemoriaComercialPNJDAO.ObtenerPrecioConocido
+- uid: System.Nullable{System.Double}
+  commentId: T:System.Nullable{System.Double}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.double
+  name: double?
+  nameWithType: double?
+  fullName: double?
+  nameWithType.vb: Double?
+  fullName.vb: Double?
+  name.vb: Double?
+  spec.csharp:
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: '?'
+  spec.vb:
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota*
+  commentId: Overload:MareImperium.MemoriaComercialPNJDAO.EliminarMemoriaDeFlota
+  href: MareImperium.MemoriaComercialPNJDAO.html#MemoriaComercialPNJDAO_EliminarMemoriaDeFlota_System_Int32_
+  name: EliminarMemoriaDeFlota
+  nameWithType: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota
+  fullName: MemoriaComercialPNJDAO.EliminarMemoriaDeFlota

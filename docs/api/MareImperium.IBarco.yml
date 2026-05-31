@@ -1,0 +1,427 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.IBarco
+  commentId: T:MareImperium.IBarco
+  id: IBarco
+  parent: MareImperium
+  children:
+  - MareImperium.IBarco.CapacidadCargaBase
+  - MareImperium.IBarco.CapacidadModulos
+  - MareImperium.IBarco.CapacidadTripulacion
+  - MareImperium.IBarco.CosteOro
+  - MareImperium.IBarco.IdTipoCasco
+  - MareImperium.IBarco.ManiobrabilidadBase
+  - MareImperium.IBarco.NombreCasco
+  - MareImperium.IBarco.VelocidadBase
+  - MareImperium.IBarco.VidaBase
+  langs:
+  - csharp
+  - vb
+  name: IBarco
+  nameWithType: IBarco
+  fullName: IBarco
+  type: Interface
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IBarco
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 5
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Interfaz común del patrón Decorator para cascos de barco (IComponent).
+
+    Tanto <xref href="TipoCascoData" data-throw-if-not-resolved="false"></xref> (componente concreto) como <xref href="CascoDecorador" data-throw-if-not-resolved="false"></xref>
+
+    (decorador abstracto) la implementan, lo que permite tratarlos de forma uniforme.
+  example: []
+  syntax:
+    content: public interface IBarco
+    content.vb: Public Interface IBarco
+  derivedClasses:
+  - MareImperium.CascoCarraca
+  - MareImperium.CascoCog
+  - MareImperium.CascoDecorador
+  - MareImperium.CascoGalera
+  - MareImperium.CascoHulk
+  - MareImperium.TipoCascoData
+- uid: MareImperium.IBarco.IdTipoCasco
+  commentId: P:MareImperium.IBarco.IdTipoCasco
+  id: IdTipoCasco
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: IdTipoCasco
+  nameWithType: IBarco.IdTipoCasco
+  fullName: IBarco.IdTipoCasco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdTipoCasco
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 8
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único del tipo de casco, coincide con <code>id_tipo_casco</code> en la BD.
+  example: []
+  syntax:
+    content: int IdTipoCasco { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property IdTipoCasco As Integer
+  overload: MareImperium.IBarco.IdTipoCasco*
+- uid: MareImperium.IBarco.NombreCasco
+  commentId: P:MareImperium.IBarco.NombreCasco
+  id: NombreCasco
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: NombreCasco
+  nameWithType: IBarco.NombreCasco
+  fullName: IBarco.NombreCasco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NombreCasco
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 11
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre del tipo de casco mostrado en el astillero (p. ej. "Cog", "Galera").
+  example: []
+  syntax:
+    content: string NombreCasco { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property NombreCasco As String
+  overload: MareImperium.IBarco.NombreCasco*
+- uid: MareImperium.IBarco.VidaBase
+  commentId: P:MareImperium.IBarco.VidaBase
+  id: VidaBase
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: VidaBase
+  nameWithType: IBarco.VidaBase
+  fullName: IBarco.VidaBase
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaBase
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 14
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Puntos de vida base antes de aplicar módulos.
+  example: []
+  syntax:
+    content: int VidaBase { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property VidaBase As Integer
+  overload: MareImperium.IBarco.VidaBase*
+- uid: MareImperium.IBarco.VelocidadBase
+  commentId: P:MareImperium.IBarco.VelocidadBase
+  id: VelocidadBase
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: VelocidadBase
+  nameWithType: IBarco.VelocidadBase
+  fullName: IBarco.VelocidadBase
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VelocidadBase
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 17
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Velocidad de navegación base antes de aplicar módulos.
+  example: []
+  syntax:
+    content: int VelocidadBase { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property VelocidadBase As Integer
+  overload: MareImperium.IBarco.VelocidadBase*
+- uid: MareImperium.IBarco.ManiobrabilidadBase
+  commentId: P:MareImperium.IBarco.ManiobrabilidadBase
+  id: ManiobrabilidadBase
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: ManiobrabilidadBase
+  nameWithType: IBarco.ManiobrabilidadBase
+  fullName: IBarco.ManiobrabilidadBase
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ManiobrabilidadBase
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 20
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Maniobrabilidad base antes de aplicar módulos.
+  example: []
+  syntax:
+    content: int ManiobrabilidadBase { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property ManiobrabilidadBase As Integer
+  overload: MareImperium.IBarco.ManiobrabilidadBase*
+- uid: MareImperium.IBarco.CapacidadCargaBase
+  commentId: P:MareImperium.IBarco.CapacidadCargaBase
+  id: CapacidadCargaBase
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: CapacidadCargaBase
+  nameWithType: IBarco.CapacidadCargaBase
+  fullName: IBarco.CapacidadCargaBase
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapacidadCargaBase
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 23
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Capacidad de carga máxima base antes de aplicar módulos.
+  example: []
+  syntax:
+    content: int CapacidadCargaBase { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property CapacidadCargaBase As Integer
+  overload: MareImperium.IBarco.CapacidadCargaBase*
+- uid: MareImperium.IBarco.CapacidadModulos
+  commentId: P:MareImperium.IBarco.CapacidadModulos
+  id: CapacidadModulos
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: CapacidadModulos
+  nameWithType: IBarco.CapacidadModulos
+  fullName: IBarco.CapacidadModulos
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapacidadModulos
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 26
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número de slots disponibles para instalar módulos en este casco.
+  example: []
+  syntax:
+    content: int CapacidadModulos { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property CapacidadModulos As Integer
+  overload: MareImperium.IBarco.CapacidadModulos*
+- uid: MareImperium.IBarco.CapacidadTripulacion
+  commentId: P:MareImperium.IBarco.CapacidadTripulacion
+  id: CapacidadTripulacion
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: CapacidadTripulacion
+  nameWithType: IBarco.CapacidadTripulacion
+  fullName: IBarco.CapacidadTripulacion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapacidadTripulacion
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número máximo de tripulantes que puede embarcar este tipo de casco.
+  example: []
+  syntax:
+    content: int CapacidadTripulacion { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property CapacidadTripulacion As Integer
+  overload: MareImperium.IBarco.CapacidadTripulacion*
+- uid: MareImperium.IBarco.CosteOro
+  commentId: P:MareImperium.IBarco.CosteOro
+  id: CosteOro
+  parent: MareImperium.IBarco
+  langs:
+  - csharp
+  - vb
+  name: CosteOro
+  nameWithType: IBarco.CosteOro
+  fullName: IBarco.CosteOro
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/IBarco.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CosteOro
+    path: TFG/Assets/Scripts/Astillero/IBarco.cs
+    startLine: 32
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Precio base en oro que cobra el astillero por la mano de obra de construcción.
+  example: []
+  syntax:
+    content: int CosteOro { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property CosteOro As Integer
+  overload: MareImperium.IBarco.CosteOro*
+references:
+- uid: TipoCascoData
+  commentId: T:TipoCascoData
+  href: TipoCascoData.html
+  name: TipoCascoData
+  nameWithType: TipoCascoData
+  fullName: TipoCascoData
+- uid: CascoDecorador
+  commentId: T:CascoDecorador
+  href: CascoDecorador.html
+  name: CascoDecorador
+  nameWithType: CascoDecorador
+  fullName: CascoDecorador
+- uid: MareImperium
+- uid: MareImperium.IBarco.IdTipoCasco*
+  commentId: Overload:MareImperium.IBarco.IdTipoCasco
+  href: MareImperium.IBarco.html#IBarco_IdTipoCasco
+  name: IdTipoCasco
+  nameWithType: IBarco.IdTipoCasco
+  fullName: IBarco.IdTipoCasco
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.IBarco.NombreCasco*
+  commentId: Overload:MareImperium.IBarco.NombreCasco
+  href: MareImperium.IBarco.html#IBarco_NombreCasco
+  name: NombreCasco
+  nameWithType: IBarco.NombreCasco
+  fullName: IBarco.NombreCasco
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.IBarco.VidaBase*
+  commentId: Overload:MareImperium.IBarco.VidaBase
+  href: MareImperium.IBarco.html#IBarco_VidaBase
+  name: VidaBase
+  nameWithType: IBarco.VidaBase
+  fullName: IBarco.VidaBase
+- uid: MareImperium.IBarco.VelocidadBase*
+  commentId: Overload:MareImperium.IBarco.VelocidadBase
+  href: MareImperium.IBarco.html#IBarco_VelocidadBase
+  name: VelocidadBase
+  nameWithType: IBarco.VelocidadBase
+  fullName: IBarco.VelocidadBase
+- uid: MareImperium.IBarco.ManiobrabilidadBase*
+  commentId: Overload:MareImperium.IBarco.ManiobrabilidadBase
+  href: MareImperium.IBarco.html#IBarco_ManiobrabilidadBase
+  name: ManiobrabilidadBase
+  nameWithType: IBarco.ManiobrabilidadBase
+  fullName: IBarco.ManiobrabilidadBase
+- uid: MareImperium.IBarco.CapacidadCargaBase*
+  commentId: Overload:MareImperium.IBarco.CapacidadCargaBase
+  href: MareImperium.IBarco.html#IBarco_CapacidadCargaBase
+  name: CapacidadCargaBase
+  nameWithType: IBarco.CapacidadCargaBase
+  fullName: IBarco.CapacidadCargaBase
+- uid: MareImperium.IBarco.CapacidadModulos*
+  commentId: Overload:MareImperium.IBarco.CapacidadModulos
+  href: MareImperium.IBarco.html#IBarco_CapacidadModulos
+  name: CapacidadModulos
+  nameWithType: IBarco.CapacidadModulos
+  fullName: IBarco.CapacidadModulos
+- uid: MareImperium.IBarco.CapacidadTripulacion*
+  commentId: Overload:MareImperium.IBarco.CapacidadTripulacion
+  href: MareImperium.IBarco.html#IBarco_CapacidadTripulacion
+  name: CapacidadTripulacion
+  nameWithType: IBarco.CapacidadTripulacion
+  fullName: IBarco.CapacidadTripulacion
+- uid: MareImperium.IBarco.CosteOro*
+  commentId: Overload:MareImperium.IBarco.CosteOro
+  href: MareImperium.IBarco.html#IBarco_CosteOro
+  name: CosteOro
+  nameWithType: IBarco.CosteOro
+  fullName: IBarco.CosteOro

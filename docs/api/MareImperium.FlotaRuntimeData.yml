@@ -1,0 +1,1788 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.FlotaRuntimeData
+  commentId: T:MareImperium.FlotaRuntimeData
+  id: FlotaRuntimeData
+  parent: MareImperium
+  children:
+  - MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String)
+  - MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String,System.Boolean)
+  - MareImperium.FlotaRuntimeData.AplicarDanio(System.Single)
+  - MareImperium.FlotaRuntimeData.BarcosFlota
+  - MareImperium.FlotaRuntimeData.Carga
+  - MareImperium.FlotaRuntimeData.CargaMaximaTotal
+  - MareImperium.FlotaRuntimeData.CasillaDestino
+  - MareImperium.FlotaRuntimeData.CiudadDestinoId
+  - MareImperium.FlotaRuntimeData.CiudadOrigenId
+  - MareImperium.FlotaRuntimeData.EstaDestruida
+  - MareImperium.FlotaRuntimeData.EstadoActual
+  - MareImperium.FlotaRuntimeData.FuerzaCanhones
+  - MareImperium.FlotaRuntimeData.HabilidadCapitan
+  - MareImperium.FlotaRuntimeData.Id
+  - MareImperium.FlotaRuntimeData.IndiceWaypointActual
+  - MareImperium.FlotaRuntimeData.InteligenciaComercial
+  - MareImperium.FlotaRuntimeData.IsPirata
+  - MareImperium.FlotaRuntimeData.ManiobrabilidadFlota
+  - MareImperium.FlotaRuntimeData.NombrePropietario
+  - MareImperium.FlotaRuntimeData.NumBarcos
+  - MareImperium.FlotaRuntimeData.PosicionActual
+  - MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento
+  - MareImperium.FlotaRuntimeData.RutaActual
+  - MareImperium.FlotaRuntimeData.RutaActualTilemap
+  - MareImperium.FlotaRuntimeData.TieneCarga
+  - MareImperium.FlotaRuntimeData.Tripulacion
+  - MareImperium.FlotaRuntimeData.VelocidadFlota
+  - MareImperium.FlotaRuntimeData.VidaActual
+  - MareImperium.FlotaRuntimeData.VidaMax
+  langs:
+  - csharp
+  - vb
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FlotaRuntimeData
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 8
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Datos de runtime de una flota PNJ (comerciante o pirata).
+
+    POCO puro (no MonoBehaviour): vive en <xref href="EstadoPartida.FlotasPorId" data-throw-if-not-resolved="false"></xref>
+
+    y es gestionado por <xref href="FlotaManager" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public class FlotaRuntimeData
+    content.vb: Public Class FlotaRuntimeData
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.FlotaRuntimeData.IsPirata
+  commentId: P:MareImperium.FlotaRuntimeData.IsPirata
+  id: IsPirata
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: IsPirata
+  nameWithType: FlotaRuntimeData.IsPirata
+  fullName: FlotaRuntimeData.IsPirata
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IsPirata
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 25
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Indica si esta flota es pirata. Los piratas atacan a comerciantes al cruzarse.
+  example: []
+  syntax:
+    content: public bool IsPirata { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property IsPirata As Boolean
+  overload: MareImperium.FlotaRuntimeData.IsPirata*
+- uid: MareImperium.FlotaRuntimeData.VidaMax
+  commentId: P:MareImperium.FlotaRuntimeData.VidaMax
+  id: VidaMax
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: VidaMax
+  nameWithType: FlotaRuntimeData.VidaMax
+  fullName: FlotaRuntimeData.VidaMax
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaMax
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 28
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Puntos de vida máximos de la flota, proporcionales al número inicial de barcos.
+  example: []
+  syntax:
+    content: public float VidaMax { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property VidaMax As Single
+  overload: MareImperium.FlotaRuntimeData.VidaMax*
+- uid: MareImperium.FlotaRuntimeData.VidaActual
+  commentId: P:MareImperium.FlotaRuntimeData.VidaActual
+  id: VidaActual
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: VidaActual
+  nameWithType: FlotaRuntimeData.VidaActual
+  fullName: FlotaRuntimeData.VidaActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaActual
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 35
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Puntos de vida actuales de la flota. Se reduce al recibir daño en combate.
+  example: []
+  syntax:
+    content: public float VidaActual { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property VidaActual As Single
+  overload: MareImperium.FlotaRuntimeData.VidaActual*
+- uid: MareImperium.FlotaRuntimeData.FuerzaCanhones
+  commentId: P:MareImperium.FlotaRuntimeData.FuerzaCanhones
+  id: FuerzaCanhones
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: FuerzaCanhones
+  nameWithType: FlotaRuntimeData.FuerzaCanhones
+  fullName: FlotaRuntimeData.FuerzaCanhones
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FuerzaCanhones
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 42
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Potencia de fuego combinada de todos los barcos de la flota.
+  example: []
+  syntax:
+    content: public float FuerzaCanhones { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property FuerzaCanhones As Single
+  overload: MareImperium.FlotaRuntimeData.FuerzaCanhones*
+- uid: MareImperium.FlotaRuntimeData.VelocidadFlota
+  commentId: P:MareImperium.FlotaRuntimeData.VelocidadFlota
+  id: VelocidadFlota
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: VelocidadFlota
+  nameWithType: FlotaRuntimeData.VelocidadFlota
+  fullName: FlotaRuntimeData.VelocidadFlota
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VelocidadFlota
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 49
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Velocidad de navegación de la flota, usada para resolver intentos de huida.
+  example: []
+  syntax:
+    content: public float VelocidadFlota { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property VelocidadFlota As Single
+  overload: MareImperium.FlotaRuntimeData.VelocidadFlota*
+- uid: MareImperium.FlotaRuntimeData.ManiobrabilidadFlota
+  commentId: P:MareImperium.FlotaRuntimeData.ManiobrabilidadFlota
+  id: ManiobrabilidadFlota
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: ManiobrabilidadFlota
+  nameWithType: FlotaRuntimeData.ManiobrabilidadFlota
+  fullName: FlotaRuntimeData.ManiobrabilidadFlota
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ManiobrabilidadFlota
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 56
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Maniobrabilidad de la flota, influye en capturas de barco y maniobras evasivas.
+  example: []
+  syntax:
+    content: public float ManiobrabilidadFlota { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property ManiobrabilidadFlota As Single
+  overload: MareImperium.FlotaRuntimeData.ManiobrabilidadFlota*
+- uid: MareImperium.FlotaRuntimeData.HabilidadCapitan
+  commentId: P:MareImperium.FlotaRuntimeData.HabilidadCapitan
+  id: HabilidadCapitan
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: HabilidadCapitan
+  nameWithType: FlotaRuntimeData.HabilidadCapitan
+  fullName: FlotaRuntimeData.HabilidadCapitan
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: HabilidadCapitan
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 63
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Habilidad táctica del capitán. Coincide con <xref href="FlotaRuntimeData.InteligenciaComercial" data-throw-if-not-resolved="false"></xref> al crear la flota.
+  example: []
+  syntax:
+    content: public float HabilidadCapitan { get; set; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public Property HabilidadCapitan As Single
+  overload: MareImperium.FlotaRuntimeData.HabilidadCapitan*
+- uid: MareImperium.FlotaRuntimeData.NumBarcos
+  commentId: P:MareImperium.FlotaRuntimeData.NumBarcos
+  id: NumBarcos
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: NumBarcos
+  nameWithType: FlotaRuntimeData.NumBarcos
+  fullName: FlotaRuntimeData.NumBarcos
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NumBarcos
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 70
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número de barcos operativos en la flota. Se reduce con bajas en combate.
+  example: []
+  syntax:
+    content: public int NumBarcos { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property NumBarcos As Integer
+  overload: MareImperium.FlotaRuntimeData.NumBarcos*
+- uid: MareImperium.FlotaRuntimeData.Tripulacion
+  commentId: P:MareImperium.FlotaRuntimeData.Tripulacion
+  id: Tripulacion
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: Tripulacion
+  nameWithType: FlotaRuntimeData.Tripulacion
+  fullName: FlotaRuntimeData.Tripulacion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Tripulacion
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 77
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Tripulantes activos. Influyen en la fuerza de combate cuerpo a cuerpo.
+  example: []
+  syntax:
+    content: public int Tripulacion { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Tripulacion As Integer
+  overload: MareImperium.FlotaRuntimeData.Tripulacion*
+- uid: MareImperium.FlotaRuntimeData.Id
+  commentId: P:MareImperium.FlotaRuntimeData.Id
+  id: Id
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: Id
+  nameWithType: FlotaRuntimeData.Id
+  fullName: FlotaRuntimeData.Id
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Id
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 83
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único de la flota. Coincide con el <code>id_flota</code> de la base de datos.
+  example: []
+  syntax:
+    content: public int Id { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property Id As Integer
+  overload: MareImperium.FlotaRuntimeData.Id*
+- uid: MareImperium.FlotaRuntimeData.NombrePropietario
+  commentId: P:MareImperium.FlotaRuntimeData.NombrePropietario
+  id: NombrePropietario
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: NombrePropietario
+  nameWithType: FlotaRuntimeData.NombrePropietario
+  fullName: FlotaRuntimeData.NombrePropietario
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NombrePropietario
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 86
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre del comerciante propietario de la flota.
+  example: []
+  syntax:
+    content: public string NombrePropietario { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property NombrePropietario As String
+  overload: MareImperium.FlotaRuntimeData.NombrePropietario*
+- uid: MareImperium.FlotaRuntimeData.InteligenciaComercial
+  commentId: P:MareImperium.FlotaRuntimeData.InteligenciaComercial
+  id: InteligenciaComercial
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: InteligenciaComercial
+  nameWithType: FlotaRuntimeData.InteligenciaComercial
+  fullName: FlotaRuntimeData.InteligenciaComercial
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InteligenciaComercial
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 94
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Nivel de inteligencia comercial del comerciante, entre 0 y 1.
+
+    Determina la precisión con la que estima los precios de mercado en ciudades no visitadas.
+
+    Un valor de 1 implica estimaciones casi exactas; 0 implica error máximo del 40%.
+
+    Se asigna aleatoriamente al crear la flota y no cambia durante la partida.
+  example: []
+  syntax:
+    content: public float InteligenciaComercial { get; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public ReadOnly Property InteligenciaComercial As Single
+  overload: MareImperium.FlotaRuntimeData.InteligenciaComercial*
+- uid: MareImperium.FlotaRuntimeData.CiudadOrigenId
+  commentId: P:MareImperium.FlotaRuntimeData.CiudadOrigenId
+  id: CiudadOrigenId
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: CiudadOrigenId
+  nameWithType: FlotaRuntimeData.CiudadOrigenId
+  fullName: FlotaRuntimeData.CiudadOrigenId
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CiudadOrigenId
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 97
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador de la ciudad donde la flota inició su ruta actual.
+  example: []
+  syntax:
+    content: public int CiudadOrigenId { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CiudadOrigenId As Integer
+  overload: MareImperium.FlotaRuntimeData.CiudadOrigenId*
+- uid: MareImperium.FlotaRuntimeData.CiudadDestinoId
+  commentId: P:MareImperium.FlotaRuntimeData.CiudadDestinoId
+  id: CiudadDestinoId
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: CiudadDestinoId
+  nameWithType: FlotaRuntimeData.CiudadDestinoId
+  fullName: FlotaRuntimeData.CiudadDestinoId
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CiudadDestinoId
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 103
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Identificador de la ciudad a la que se dirige la flota.
+
+    Vale <code>-1</code> si la flota no tiene destino asignado todavía.
+  example: []
+  syntax:
+    content: public int CiudadDestinoId { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CiudadDestinoId As Integer
+  overload: MareImperium.FlotaRuntimeData.CiudadDestinoId*
+- uid: MareImperium.FlotaRuntimeData.EstadoActual
+  commentId: P:MareImperium.FlotaRuntimeData.EstadoActual
+  id: EstadoActual
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: EstadoActual
+  nameWithType: FlotaRuntimeData.EstadoActual
+  fullName: FlotaRuntimeData.EstadoActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstadoActual
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 106
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Estado actual dentro de la máquina de estados de comportamiento PNJ.
+  example: []
+  syntax:
+    content: public EstadoFlotaPNJ EstadoActual { get; set; }
+    parameters: []
+    return:
+      type: MareImperium.EstadoFlotaPNJ
+    content.vb: Public Property EstadoActual As EstadoFlotaPNJ
+  overload: MareImperium.FlotaRuntimeData.EstadoActual*
+- uid: MareImperium.FlotaRuntimeData.RutaActual
+  commentId: P:MareImperium.FlotaRuntimeData.RutaActual
+  id: RutaActual
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: RutaActual
+  nameWithType: FlotaRuntimeData.RutaActual
+  fullName: FlotaRuntimeData.RutaActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: RutaActual
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 112
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Secuencia de identificadores de ciudad que componen la ruta activa.
+
+    El primer elemento es el siguiente waypoint; el último, el destino final.
+  example: []
+  syntax:
+    content: public List<int> RutaActual { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.List{System.Int32}
+    content.vb: Public Property RutaActual As List(Of Integer)
+  overload: MareImperium.FlotaRuntimeData.RutaActual*
+- uid: MareImperium.FlotaRuntimeData.Carga
+  commentId: P:MareImperium.FlotaRuntimeData.Carga
+  id: Carga
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: Carga
+  nameWithType: FlotaRuntimeData.Carga
+  fullName: FlotaRuntimeData.Carga
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Carga
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 119
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inventario de la bodega de la flota.
+
+    Clave: identificador del bien (coincide con <code>id_bien</code> del catálogo).
+
+    Valor: unidades cargadas.
+  example: []
+  syntax:
+    content: public Dictionary<int, int> Carga { get; set; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+    content.vb: Public Property Carga As Dictionary(Of Integer, Integer)
+  overload: MareImperium.FlotaRuntimeData.Carga*
+- uid: MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String)
+  commentId: M:MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String)
+  id: '#ctor(System.Int32,System.String)'
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: FlotaRuntimeData(int, string)
+  nameWithType: FlotaRuntimeData.FlotaRuntimeData(int, string)
+  fullName: FlotaRuntimeData.FlotaRuntimeData(int, string)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 128
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inicializa una flota PNJ con su identificador y propietario.
+
+    El resto de campos quedan en sus valores por defecto:
+
+    destino <code>-1</code>, estado <xref href="EstadoFlotaPNJ.EnPuerto" data-throw-if-not-resolved="false"></xref> y colecciones vacías.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData(int id, string nombrePropietario)
+    parameters:
+    - id: id
+      type: System.Int32
+      description: Identificador único de la flota.
+    - id: nombrePropietario
+      type: System.String
+      description: Nombre del comerciante propietario.
+    content.vb: Public Sub New(id As Integer, nombrePropietario As String)
+  overload: MareImperium.FlotaRuntimeData.#ctor*
+  nameWithType.vb: FlotaRuntimeData.New(Integer, String)
+  fullName.vb: FlotaRuntimeData.New(Integer, String)
+  name.vb: New(Integer, String)
+- uid: MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String,System.Boolean)
+  commentId: M:MareImperium.FlotaRuntimeData.#ctor(System.Int32,System.String,System.Boolean)
+  id: '#ctor(System.Int32,System.String,System.Boolean)'
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: FlotaRuntimeData(int, string, bool)
+  nameWithType: FlotaRuntimeData.FlotaRuntimeData(int, string, bool)
+  fullName: FlotaRuntimeData.FlotaRuntimeData(int, string, bool)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 156
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Constructor para flotas pirata. Sobreescribe las estadísticas de combate con valores hostiles.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData(int id, string nombrePropietario, bool esPirata)
+    parameters:
+    - id: id
+      type: System.Int32
+      description: Identificador único de la flota.
+    - id: nombrePropietario
+      type: System.String
+      description: Nombre del capitán pirata.
+    - id: esPirata
+      type: System.Boolean
+      description: Debe ser <code>true</code> para activar los stats piratas.
+    content.vb: Public Sub New(id As Integer, nombrePropietario As String, esPirata As Boolean)
+  overload: MareImperium.FlotaRuntimeData.#ctor*
+  nameWithType.vb: FlotaRuntimeData.New(Integer, String, Boolean)
+  fullName.vb: FlotaRuntimeData.New(Integer, String, Boolean)
+  name.vb: New(Integer, String, Boolean)
+- uid: MareImperium.FlotaRuntimeData.PosicionActual
+  commentId: F:MareImperium.FlotaRuntimeData.PosicionActual
+  id: PosicionActual
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: PosicionActual
+  nameWithType: FlotaRuntimeData.PosicionActual
+  fullName: FlotaRuntimeData.PosicionActual
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: PosicionActual
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 173
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Posición actual de la flota en coordenadas de mundo del mapamundi.
+  example: []
+  syntax:
+    content: public Vector2 PosicionActual
+    return:
+      type: UnityEngine.Vector2
+    content.vb: Public PosicionActual As Vector2
+- uid: MareImperium.FlotaRuntimeData.CasillaDestino
+  commentId: F:MareImperium.FlotaRuntimeData.CasillaDestino
+  id: CasillaDestino
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: CasillaDestino
+  nameWithType: FlotaRuntimeData.CasillaDestino
+  fullName: FlotaRuntimeData.CasillaDestino
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CasillaDestino
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 176
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Casilla de destino en coordenadas offset del Tilemap.
+  example: []
+  syntax:
+    content: public Vector3Int CasillaDestino
+    return:
+      type: UnityEngine.Vector3Int
+    content.vb: Public CasillaDestino As Vector3Int
+- uid: MareImperium.FlotaRuntimeData.RutaActualTilemap
+  commentId: F:MareImperium.FlotaRuntimeData.RutaActualTilemap
+  id: RutaActualTilemap
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: RutaActualTilemap
+  nameWithType: FlotaRuntimeData.RutaActualTilemap
+  fullName: FlotaRuntimeData.RutaActualTilemap
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: RutaActualTilemap
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 179
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Secuencia de casillas offset que componen la ruta en el mapamundi. Se recalcula al cargar.
+  example: []
+  syntax:
+    content: >-
+      [NonSerialized]
+
+      public List<Vector3Int> RutaActualTilemap
+    return:
+      type: System.Collections.Generic.List{UnityEngine.Vector3Int}
+    content.vb: >-
+      <NonSerialized>
+
+      Public RutaActualTilemap As List(Of Vector3Int)
+  attributes:
+  - type: System.NonSerializedAttribute
+    ctor: System.NonSerializedAttribute.#ctor
+    arguments: []
+- uid: MareImperium.FlotaRuntimeData.IndiceWaypointActual
+  commentId: F:MareImperium.FlotaRuntimeData.IndiceWaypointActual
+  id: IndiceWaypointActual
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: IndiceWaypointActual
+  nameWithType: FlotaRuntimeData.IndiceWaypointActual
+  fullName: FlotaRuntimeData.IndiceWaypointActual
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IndiceWaypointActual
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 182
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Índice del siguiente waypoint dentro de <xref href="FlotaRuntimeData.RutaActual" data-throw-if-not-resolved="false"></xref>. Se recalcula al cargar.
+  example: []
+  syntax:
+    content: >-
+      [NonSerialized]
+
+      public int IndiceWaypointActual
+    return:
+      type: System.Int32
+    content.vb: >-
+      <NonSerialized>
+
+      Public IndiceWaypointActual As Integer
+  attributes:
+  - type: System.NonSerializedAttribute
+    ctor: System.NonSerializedAttribute.#ctor
+    arguments: []
+- uid: MareImperium.FlotaRuntimeData.BarcosFlota
+  commentId: F:MareImperium.FlotaRuntimeData.BarcosFlota
+  id: BarcosFlota
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: BarcosFlota
+  nameWithType: FlotaRuntimeData.BarcosFlota
+  fullName: FlotaRuntimeData.BarcosFlota
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: BarcosFlota
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 183
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  syntax:
+    content: >-
+      [NonSerialized]
+
+      public List<BarcoJugador> BarcosFlota
+    return:
+      type: System.Collections.Generic.List{BarcoJugador}
+    content.vb: >-
+      <NonSerialized>
+
+      Public BarcosFlota As List(Of BarcoJugador)
+  attributes:
+  - type: System.NonSerializedAttribute
+    ctor: System.NonSerializedAttribute.#ctor
+    arguments: []
+- uid: MareImperium.FlotaRuntimeData.CargaMaximaTotal
+  commentId: P:MareImperium.FlotaRuntimeData.CargaMaximaTotal
+  id: CargaMaximaTotal
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: CargaMaximaTotal
+  nameWithType: FlotaRuntimeData.CargaMaximaTotal
+  fullName: FlotaRuntimeData.CargaMaximaTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargaMaximaTotal
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 190
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Capacidad máxima de carga de toda la flota: suma de <xref href="BarcoJugador.CargaMaximaTotal" data-throw-if-not-resolved="false"></xref>
+
+    de cada barco en <xref href="FlotaRuntimeData.BarcosFlota" data-throw-if-not-resolved="false"></xref>. Si la lista no tiene datos individuales,
+
+    devuelve una estimación de <xref href="FlotaRuntimeData.NumBarcos" data-throw-if-not-resolved="false"></xref> × 50 (bodega base de un Cog).
+  example: []
+  syntax:
+    content: public int CargaMaximaTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property CargaMaximaTotal As Integer
+  overload: MareImperium.FlotaRuntimeData.CargaMaximaTotal*
+- uid: MareImperium.FlotaRuntimeData.AplicarDanio(System.Single)
+  commentId: M:MareImperium.FlotaRuntimeData.AplicarDanio(System.Single)
+  id: AplicarDanio(System.Single)
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: AplicarDanio(float)
+  nameWithType: FlotaRuntimeData.AplicarDanio(float)
+  fullName: FlotaRuntimeData.AplicarDanio(float)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: AplicarDanio
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 211
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Reduce la vida de la flota en la cantidad indicada, sin bajar de cero.
+  example: []
+  syntax:
+    content: public bool AplicarDanio(float cantidad)
+    parameters:
+    - id: cantidad
+      type: System.Single
+      description: Puntos de daño a aplicar.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si la flota queda destruida (vida llega a 0).
+    content.vb: Public Function AplicarDanio(cantidad As Single) As Boolean
+  overload: MareImperium.FlotaRuntimeData.AplicarDanio*
+  nameWithType.vb: FlotaRuntimeData.AplicarDanio(Single)
+  fullName.vb: FlotaRuntimeData.AplicarDanio(Single)
+  name.vb: AplicarDanio(Single)
+- uid: MareImperium.FlotaRuntimeData.EstaDestruida
+  commentId: M:MareImperium.FlotaRuntimeData.EstaDestruida
+  id: EstaDestruida
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: EstaDestruida()
+  nameWithType: FlotaRuntimeData.EstaDestruida()
+  fullName: FlotaRuntimeData.EstaDestruida()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstaDestruida
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 221
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Indica si la flota ha sido destruida por completo (sin barcos operativos).
+  example: []
+  syntax:
+    content: public bool EstaDestruida()
+    return:
+      type: System.Boolean
+      description: <code>true</code> si <xref href="FlotaRuntimeData.NumBarcos" data-throw-if-not-resolved="false"></xref> es cero o negativo.
+    content.vb: Public Function EstaDestruida() As Boolean
+  overload: MareImperium.FlotaRuntimeData.EstaDestruida*
+- uid: MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento
+  commentId: M:MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento
+  id: ResetearParaReabastecimiento
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: ResetearParaReabastecimiento()
+  nameWithType: FlotaRuntimeData.ResetearParaReabastecimiento()
+  fullName: FlotaRuntimeData.ResetearParaReabastecimiento()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ResetearParaReabastecimiento
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 227
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Restaura la flota a su estado inicial de combate: vida máxima, tripulación y barcos completos,
+
+    y bodega vaciada. Se llama semanalmente en piratas como ciclo de reabastecimiento.
+  example: []
+  syntax:
+    content: public void ResetearParaReabastecimiento()
+    content.vb: Public Sub ResetearParaReabastecimiento()
+  overload: MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento*
+- uid: MareImperium.FlotaRuntimeData.TieneCarga
+  commentId: M:MareImperium.FlotaRuntimeData.TieneCarga
+  id: TieneCarga
+  parent: MareImperium.FlotaRuntimeData
+  langs:
+  - csharp
+  - vb
+  name: TieneCarga()
+  nameWithType: FlotaRuntimeData.TieneCarga()
+  fullName: FlotaRuntimeData.TieneCarga()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TieneCarga
+    path: TFG/Assets/Scripts/PNJ/FlotaRuntimeData.cs
+    startLine: 240
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Indica si la bodega de la flota contiene al menos un bien con cantidad mayor que cero.
+  example: []
+  syntax:
+    content: public bool TieneCarga()
+    return:
+      type: System.Boolean
+      description: <code>true</code> si hay mercancía cargada; <code>false</code> si la bodega está vacía.
+    content.vb: Public Function TieneCarga() As Boolean
+  overload: MareImperium.FlotaRuntimeData.TieneCarga*
+references:
+- uid: EstadoPartida.FlotasPorId
+  commentId: F:EstadoPartida.FlotasPorId
+  href: MareImperium.EstadoPartida.html#EstadoPartida_FlotasPorId
+  name: FlotasPorId
+  nameWithType: EstadoPartida.FlotasPorId
+  fullName: EstadoPartida.FlotasPorId
+- uid: FlotaManager
+  commentId: T:FlotaManager
+  href: FlotaManager.html
+  name: FlotaManager
+  nameWithType: FlotaManager
+  fullName: FlotaManager
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.FlotaRuntimeData.IsPirata*
+  commentId: Overload:MareImperium.FlotaRuntimeData.IsPirata
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_IsPirata
+  name: IsPirata
+  nameWithType: FlotaRuntimeData.IsPirata
+  fullName: FlotaRuntimeData.IsPirata
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: MareImperium.FlotaRuntimeData.VidaMax*
+  commentId: Overload:MareImperium.FlotaRuntimeData.VidaMax
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_VidaMax
+  name: VidaMax
+  nameWithType: FlotaRuntimeData.VidaMax
+  fullName: FlotaRuntimeData.VidaMax
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
+- uid: MareImperium.FlotaRuntimeData.VidaActual*
+  commentId: Overload:MareImperium.FlotaRuntimeData.VidaActual
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_VidaActual
+  name: VidaActual
+  nameWithType: FlotaRuntimeData.VidaActual
+  fullName: FlotaRuntimeData.VidaActual
+- uid: MareImperium.FlotaRuntimeData.FuerzaCanhones*
+  commentId: Overload:MareImperium.FlotaRuntimeData.FuerzaCanhones
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_FuerzaCanhones
+  name: FuerzaCanhones
+  nameWithType: FlotaRuntimeData.FuerzaCanhones
+  fullName: FlotaRuntimeData.FuerzaCanhones
+- uid: MareImperium.FlotaRuntimeData.VelocidadFlota*
+  commentId: Overload:MareImperium.FlotaRuntimeData.VelocidadFlota
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_VelocidadFlota
+  name: VelocidadFlota
+  nameWithType: FlotaRuntimeData.VelocidadFlota
+  fullName: FlotaRuntimeData.VelocidadFlota
+- uid: MareImperium.FlotaRuntimeData.ManiobrabilidadFlota*
+  commentId: Overload:MareImperium.FlotaRuntimeData.ManiobrabilidadFlota
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_ManiobrabilidadFlota
+  name: ManiobrabilidadFlota
+  nameWithType: FlotaRuntimeData.ManiobrabilidadFlota
+  fullName: FlotaRuntimeData.ManiobrabilidadFlota
+- uid: FlotaRuntimeData.InteligenciaComercial
+  commentId: P:FlotaRuntimeData.InteligenciaComercial
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_InteligenciaComercial
+  name: InteligenciaComercial
+  nameWithType: FlotaRuntimeData.InteligenciaComercial
+  fullName: FlotaRuntimeData.InteligenciaComercial
+- uid: MareImperium.FlotaRuntimeData.HabilidadCapitan*
+  commentId: Overload:MareImperium.FlotaRuntimeData.HabilidadCapitan
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_HabilidadCapitan
+  name: HabilidadCapitan
+  nameWithType: FlotaRuntimeData.HabilidadCapitan
+  fullName: FlotaRuntimeData.HabilidadCapitan
+- uid: MareImperium.FlotaRuntimeData.NumBarcos*
+  commentId: Overload:MareImperium.FlotaRuntimeData.NumBarcos
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_NumBarcos
+  name: NumBarcos
+  nameWithType: FlotaRuntimeData.NumBarcos
+  fullName: FlotaRuntimeData.NumBarcos
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.FlotaRuntimeData.Tripulacion*
+  commentId: Overload:MareImperium.FlotaRuntimeData.Tripulacion
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_Tripulacion
+  name: Tripulacion
+  nameWithType: FlotaRuntimeData.Tripulacion
+  fullName: FlotaRuntimeData.Tripulacion
+- uid: MareImperium.FlotaRuntimeData.Id*
+  commentId: Overload:MareImperium.FlotaRuntimeData.Id
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_Id
+  name: Id
+  nameWithType: FlotaRuntimeData.Id
+  fullName: FlotaRuntimeData.Id
+- uid: MareImperium.FlotaRuntimeData.NombrePropietario*
+  commentId: Overload:MareImperium.FlotaRuntimeData.NombrePropietario
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_NombrePropietario
+  name: NombrePropietario
+  nameWithType: FlotaRuntimeData.NombrePropietario
+  fullName: FlotaRuntimeData.NombrePropietario
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.FlotaRuntimeData.InteligenciaComercial*
+  commentId: Overload:MareImperium.FlotaRuntimeData.InteligenciaComercial
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_InteligenciaComercial
+  name: InteligenciaComercial
+  nameWithType: FlotaRuntimeData.InteligenciaComercial
+  fullName: FlotaRuntimeData.InteligenciaComercial
+- uid: MareImperium.FlotaRuntimeData.CiudadOrigenId*
+  commentId: Overload:MareImperium.FlotaRuntimeData.CiudadOrigenId
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_CiudadOrigenId
+  name: CiudadOrigenId
+  nameWithType: FlotaRuntimeData.CiudadOrigenId
+  fullName: FlotaRuntimeData.CiudadOrigenId
+- uid: MareImperium.FlotaRuntimeData.CiudadDestinoId*
+  commentId: Overload:MareImperium.FlotaRuntimeData.CiudadDestinoId
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_CiudadDestinoId
+  name: CiudadDestinoId
+  nameWithType: FlotaRuntimeData.CiudadDestinoId
+  fullName: FlotaRuntimeData.CiudadDestinoId
+- uid: MareImperium.FlotaRuntimeData.EstadoActual*
+  commentId: Overload:MareImperium.FlotaRuntimeData.EstadoActual
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_EstadoActual
+  name: EstadoActual
+  nameWithType: FlotaRuntimeData.EstadoActual
+  fullName: FlotaRuntimeData.EstadoActual
+- uid: MareImperium.EstadoFlotaPNJ
+  commentId: T:MareImperium.EstadoFlotaPNJ
+  href: EstadoFlotaPNJ.html
+  name: EstadoFlotaPNJ
+  nameWithType: EstadoFlotaPNJ
+  fullName: EstadoFlotaPNJ
+- uid: MareImperium.FlotaRuntimeData.RutaActual*
+  commentId: Overload:MareImperium.FlotaRuntimeData.RutaActual
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_RutaActual
+  name: RutaActual
+  nameWithType: FlotaRuntimeData.RutaActual
+  fullName: FlotaRuntimeData.RutaActual
+- uid: System.Collections.Generic.List{System.Int32}
+  commentId: T:System.Collections.Generic.List{System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<int>
+  nameWithType: List<int>
+  fullName: System.Collections.Generic.List<int>
+  nameWithType.vb: List(Of Integer)
+  fullName.vb: System.Collections.Generic.List(Of Integer)
+  name.vb: List(Of Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.FlotaRuntimeData.Carga*
+  commentId: Overload:MareImperium.FlotaRuntimeData.Carga
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_Carga
+  name: Carga
+  nameWithType: FlotaRuntimeData.Carga
+  fullName: FlotaRuntimeData.Carga
+- uid: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  commentId: T:System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<int, int>
+  nameWithType: Dictionary<int, int>
+  fullName: System.Collections.Generic.Dictionary<int, int>
+  nameWithType.vb: Dictionary(Of Integer, Integer)
+  fullName.vb: System.Collections.Generic.Dictionary(Of Integer, Integer)
+  name.vb: Dictionary(Of Integer, Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: EstadoFlotaPNJ.EnPuerto
+  commentId: F:EstadoFlotaPNJ.EnPuerto
+  href: MareImperium.EstadoFlotaPNJ.html#EstadoFlotaPNJ_EnPuerto
+  name: EnPuerto
+  nameWithType: EstadoFlotaPNJ.EnPuerto
+  fullName: EstadoFlotaPNJ.EnPuerto
+- uid: MareImperium.FlotaRuntimeData.#ctor*
+  commentId: Overload:MareImperium.FlotaRuntimeData.#ctor
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData__ctor_System_Int32_System_String_
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData.FlotaRuntimeData
+  fullName: FlotaRuntimeData.FlotaRuntimeData
+  nameWithType.vb: FlotaRuntimeData.New
+  fullName.vb: FlotaRuntimeData.New
+  name.vb: New
+- uid: UnityEngine.Vector2
+  commentId: T:UnityEngine.Vector2
+  parent: UnityEngine
+  isExternal: true
+  name: Vector2
+  nameWithType: Vector2
+  fullName: UnityEngine.Vector2
+- uid: UnityEngine
+  commentId: N:UnityEngine
+  isExternal: true
+  name: UnityEngine
+  nameWithType: UnityEngine
+  fullName: UnityEngine
+- uid: UnityEngine.Vector3Int
+  commentId: T:UnityEngine.Vector3Int
+  parent: UnityEngine
+  isExternal: true
+  name: Vector3Int
+  nameWithType: Vector3Int
+  fullName: UnityEngine.Vector3Int
+- uid: System.Collections.Generic.List{UnityEngine.Vector3Int}
+  commentId: T:System.Collections.Generic.List{UnityEngine.Vector3Int}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<Vector3Int>
+  nameWithType: List<Vector3Int>
+  fullName: System.Collections.Generic.List<UnityEngine.Vector3Int>
+  nameWithType.vb: List(Of Vector3Int)
+  fullName.vb: System.Collections.Generic.List(Of UnityEngine.Vector3Int)
+  name.vb: List(Of Vector3Int)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: )
+- uid: FlotaRuntimeData.RutaActual
+  commentId: P:FlotaRuntimeData.RutaActual
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_RutaActual
+  name: RutaActual
+  nameWithType: FlotaRuntimeData.RutaActual
+  fullName: FlotaRuntimeData.RutaActual
+- uid: System.Collections.Generic.List{BarcoJugador}
+  commentId: T:System.Collections.Generic.List{BarcoJugador}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<BarcoJugador>
+  nameWithType: List<BarcoJugador>
+  fullName: System.Collections.Generic.List<BarcoJugador>
+  nameWithType.vb: List(Of BarcoJugador)
+  fullName.vb: System.Collections.Generic.List(Of BarcoJugador)
+  name.vb: List(Of BarcoJugador)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.BarcoJugador
+    name: BarcoJugador
+    href: BarcoJugador.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.BarcoJugador
+    name: BarcoJugador
+    href: BarcoJugador.html
+  - name: )
+- uid: BarcoJugador.CargaMaximaTotal
+  commentId: P:BarcoJugador.CargaMaximaTotal
+  href: MareImperium.BarcoJugador.html#BarcoJugador_CargaMaximaTotal
+  name: CargaMaximaTotal
+  nameWithType: BarcoJugador.CargaMaximaTotal
+  fullName: BarcoJugador.CargaMaximaTotal
+- uid: FlotaRuntimeData.BarcosFlota
+  commentId: F:FlotaRuntimeData.BarcosFlota
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_BarcosFlota
+  name: BarcosFlota
+  nameWithType: FlotaRuntimeData.BarcosFlota
+  fullName: FlotaRuntimeData.BarcosFlota
+- uid: FlotaRuntimeData.NumBarcos
+  commentId: P:FlotaRuntimeData.NumBarcos
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_NumBarcos
+  name: NumBarcos
+  nameWithType: FlotaRuntimeData.NumBarcos
+  fullName: FlotaRuntimeData.NumBarcos
+- uid: MareImperium.FlotaRuntimeData.CargaMaximaTotal*
+  commentId: Overload:MareImperium.FlotaRuntimeData.CargaMaximaTotal
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_CargaMaximaTotal
+  name: CargaMaximaTotal
+  nameWithType: FlotaRuntimeData.CargaMaximaTotal
+  fullName: FlotaRuntimeData.CargaMaximaTotal
+- uid: MareImperium.FlotaRuntimeData.AplicarDanio*
+  commentId: Overload:MareImperium.FlotaRuntimeData.AplicarDanio
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_AplicarDanio_System_Single_
+  name: AplicarDanio
+  nameWithType: FlotaRuntimeData.AplicarDanio
+  fullName: FlotaRuntimeData.AplicarDanio
+- uid: MareImperium.FlotaRuntimeData.EstaDestruida*
+  commentId: Overload:MareImperium.FlotaRuntimeData.EstaDestruida
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_EstaDestruida
+  name: EstaDestruida
+  nameWithType: FlotaRuntimeData.EstaDestruida
+  fullName: FlotaRuntimeData.EstaDestruida
+- uid: MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento*
+  commentId: Overload:MareImperium.FlotaRuntimeData.ResetearParaReabastecimiento
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_ResetearParaReabastecimiento
+  name: ResetearParaReabastecimiento
+  nameWithType: FlotaRuntimeData.ResetearParaReabastecimiento
+  fullName: FlotaRuntimeData.ResetearParaReabastecimiento
+- uid: MareImperium.FlotaRuntimeData.TieneCarga*
+  commentId: Overload:MareImperium.FlotaRuntimeData.TieneCarga
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_TieneCarga
+  name: TieneCarga
+  nameWithType: FlotaRuntimeData.TieneCarga
+  fullName: FlotaRuntimeData.TieneCarga

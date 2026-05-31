@@ -1,0 +1,532 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.EstadoMercadoDto
+  commentId: T:MareImperium.EstadoMercadoDto
+  id: EstadoMercadoDto
+  parent: MareImperium
+  children:
+  - MareImperium.EstadoMercadoDto.Consumo
+  - MareImperium.EstadoMercadoDto.IdBien
+  - MareImperium.EstadoMercadoDto.IdCiudad
+  - MareImperium.EstadoMercadoDto.PrecioActual
+  - MareImperium.EstadoMercadoDto.Produccion
+  - MareImperium.EstadoMercadoDto.Stock
+  langs:
+  - csharp
+  - vb
+  name: EstadoMercadoDto
+  nameWithType: EstadoMercadoDto
+  fullName: EstadoMercadoDto
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstadoMercadoDto
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 9
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Fila de la tabla EstadoMercadoCiudad mapeada desde SQLite.
+
+    Contiene el estado económico completo de un bien en una ciudad concreta.
+  example: []
+  syntax:
+    content: public class EstadoMercadoDto
+    content.vb: Public Class EstadoMercadoDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.EstadoMercadoDto.IdCiudad
+  commentId: P:MareImperium.EstadoMercadoDto.IdCiudad
+  id: IdCiudad
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: IdCiudad
+  nameWithType: EstadoMercadoDto.IdCiudad
+  fullName: EstadoMercadoDto.IdCiudad
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdCiudad
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador de la ciudad a la que pertenece esta entrada.
+  example: []
+  syntax:
+    content: public int IdCiudad { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdCiudad As Integer
+  overload: MareImperium.EstadoMercadoDto.IdCiudad*
+- uid: MareImperium.EstadoMercadoDto.IdBien
+  commentId: P:MareImperium.EstadoMercadoDto.IdBien
+  id: IdBien
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: IdBien
+  nameWithType: EstadoMercadoDto.IdBien
+  fullName: EstadoMercadoDto.IdBien
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdBien
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador del bien al que corresponde esta entrada.
+  example: []
+  syntax:
+    content: public int IdBien { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdBien As Integer
+  overload: MareImperium.EstadoMercadoDto.IdBien*
+- uid: MareImperium.EstadoMercadoDto.Stock
+  commentId: P:MareImperium.EstadoMercadoDto.Stock
+  id: Stock
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: Stock
+  nameWithType: EstadoMercadoDto.Stock
+  fullName: EstadoMercadoDto.Stock
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Stock
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Unidades disponibles del bien en el mercado de la ciudad.
+  example: []
+  syntax:
+    content: public int Stock { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Stock As Integer
+  overload: MareImperium.EstadoMercadoDto.Stock*
+- uid: MareImperium.EstadoMercadoDto.Produccion
+  commentId: P:MareImperium.EstadoMercadoDto.Produccion
+  id: Produccion
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: Produccion
+  nameWithType: EstadoMercadoDto.Produccion
+  fullName: EstadoMercadoDto.Produccion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Produccion
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 21
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Unidades que la ciudad genera de este bien cada día de juego.
+  example: []
+  syntax:
+    content: public int Produccion { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Produccion As Integer
+  overload: MareImperium.EstadoMercadoDto.Produccion*
+- uid: MareImperium.EstadoMercadoDto.Consumo
+  commentId: P:MareImperium.EstadoMercadoDto.Consumo
+  id: Consumo
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: Consumo
+  nameWithType: EstadoMercadoDto.Consumo
+  fullName: EstadoMercadoDto.Consumo
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Consumo
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Unidades que la ciudad consume de este bien cada día de juego.
+  example: []
+  syntax:
+    content: public int Consumo { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property Consumo As Integer
+  overload: MareImperium.EstadoMercadoDto.Consumo*
+- uid: MareImperium.EstadoMercadoDto.PrecioActual
+  commentId: P:MareImperium.EstadoMercadoDto.PrecioActual
+  id: PrecioActual
+  parent: MareImperium.EstadoMercadoDto
+  langs:
+  - csharp
+  - vb
+  name: PrecioActual
+  nameWithType: EstadoMercadoDto.PrecioActual
+  fullName: EstadoMercadoDto.PrecioActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: PrecioActual
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Precio calculado en tiempo de ejecución según la fórmula de oferta y demanda.
+  example: []
+  syntax:
+    content: public decimal PrecioActual { get; set; }
+    parameters: []
+    return:
+      type: System.Decimal
+    content.vb: Public Property PrecioActual As Decimal
+  overload: MareImperium.EstadoMercadoDto.PrecioActual*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.EstadoMercadoDto.IdCiudad*
+  commentId: Overload:MareImperium.EstadoMercadoDto.IdCiudad
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_IdCiudad
+  name: IdCiudad
+  nameWithType: EstadoMercadoDto.IdCiudad
+  fullName: EstadoMercadoDto.IdCiudad
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.EstadoMercadoDto.IdBien*
+  commentId: Overload:MareImperium.EstadoMercadoDto.IdBien
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_IdBien
+  name: IdBien
+  nameWithType: EstadoMercadoDto.IdBien
+  fullName: EstadoMercadoDto.IdBien
+- uid: MareImperium.EstadoMercadoDto.Stock*
+  commentId: Overload:MareImperium.EstadoMercadoDto.Stock
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_Stock
+  name: Stock
+  nameWithType: EstadoMercadoDto.Stock
+  fullName: EstadoMercadoDto.Stock
+- uid: MareImperium.EstadoMercadoDto.Produccion*
+  commentId: Overload:MareImperium.EstadoMercadoDto.Produccion
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_Produccion
+  name: Produccion
+  nameWithType: EstadoMercadoDto.Produccion
+  fullName: EstadoMercadoDto.Produccion
+- uid: MareImperium.EstadoMercadoDto.Consumo*
+  commentId: Overload:MareImperium.EstadoMercadoDto.Consumo
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_Consumo
+  name: Consumo
+  nameWithType: EstadoMercadoDto.Consumo
+  fullName: EstadoMercadoDto.Consumo
+- uid: MareImperium.EstadoMercadoDto.PrecioActual*
+  commentId: Overload:MareImperium.EstadoMercadoDto.PrecioActual
+  href: MareImperium.EstadoMercadoDto.html#EstadoMercadoDto_PrecioActual
+  name: PrecioActual
+  nameWithType: EstadoMercadoDto.PrecioActual
+  fullName: EstadoMercadoDto.PrecioActual
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal

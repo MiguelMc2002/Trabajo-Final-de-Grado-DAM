@@ -1,0 +1,957 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.PirataBrain
+  commentId: T:MareImperium.PirataBrain
+  id: PirataBrain
+  parent: MareImperium
+  children:
+  - MareImperium.PirataBrain.#ctor(System.Int32,System.Single,System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}},System.Collections.Generic.HashSet{UnityEngine.Vector3Int})
+  - MareImperium.PirataBrain.ActualizarPosPropia(UnityEngine.Vector2,UnityEngine.Vector3Int)
+  - MareImperium.PirataBrain.ColaSalida
+  - MareImperium.PirataBrain.Detener
+  - MareImperium.PirataBrain.EnviarSnapshot(FlotaSnapshot[])
+  - MareImperium.PirataBrain.IniciarTasks
+  langs:
+  - csharp
+  - vb
+  name: PirataBrain
+  nameWithType: PirataBrain
+  fullName: PirataBrain
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: PirataBrain
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 58
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Cerebro asíncrono de una flota pirata. Ejecuta dos <xref href="System.Threading.Tasks.Task" data-throw-if-not-resolved="false"></xref> en background:
+
+
+    <ul><li><b>BucleDeteccion</b>: consume snapshots de posiciones del mundo y decide si interceptar o patrullar.</li><li><b>BucleNavegacion</b>: calcula rutas A* puras sin tocar la API de Unity.</li></ul>
+
+
+    El hilo principal solo envía snapshots y consume <xref href="PirataBrain.ColaSalida" data-throw-if-not-resolved="false"></xref> — nunca bloquea.
+  example: []
+  syntax:
+    content: public class PirataBrain
+    content.vb: Public Class PirataBrain
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.PirataBrain.ColaSalida
+  commentId: F:MareImperium.PirataBrain.ColaSalida
+  id: ColaSalida
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: ColaSalida
+  nameWithType: PirataBrain.ColaSalida
+  fullName: PirataBrain.ColaSalida
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ColaSalida
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 78
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Cola de comandos lista para ser consumida en el hilo principal (Update).
+
+    Cada llamada a <code>TryDequeue</code> extrae como máximo un comando por frame.
+  example: []
+  syntax:
+    content: public readonly ConcurrentQueue<ComandoPirata> ColaSalida
+    return:
+      type: System.Collections.Concurrent.ConcurrentQueue{ComandoPirata}
+    content.vb: Public ReadOnly ColaSalida As ConcurrentQueue(Of ComandoPirata)
+- uid: MareImperium.PirataBrain.#ctor(System.Int32,System.Single,System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}},System.Collections.Generic.HashSet{UnityEngine.Vector3Int})
+  commentId: M:MareImperium.PirataBrain.#ctor(System.Int32,System.Single,System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}},System.Collections.Generic.HashSet{UnityEngine.Vector3Int})
+  id: '#ctor(System.Int32,System.Single,System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}},System.Collections.Generic.HashSet{UnityEngine.Vector3Int})'
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: PirataBrain(int, float, Dictionary<Vector3Int, List<Vector3Int>>, HashSet<Vector3Int>)
+  nameWithType: PirataBrain.PirataBrain(int, float, Dictionary<Vector3Int, List<Vector3Int>>, HashSet<Vector3Int>)
+  fullName: PirataBrain.PirataBrain(int, float, System.Collections.Generic.Dictionary<UnityEngine.Vector3Int, System.Collections.Generic.List<UnityEngine.Vector3Int>>, System.Collections.Generic.HashSet<UnityEngine.Vector3Int>)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 109
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Crea el brain pero NO inicia los Tasks todavía.
+
+    Llamar a <xref href="PirataBrain.IniciarTasks" data-throw-if-not-resolved="false"></xref> después de la construcción.
+  example: []
+  syntax:
+    content: public PirataBrain(int flotaId, float radioDeteccion, Dictionary<Vector3Int, List<Vector3Int>> grafoNavegacion, HashSet<Vector3Int> casillasCiudad)
+    parameters:
+    - id: flotaId
+      type: System.Int32
+      description: Id de la flota pirata que gobierna este brain.
+    - id: radioDeteccion
+      type: System.Single
+      description: Radio de detección en casillas tilemap.
+    - id: grafoNavegacion
+      type: System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}}
+      description: >-
+        Grafo pre-calculado desde el hilo principal: casilla → vecinos navegables.
+
+        Debe ser inmutable tras la construcción.
+    - id: casillasCiudad
+      type: System.Collections.Generic.HashSet{UnityEngine.Vector3Int}
+      description: Conjunto de casillas que corresponden a ciudades; el brain las excluye como destino de patrulla.
+    content.vb: Public Sub New(flotaId As Integer, radioDeteccion As Single, grafoNavegacion As Dictionary(Of Vector3Int, List(Of Vector3Int)), casillasCiudad As HashSet(Of Vector3Int))
+  overload: MareImperium.PirataBrain.#ctor*
+  nameWithType.vb: PirataBrain.New(Integer, Single, Dictionary(Of Vector3Int, List(Of Vector3Int)), HashSet(Of Vector3Int))
+  fullName.vb: PirataBrain.New(Integer, Single, System.Collections.Generic.Dictionary(Of UnityEngine.Vector3Int, System.Collections.Generic.List(Of UnityEngine.Vector3Int)), System.Collections.Generic.HashSet(Of UnityEngine.Vector3Int))
+  name.vb: New(Integer, Single, Dictionary(Of Vector3Int, List(Of Vector3Int)), HashSet(Of Vector3Int))
+- uid: MareImperium.PirataBrain.IniciarTasks
+  commentId: M:MareImperium.PirataBrain.IniciarTasks
+  id: IniciarTasks
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: IniciarTasks()
+  nameWithType: PirataBrain.IniciarTasks()
+  fullName: PirataBrain.IniciarTasks()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IniciarTasks
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 125
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Lanza los dos Tasks de detección y navegación con un <xref href="System.Threading.CancellationToken" data-throw-if-not-resolved="false"></xref> compartido.
+
+    Debe llamarse desde el hilo principal tras la construcción.
+  example: []
+  syntax:
+    content: public void IniciarTasks()
+    content.vb: Public Sub IniciarTasks()
+  overload: MareImperium.PirataBrain.IniciarTasks*
+- uid: MareImperium.PirataBrain.Detener
+  commentId: M:MareImperium.PirataBrain.Detener
+  id: Detener
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: Detener()
+  nameWithType: PirataBrain.Detener()
+  fullName: PirataBrain.Detener()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Detener
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 135
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Cancela los dos Tasks en background. Llamar desde <code>OnDestroy</code>.
+  example: []
+  syntax:
+    content: public void Detener()
+    content.vb: Public Sub Detener()
+  overload: MareImperium.PirataBrain.Detener*
+- uid: MareImperium.PirataBrain.EnviarSnapshot(FlotaSnapshot[])
+  commentId: M:MareImperium.PirataBrain.EnviarSnapshot(FlotaSnapshot[])
+  id: EnviarSnapshot(FlotaSnapshot[])
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: EnviarSnapshot(FlotaSnapshot[])
+  nameWithType: PirataBrain.EnviarSnapshot(FlotaSnapshot[])
+  fullName: PirataBrain.EnviarSnapshot(FlotaSnapshot[])
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EnviarSnapshot
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 148
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Encola un array de snapshots para que <xref href="PirataBrain.BucleDeteccion(System.Threading.CancellationToken)" data-throw-if-not-resolved="false"></xref> lo procese.
+
+    Si la cola acumula más de 3 entradas, descarta la más antigua para evitar lag.
+
+    Seguro para llamar desde cualquier hilo.
+  example: []
+  syntax:
+    content: public void EnviarSnapshot(FlotaSnapshot[] snapshots)
+    parameters:
+    - id: snapshots
+      type: MareImperium.FlotaSnapshot[]
+      description: Array de snapshots del estado actual de todas las flotas.
+    content.vb: Public Sub EnviarSnapshot(snapshots As FlotaSnapshot())
+  overload: MareImperium.PirataBrain.EnviarSnapshot*
+  nameWithType.vb: PirataBrain.EnviarSnapshot(FlotaSnapshot())
+  fullName.vb: PirataBrain.EnviarSnapshot(FlotaSnapshot())
+  name.vb: EnviarSnapshot(FlotaSnapshot())
+- uid: MareImperium.PirataBrain.ActualizarPosPropia(UnityEngine.Vector2,UnityEngine.Vector3Int)
+  commentId: M:MareImperium.PirataBrain.ActualizarPosPropia(UnityEngine.Vector2,UnityEngine.Vector3Int)
+  id: ActualizarPosPropia(UnityEngine.Vector2,UnityEngine.Vector3Int)
+  parent: MareImperium.PirataBrain
+  langs:
+  - csharp
+  - vb
+  name: ActualizarPosPropia(Vector2, Vector3Int)
+  nameWithType: PirataBrain.ActualizarPosPropia(Vector2, Vector3Int)
+  fullName: PirataBrain.ActualizarPosPropia(UnityEngine.Vector2, UnityEngine.Vector3Int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ActualizarPosPropia
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 161
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Actualiza la posición propia del pirata en el brain.
+
+    Seguro para llamar desde el hilo principal en Update.
+  example: []
+  syntax:
+    content: public void ActualizarPosPropia(Vector2 posicion, Vector3Int casilla)
+    parameters:
+    - id: posicion
+      type: UnityEngine.Vector2
+      description: Posición en espacio de mundo.
+    - id: casilla
+      type: UnityEngine.Vector3Int
+      description: Posición en coordenadas offset del tilemap.
+    content.vb: Public Sub ActualizarPosPropia(posicion As Vector2, casilla As Vector3Int)
+  overload: MareImperium.PirataBrain.ActualizarPosPropia*
+references:
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: PirataBrain.ColaSalida
+  commentId: F:PirataBrain.ColaSalida
+  href: MareImperium.PirataBrain.html#PirataBrain_ColaSalida
+  name: ColaSalida
+  nameWithType: PirataBrain.ColaSalida
+  fullName: PirataBrain.ColaSalida
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: System.Collections.Concurrent.ConcurrentQueue{ComandoPirata}
+  commentId: T:System.Collections.Concurrent.ConcurrentQueue{ComandoPirata}
+  parent: System.Collections.Concurrent
+  definition: System.Collections.Concurrent.ConcurrentQueue`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  name: ConcurrentQueue<ComandoPirata>
+  nameWithType: ConcurrentQueue<ComandoPirata>
+  fullName: System.Collections.Concurrent.ConcurrentQueue<ComandoPirata>
+  nameWithType.vb: ConcurrentQueue(Of ComandoPirata)
+  fullName.vb: System.Collections.Concurrent.ConcurrentQueue(Of ComandoPirata)
+  name.vb: ConcurrentQueue(Of ComandoPirata)
+  spec.csharp:
+  - uid: System.Collections.Concurrent.ConcurrentQueue`1
+    name: ConcurrentQueue
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  - name: <
+  - uid: MareImperium.ComandoPirata
+    name: ComandoPirata
+    href: ComandoPirata.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Concurrent.ConcurrentQueue`1
+    name: ConcurrentQueue
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.ComandoPirata
+    name: ComandoPirata
+    href: ComandoPirata.html
+  - name: )
+- uid: System.Collections.Concurrent.ConcurrentQueue`1
+  commentId: T:System.Collections.Concurrent.ConcurrentQueue`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  name: ConcurrentQueue<T>
+  nameWithType: ConcurrentQueue<T>
+  fullName: System.Collections.Concurrent.ConcurrentQueue<T>
+  nameWithType.vb: ConcurrentQueue(Of T)
+  fullName.vb: System.Collections.Concurrent.ConcurrentQueue(Of T)
+  name.vb: ConcurrentQueue(Of T)
+  spec.csharp:
+  - uid: System.Collections.Concurrent.ConcurrentQueue`1
+    name: ConcurrentQueue
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Concurrent.ConcurrentQueue`1
+    name: ConcurrentQueue
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Concurrent
+  commentId: N:System.Collections.Concurrent
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Concurrent
+  nameWithType: System.Collections.Concurrent
+  fullName: System.Collections.Concurrent
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Concurrent
+    name: Concurrent
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Concurrent
+    name: Concurrent
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.concurrent
+- uid: PirataBrain.IniciarTasks
+  commentId: M:PirataBrain.IniciarTasks
+  href: MareImperium.PirataBrain.html#PirataBrain_IniciarTasks
+  name: IniciarTasks()
+  nameWithType: PirataBrain.IniciarTasks()
+  fullName: PirataBrain.IniciarTasks()
+  spec.csharp:
+  - uid: MareImperium.PirataBrain.IniciarTasks
+    name: IniciarTasks
+    href: MareImperium.PirataBrain.html#PirataBrain_IniciarTasks
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: MareImperium.PirataBrain.IniciarTasks
+    name: IniciarTasks
+    href: MareImperium.PirataBrain.html#PirataBrain_IniciarTasks
+  - name: (
+  - name: )
+- uid: MareImperium.PirataBrain.#ctor*
+  commentId: Overload:MareImperium.PirataBrain.#ctor
+  href: MareImperium.PirataBrain.html#PirataBrain__ctor_System_Int32_System_Single_System_Collections_Generic_Dictionary_UnityEngine_Vector3Int_System_Collections_Generic_List_UnityEngine_Vector3Int___System_Collections_Generic_HashSet_UnityEngine_Vector3Int__
+  name: PirataBrain
+  nameWithType: PirataBrain.PirataBrain
+  fullName: PirataBrain.PirataBrain
+  nameWithType.vb: PirataBrain.New
+  fullName.vb: PirataBrain.New
+  name.vb: New
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
+- uid: System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}}
+  commentId: T:System.Collections.Generic.Dictionary{UnityEngine.Vector3Int,System.Collections.Generic.List{UnityEngine.Vector3Int}}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<Vector3Int, List<Vector3Int>>
+  nameWithType: Dictionary<Vector3Int, List<Vector3Int>>
+  fullName: System.Collections.Generic.Dictionary<UnityEngine.Vector3Int, System.Collections.Generic.List<UnityEngine.Vector3Int>>
+  nameWithType.vb: Dictionary(Of Vector3Int, List(Of Vector3Int))
+  fullName.vb: System.Collections.Generic.Dictionary(Of UnityEngine.Vector3Int, System.Collections.Generic.List(Of UnityEngine.Vector3Int))
+  name.vb: Dictionary(Of Vector3Int, List(Of Vector3Int))
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: '>'
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: ','
+  - name: " "
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: )
+  - name: )
+- uid: System.Collections.Generic.HashSet{UnityEngine.Vector3Int}
+  commentId: T:System.Collections.Generic.HashSet{UnityEngine.Vector3Int}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.HashSet`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  name: HashSet<Vector3Int>
+  nameWithType: HashSet<Vector3Int>
+  fullName: System.Collections.Generic.HashSet<UnityEngine.Vector3Int>
+  nameWithType.vb: HashSet(Of Vector3Int)
+  fullName.vb: System.Collections.Generic.HashSet(Of UnityEngine.Vector3Int)
+  name.vb: HashSet(Of Vector3Int)
+  spec.csharp:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: <
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: System.Collections.Generic.HashSet`1
+  commentId: T:System.Collections.Generic.HashSet`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  name: HashSet<T>
+  nameWithType: HashSet<T>
+  fullName: System.Collections.Generic.HashSet<T>
+  nameWithType.vb: HashSet(Of T)
+  fullName.vb: System.Collections.Generic.HashSet(Of T)
+  name.vb: HashSet(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.HashSet`1
+    name: HashSet
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Threading.CancellationToken
+  commentId: T:System.Threading.CancellationToken
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: CancellationToken
+  nameWithType: CancellationToken
+  fullName: System.Threading.CancellationToken
+- uid: MareImperium.PirataBrain.IniciarTasks*
+  commentId: Overload:MareImperium.PirataBrain.IniciarTasks
+  href: MareImperium.PirataBrain.html#PirataBrain_IniciarTasks
+  name: IniciarTasks
+  nameWithType: PirataBrain.IniciarTasks
+  fullName: PirataBrain.IniciarTasks
+- uid: MareImperium.PirataBrain.Detener*
+  commentId: Overload:MareImperium.PirataBrain.Detener
+  href: MareImperium.PirataBrain.html#PirataBrain_Detener
+  name: Detener
+  nameWithType: PirataBrain.Detener
+  fullName: PirataBrain.Detener
+- uid: PirataBrain.BucleDeteccion(System.Threading.CancellationToken)
+  commentId: M:PirataBrain.BucleDeteccion(System.Threading.CancellationToken)
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  name: BucleDeteccion(CancellationToken)
+  nameWithType: PirataBrain.BucleDeteccion(CancellationToken)
+  fullName: PirataBrain.BucleDeteccion(System.Threading.CancellationToken)
+  spec.csharp:
+  - uid: MareImperium.PirataBrain.BucleDeteccion(System.Threading.CancellationToken)
+    name: BucleDeteccion
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+  spec.vb:
+  - uid: MareImperium.PirataBrain.BucleDeteccion(System.Threading.CancellationToken)
+    name: BucleDeteccion
+  - name: (
+  - uid: System.Threading.CancellationToken
+    name: CancellationToken
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken
+  - name: )
+- uid: MareImperium.PirataBrain.EnviarSnapshot*
+  commentId: Overload:MareImperium.PirataBrain.EnviarSnapshot
+  href: MareImperium.PirataBrain.html#PirataBrain_EnviarSnapshot_FlotaSnapshot___
+  name: EnviarSnapshot
+  nameWithType: PirataBrain.EnviarSnapshot
+  fullName: PirataBrain.EnviarSnapshot
+- uid: MareImperium.FlotaSnapshot[]
+  isExternal: true
+  href: FlotaSnapshot.html
+  name: FlotaSnapshot[]
+  nameWithType: FlotaSnapshot[]
+  fullName: FlotaSnapshot[]
+  nameWithType.vb: FlotaSnapshot()
+  fullName.vb: FlotaSnapshot()
+  name.vb: FlotaSnapshot()
+  spec.csharp:
+  - uid: MareImperium.FlotaSnapshot
+    name: FlotaSnapshot
+    href: FlotaSnapshot.html
+  - name: '['
+  - name: ']'
+  spec.vb:
+  - uid: MareImperium.FlotaSnapshot
+    name: FlotaSnapshot
+    href: FlotaSnapshot.html
+  - name: (
+  - name: )
+- uid: MareImperium.PirataBrain.ActualizarPosPropia*
+  commentId: Overload:MareImperium.PirataBrain.ActualizarPosPropia
+  href: MareImperium.PirataBrain.html#PirataBrain_ActualizarPosPropia_UnityEngine_Vector2_UnityEngine_Vector3Int_
+  name: ActualizarPosPropia
+  nameWithType: PirataBrain.ActualizarPosPropia
+  fullName: PirataBrain.ActualizarPosPropia
+- uid: UnityEngine.Vector2
+  commentId: T:UnityEngine.Vector2
+  parent: UnityEngine
+  isExternal: true
+  name: Vector2
+  nameWithType: Vector2
+  fullName: UnityEngine.Vector2
+- uid: UnityEngine.Vector3Int
+  commentId: T:UnityEngine.Vector3Int
+  parent: UnityEngine
+  isExternal: true
+  name: Vector3Int
+  nameWithType: Vector3Int
+  fullName: UnityEngine.Vector3Int
+- uid: UnityEngine
+  commentId: N:UnityEngine
+  isExternal: true
+  name: UnityEngine
+  nameWithType: UnityEngine
+  fullName: UnityEngine

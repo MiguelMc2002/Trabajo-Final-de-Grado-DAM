@@ -1,0 +1,99 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.SlotModo
+  commentId: T:MareImperium.SlotModo
+  id: SlotModo
+  parent: MareImperium
+  children:
+  - MareImperium.SlotModo.Cargar
+  - MareImperium.SlotModo.Guardar
+  langs:
+  - csharp
+  - vb
+  name: SlotModo
+  nameWithType: SlotModo
+  fullName: SlotModo
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: SlotModo
+    path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Determina si el panel de slots se abrió para guardar o para cargar una partida.
+
+    Controla qué acción ejecuta el botón principal de cada fila.
+  example: []
+  syntax:
+    content: public enum SlotModo
+    content.vb: Public Enum SlotModo
+- uid: MareImperium.SlotModo.Guardar
+  commentId: F:MareImperium.SlotModo.Guardar
+  id: Guardar
+  parent: MareImperium.SlotModo
+  langs:
+  - csharp
+  - vb
+  name: Guardar
+  nameWithType: SlotModo.Guardar
+  fullName: SlotModo.Guardar
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Guardar
+    path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: El jugador quiere guardar la partida actual en un slot.
+  example: []
+  syntax:
+    content: Guardar = 0
+    return:
+      type: MareImperium.SlotModo
+- uid: MareImperium.SlotModo.Cargar
+  commentId: F:MareImperium.SlotModo.Cargar
+  id: Cargar
+  parent: MareImperium.SlotModo
+  langs:
+  - csharp
+  - vb
+  name: Cargar
+  nameWithType: SlotModo.Cargar
+  fullName: SlotModo.Cargar
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Cargar
+    path: TFG/Assets/Scripts/Database/PantallaSlotsUI.cs
+    startLine: 17
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: El jugador quiere cargar una partida guardada anteriormente.
+  example: []
+  syntax:
+    content: Cargar = 1
+    return:
+      type: MareImperium.SlotModo
+references:
+- uid: MareImperium
+- uid: MareImperium.SlotModo
+  commentId: T:MareImperium.SlotModo
+  href: SlotModo.html
+  name: SlotModo
+  nameWithType: SlotModo
+  fullName: SlotModo
