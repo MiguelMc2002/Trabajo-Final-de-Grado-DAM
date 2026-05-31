@@ -1,0 +1,131 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.ComandoPirataTipo
+  commentId: T:MareImperium.ComandoPirataTipo
+  id: ComandoPirataTipo
+  parent: MareImperium
+  children:
+  - MareImperium.ComandoPirataTipo.InterceptarObjetivo
+  - MareImperium.ComandoPirataTipo.NuevaRuta
+  - MareImperium.ComandoPirataTipo.Patrullar
+  langs:
+  - csharp
+  - vb
+  name: ComandoPirataTipo
+  nameWithType: ComandoPirataTipo
+  fullName: ComandoPirataTipo
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ComandoPirataTipo
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 26
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Tipo de comando que el <xref href="PirataBrain" data-throw-if-not-resolved="false"></xref> envía al hilo principal.
+  example: []
+  syntax:
+    content: public enum ComandoPirataTipo
+    content.vb: Public Enum ComandoPirataTipo
+- uid: MareImperium.ComandoPirataTipo.NuevaRuta
+  commentId: F:MareImperium.ComandoPirataTipo.NuevaRuta
+  id: NuevaRuta
+  parent: MareImperium.ComandoPirataTipo
+  langs:
+  - csharp
+  - vb
+  name: NuevaRuta
+  nameWithType: ComandoPirataTipo.NuevaRuta
+  fullName: ComandoPirataTipo.NuevaRuta
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NuevaRuta
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Asignar una nueva lista de waypoints a la flota.
+  example: []
+  syntax:
+    content: NuevaRuta = 0
+    return:
+      type: MareImperium.ComandoPirataTipo
+- uid: MareImperium.ComandoPirataTipo.InterceptarObjetivo
+  commentId: F:MareImperium.ComandoPirataTipo.InterceptarObjetivo
+  id: InterceptarObjetivo
+  parent: MareImperium.ComandoPirataTipo
+  langs:
+  - csharp
+  - vb
+  name: InterceptarObjetivo
+  nameWithType: ComandoPirataTipo.InterceptarObjetivo
+  fullName: ComandoPirataTipo.InterceptarObjetivo
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InterceptarObjetivo
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 31
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Cambiar estado a Interceptando para perseguir un objetivo.
+  example: []
+  syntax:
+    content: InterceptarObjetivo = 1
+    return:
+      type: MareImperium.ComandoPirataTipo
+- uid: MareImperium.ComandoPirataTipo.Patrullar
+  commentId: F:MareImperium.ComandoPirataTipo.Patrullar
+  id: Patrullar
+  parent: MareImperium.ComandoPirataTipo
+  langs:
+  - csharp
+  - vb
+  name: Patrullar
+  nameWithType: ComandoPirataTipo.Patrullar
+  fullName: ComandoPirataTipo.Patrullar
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Patrullar
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 33
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Volver al estado Patrullando porque el objetivo se perdió.
+  example: []
+  syntax:
+    content: Patrullar = 2
+    return:
+      type: MareImperium.ComandoPirataTipo
+references:
+- uid: PirataBrain
+  commentId: T:PirataBrain
+  href: PirataBrain.html
+  name: PirataBrain
+  nameWithType: PirataBrain
+  fullName: PirataBrain
+- uid: MareImperium
+- uid: MareImperium.ComandoPirataTipo
+  commentId: T:MareImperium.ComandoPirataTipo
+  href: ComandoPirataTipo.html
+  name: ComandoPirataTipo
+  nameWithType: ComandoPirataTipo
+  fullName: ComandoPirataTipo

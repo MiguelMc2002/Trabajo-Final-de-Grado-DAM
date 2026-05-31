@@ -1,0 +1,619 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CapitanData
+  commentId: T:MareImperium.CapitanData
+  id: CapitanData
+  parent: MareImperium
+  children:
+  - MareImperium.CapitanData.#ctor(System.Int32,System.String)
+  - MareImperium.CapitanData.#ctor(System.Int32,System.String,System.Single,System.Single)
+  - MareImperium.CapitanData.HabilidadCombate
+  - MareImperium.CapitanData.HabilidadNavegacion
+  - MareImperium.CapitanData.IdBarcoAsignado
+  - MareImperium.CapitanData.IdCapitan
+  - MareImperium.CapitanData.Nombre
+  langs:
+  - csharp
+  - vb
+  name: CapitanData
+  nameWithType: CapitanData
+  fullName: CapitanData
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapitanData
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 6
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Datos de un capitán contratado o disponible para contratar en la taberna.
+
+    Clase pura C# — no hereda de MonoBehaviour.
+  example: []
+  syntax:
+    content: public class CapitanData
+    content.vb: Public Class CapitanData
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CapitanData.IdCapitan
+  commentId: P:MareImperium.CapitanData.IdCapitan
+  id: IdCapitan
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: IdCapitan
+  nameWithType: CapitanData.IdCapitan
+  fullName: CapitanData.IdCapitan
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdCapitan
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 9
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único del capitán dentro de la sesión.
+  example: []
+  syntax:
+    content: public int IdCapitan { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property IdCapitan As Integer
+  overload: MareImperium.CapitanData.IdCapitan*
+- uid: MareImperium.CapitanData.Nombre
+  commentId: P:MareImperium.CapitanData.Nombre
+  id: Nombre
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: Nombre
+  nameWithType: CapitanData.Nombre
+  fullName: CapitanData.Nombre
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Nombre
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre propio del capitán.
+  example: []
+  syntax:
+    content: public string Nombre { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property Nombre As String
+  overload: MareImperium.CapitanData.Nombre*
+- uid: MareImperium.CapitanData.HabilidadNavegacion
+  commentId: P:MareImperium.CapitanData.HabilidadNavegacion
+  id: HabilidadNavegacion
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: HabilidadNavegacion
+  nameWithType: CapitanData.HabilidadNavegacion
+  fullName: CapitanData.HabilidadNavegacion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: HabilidadNavegacion
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Habilidad de navegación del capitán, entre 0.0 y 5.0.
+
+    Influye en la velocidad efectiva de la flota y la evasión de tormentas.
+  example: []
+  syntax:
+    content: public float HabilidadNavegacion { get; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public ReadOnly Property HabilidadNavegacion As Single
+  overload: MareImperium.CapitanData.HabilidadNavegacion*
+- uid: MareImperium.CapitanData.HabilidadCombate
+  commentId: P:MareImperium.CapitanData.HabilidadCombate
+  id: HabilidadCombate
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: HabilidadCombate
+  nameWithType: CapitanData.HabilidadCombate
+  fullName: CapitanData.HabilidadCombate
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: HabilidadCombate
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Habilidad de combate del capitán, entre 0.0 y 5.0.
+
+    Se usa como <code>HabilidadCapitan</code> en <xref href="FlotaRuntimeData" data-throw-if-not-resolved="false"></xref> al resolver combates.
+  example: []
+  syntax:
+    content: public float HabilidadCombate { get; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public ReadOnly Property HabilidadCombate As Single
+  overload: MareImperium.CapitanData.HabilidadCombate*
+- uid: MareImperium.CapitanData.IdBarcoAsignado
+  commentId: P:MareImperium.CapitanData.IdBarcoAsignado
+  id: IdBarcoAsignado
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: IdBarcoAsignado
+  nameWithType: CapitanData.IdBarcoAsignado
+  fullName: CapitanData.IdBarcoAsignado
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdBarcoAsignado
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 30
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Identificador del barco al que está asignado este capitán.
+
+    Vale <code>-1</code> si el capitán aún no ha sido embarcado.
+  example: []
+  syntax:
+    content: public int IdBarcoAsignado { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdBarcoAsignado As Integer
+  overload: MareImperium.CapitanData.IdBarcoAsignado*
+- uid: MareImperium.CapitanData.#ctor(System.Int32,System.String)
+  commentId: M:MareImperium.CapitanData.#ctor(System.Int32,System.String)
+  id: '#ctor(System.Int32,System.String)'
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: CapitanData(int, string)
+  nameWithType: CapitanData.CapitanData(int, string)
+  fullName: CapitanData.CapitanData(int, string)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 38
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inicializa un capitán con el identificador y nombre indicados.
+
+    Las habilidades se generan aleatoriamente en el rango [0, 5] con un decimal.
+  example: []
+  syntax:
+    content: public CapitanData(int idCapitan, string nombre)
+    parameters:
+    - id: idCapitan
+      type: System.Int32
+      description: Identificador único del capitán.
+    - id: nombre
+      type: System.String
+      description: Nombre propio del capitán.
+    content.vb: Public Sub New(idCapitan As Integer, nombre As String)
+  overload: MareImperium.CapitanData.#ctor*
+  nameWithType.vb: CapitanData.New(Integer, String)
+  fullName.vb: CapitanData.New(Integer, String)
+  name.vb: New(Integer, String)
+- uid: MareImperium.CapitanData.#ctor(System.Int32,System.String,System.Single,System.Single)
+  commentId: M:MareImperium.CapitanData.#ctor(System.Int32,System.String,System.Single,System.Single)
+  id: '#ctor(System.Int32,System.String,System.Single,System.Single)'
+  parent: MareImperium.CapitanData
+  langs:
+  - csharp
+  - vb
+  name: CapitanData(int, string, float, float)
+  nameWithType: CapitanData.CapitanData(int, string, float, float)
+  fullName: CapitanData.CapitanData(int, string, float, float)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Taberna/CapitanData.cs
+    startLine: 55
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inicializa un capitán con habilidades explícitas, sin aleatoriedad.
+
+    Usar al restaurar capitanes desde la base de datos.
+  example: []
+  syntax:
+    content: public CapitanData(int idCapitan, string nombre, float habilidadNavegacion, float habilidadCombate)
+    parameters:
+    - id: idCapitan
+      type: System.Int32
+      description: Identificador único del capitán.
+    - id: nombre
+      type: System.String
+      description: Nombre propio del capitán.
+    - id: habilidadNavegacion
+      type: System.Single
+      description: Habilidad de navegación guardada.
+    - id: habilidadCombate
+      type: System.Single
+      description: Habilidad de combate guardada.
+    content.vb: Public Sub New(idCapitan As Integer, nombre As String, habilidadNavegacion As Single, habilidadCombate As Single)
+  overload: MareImperium.CapitanData.#ctor*
+  nameWithType.vb: CapitanData.New(Integer, String, Single, Single)
+  fullName.vb: CapitanData.New(Integer, String, Single, Single)
+  name.vb: New(Integer, String, Single, Single)
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CapitanData.IdCapitan*
+  commentId: Overload:MareImperium.CapitanData.IdCapitan
+  href: MareImperium.CapitanData.html#CapitanData_IdCapitan
+  name: IdCapitan
+  nameWithType: CapitanData.IdCapitan
+  fullName: CapitanData.IdCapitan
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.CapitanData.Nombre*
+  commentId: Overload:MareImperium.CapitanData.Nombre
+  href: MareImperium.CapitanData.html#CapitanData_Nombre
+  name: Nombre
+  nameWithType: CapitanData.Nombre
+  fullName: CapitanData.Nombre
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.CapitanData.HabilidadNavegacion*
+  commentId: Overload:MareImperium.CapitanData.HabilidadNavegacion
+  href: MareImperium.CapitanData.html#CapitanData_HabilidadNavegacion
+  name: HabilidadNavegacion
+  nameWithType: CapitanData.HabilidadNavegacion
+  fullName: CapitanData.HabilidadNavegacion
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
+- uid: FlotaRuntimeData
+  commentId: T:FlotaRuntimeData
+  href: FlotaRuntimeData.html
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData
+- uid: MareImperium.CapitanData.HabilidadCombate*
+  commentId: Overload:MareImperium.CapitanData.HabilidadCombate
+  href: MareImperium.CapitanData.html#CapitanData_HabilidadCombate
+  name: HabilidadCombate
+  nameWithType: CapitanData.HabilidadCombate
+  fullName: CapitanData.HabilidadCombate
+- uid: MareImperium.CapitanData.IdBarcoAsignado*
+  commentId: Overload:MareImperium.CapitanData.IdBarcoAsignado
+  href: MareImperium.CapitanData.html#CapitanData_IdBarcoAsignado
+  name: IdBarcoAsignado
+  nameWithType: CapitanData.IdBarcoAsignado
+  fullName: CapitanData.IdBarcoAsignado
+- uid: MareImperium.CapitanData.#ctor*
+  commentId: Overload:MareImperium.CapitanData.#ctor
+  href: MareImperium.CapitanData.html#CapitanData__ctor_System_Int32_System_String_
+  name: CapitanData
+  nameWithType: CapitanData.CapitanData
+  fullName: CapitanData.CapitanData
+  nameWithType.vb: CapitanData.New
+  fullName.vb: CapitanData.New
+  name.vb: New

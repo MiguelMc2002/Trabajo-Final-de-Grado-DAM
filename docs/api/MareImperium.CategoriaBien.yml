@@ -1,0 +1,125 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CategoriaBien
+  commentId: T:MareImperium.CategoriaBien
+  id: CategoriaBien
+  parent: MareImperium
+  children:
+  - MareImperium.CategoriaBien.Avanzado
+  - MareImperium.CategoriaBien.Intermedio
+  - MareImperium.CategoriaBien.Primario
+  langs:
+  - csharp
+  - vb
+  name: CategoriaBien
+  nameWithType: CategoriaBien
+  fullName: CategoriaBien
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/BienData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CategoriaBien
+    path: TFG/Assets/Scripts/Economico/BienData.cs
+    startLine: 48
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Clasificación de un bien según su posición en la cadena de producción.
+  example: []
+  syntax:
+    content: public enum CategoriaBien
+    content.vb: Public Enum CategoriaBien
+- uid: MareImperium.CategoriaBien.Primario
+  commentId: F:MareImperium.CategoriaBien.Primario
+  id: Primario
+  parent: MareImperium.CategoriaBien
+  langs:
+  - csharp
+  - vb
+  name: Primario
+  nameWithType: CategoriaBien.Primario
+  fullName: CategoriaBien.Primario
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/BienData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Primario
+    path: TFG/Assets/Scripts/Economico/BienData.cs
+    startLine: 51
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Materia prima directamente extraída (grano, madera, pescado…).
+  example: []
+  syntax:
+    content: Primario = 0
+    return:
+      type: MareImperium.CategoriaBien
+- uid: MareImperium.CategoriaBien.Intermedio
+  commentId: F:MareImperium.CategoriaBien.Intermedio
+  id: Intermedio
+  parent: MareImperium.CategoriaBien
+  langs:
+  - csharp
+  - vb
+  name: Intermedio
+  nameWithType: CategoriaBien.Intermedio
+  fullName: CategoriaBien.Intermedio
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/BienData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Intermedio
+    path: TFG/Assets/Scripts/Economico/BienData.cs
+    startLine: 53
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Bien semielaborado fabricado a partir de materias primas (harina, tela…).
+  example: []
+  syntax:
+    content: Intermedio = 1
+    return:
+      type: MareImperium.CategoriaBien
+- uid: MareImperium.CategoriaBien.Avanzado
+  commentId: F:MareImperium.CategoriaBien.Avanzado
+  id: Avanzado
+  parent: MareImperium.CategoriaBien
+  langs:
+  - csharp
+  - vb
+  name: Avanzado
+  nameWithType: CategoriaBien.Avanzado
+  fullName: CategoriaBien.Avanzado
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Economico/BienData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Avanzado
+    path: TFG/Assets/Scripts/Economico/BienData.cs
+    startLine: 55
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Bien manufacturado de alto valor que requiere varias transformaciones (pan, ropa…).
+  example: []
+  syntax:
+    content: Avanzado = 2
+    return:
+      type: MareImperium.CategoriaBien
+references:
+- uid: MareImperium
+- uid: MareImperium.CategoriaBien
+  commentId: T:MareImperium.CategoriaBien
+  href: CategoriaBien.html
+  name: CategoriaBien
+  nameWithType: CategoriaBien
+  fullName: CategoriaBien

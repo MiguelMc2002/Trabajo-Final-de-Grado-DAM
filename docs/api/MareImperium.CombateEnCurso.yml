@@ -1,0 +1,810 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CombateEnCurso
+  commentId: T:MareImperium.CombateEnCurso
+  id: CombateEnCurso
+  parent: MareImperium
+  children:
+  - MareImperium.CombateEnCurso.#ctor(FlotaRuntimeData,FlotaRuntimeData,System.Boolean)
+  - MareImperium.CombateEnCurso.Atacante
+  - MareImperium.CombateEnCurso.Defensor
+  - MareImperium.CombateEnCurso.EsDelJugador
+  - MareImperium.CombateEnCurso.FlotaEnemiga
+  - MareImperium.CombateEnCurso.Ganador
+  - MareImperium.CombateEnCurso.JugadorGano
+  - MareImperium.CombateEnCurso.NumBarcosInicialAtacante
+  - MareImperium.CombateEnCurso.NumBarcosInicialDefensor
+  - MareImperium.CombateEnCurso.ResolverTurno
+  - MareImperium.CombateEnCurso.TerminoPorTimeout
+  - MareImperium.CombateEnCurso.TurnoActual
+  langs:
+  - csharp
+  - vb
+  name: CombateEnCurso
+  nameWithType: CombateEnCurso
+  fullName: CombateEnCurso
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CombateEnCurso
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 10
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Representa un combate naval en curso resuelto de forma asíncrona, turno a turno.
+
+    Puro C# — no hereda de MonoBehaviour. Cada turno equivale a una hora de juego.
+
+    <xref href="GestorCombatesActivos" data-throw-if-not-resolved="false"></xref> lo crea y lo avanza cada <xref href="SimulacionTiempo.OnNuevaHora" data-throw-if-not-resolved="false"></xref>.
+
+    El daño se distribuye sobre los barcos individuales de <xref href="FlotaRuntimeData.BarcosFlota" data-throw-if-not-resolved="false"></xref>;
+
+    un barco con <code>VidaActual == 0</code> queda inutilizado (potencialmente capturable al final).
+  example: []
+  syntax:
+    content: public class CombateEnCurso
+    content.vb: Public Class CombateEnCurso
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CombateEnCurso.Atacante
+  commentId: P:MareImperium.CombateEnCurso.Atacante
+  id: Atacante
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: Atacante
+  nameWithType: CombateEnCurso.Atacante
+  fullName: CombateEnCurso.Atacante
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Atacante
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Flota que inició el encuentro.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData Atacante { get; }
+    parameters: []
+    return:
+      type: MareImperium.FlotaRuntimeData
+    content.vb: Public ReadOnly Property Atacante As FlotaRuntimeData
+  overload: MareImperium.CombateEnCurso.Atacante*
+- uid: MareImperium.CombateEnCurso.Defensor
+  commentId: P:MareImperium.CombateEnCurso.Defensor
+  id: Defensor
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: Defensor
+  nameWithType: CombateEnCurso.Defensor
+  fullName: CombateEnCurso.Defensor
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Defensor
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Flota que recibió el ataque.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData Defensor { get; }
+    parameters: []
+    return:
+      type: MareImperium.FlotaRuntimeData
+    content.vb: Public ReadOnly Property Defensor As FlotaRuntimeData
+  overload: MareImperium.CombateEnCurso.Defensor*
+- uid: MareImperium.CombateEnCurso.TurnoActual
+  commentId: P:MareImperium.CombateEnCurso.TurnoActual
+  id: TurnoActual
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: TurnoActual
+  nameWithType: CombateEnCurso.TurnoActual
+  fullName: CombateEnCurso.TurnoActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TurnoActual
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 21
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número de turno completado (empieza en 0). Un turno = una hora de juego.
+  example: []
+  syntax:
+    content: public int TurnoActual { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property TurnoActual As Integer
+  overload: MareImperium.CombateEnCurso.TurnoActual*
+- uid: MareImperium.CombateEnCurso.EsDelJugador
+  commentId: P:MareImperium.CombateEnCurso.EsDelJugador
+  id: EsDelJugador
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: EsDelJugador
+  nameWithType: CombateEnCurso.EsDelJugador
+  fullName: CombateEnCurso.EsDelJugador
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EsDelJugador
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Si <code>true</code>, el jugador (Id == -1) es una de las dos flotas.
+  example: []
+  syntax:
+    content: public bool EsDelJugador { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property EsDelJugador As Boolean
+  overload: MareImperium.CombateEnCurso.EsDelJugador*
+- uid: MareImperium.CombateEnCurso.TerminoPorTimeout
+  commentId: P:MareImperium.CombateEnCurso.TerminoPorTimeout
+  id: TerminoPorTimeout
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: TerminoPorTimeout
+  nameWithType: CombateEnCurso.TerminoPorTimeout
+  fullName: CombateEnCurso.TerminoPorTimeout
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TerminoPorTimeout
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 30
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Verdadero si el combate terminó por timeout (5 días sin resolución),
+
+    interpretado como evasión del defensor con los daños acumulados.
+  example: []
+  syntax:
+    content: public bool TerminoPorTimeout { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property TerminoPorTimeout As Boolean
+  overload: MareImperium.CombateEnCurso.TerminoPorTimeout*
+- uid: MareImperium.CombateEnCurso.NumBarcosInicialAtacante
+  commentId: P:MareImperium.CombateEnCurso.NumBarcosInicialAtacante
+  id: NumBarcosInicialAtacante
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: NumBarcosInicialAtacante
+  nameWithType: CombateEnCurso.NumBarcosInicialAtacante
+  fullName: CombateEnCurso.NumBarcosInicialAtacante
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NumBarcosInicialAtacante
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 33
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Barcos activos al inicio del combate en la flota atacante.
+  example: []
+  syntax:
+    content: public int NumBarcosInicialAtacante { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property NumBarcosInicialAtacante As Integer
+  overload: MareImperium.CombateEnCurso.NumBarcosInicialAtacante*
+- uid: MareImperium.CombateEnCurso.NumBarcosInicialDefensor
+  commentId: P:MareImperium.CombateEnCurso.NumBarcosInicialDefensor
+  id: NumBarcosInicialDefensor
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: NumBarcosInicialDefensor
+  nameWithType: CombateEnCurso.NumBarcosInicialDefensor
+  fullName: CombateEnCurso.NumBarcosInicialDefensor
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NumBarcosInicialDefensor
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 36
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Barcos activos al inicio del combate en la flota defensora.
+  example: []
+  syntax:
+    content: public int NumBarcosInicialDefensor { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property NumBarcosInicialDefensor As Integer
+  overload: MareImperium.CombateEnCurso.NumBarcosInicialDefensor*
+- uid: MareImperium.CombateEnCurso.FlotaEnemiga
+  commentId: P:MareImperium.CombateEnCurso.FlotaEnemiga
+  id: FlotaEnemiga
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: FlotaEnemiga
+  nameWithType: CombateEnCurso.FlotaEnemiga
+  fullName: CombateEnCurso.FlotaEnemiga
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FlotaEnemiga
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 39
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Flota enemiga del jugador (la que no tiene Id == -1).
+  example: []
+  syntax:
+    content: public FlotaRuntimeData FlotaEnemiga { get; }
+    parameters: []
+    return:
+      type: MareImperium.FlotaRuntimeData
+    content.vb: Public ReadOnly Property FlotaEnemiga As FlotaRuntimeData
+  overload: MareImperium.CombateEnCurso.FlotaEnemiga*
+- uid: MareImperium.CombateEnCurso.JugadorGano
+  commentId: P:MareImperium.CombateEnCurso.JugadorGano
+  id: JugadorGano
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: JugadorGano
+  nameWithType: CombateEnCurso.JugadorGano
+  fullName: CombateEnCurso.JugadorGano
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: JugadorGano
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 42
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'El jugador ganó: su flota sobrevive y la enemiga fue destruida.'
+  example: []
+  syntax:
+    content: public bool JugadorGano { get; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public ReadOnly Property JugadorGano As Boolean
+  overload: MareImperium.CombateEnCurso.JugadorGano*
+- uid: MareImperium.CombateEnCurso.Ganador
+  commentId: P:MareImperium.CombateEnCurso.Ganador
+  id: Ganador
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: Ganador
+  nameWithType: CombateEnCurso.Ganador
+  fullName: CombateEnCurso.Ganador
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Ganador
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 52
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Flota superviviente al terminar el combate; <code>null</code> si ambas destruidas.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData Ganador { get; }
+    parameters: []
+    return:
+      type: MareImperium.FlotaRuntimeData
+    content.vb: Public ReadOnly Property Ganador As FlotaRuntimeData
+  overload: MareImperium.CombateEnCurso.Ganador*
+- uid: MareImperium.CombateEnCurso.#ctor(FlotaRuntimeData,FlotaRuntimeData,System.Boolean)
+  commentId: M:MareImperium.CombateEnCurso.#ctor(FlotaRuntimeData,FlotaRuntimeData,System.Boolean)
+  id: '#ctor(FlotaRuntimeData,FlotaRuntimeData,System.Boolean)'
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: CombateEnCurso(FlotaRuntimeData, FlotaRuntimeData, bool)
+  nameWithType: CombateEnCurso.CombateEnCurso(FlotaRuntimeData, FlotaRuntimeData, bool)
+  fullName: CombateEnCurso.CombateEnCurso(FlotaRuntimeData, FlotaRuntimeData, bool)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 85
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  example: []
+  syntax:
+    content: public CombateEnCurso(FlotaRuntimeData atacante, FlotaRuntimeData defensor, bool esDelJugador)
+    parameters:
+    - id: atacante
+      type: MareImperium.FlotaRuntimeData
+      description: Flota que inicia el encuentro.
+    - id: defensor
+      type: MareImperium.FlotaRuntimeData
+      description: Flota que recibe el ataque.
+    - id: esDelJugador
+      type: System.Boolean
+      description: Verdadero si alguna flota tiene Id == -1.
+    content.vb: Public Sub New(atacante As FlotaRuntimeData, defensor As FlotaRuntimeData, esDelJugador As Boolean)
+  overload: MareImperium.CombateEnCurso.#ctor*
+  nameWithType.vb: CombateEnCurso.New(FlotaRuntimeData, FlotaRuntimeData, Boolean)
+  fullName.vb: CombateEnCurso.New(FlotaRuntimeData, FlotaRuntimeData, Boolean)
+  name.vb: New(FlotaRuntimeData, FlotaRuntimeData, Boolean)
+- uid: MareImperium.CombateEnCurso.ResolverTurno
+  commentId: M:MareImperium.CombateEnCurso.ResolverTurno
+  id: ResolverTurno
+  parent: MareImperium.CombateEnCurso
+  langs:
+  - csharp
+  - vb
+  name: ResolverTurno()
+  nameWithType: CombateEnCurso.ResolverTurno()
+  fullName: CombateEnCurso.ResolverTurno()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ResolverTurno
+    path: TFG/Assets/Scripts/Combate/CombateEnCurso.cs
+    startLine: 103
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Avanza el combate un turno: calcula la fuerza actual de cada flota (incluyendo
+
+    barcos inutilizados que ya no contribuyen), distribuye el daño entre los barcos
+
+    activos de cada bando y recalcula los stats agregados.
+  example: []
+  syntax:
+    content: public bool ResolverTurno()
+    return:
+      type: System.Boolean
+      description: <code>true</code> si el combate ha terminado.
+    content.vb: Public Function ResolverTurno() As Boolean
+  overload: MareImperium.CombateEnCurso.ResolverTurno*
+references:
+- uid: GestorCombatesActivos
+  commentId: T:GestorCombatesActivos
+  href: GestorCombatesActivos.html
+  name: GestorCombatesActivos
+  nameWithType: GestorCombatesActivos
+  fullName: GestorCombatesActivos
+- uid: SimulacionTiempo.OnNuevaHora
+  commentId: E:SimulacionTiempo.OnNuevaHora
+  href: MareImperium.SimulacionTiempo.html#SimulacionTiempo_OnNuevaHora
+  name: OnNuevaHora
+  nameWithType: SimulacionTiempo.OnNuevaHora
+  fullName: SimulacionTiempo.OnNuevaHora
+- uid: FlotaRuntimeData.BarcosFlota
+  commentId: F:FlotaRuntimeData.BarcosFlota
+  href: MareImperium.FlotaRuntimeData.html#FlotaRuntimeData_BarcosFlota
+  name: BarcosFlota
+  nameWithType: FlotaRuntimeData.BarcosFlota
+  fullName: FlotaRuntimeData.BarcosFlota
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CombateEnCurso.Atacante*
+  commentId: Overload:MareImperium.CombateEnCurso.Atacante
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_Atacante
+  name: Atacante
+  nameWithType: CombateEnCurso.Atacante
+  fullName: CombateEnCurso.Atacante
+- uid: MareImperium.FlotaRuntimeData
+  commentId: T:MareImperium.FlotaRuntimeData
+  href: FlotaRuntimeData.html
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData
+- uid: MareImperium.CombateEnCurso.Defensor*
+  commentId: Overload:MareImperium.CombateEnCurso.Defensor
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_Defensor
+  name: Defensor
+  nameWithType: CombateEnCurso.Defensor
+  fullName: CombateEnCurso.Defensor
+- uid: MareImperium.CombateEnCurso.TurnoActual*
+  commentId: Overload:MareImperium.CombateEnCurso.TurnoActual
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_TurnoActual
+  name: TurnoActual
+  nameWithType: CombateEnCurso.TurnoActual
+  fullName: CombateEnCurso.TurnoActual
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.CombateEnCurso.EsDelJugador*
+  commentId: Overload:MareImperium.CombateEnCurso.EsDelJugador
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_EsDelJugador
+  name: EsDelJugador
+  nameWithType: CombateEnCurso.EsDelJugador
+  fullName: CombateEnCurso.EsDelJugador
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: MareImperium.CombateEnCurso.TerminoPorTimeout*
+  commentId: Overload:MareImperium.CombateEnCurso.TerminoPorTimeout
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_TerminoPorTimeout
+  name: TerminoPorTimeout
+  nameWithType: CombateEnCurso.TerminoPorTimeout
+  fullName: CombateEnCurso.TerminoPorTimeout
+- uid: MareImperium.CombateEnCurso.NumBarcosInicialAtacante*
+  commentId: Overload:MareImperium.CombateEnCurso.NumBarcosInicialAtacante
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_NumBarcosInicialAtacante
+  name: NumBarcosInicialAtacante
+  nameWithType: CombateEnCurso.NumBarcosInicialAtacante
+  fullName: CombateEnCurso.NumBarcosInicialAtacante
+- uid: MareImperium.CombateEnCurso.NumBarcosInicialDefensor*
+  commentId: Overload:MareImperium.CombateEnCurso.NumBarcosInicialDefensor
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_NumBarcosInicialDefensor
+  name: NumBarcosInicialDefensor
+  nameWithType: CombateEnCurso.NumBarcosInicialDefensor
+  fullName: CombateEnCurso.NumBarcosInicialDefensor
+- uid: MareImperium.CombateEnCurso.FlotaEnemiga*
+  commentId: Overload:MareImperium.CombateEnCurso.FlotaEnemiga
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_FlotaEnemiga
+  name: FlotaEnemiga
+  nameWithType: CombateEnCurso.FlotaEnemiga
+  fullName: CombateEnCurso.FlotaEnemiga
+- uid: MareImperium.CombateEnCurso.JugadorGano*
+  commentId: Overload:MareImperium.CombateEnCurso.JugadorGano
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_JugadorGano
+  name: JugadorGano
+  nameWithType: CombateEnCurso.JugadorGano
+  fullName: CombateEnCurso.JugadorGano
+- uid: MareImperium.CombateEnCurso.Ganador*
+  commentId: Overload:MareImperium.CombateEnCurso.Ganador
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_Ganador
+  name: Ganador
+  nameWithType: CombateEnCurso.Ganador
+  fullName: CombateEnCurso.Ganador
+- uid: MareImperium.CombateEnCurso.#ctor*
+  commentId: Overload:MareImperium.CombateEnCurso.#ctor
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso__ctor_FlotaRuntimeData_FlotaRuntimeData_System_Boolean_
+  name: CombateEnCurso
+  nameWithType: CombateEnCurso.CombateEnCurso
+  fullName: CombateEnCurso.CombateEnCurso
+  nameWithType.vb: CombateEnCurso.New
+  fullName.vb: CombateEnCurso.New
+  name.vb: New
+- uid: MareImperium.CombateEnCurso.ResolverTurno*
+  commentId: Overload:MareImperium.CombateEnCurso.ResolverTurno
+  href: MareImperium.CombateEnCurso.html#CombateEnCurso_ResolverTurno
+  name: ResolverTurno
+  nameWithType: CombateEnCurso.ResolverTurno
+  fullName: CombateEnCurso.ResolverTurno

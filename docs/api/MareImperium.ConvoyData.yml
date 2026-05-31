@@ -1,0 +1,935 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.ConvoyData
+  commentId: T:MareImperium.ConvoyData
+  id: ConvoyData
+  parent: MareImperium
+  children:
+  - MareImperium.ConvoyData.#ctor(BarcoJugador)
+  - MareImperium.ConvoyData.AñadirMiembro(BarcoJugador)
+  - MareImperium.ConvoyData.BarcoLider
+  - MareImperium.ConvoyData.CargaMaximaTotal
+  - MareImperium.ConvoyData.ComoFlotaRuntime
+  - MareImperium.ConvoyData.EliminarMiembro(BarcoJugador)
+  - MareImperium.ConvoyData.FuerzaCombateTotal
+  - MareImperium.ConvoyData.Miembros
+  - MareImperium.ConvoyData.ModoPirata
+  - MareImperium.ConvoyData.NombreConvoy
+  - MareImperium.ConvoyData.TripulacionTotal
+  - MareImperium.ConvoyData.VelocidadConvoy
+  langs:
+  - csharp
+  - vb
+  name: ConvoyData
+  nameWithType: ConvoyData
+  fullName: ConvoyData
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ConvoyData
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 7
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Agrupa varios barcos del jugador en una formación navegable.
+
+    El barco líder es el primero en incorporarse y no puede abandonar el convoy.
+
+    Clase pura C# — no hereda de MonoBehaviour.
+  example: []
+  syntax:
+    content: public class ConvoyData
+    content.vb: Public Class ConvoyData
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.ConvoyData.NombreConvoy
+  commentId: P:MareImperium.ConvoyData.NombreConvoy
+  id: NombreConvoy
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: NombreConvoy
+  nameWithType: ConvoyData.NombreConvoy
+  fullName: ConvoyData.NombreConvoy
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NombreConvoy
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre del convoy, igual al nombre del barco líder.
+  example: []
+  syntax:
+    content: public string NombreConvoy { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public ReadOnly Property NombreConvoy As String
+  overload: MareImperium.ConvoyData.NombreConvoy*
+- uid: MareImperium.ConvoyData.BarcoLider
+  commentId: P:MareImperium.ConvoyData.BarcoLider
+  id: BarcoLider
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: BarcoLider
+  nameWithType: ConvoyData.BarcoLider
+  fullName: ConvoyData.BarcoLider
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: BarcoLider
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Barco que lidera el convoy. No puede ser eliminado de la formación.
+  example: []
+  syntax:
+    content: public BarcoJugador BarcoLider { get; }
+    parameters: []
+    return:
+      type: MareImperium.BarcoJugador
+    content.vb: Public ReadOnly Property BarcoLider As BarcoJugador
+  overload: MareImperium.ConvoyData.BarcoLider*
+- uid: MareImperium.ConvoyData.Miembros
+  commentId: P:MareImperium.ConvoyData.Miembros
+  id: Miembros
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: Miembros
+  nameWithType: ConvoyData.Miembros
+  fullName: ConvoyData.Miembros
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Miembros
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Lista de barcos miembros del convoy, incluyendo al líder. Solo lectura desde fuera.
+  example: []
+  syntax:
+    content: public IReadOnlyList<BarcoJugador> Miembros { get; }
+    parameters: []
+    return:
+      type: System.Collections.Generic.IReadOnlyList{BarcoJugador}
+    content.vb: Public ReadOnly Property Miembros As IReadOnlyList(Of BarcoJugador)
+  overload: MareImperium.ConvoyData.Miembros*
+- uid: MareImperium.ConvoyData.ModoPirata
+  commentId: P:MareImperium.ConvoyData.ModoPirata
+  id: ModoPirata
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: ModoPirata
+  nameWithType: ConvoyData.ModoPirata
+  fullName: ConvoyData.ModoPirata
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ModoPirata
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Si <code>true</code>, el convoy actúa como pirata en el mapamundi:
+
+    los comerciantes le huyen y puede atacarlos.
+  example: []
+  syntax:
+    content: public bool ModoPirata { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property ModoPirata As Boolean
+  overload: MareImperium.ConvoyData.ModoPirata*
+- uid: MareImperium.ConvoyData.TripulacionTotal
+  commentId: P:MareImperium.ConvoyData.TripulacionTotal
+  id: TripulacionTotal
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: TripulacionTotal
+  nameWithType: ConvoyData.TripulacionTotal
+  fullName: ConvoyData.TripulacionTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TripulacionTotal
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Suma de la tripulación de todos los barcos miembros.
+  example: []
+  syntax:
+    content: public int TripulacionTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property TripulacionTotal As Integer
+  overload: MareImperium.ConvoyData.TripulacionTotal*
+- uid: MareImperium.ConvoyData.VelocidadConvoy
+  commentId: P:MareImperium.ConvoyData.VelocidadConvoy
+  id: VelocidadConvoy
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: VelocidadConvoy
+  nameWithType: ConvoyData.VelocidadConvoy
+  fullName: ConvoyData.VelocidadConvoy
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VelocidadConvoy
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 42
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Velocidad del convoy: el barco más lento determina la velocidad de toda la formación.'
+  example: []
+  syntax:
+    content: public float VelocidadConvoy { get; }
+    parameters: []
+    return:
+      type: System.Single
+    content.vb: Public ReadOnly Property VelocidadConvoy As Single
+  overload: MareImperium.ConvoyData.VelocidadConvoy*
+- uid: MareImperium.ConvoyData.FuerzaCombateTotal
+  commentId: P:MareImperium.ConvoyData.FuerzaCombateTotal
+  id: FuerzaCombateTotal
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: FuerzaCombateTotal
+  nameWithType: ConvoyData.FuerzaCombateTotal
+  fullName: ConvoyData.FuerzaCombateTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FuerzaCombateTotal
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 55
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Suma de la fuerza de combate de todos los barcos miembros.
+  example: []
+  syntax:
+    content: public int FuerzaCombateTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property FuerzaCombateTotal As Integer
+  overload: MareImperium.ConvoyData.FuerzaCombateTotal*
+- uid: MareImperium.ConvoyData.CargaMaximaTotal
+  commentId: P:MareImperium.ConvoyData.CargaMaximaTotal
+  id: CargaMaximaTotal
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: CargaMaximaTotal
+  nameWithType: ConvoyData.CargaMaximaTotal
+  fullName: ConvoyData.CargaMaximaTotal
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargaMaximaTotal
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 66
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Suma de la capacidad de carga máxima de todos los barcos miembros.
+  example: []
+  syntax:
+    content: public int CargaMaximaTotal { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public ReadOnly Property CargaMaximaTotal As Integer
+  overload: MareImperium.ConvoyData.CargaMaximaTotal*
+- uid: MareImperium.ConvoyData.#ctor(BarcoJugador)
+  commentId: M:MareImperium.ConvoyData.#ctor(BarcoJugador)
+  id: '#ctor(BarcoJugador)'
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: ConvoyData(BarcoJugador)
+  nameWithType: ConvoyData.ConvoyData(BarcoJugador)
+  fullName: ConvoyData.ConvoyData(BarcoJugador)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 83
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Crea un convoy con el barco indicado como líder.
+
+    El líder se añade automáticamente a la lista de miembros.
+  example: []
+  syntax:
+    content: public ConvoyData(BarcoJugador barcoLider)
+    parameters:
+    - id: barcoLider
+      type: MareImperium.BarcoJugador
+      description: Barco que encabeza la formación.
+    content.vb: Public Sub New(barcoLider As BarcoJugador)
+  overload: MareImperium.ConvoyData.#ctor*
+  nameWithType.vb: ConvoyData.New(BarcoJugador)
+  fullName.vb: ConvoyData.New(BarcoJugador)
+  name.vb: New(BarcoJugador)
+- uid: MareImperium.ConvoyData.AñadirMiembro(BarcoJugador)
+  commentId: M:MareImperium.ConvoyData.AñadirMiembro(BarcoJugador)
+  id: AñadirMiembro(BarcoJugador)
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: AñadirMiembro(BarcoJugador)
+  nameWithType: ConvoyData.AñadirMiembro(BarcoJugador)
+  fullName: ConvoyData.AñadirMiembro(BarcoJugador)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: AñadirMiembro
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 98
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Añade un barco al convoy. Falla si el barco ya es miembro, si es el líder
+
+    o si ya hay 5 miembros (límite de la formación).
+  example: []
+  syntax:
+    content: public bool AñadirMiembro(BarcoJugador barco)
+    parameters:
+    - id: barco
+      type: MareImperium.BarcoJugador
+      description: Barco a incorporar.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si se incorporó correctamente; <code>false</code> en caso contrario.
+    content.vb: Public Function AñadirMiembro(barco As BarcoJugador) As Boolean
+  overload: MareImperium.ConvoyData.AñadirMiembro*
+- uid: MareImperium.ConvoyData.EliminarMiembro(BarcoJugador)
+  commentId: M:MareImperium.ConvoyData.EliminarMiembro(BarcoJugador)
+  id: EliminarMiembro(BarcoJugador)
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: EliminarMiembro(BarcoJugador)
+  nameWithType: ConvoyData.EliminarMiembro(BarcoJugador)
+  fullName: ConvoyData.EliminarMiembro(BarcoJugador)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EliminarMiembro
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 111
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Elimina un barco del convoy. El barco líder no puede abandonar la formación.
+  example: []
+  syntax:
+    content: public bool EliminarMiembro(BarcoJugador barco)
+    parameters:
+    - id: barco
+      type: MareImperium.BarcoJugador
+      description: Barco a eliminar.
+    return:
+      type: System.Boolean
+      description: <code>true</code> si se eliminó correctamente; <code>false</code> si era el líder o no estaba.
+    content.vb: Public Function EliminarMiembro(barco As BarcoJugador) As Boolean
+  overload: MareImperium.ConvoyData.EliminarMiembro*
+- uid: MareImperium.ConvoyData.ComoFlotaRuntime
+  commentId: M:MareImperium.ConvoyData.ComoFlotaRuntime
+  id: ComoFlotaRuntime
+  parent: MareImperium.ConvoyData
+  langs:
+  - csharp
+  - vb
+  name: ComoFlotaRuntime()
+  nameWithType: ConvoyData.ComoFlotaRuntime()
+  fullName: ConvoyData.ComoFlotaRuntime()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ComoFlotaRuntime
+    path: TFG/Assets/Scripts/Taberna/ConvoyData.cs
+    startLine: 123
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Convierte el convoy en un <xref href="FlotaRuntimeData" data-throw-if-not-resolved="false"></xref> para que
+
+    <xref href="CombateNavalResolver" data-throw-if-not-resolved="false"></xref> pueda procesarlo igual que cualquier otra flota.
+
+    La habilidad del capitán se obtiene del capitán asignado al barco líder.
+  example: []
+  syntax:
+    content: public FlotaRuntimeData ComoFlotaRuntime()
+    return:
+      type: MareImperium.FlotaRuntimeData
+      description: Instancia de <xref href="FlotaRuntimeData" data-throw-if-not-resolved="false"></xref> con los stats agregados del convoy.
+    content.vb: Public Function ComoFlotaRuntime() As FlotaRuntimeData
+  overload: MareImperium.ConvoyData.ComoFlotaRuntime*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.ConvoyData.NombreConvoy*
+  commentId: Overload:MareImperium.ConvoyData.NombreConvoy
+  href: MareImperium.ConvoyData.html#ConvoyData_NombreConvoy
+  name: NombreConvoy
+  nameWithType: ConvoyData.NombreConvoy
+  fullName: ConvoyData.NombreConvoy
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.ConvoyData.BarcoLider*
+  commentId: Overload:MareImperium.ConvoyData.BarcoLider
+  href: MareImperium.ConvoyData.html#ConvoyData_BarcoLider
+  name: BarcoLider
+  nameWithType: ConvoyData.BarcoLider
+  fullName: ConvoyData.BarcoLider
+- uid: MareImperium.BarcoJugador
+  commentId: T:MareImperium.BarcoJugador
+  href: BarcoJugador.html
+  name: BarcoJugador
+  nameWithType: BarcoJugador
+  fullName: BarcoJugador
+- uid: MareImperium.ConvoyData.Miembros*
+  commentId: Overload:MareImperium.ConvoyData.Miembros
+  href: MareImperium.ConvoyData.html#ConvoyData_Miembros
+  name: Miembros
+  nameWithType: ConvoyData.Miembros
+  fullName: ConvoyData.Miembros
+- uid: System.Collections.Generic.IReadOnlyList{BarcoJugador}
+  commentId: T:System.Collections.Generic.IReadOnlyList{BarcoJugador}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<BarcoJugador>
+  nameWithType: IReadOnlyList<BarcoJugador>
+  fullName: System.Collections.Generic.IReadOnlyList<BarcoJugador>
+  nameWithType.vb: IReadOnlyList(Of BarcoJugador)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of BarcoJugador)
+  name.vb: IReadOnlyList(Of BarcoJugador)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: MareImperium.BarcoJugador
+    name: BarcoJugador
+    href: BarcoJugador.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.BarcoJugador
+    name: BarcoJugador
+    href: BarcoJugador.html
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.ConvoyData.ModoPirata*
+  commentId: Overload:MareImperium.ConvoyData.ModoPirata
+  href: MareImperium.ConvoyData.html#ConvoyData_ModoPirata
+  name: ModoPirata
+  nameWithType: ConvoyData.ModoPirata
+  fullName: ConvoyData.ModoPirata
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: MareImperium.ConvoyData.TripulacionTotal*
+  commentId: Overload:MareImperium.ConvoyData.TripulacionTotal
+  href: MareImperium.ConvoyData.html#ConvoyData_TripulacionTotal
+  name: TripulacionTotal
+  nameWithType: ConvoyData.TripulacionTotal
+  fullName: ConvoyData.TripulacionTotal
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.ConvoyData.VelocidadConvoy*
+  commentId: Overload:MareImperium.ConvoyData.VelocidadConvoy
+  href: MareImperium.ConvoyData.html#ConvoyData_VelocidadConvoy
+  name: VelocidadConvoy
+  nameWithType: ConvoyData.VelocidadConvoy
+  fullName: ConvoyData.VelocidadConvoy
+- uid: System.Single
+  commentId: T:System.Single
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.single
+  name: float
+  nameWithType: float
+  fullName: float
+  nameWithType.vb: Single
+  fullName.vb: Single
+  name.vb: Single
+- uid: MareImperium.ConvoyData.FuerzaCombateTotal*
+  commentId: Overload:MareImperium.ConvoyData.FuerzaCombateTotal
+  href: MareImperium.ConvoyData.html#ConvoyData_FuerzaCombateTotal
+  name: FuerzaCombateTotal
+  nameWithType: ConvoyData.FuerzaCombateTotal
+  fullName: ConvoyData.FuerzaCombateTotal
+- uid: MareImperium.ConvoyData.CargaMaximaTotal*
+  commentId: Overload:MareImperium.ConvoyData.CargaMaximaTotal
+  href: MareImperium.ConvoyData.html#ConvoyData_CargaMaximaTotal
+  name: CargaMaximaTotal
+  nameWithType: ConvoyData.CargaMaximaTotal
+  fullName: ConvoyData.CargaMaximaTotal
+- uid: MareImperium.ConvoyData.#ctor*
+  commentId: Overload:MareImperium.ConvoyData.#ctor
+  href: MareImperium.ConvoyData.html#ConvoyData__ctor_BarcoJugador_
+  name: ConvoyData
+  nameWithType: ConvoyData.ConvoyData
+  fullName: ConvoyData.ConvoyData
+  nameWithType.vb: ConvoyData.New
+  fullName.vb: ConvoyData.New
+  name.vb: New
+- uid: MareImperium.ConvoyData.AñadirMiembro*
+  commentId: Overload:MareImperium.ConvoyData.AñadirMiembro
+  href: MareImperium.ConvoyData.html#ConvoyData_AñadirMiembro_BarcoJugador_
+  name: AñadirMiembro
+  nameWithType: ConvoyData.AñadirMiembro
+  fullName: ConvoyData.AñadirMiembro
+- uid: MareImperium.ConvoyData.EliminarMiembro*
+  commentId: Overload:MareImperium.ConvoyData.EliminarMiembro
+  href: MareImperium.ConvoyData.html#ConvoyData_EliminarMiembro_BarcoJugador_
+  name: EliminarMiembro
+  nameWithType: ConvoyData.EliminarMiembro
+  fullName: ConvoyData.EliminarMiembro
+- uid: FlotaRuntimeData
+  commentId: T:FlotaRuntimeData
+  href: FlotaRuntimeData.html
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData
+- uid: CombateNavalResolver
+  commentId: T:CombateNavalResolver
+  href: CombateNavalResolver.html
+  name: CombateNavalResolver
+  nameWithType: CombateNavalResolver
+  fullName: CombateNavalResolver
+- uid: MareImperium.ConvoyData.ComoFlotaRuntime*
+  commentId: Overload:MareImperium.ConvoyData.ComoFlotaRuntime
+  href: MareImperium.ConvoyData.html#ConvoyData_ComoFlotaRuntime
+  name: ComoFlotaRuntime
+  nameWithType: ConvoyData.ComoFlotaRuntime
+  fullName: ConvoyData.ComoFlotaRuntime
+- uid: MareImperium.FlotaRuntimeData
+  commentId: T:MareImperium.FlotaRuntimeData
+  href: FlotaRuntimeData.html
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData

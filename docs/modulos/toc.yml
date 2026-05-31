@@ -1,0 +1,24 @@
+- name: "1 — Económico"
+  href: economico.md
+- name: "2 — Producción y Cadenas"
+  href: produccion.md
+- name: "3 — Combate Naval"
+  href: combate-naval.md
+- name: "4 — Construcción de Navíos"
+  href: construccion-navios.md
+- name: "5 — Ciudades"
+  href: ciudades.md
+- name: "6 — Mundo y Navegación"
+  href: mundo-navegacion.md
+- name: "7 — Flotas y Tripulación"
+  href: flotas-tripulacion.md
+- name: "8 — Comportamiento de PNJs"
+  href: pnjs.md
+- name: "9 — Tiempo y Simulación"
+  href: tiempo-simulacion.md
+- name: "10 — Interfaz de Usuario"
+  href: interfaz-usuario.md
+- name: "11 — Guardado y Carga"
+  href: guardado-carga.md
+- name: "12 — Audio y Feedback Visual"
+  href: audio-feedback.md

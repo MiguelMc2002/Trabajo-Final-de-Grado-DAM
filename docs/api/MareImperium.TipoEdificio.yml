@@ -1,0 +1,157 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.TipoEdificio
+  commentId: T:MareImperium.TipoEdificio
+  id: TipoEdificio
+  parent: MareImperium
+  children:
+  - MareImperium.TipoEdificio.Astillero
+  - MareImperium.TipoEdificio.Mercado
+  - MareImperium.TipoEdificio.Puerto
+  - MareImperium.TipoEdificio.Taberna
+  langs:
+  - csharp
+  - vb
+  name: TipoEdificio
+  nameWithType: TipoEdificio
+  fullName: TipoEdificio
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TipoEdificio
+    path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+    startLine: 255
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Identifica cada tipo de edificio con el que el jugador puede interactuar
+
+    en el mapa visual de la ciudad.
+  example: []
+  syntax:
+    content: public enum TipoEdificio
+    content.vb: Public Enum TipoEdificio
+- uid: MareImperium.TipoEdificio.Mercado
+  commentId: F:MareImperium.TipoEdificio.Mercado
+  id: Mercado
+  parent: MareImperium.TipoEdificio
+  langs:
+  - csharp
+  - vb
+  name: Mercado
+  nameWithType: TipoEdificio.Mercado
+  fullName: TipoEdificio.Mercado
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Mercado
+    path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+    startLine: 258
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Mercado de la ciudad: permite comprar y vender mercancías.'
+  example: []
+  syntax:
+    content: Mercado = 0
+    return:
+      type: MareImperium.TipoEdificio
+- uid: MareImperium.TipoEdificio.Astillero
+  commentId: F:MareImperium.TipoEdificio.Astillero
+  id: Astillero
+  parent: MareImperium.TipoEdificio
+  langs:
+  - csharp
+  - vb
+  name: Astillero
+  nameWithType: TipoEdificio.Astillero
+  fullName: TipoEdificio.Astillero
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Astillero
+    path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+    startLine: 261
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Astillero: construcción y reparación de barcos. Disponible tras la beta.'
+  example: []
+  syntax:
+    content: Astillero = 1
+    return:
+      type: MareImperium.TipoEdificio
+- uid: MareImperium.TipoEdificio.Taberna
+  commentId: F:MareImperium.TipoEdificio.Taberna
+  id: Taberna
+  parent: MareImperium.TipoEdificio
+  langs:
+  - csharp
+  - vb
+  name: Taberna
+  nameWithType: TipoEdificio.Taberna
+  fullName: TipoEdificio.Taberna
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Taberna
+    path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+    startLine: 264
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Taberna: contratación de capitanes y tripulación. Disponible tras la beta.'
+  example: []
+  syntax:
+    content: Taberna = 2
+    return:
+      type: MareImperium.TipoEdificio
+- uid: MareImperium.TipoEdificio.Puerto
+  commentId: F:MareImperium.TipoEdificio.Puerto
+  id: Puerto
+  parent: MareImperium.TipoEdificio
+  langs:
+  - csharp
+  - vb
+  name: Puerto
+  nameWithType: TipoEdificio.Puerto
+  fullName: TipoEdificio.Puerto
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Puerto
+    path: TFG/Assets/Scripts/Ciudades/CiudadController.cs
+    startLine: 267
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: 'Puerto: gestión de la flota del jugador.'
+  example: []
+  syntax:
+    content: Puerto = 3
+    return:
+      type: MareImperium.TipoEdificio
+references:
+- uid: MareImperium
+- uid: MareImperium.TipoEdificio
+  commentId: T:MareImperium.TipoEdificio
+  href: TipoEdificio.html
+  name: TipoEdificio
+  nameWithType: TipoEdificio
+  fullName: TipoEdificio

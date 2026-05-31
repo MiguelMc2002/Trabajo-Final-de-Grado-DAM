@@ -1,0 +1,608 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.AlmacenJugadorDAO
+  commentId: T:MareImperium.AlmacenJugadorDAO
+  id: AlmacenJugadorDAO
+  parent: MareImperium
+  children:
+  - MareImperium.AlmacenJugadorDAO.#ctor(DatabaseManager)
+  - MareImperium.AlmacenJugadorDAO.GuardarAlmacen(System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  - MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+  - MareImperium.AlmacenJugadorDAO.ObtenerAlmacen
+  langs:
+  - csharp
+  - vb
+  name: AlmacenJugadorDAO
+  nameWithType: AlmacenJugadorDAO
+  fullName: AlmacenJugadorDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: AlmacenJugadorDAO
+    path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+    startLine: 11
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla AlmacenJugador. Persiste y restaura el inventario
+
+    personal del jugador —los bienes que lleva en su bodega— entre sesiones de juego.
+
+    Sigue el mismo patrón atómico de borrar-e-insertar que <xref href="CargaBarcoDAO" data-throw-if-not-resolved="false"></xref>
+
+    para evitar filas huérfanas de bienes que el jugador ya no posee.
+  example: []
+  syntax:
+    content: public class AlmacenJugadorDAO
+    content.vb: Public Class AlmacenJugadorDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.AlmacenJugadorDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.AlmacenJugadorDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.AlmacenJugadorDAO
+  langs:
+  - csharp
+  - vb
+  name: AlmacenJugadorDAO(DatabaseManager)
+  nameWithType: AlmacenJugadorDAO.AlmacenJugadorDAO(DatabaseManager)
+  fullName: AlmacenJugadorDAO.AlmacenJugadorDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+    startLine: 19
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public AlmacenJugadorDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.AlmacenJugadorDAO.#ctor*
+  nameWithType.vb: AlmacenJugadorDAO.New(DatabaseManager)
+  fullName.vb: AlmacenJugadorDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.AlmacenJugadorDAO.GuardarAlmacen(System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  commentId: M:MareImperium.AlmacenJugadorDAO.GuardarAlmacen(System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  id: GuardarAlmacen(System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  parent: MareImperium.AlmacenJugadorDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarAlmacen(Dictionary<int, int>)
+  nameWithType: AlmacenJugadorDAO.GuardarAlmacen(Dictionary<int, int>)
+  fullName: AlmacenJugadorDAO.GuardarAlmacen(System.Collections.Generic.Dictionary<int, int>)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarAlmacen
+    path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+    startLine: 33
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Persiste el inventario completo del jugador de forma atómica: primero elimina
+
+    todas las filas existentes con <xref href="AlmacenJugadorDAO.LimpiarAlmacen" data-throw-if-not-resolved="false"></xref> y luego inserta
+
+    solo las entradas con cantidad mayor que cero.
+  example: []
+  syntax:
+    content: public void GuardarAlmacen(Dictionary<int, int> almacenPorIdBien)
+    parameters:
+    - id: almacenPorIdBien
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+      description: >-
+        Diccionario donde la clave es el <code>id_bien</code> y el valor es la cantidad
+
+        de unidades que el jugador posee de ese bien.
+    content.vb: Public Sub GuardarAlmacen(almacenPorIdBien As Dictionary(Of Integer, Integer))
+  overload: MareImperium.AlmacenJugadorDAO.GuardarAlmacen*
+  nameWithType.vb: AlmacenJugadorDAO.GuardarAlmacen(Dictionary(Of Integer, Integer))
+  fullName.vb: AlmacenJugadorDAO.GuardarAlmacen(System.Collections.Generic.Dictionary(Of Integer, Integer))
+  name.vb: GuardarAlmacen(Dictionary(Of Integer, Integer))
+- uid: MareImperium.AlmacenJugadorDAO.ObtenerAlmacen
+  commentId: M:MareImperium.AlmacenJugadorDAO.ObtenerAlmacen
+  id: ObtenerAlmacen
+  parent: MareImperium.AlmacenJugadorDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerAlmacen()
+  nameWithType: AlmacenJugadorDAO.ObtenerAlmacen()
+  fullName: AlmacenJugadorDAO.ObtenerAlmacen()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerAlmacen
+    path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+    startLine: 75
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Lee el inventario completo del jugador desde la tabla AlmacenJugador.
+  example: []
+  syntax:
+    content: public Dictionary<int, int> ObtenerAlmacen()
+    return:
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+      description: >-
+        Diccionario con <code>id_bien → cantidad</code>. Vacío si el almacén no tiene
+
+        datos o si ocurre un error; nunca devuelve <code>null</code>.
+    content.vb: Public Function ObtenerAlmacen() As Dictionary(Of Integer, Integer)
+  overload: MareImperium.AlmacenJugadorDAO.ObtenerAlmacen*
+- uid: MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+  commentId: M:MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+  id: LimpiarAlmacen
+  parent: MareImperium.AlmacenJugadorDAO
+  langs:
+  - csharp
+  - vb
+  name: LimpiarAlmacen()
+  nameWithType: AlmacenJugadorDAO.LimpiarAlmacen()
+  fullName: AlmacenJugadorDAO.LimpiarAlmacen()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: LimpiarAlmacen
+    path: TFG/Assets/Scripts/Database/AlmacenJugadorDAO.cs
+    startLine: 109
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Elimina todas las filas de la tabla AlmacenJugador.
+
+    Se llama antes de guardar el estado actualizado del inventario.
+  example: []
+  syntax:
+    content: public void LimpiarAlmacen()
+    content.vb: Public Sub LimpiarAlmacen()
+  overload: MareImperium.AlmacenJugadorDAO.LimpiarAlmacen*
+references:
+- uid: CargaBarcoDAO
+  commentId: T:CargaBarcoDAO
+  href: CargaBarcoDAO.html
+  name: CargaBarcoDAO
+  nameWithType: CargaBarcoDAO
+  fullName: CargaBarcoDAO
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.AlmacenJugadorDAO.#ctor*
+  commentId: Overload:MareImperium.AlmacenJugadorDAO.#ctor
+  href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO__ctor_DatabaseManager_
+  name: AlmacenJugadorDAO
+  nameWithType: AlmacenJugadorDAO.AlmacenJugadorDAO
+  fullName: AlmacenJugadorDAO.AlmacenJugadorDAO
+  nameWithType.vb: AlmacenJugadorDAO.New
+  fullName.vb: AlmacenJugadorDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: AlmacenJugadorDAO.LimpiarAlmacen
+  commentId: M:AlmacenJugadorDAO.LimpiarAlmacen
+  href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_LimpiarAlmacen
+  name: LimpiarAlmacen()
+  nameWithType: AlmacenJugadorDAO.LimpiarAlmacen()
+  fullName: AlmacenJugadorDAO.LimpiarAlmacen()
+  spec.csharp:
+  - uid: MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+    name: LimpiarAlmacen
+    href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_LimpiarAlmacen
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+    name: LimpiarAlmacen
+    href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_LimpiarAlmacen
+  - name: (
+  - name: )
+- uid: MareImperium.AlmacenJugadorDAO.GuardarAlmacen*
+  commentId: Overload:MareImperium.AlmacenJugadorDAO.GuardarAlmacen
+  href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_GuardarAlmacen_System_Collections_Generic_Dictionary_System_Int32_System_Int32__
+  name: GuardarAlmacen
+  nameWithType: AlmacenJugadorDAO.GuardarAlmacen
+  fullName: AlmacenJugadorDAO.GuardarAlmacen
+- uid: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  commentId: T:System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<int, int>
+  nameWithType: Dictionary<int, int>
+  fullName: System.Collections.Generic.Dictionary<int, int>
+  nameWithType.vb: Dictionary(Of Integer, Integer)
+  fullName.vb: System.Collections.Generic.Dictionary(Of Integer, Integer)
+  name.vb: Dictionary(Of Integer, Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.AlmacenJugadorDAO.ObtenerAlmacen*
+  commentId: Overload:MareImperium.AlmacenJugadorDAO.ObtenerAlmacen
+  href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_ObtenerAlmacen
+  name: ObtenerAlmacen
+  nameWithType: AlmacenJugadorDAO.ObtenerAlmacen
+  fullName: AlmacenJugadorDAO.ObtenerAlmacen
+- uid: MareImperium.AlmacenJugadorDAO.LimpiarAlmacen*
+  commentId: Overload:MareImperium.AlmacenJugadorDAO.LimpiarAlmacen
+  href: MareImperium.AlmacenJugadorDAO.html#AlmacenJugadorDAO_LimpiarAlmacen
+  name: LimpiarAlmacen
+  nameWithType: AlmacenJugadorDAO.LimpiarAlmacen
+  fullName: AlmacenJugadorDAO.LimpiarAlmacen

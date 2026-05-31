@@ -1,0 +1,676 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.BarcoDto
+  commentId: T:MareImperium.BarcoDto
+  id: BarcoDto
+  parent: MareImperium
+  children:
+  - MareImperium.BarcoDto.CapacidadTripulacion
+  - MareImperium.BarcoDto.EsBarcosCombate
+  - MareImperium.BarcoDto.IdBarco
+  - MareImperium.BarcoDto.IdFlota
+  - MareImperium.BarcoDto.IdTipoCasco
+  - MareImperium.BarcoDto.NombreBarco
+  - MareImperium.BarcoDto.TripulacionActual
+  - MareImperium.BarcoDto.VidaActual
+  langs:
+  - csharp
+  - vb
+  name: BarcoDto
+  nameWithType: BarcoDto
+  fullName: BarcoDto
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: BarcoDto
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 9
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Fila de la tabla Barco mapeada desde SQLite.
+
+    Contiene el estado completo de un barco individual: casco, vida, tripulación y flota asignada.
+  example: []
+  syntax:
+    content: public class BarcoDto
+    content.vb: Public Class BarcoDto
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.BarcoDto.IdBarco
+  commentId: P:MareImperium.BarcoDto.IdBarco
+  id: IdBarco
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: IdBarco
+  nameWithType: BarcoDto.IdBarco
+  fullName: BarcoDto.IdBarco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdBarco
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador único del barco (clave primaria en BD).
+  example: []
+  syntax:
+    content: public int IdBarco { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdBarco As Integer
+  overload: MareImperium.BarcoDto.IdBarco*
+- uid: MareImperium.BarcoDto.IdTipoCasco
+  commentId: P:MareImperium.BarcoDto.IdTipoCasco
+  id: IdTipoCasco
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: IdTipoCasco
+  nameWithType: BarcoDto.IdTipoCasco
+  fullName: BarcoDto.IdTipoCasco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdTipoCasco
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 15
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Identificador del tipo de casco base del barco (FK a TipoCasco).
+  example: []
+  syntax:
+    content: public int IdTipoCasco { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property IdTipoCasco As Integer
+  overload: MareImperium.BarcoDto.IdTipoCasco*
+- uid: MareImperium.BarcoDto.NombreBarco
+  commentId: P:MareImperium.BarcoDto.NombreBarco
+  id: NombreBarco
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: NombreBarco
+  nameWithType: BarcoDto.NombreBarco
+  fullName: BarcoDto.NombreBarco
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NombreBarco
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Nombre propio del barco asignado por el jugador o generado para los PNJ.
+  example: []
+  syntax:
+    content: public string NombreBarco { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property NombreBarco As String
+  overload: MareImperium.BarcoDto.NombreBarco*
+- uid: MareImperium.BarcoDto.EsBarcosCombate
+  commentId: P:MareImperium.BarcoDto.EsBarcosCombate
+  id: EsBarcosCombate
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: EsBarcosCombate
+  nameWithType: BarcoDto.EsBarcosCombate
+  fullName: BarcoDto.EsBarcosCombate
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EsBarcosCombate
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Indica si el barco es una unidad de combate activa dentro de su flota.
+
+    Los barcos de carga no participan directamente en el combate naval.
+  example: []
+  syntax:
+    content: public bool EsBarcosCombate { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EsBarcosCombate As Boolean
+  overload: MareImperium.BarcoDto.EsBarcosCombate*
+- uid: MareImperium.BarcoDto.VidaActual
+  commentId: P:MareImperium.BarcoDto.VidaActual
+  id: VidaActual
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: VidaActual
+  nameWithType: BarcoDto.VidaActual
+  fullName: BarcoDto.VidaActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: VidaActual
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 27
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Puntos de vida actuales del barco. Se reduce al recibir daño en combate.
+  example: []
+  syntax:
+    content: public int VidaActual { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property VidaActual As Integer
+  overload: MareImperium.BarcoDto.VidaActual*
+- uid: MareImperium.BarcoDto.TripulacionActual
+  commentId: P:MareImperium.BarcoDto.TripulacionActual
+  id: TripulacionActual
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: TripulacionActual
+  nameWithType: BarcoDto.TripulacionActual
+  fullName: BarcoDto.TripulacionActual
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TripulacionActual
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 30
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Número de tripulantes embarcados en este momento.
+  example: []
+  syntax:
+    content: public int TripulacionActual { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property TripulacionActual As Integer
+  overload: MareImperium.BarcoDto.TripulacionActual*
+- uid: MareImperium.BarcoDto.CapacidadTripulacion
+  commentId: P:MareImperium.BarcoDto.CapacidadTripulacion
+  id: CapacidadTripulacion
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: CapacidadTripulacion
+  nameWithType: BarcoDto.CapacidadTripulacion
+  fullName: BarcoDto.CapacidadTripulacion
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapacidadTripulacion
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 33
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Capacidad máxima de tripulación que admite el casco.
+  example: []
+  syntax:
+    content: public int CapacidadTripulacion { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property CapacidadTripulacion As Integer
+  overload: MareImperium.BarcoDto.CapacidadTripulacion*
+- uid: MareImperium.BarcoDto.IdFlota
+  commentId: P:MareImperium.BarcoDto.IdFlota
+  id: IdFlota
+  parent: MareImperium.BarcoDto
+  langs:
+  - csharp
+  - vb
+  name: IdFlota
+  nameWithType: BarcoDto.IdFlota
+  fullName: BarcoDto.IdFlota
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IdFlota
+    path: TFG/Assets/Scripts/Database/BarcoDAO.cs
+    startLine: 39
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Identificador de la flota a la que pertenece el barco, o <code>null</code> si
+
+    está en astillero o sin asignar.
+  example: []
+  syntax:
+    content: public int? IdFlota { get; set; }
+    parameters: []
+    return:
+      type: System.Nullable{System.Int32}
+    content.vb: Public Property IdFlota As Integer?
+  overload: MareImperium.BarcoDto.IdFlota*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.BarcoDto.IdBarco*
+  commentId: Overload:MareImperium.BarcoDto.IdBarco
+  href: MareImperium.BarcoDto.html#BarcoDto_IdBarco
+  name: IdBarco
+  nameWithType: BarcoDto.IdBarco
+  fullName: BarcoDto.IdBarco
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.BarcoDto.IdTipoCasco*
+  commentId: Overload:MareImperium.BarcoDto.IdTipoCasco
+  href: MareImperium.BarcoDto.html#BarcoDto_IdTipoCasco
+  name: IdTipoCasco
+  nameWithType: BarcoDto.IdTipoCasco
+  fullName: BarcoDto.IdTipoCasco
+- uid: MareImperium.BarcoDto.NombreBarco*
+  commentId: Overload:MareImperium.BarcoDto.NombreBarco
+  href: MareImperium.BarcoDto.html#BarcoDto_NombreBarco
+  name: NombreBarco
+  nameWithType: BarcoDto.NombreBarco
+  fullName: BarcoDto.NombreBarco
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.BarcoDto.EsBarcosCombate*
+  commentId: Overload:MareImperium.BarcoDto.EsBarcosCombate
+  href: MareImperium.BarcoDto.html#BarcoDto_EsBarcosCombate
+  name: EsBarcosCombate
+  nameWithType: BarcoDto.EsBarcosCombate
+  fullName: BarcoDto.EsBarcosCombate
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: MareImperium.BarcoDto.VidaActual*
+  commentId: Overload:MareImperium.BarcoDto.VidaActual
+  href: MareImperium.BarcoDto.html#BarcoDto_VidaActual
+  name: VidaActual
+  nameWithType: BarcoDto.VidaActual
+  fullName: BarcoDto.VidaActual
+- uid: MareImperium.BarcoDto.TripulacionActual*
+  commentId: Overload:MareImperium.BarcoDto.TripulacionActual
+  href: MareImperium.BarcoDto.html#BarcoDto_TripulacionActual
+  name: TripulacionActual
+  nameWithType: BarcoDto.TripulacionActual
+  fullName: BarcoDto.TripulacionActual
+- uid: MareImperium.BarcoDto.CapacidadTripulacion*
+  commentId: Overload:MareImperium.BarcoDto.CapacidadTripulacion
+  href: MareImperium.BarcoDto.html#BarcoDto_CapacidadTripulacion
+  name: CapacidadTripulacion
+  nameWithType: BarcoDto.CapacidadTripulacion
+  fullName: BarcoDto.CapacidadTripulacion
+- uid: MareImperium.BarcoDto.IdFlota*
+  commentId: Overload:MareImperium.BarcoDto.IdFlota
+  href: MareImperium.BarcoDto.html#BarcoDto_IdFlota
+  name: IdFlota
+  nameWithType: BarcoDto.IdFlota
+  fullName: BarcoDto.IdFlota
+- uid: System.Nullable{System.Int32}
+  commentId: T:System.Nullable{System.Int32}
+  parent: System
+  definition: System.Nullable`1
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int?
+  nameWithType: int?
+  fullName: int?
+  nameWithType.vb: Integer?
+  fullName.vb: Integer?
+  name.vb: Integer?
+  spec.csharp:
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+  spec.vb:
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '?'
+- uid: System.Nullable`1
+  commentId: T:System.Nullable`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  name: Nullable<T>
+  nameWithType: Nullable<T>
+  fullName: System.Nullable<T>
+  nameWithType.vb: Nullable(Of T)
+  fullName.vb: System.Nullable(Of T)
+  name.vb: Nullable(Of T)
+  spec.csharp:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Nullable`1
+    name: Nullable
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.nullable-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )

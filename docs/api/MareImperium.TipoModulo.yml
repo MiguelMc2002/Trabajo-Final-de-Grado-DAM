@@ -1,0 +1,128 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.TipoModulo
+  commentId: T:MareImperium.TipoModulo
+  id: TipoModulo
+  parent: MareImperium
+  children:
+  - MareImperium.TipoModulo.Armamento
+  - MareImperium.TipoModulo.Bodega
+  - MareImperium.TipoModulo.Velas
+  langs:
+  - csharp
+  - vb
+  name: TipoModulo
+  nameWithType: TipoModulo
+  fullName: TipoModulo
+  type: Enum
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: TipoModulo
+    path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+    startLine: 4
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Categoría funcional de un módulo instalable en un barco.
+
+    Determina qué estadística mejora principalmente el módulo.
+  example: []
+  syntax:
+    content: public enum TipoModulo
+    content.vb: Public Enum TipoModulo
+- uid: MareImperium.TipoModulo.Armamento
+  commentId: F:MareImperium.TipoModulo.Armamento
+  id: Armamento
+  parent: MareImperium.TipoModulo
+  langs:
+  - csharp
+  - vb
+  name: Armamento
+  nameWithType: TipoModulo.Armamento
+  fullName: TipoModulo.Armamento
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Armamento
+    path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+    startLine: 7
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Cañones, ballestas y otras armas. Aumenta la fuerza de combate.
+  example: []
+  syntax:
+    content: Armamento = 0
+    return:
+      type: MareImperium.TipoModulo
+- uid: MareImperium.TipoModulo.Velas
+  commentId: F:MareImperium.TipoModulo.Velas
+  id: Velas
+  parent: MareImperium.TipoModulo
+  langs:
+  - csharp
+  - vb
+  name: Velas
+  nameWithType: TipoModulo.Velas
+  fullName: TipoModulo.Velas
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Velas
+    path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+    startLine: 10
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Velas, mástiles y aparejos. Aumenta velocidad y maniobrabilidad.
+  example: []
+  syntax:
+    content: Velas = 1
+    return:
+      type: MareImperium.TipoModulo
+- uid: MareImperium.TipoModulo.Bodega
+  commentId: F:MareImperium.TipoModulo.Bodega
+  id: Bodega
+  parent: MareImperium.TipoModulo
+  langs:
+  - csharp
+  - vb
+  name: Bodega
+  nameWithType: TipoModulo.Bodega
+  fullName: TipoModulo.Bodega
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Bodega
+    path: TFG/Assets/Scripts/Astillero/TipoModulo.cs
+    startLine: 13
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Bodegas y compartimentos de carga. Aumenta la capacidad de mercancías.
+  example: []
+  syntax:
+    content: Bodega = 2
+    return:
+      type: MareImperium.TipoModulo
+references:
+- uid: MareImperium
+- uid: MareImperium.TipoModulo
+  commentId: T:MareImperium.TipoModulo
+  href: TipoModulo.html
+  name: TipoModulo
+  nameWithType: TipoModulo
+  fullName: TipoModulo

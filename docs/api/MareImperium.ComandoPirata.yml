@@ -1,0 +1,488 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.ComandoPirata
+  commentId: T:MareImperium.ComandoPirata
+  id: ComandoPirata
+  parent: MareImperium
+  children:
+  - MareImperium.ComandoPirata.ObjetivoId
+  - MareImperium.ComandoPirata.Ruta
+  - MareImperium.ComandoPirata.Tipo
+  langs:
+  - csharp
+  - vb
+  name: ComandoPirata
+  nameWithType: ComandoPirata
+  fullName: ComandoPirata
+  type: Struct
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ComandoPirata
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 40
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Comando generado por el <xref href="PirataBrain" data-throw-if-not-resolved="false"></xref> para ser consumido en el hilo
+
+    principal (Update). Contiene únicamente datos seguros entre hilos.
+  example: []
+  syntax:
+    content: public struct ComandoPirata
+    content.vb: Public Structure ComandoPirata
+  inheritedMembers:
+  - System.ValueType.Equals(System.Object)
+  - System.ValueType.GetHashCode
+  - System.ValueType.ToString
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetType
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+- uid: MareImperium.ComandoPirata.Tipo
+  commentId: F:MareImperium.ComandoPirata.Tipo
+  id: Tipo
+  parent: MareImperium.ComandoPirata
+  langs:
+  - csharp
+  - vb
+  name: Tipo
+  nameWithType: ComandoPirata.Tipo
+  fullName: ComandoPirata.Tipo
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Tipo
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 43
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Tipo de acción que debe aplicar el hilo principal.
+  example: []
+  syntax:
+    content: public ComandoPirataTipo Tipo
+    return:
+      type: MareImperium.ComandoPirataTipo
+    content.vb: Public Tipo As ComandoPirataTipo
+- uid: MareImperium.ComandoPirata.ObjetivoId
+  commentId: F:MareImperium.ComandoPirata.ObjetivoId
+  id: ObjetivoId
+  parent: MareImperium.ComandoPirata
+  langs:
+  - csharp
+  - vb
+  name: ObjetivoId
+  nameWithType: ComandoPirata.ObjetivoId
+  fullName: ComandoPirata.ObjetivoId
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObjetivoId
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 45
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Id del objetivo; solo válido cuando <xref href="ComandoPirata.Tipo" data-throw-if-not-resolved="false"></xref> == <xref href="ComandoPirataTipo.InterceptarObjetivo" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public int ObjetivoId
+    return:
+      type: System.Int32
+    content.vb: Public ObjetivoId As Integer
+- uid: MareImperium.ComandoPirata.Ruta
+  commentId: F:MareImperium.ComandoPirata.Ruta
+  id: Ruta
+  parent: MareImperium.ComandoPirata
+  langs:
+  - csharp
+  - vb
+  name: Ruta
+  nameWithType: ComandoPirata.Ruta
+  fullName: ComandoPirata.Ruta
+  type: Field
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Ruta
+    path: TFG/Assets/Scripts/PNJ/PirataBrain.cs
+    startLine: 47
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Ruta calculada; solo válido cuando <xref href="ComandoPirata.Tipo" data-throw-if-not-resolved="false"></xref> == <xref href="ComandoPirataTipo.NuevaRuta" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public List<Vector3Int> Ruta
+    return:
+      type: System.Collections.Generic.List{UnityEngine.Vector3Int}
+    content.vb: Public Ruta As List(Of Vector3Int)
+references:
+- uid: PirataBrain
+  commentId: T:PirataBrain
+  href: PirataBrain.html
+  name: PirataBrain
+  nameWithType: PirataBrain
+  fullName: PirataBrain
+- uid: MareImperium
+- uid: System.ValueType.Equals(System.Object)
+  commentId: M:System.ValueType.Equals(System.Object)
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  name: Equals(object)
+  nameWithType: ValueType.Equals(object)
+  fullName: System.ValueType.Equals(object)
+  nameWithType.vb: ValueType.Equals(Object)
+  fullName.vb: System.ValueType.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.equals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.ValueType.GetHashCode
+  commentId: M:System.ValueType.GetHashCode
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  name: GetHashCode()
+  nameWithType: ValueType.GetHashCode()
+  fullName: System.ValueType.GetHashCode()
+  spec.csharp:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode
+  - name: (
+  - name: )
+- uid: System.ValueType.ToString
+  commentId: M:System.ValueType.ToString
+  parent: System.ValueType
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  name: ToString()
+  nameWithType: ValueType.ToString()
+  fullName: System.ValueType.ToString()
+  spec.csharp:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.ValueType.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.valuetype.tostring
+  - name: (
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.ValueType
+  commentId: T:System.ValueType
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.valuetype
+  name: ValueType
+  nameWithType: ValueType
+  fullName: System.ValueType
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.ComandoPirataTipo
+  commentId: T:MareImperium.ComandoPirataTipo
+  href: ComandoPirataTipo.html
+  name: ComandoPirataTipo
+  nameWithType: ComandoPirataTipo
+  fullName: ComandoPirataTipo
+- uid: ComandoPirata.Tipo
+  commentId: F:ComandoPirata.Tipo
+  href: MareImperium.ComandoPirata.html#ComandoPirata_Tipo
+  name: Tipo
+  nameWithType: ComandoPirata.Tipo
+  fullName: ComandoPirata.Tipo
+- uid: ComandoPirataTipo.InterceptarObjetivo
+  commentId: F:ComandoPirataTipo.InterceptarObjetivo
+  href: MareImperium.ComandoPirataTipo.html#ComandoPirataTipo_InterceptarObjetivo
+  name: InterceptarObjetivo
+  nameWithType: ComandoPirataTipo.InterceptarObjetivo
+  fullName: ComandoPirataTipo.InterceptarObjetivo
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: ComandoPirataTipo.NuevaRuta
+  commentId: F:ComandoPirataTipo.NuevaRuta
+  href: MareImperium.ComandoPirataTipo.html#ComandoPirataTipo_NuevaRuta
+  name: NuevaRuta
+  nameWithType: ComandoPirataTipo.NuevaRuta
+  fullName: ComandoPirataTipo.NuevaRuta
+- uid: System.Collections.Generic.List{UnityEngine.Vector3Int}
+  commentId: T:System.Collections.Generic.List{UnityEngine.Vector3Int}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<Vector3Int>
+  nameWithType: List<Vector3Int>
+  fullName: System.Collections.Generic.List<UnityEngine.Vector3Int>
+  nameWithType.vb: List(Of Vector3Int)
+  fullName.vb: System.Collections.Generic.List(Of UnityEngine.Vector3Int)
+  name.vb: List(Of Vector3Int)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: UnityEngine.Vector3Int
+    name: Vector3Int
+    isExternal: true
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic

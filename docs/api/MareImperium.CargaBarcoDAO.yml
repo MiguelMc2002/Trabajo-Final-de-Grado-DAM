@@ -1,0 +1,819 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CargaBarcoDAO
+  commentId: T:MareImperium.CargaBarcoDAO
+  id: CargaBarcoDAO
+  parent: MareImperium
+  children:
+  - MareImperium.CargaBarcoDAO.#ctor(DatabaseManager)
+  - MareImperium.CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+  - MareImperium.CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+  - MareImperium.CargaBarcoDAO.GuardarCargaCompleta(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  - MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco(System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: CargaBarcoDAO
+  nameWithType: CargaBarcoDAO
+  fullName: CargaBarcoDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargaBarcoDAO
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla CargaBarco. Conecta cada barco con los bienes que
+
+    transporta en su bodega. Sin este DAO toda la mercancía embarcada se perdería
+
+    al cerrar el juego, ya que no quedaría persistida en la BD.
+  example: []
+  syntax:
+    content: public class CargaBarcoDAO
+    content.vb: Public Class CargaBarcoDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CargaBarcoDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.CargaBarcoDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.CargaBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: CargaBarcoDAO(DatabaseManager)
+  nameWithType: CargaBarcoDAO.CargaBarcoDAO(DatabaseManager)
+  fullName: CargaBarcoDAO.CargaBarcoDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 37
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public CargaBarcoDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.CargaBarcoDAO.#ctor*
+  nameWithType.vb: CargaBarcoDAO.New(DatabaseManager)
+  fullName.vb: CargaBarcoDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+  commentId: M:MareImperium.CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+  id: GuardarCarga(System.Int32,System.Int32,System.Int32)
+  parent: MareImperium.CargaBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarCarga(int, int, int)
+  nameWithType: CargaBarcoDAO.GuardarCarga(int, int, int)
+  fullName: CargaBarcoDAO.GuardarCarga(int, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarCarga
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 49
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inserta o sobreescribe la cantidad de un bien concreto en la bodega de un barco.
+
+    Usa INSERT OR REPLACE para que la operación sea idempotente.
+  example: []
+  syntax:
+    content: public void GuardarCarga(int idBarco, int idBien, int cantidad)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien.
+    - id: cantidad
+      type: System.Int32
+      description: Unidades del bien almacenadas en la bodega.
+    content.vb: Public Sub GuardarCarga(idBarco As Integer, idBien As Integer, cantidad As Integer)
+  overload: MareImperium.CargaBarcoDAO.GuardarCarga*
+  nameWithType.vb: CargaBarcoDAO.GuardarCarga(Integer, Integer, Integer)
+  fullName.vb: CargaBarcoDAO.GuardarCarga(Integer, Integer, Integer)
+  name.vb: GuardarCarga(Integer, Integer, Integer)
+- uid: MareImperium.CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+  commentId: M:MareImperium.CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+  id: EliminarCargaDeBarco(System.Int32)
+  parent: MareImperium.CargaBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: EliminarCargaDeBarco(int)
+  nameWithType: CargaBarcoDAO.EliminarCargaDeBarco(int)
+  fullName: CargaBarcoDAO.EliminarCargaDeBarco(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EliminarCargaDeBarco
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 78
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Elimina toda la carga registrada para un barco. Se llama antes de guardar
+
+    la carga actualizada para evitar que queden filas huérfanas de bienes que
+
+    el jugador ya no transporta.
+  example: []
+  syntax:
+    content: public void EliminarCargaDeBarco(int idBarco)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco cuya carga se limpia.
+    content.vb: Public Sub EliminarCargaDeBarco(idBarco As Integer)
+  overload: MareImperium.CargaBarcoDAO.EliminarCargaDeBarco*
+  nameWithType.vb: CargaBarcoDAO.EliminarCargaDeBarco(Integer)
+  fullName.vb: CargaBarcoDAO.EliminarCargaDeBarco(Integer)
+  name.vb: EliminarCargaDeBarco(Integer)
+- uid: MareImperium.CargaBarcoDAO.GuardarCargaCompleta(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  commentId: M:MareImperium.CargaBarcoDAO.GuardarCargaCompleta(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  id: GuardarCargaCompleta(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Int32})
+  parent: MareImperium.CargaBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarCargaCompleta(int, Dictionary<int, int>)
+  nameWithType: CargaBarcoDAO.GuardarCargaCompleta(int, Dictionary<int, int>)
+  fullName: CargaBarcoDAO.GuardarCargaCompleta(int, System.Collections.Generic.Dictionary<int, int>)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarCargaCompleta
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 108
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Persiste la bodega completa de un barco de forma atómica: primero elimina la
+
+    carga anterior con <xref href="CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)" data-throw-if-not-resolved="false"></xref> y luego inserta cada
+
+    entrada del diccionario con <xref href="CargaBarcoDAO.GuardarCarga(System.Int32%2cSystem.Int32%2cSystem.Int32)" data-throw-if-not-resolved="false"></xref>.
+
+    Solo se insertan las entradas con cantidad mayor que cero.
+  example: []
+  syntax:
+    content: public void GuardarCargaCompleta(int idBarco, Dictionary<int, int> cargaPorIdBien)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco cuya bodega se persiste.
+    - id: cargaPorIdBien
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+      description: >-
+        Diccionario donde la clave es el <code>idBien</code> y el valor es la cantidad
+
+        de unidades que el barco lleva de ese bien.
+    content.vb: Public Sub GuardarCargaCompleta(idBarco As Integer, cargaPorIdBien As Dictionary(Of Integer, Integer))
+  overload: MareImperium.CargaBarcoDAO.GuardarCargaCompleta*
+  nameWithType.vb: CargaBarcoDAO.GuardarCargaCompleta(Integer, Dictionary(Of Integer, Integer))
+  fullName.vb: CargaBarcoDAO.GuardarCargaCompleta(Integer, System.Collections.Generic.Dictionary(Of Integer, Integer))
+  name.vb: GuardarCargaCompleta(Integer, Dictionary(Of Integer, Integer))
+- uid: MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco(System.Int32)
+  commentId: M:MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco(System.Int32)
+  id: ObtenerCargaDeBarco(System.Int32)
+  parent: MareImperium.CargaBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerCargaDeBarco(int)
+  nameWithType: CargaBarcoDAO.ObtenerCargaDeBarco(int)
+  fullName: CargaBarcoDAO.ObtenerCargaDeBarco(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerCargaDeBarco
+    path: TFG/Assets/Scripts/Database/CargaBarcoDAO.cs
+    startLine: 134
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Devuelve la carga completa de un barco con el nombre de cada bien,
+
+    obtenido mediante JOIN con la tabla Bien.
+  example: []
+  syntax:
+    content: public List<CargaBarcoDto> ObtenerCargaDeBarco(int idBarco)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco a consultar.
+    return:
+      type: System.Collections.Generic.List{CargaBarcoDto}
+      description: >-
+        Lista de <xref href="CargaBarcoDto" data-throw-if-not-resolved="false"></xref> con una entrada por bien embarcado.
+
+        Vacía si el barco no lleva mercancía o si ocurre un error.
+    content.vb: Public Function ObtenerCargaDeBarco(idBarco As Integer) As List(Of CargaBarcoDto)
+  overload: MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco*
+  nameWithType.vb: CargaBarcoDAO.ObtenerCargaDeBarco(Integer)
+  fullName.vb: CargaBarcoDAO.ObtenerCargaDeBarco(Integer)
+  name.vb: ObtenerCargaDeBarco(Integer)
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CargaBarcoDAO.#ctor*
+  commentId: Overload:MareImperium.CargaBarcoDAO.#ctor
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO__ctor_DatabaseManager_
+  name: CargaBarcoDAO
+  nameWithType: CargaBarcoDAO.CargaBarcoDAO
+  fullName: CargaBarcoDAO.CargaBarcoDAO
+  nameWithType.vb: CargaBarcoDAO.New
+  fullName.vb: CargaBarcoDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: MareImperium.CargaBarcoDAO.GuardarCarga*
+  commentId: Overload:MareImperium.CargaBarcoDAO.GuardarCarga
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_GuardarCarga_System_Int32_System_Int32_System_Int32_
+  name: GuardarCarga
+  nameWithType: CargaBarcoDAO.GuardarCarga
+  fullName: CargaBarcoDAO.GuardarCarga
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.CargaBarcoDAO.EliminarCargaDeBarco*
+  commentId: Overload:MareImperium.CargaBarcoDAO.EliminarCargaDeBarco
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_EliminarCargaDeBarco_System_Int32_
+  name: EliminarCargaDeBarco
+  nameWithType: CargaBarcoDAO.EliminarCargaDeBarco
+  fullName: CargaBarcoDAO.EliminarCargaDeBarco
+- uid: CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+  commentId: M:CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+  isExternal: true
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_EliminarCargaDeBarco_System_Int32_
+  name: EliminarCargaDeBarco(int)
+  nameWithType: CargaBarcoDAO.EliminarCargaDeBarco(int)
+  fullName: CargaBarcoDAO.EliminarCargaDeBarco(int)
+  nameWithType.vb: CargaBarcoDAO.EliminarCargaDeBarco(Integer)
+  fullName.vb: CargaBarcoDAO.EliminarCargaDeBarco(Integer)
+  name.vb: EliminarCargaDeBarco(Integer)
+  spec.csharp:
+  - uid: MareImperium.CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+    name: EliminarCargaDeBarco
+    href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_EliminarCargaDeBarco_System_Int32_
+  - name: (
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+  spec.vb:
+  - uid: MareImperium.CargaBarcoDAO.EliminarCargaDeBarco(System.Int32)
+    name: EliminarCargaDeBarco
+    href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_EliminarCargaDeBarco_System_Int32_
+  - name: (
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+  commentId: M:CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+  isExternal: true
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_GuardarCarga_System_Int32_System_Int32_System_Int32_
+  name: GuardarCarga(int, int, int)
+  nameWithType: CargaBarcoDAO.GuardarCarga(int, int, int)
+  fullName: CargaBarcoDAO.GuardarCarga(int, int, int)
+  nameWithType.vb: CargaBarcoDAO.GuardarCarga(Integer, Integer, Integer)
+  fullName.vb: CargaBarcoDAO.GuardarCarga(Integer, Integer, Integer)
+  name.vb: GuardarCarga(Integer, Integer, Integer)
+  spec.csharp:
+  - uid: MareImperium.CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+    name: GuardarCarga
+    href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_GuardarCarga_System_Int32_System_Int32_System_Int32_
+  - name: (
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+  spec.vb:
+  - uid: MareImperium.CargaBarcoDAO.GuardarCarga(System.Int32,System.Int32,System.Int32)
+    name: GuardarCarga
+    href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_GuardarCarga_System_Int32_System_Int32_System_Int32_
+  - name: (
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: MareImperium.CargaBarcoDAO.GuardarCargaCompleta*
+  commentId: Overload:MareImperium.CargaBarcoDAO.GuardarCargaCompleta
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_GuardarCargaCompleta_System_Int32_System_Collections_Generic_Dictionary_System_Int32_System_Int32__
+  name: GuardarCargaCompleta
+  nameWithType: CargaBarcoDAO.GuardarCargaCompleta
+  fullName: CargaBarcoDAO.GuardarCargaCompleta
+- uid: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  commentId: T:System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<int, int>
+  nameWithType: Dictionary<int, int>
+  fullName: System.Collections.Generic.Dictionary<int, int>
+  nameWithType.vb: Dictionary(Of Integer, Integer)
+  fullName.vb: System.Collections.Generic.Dictionary(Of Integer, Integer)
+  name.vb: Dictionary(Of Integer, Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: CargaBarcoDto
+  commentId: T:CargaBarcoDto
+  href: CargaBarcoDto.html
+  name: CargaBarcoDto
+  nameWithType: CargaBarcoDto
+  fullName: CargaBarcoDto
+- uid: MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco*
+  commentId: Overload:MareImperium.CargaBarcoDAO.ObtenerCargaDeBarco
+  href: MareImperium.CargaBarcoDAO.html#CargaBarcoDAO_ObtenerCargaDeBarco_System_Int32_
+  name: ObtenerCargaDeBarco
+  nameWithType: CargaBarcoDAO.ObtenerCargaDeBarco
+  fullName: CargaBarcoDAO.ObtenerCargaDeBarco
+- uid: System.Collections.Generic.List{CargaBarcoDto}
+  commentId: T:System.Collections.Generic.List{CargaBarcoDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<CargaBarcoDto>
+  nameWithType: List<CargaBarcoDto>
+  fullName: System.Collections.Generic.List<CargaBarcoDto>
+  nameWithType.vb: List(Of CargaBarcoDto)
+  fullName.vb: System.Collections.Generic.List(Of CargaBarcoDto)
+  name.vb: List(Of CargaBarcoDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.CargaBarcoDto
+    name: CargaBarcoDto
+    href: CargaBarcoDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.CargaBarcoDto
+    name: CargaBarcoDto
+    href: CargaBarcoDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )

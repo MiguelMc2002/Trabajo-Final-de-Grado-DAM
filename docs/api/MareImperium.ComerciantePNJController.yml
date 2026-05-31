@@ -1,0 +1,610 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.ComerciantePNJController
+  commentId: T:MareImperium.ComerciantePNJController
+  id: ComerciantePNJController
+  parent: MareImperium
+  children:
+  - MareImperium.ComerciantePNJController.#ctor(FlotaRuntimeData,FlotaManager)
+  - MareImperium.ComerciantePNJController.IniciarViaje(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Double},System.Int32)
+  - MareImperium.ComerciantePNJController.Tick
+  langs:
+  - csharp
+  - vb
+  name: ComerciantePNJController
+  nameWithType: ComerciantePNJController
+  fullName: ComerciantePNJController
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ComerciantePNJController
+    path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+    startLine: 10
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Controlador puro (no MonoBehaviour) que gobierna el ciclo de vida
+
+    de una flota PNJ comerciante mediante una máquina de estados.
+
+    Se instancia por cada flota registrada en <xref href="FlotaManager" data-throw-if-not-resolved="false"></xref>
+
+    y avanza un paso por día de juego al invocar <xref href="ComerciantePNJController.Tick" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public class ComerciantePNJController
+    content.vb: Public Class ComerciantePNJController
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.ComerciantePNJController.#ctor(FlotaRuntimeData,FlotaManager)
+  commentId: M:MareImperium.ComerciantePNJController.#ctor(FlotaRuntimeData,FlotaManager)
+  id: '#ctor(FlotaRuntimeData,FlotaManager)'
+  parent: MareImperium.ComerciantePNJController
+  langs:
+  - csharp
+  - vb
+  name: ComerciantePNJController(FlotaRuntimeData, FlotaManager)
+  nameWithType: ComerciantePNJController.ComerciantePNJController(FlotaRuntimeData, FlotaManager)
+  fullName: ComerciantePNJController.ComerciantePNJController(FlotaRuntimeData, FlotaManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+    startLine: 29
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Inicializa el controlador vinculándolo a una flota y a su gestor.
+  example: []
+  syntax:
+    content: public ComerciantePNJController(FlotaRuntimeData flota, FlotaManager manager)
+    parameters:
+    - id: flota
+      type: MareImperium.FlotaRuntimeData
+      description: Datos de runtime de la flota que este controlador gobierna.
+    - id: manager
+      type: MareImperium.FlotaManager
+      description: Gestor central de flotas PNJ, usado para aplicar transiciones de estado.
+    content.vb: Public Sub New(flota As FlotaRuntimeData, manager As FlotaManager)
+  overload: MareImperium.ComerciantePNJController.#ctor*
+  nameWithType.vb: ComerciantePNJController.New(FlotaRuntimeData, FlotaManager)
+  fullName.vb: ComerciantePNJController.New(FlotaRuntimeData, FlotaManager)
+  name.vb: New(FlotaRuntimeData, FlotaManager)
+- uid: MareImperium.ComerciantePNJController.Tick
+  commentId: M:MareImperium.ComerciantePNJController.Tick
+  id: Tick
+  parent: MareImperium.ComerciantePNJController
+  langs:
+  - csharp
+  - vb
+  name: Tick()
+  nameWithType: ComerciantePNJController.Tick()
+  fullName: ComerciantePNJController.Tick()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Tick
+    path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+    startLine: 41
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Avanza la lógica de comportamiento de la flota un día de juego.
+
+    Delega en el método privado correspondiente al estado actual de la flota.
+
+    Debe llamarse desde <xref href="FlotaManager.TickTodosLosControladores" data-throw-if-not-resolved="false"></xref> cada vez que <code>OnNuevoDia</code> se dispare.
+  example: []
+  syntax:
+    content: public void Tick()
+    content.vb: Public Sub Tick()
+  overload: MareImperium.ComerciantePNJController.Tick*
+- uid: MareImperium.ComerciantePNJController.IniciarViaje(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Double},System.Int32)
+  commentId: M:MareImperium.ComerciantePNJController.IniciarViaje(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Double},System.Int32)
+  id: IniciarViaje(System.Int32,System.Collections.Generic.Dictionary{System.Int32,System.Double},System.Int32)
+  parent: MareImperium.ComerciantePNJController
+  langs:
+  - csharp
+  - vb
+  name: IniciarViaje(int, Dictionary<int, double>, int)
+  nameWithType: ComerciantePNJController.IniciarViaje(int, Dictionary<int, double>, int)
+  fullName: ComerciantePNJController.IniciarViaje(int, System.Collections.Generic.Dictionary<int, double>, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: IniciarViaje
+    path: TFG/Assets/Scripts/PNJ/ComerciantePNJController.cs
+    startLine: 343
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inicia un viaje hacia una ciudad destino, fijando los días de tránsito y
+
+    registrando el precio de compra de cada bien cargado.
+
+    Debe llamarse desde fuera al asignar un destino a la flota.
+  example: []
+  syntax:
+    content: public void IniciarViaje(int ciudadDestinoId, Dictionary<int, double> preciosCompra, int diasViaje = 3)
+    parameters:
+    - id: ciudadDestinoId
+      type: System.Int32
+      description: Identificador de la ciudad a la que viajará la flota.
+    - id: preciosCompra
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Double}
+      description: Precios pagados por cada bien cargado (idBien → precio).
+    - id: diasViaje
+      type: System.Int32
+      description: Duración del trayecto en días de juego (por defecto 3).
+    content.vb: Public Sub IniciarViaje(ciudadDestinoId As Integer, preciosCompra As Dictionary(Of Integer, Double), diasViaje As Integer = 3)
+  overload: MareImperium.ComerciantePNJController.IniciarViaje*
+  nameWithType.vb: ComerciantePNJController.IniciarViaje(Integer, Dictionary(Of Integer, Double), Integer)
+  fullName.vb: ComerciantePNJController.IniciarViaje(Integer, System.Collections.Generic.Dictionary(Of Integer, Double), Integer)
+  name.vb: IniciarViaje(Integer, Dictionary(Of Integer, Double), Integer)
+references:
+- uid: FlotaManager
+  commentId: T:FlotaManager
+  href: FlotaManager.html
+  name: FlotaManager
+  nameWithType: FlotaManager
+  fullName: FlotaManager
+- uid: ComerciantePNJController.Tick
+  commentId: M:ComerciantePNJController.Tick
+  href: MareImperium.ComerciantePNJController.html#ComerciantePNJController_Tick
+  name: Tick()
+  nameWithType: ComerciantePNJController.Tick()
+  fullName: ComerciantePNJController.Tick()
+  spec.csharp:
+  - uid: MareImperium.ComerciantePNJController.Tick
+    name: Tick
+    href: MareImperium.ComerciantePNJController.html#ComerciantePNJController_Tick
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: MareImperium.ComerciantePNJController.Tick
+    name: Tick
+    href: MareImperium.ComerciantePNJController.html#ComerciantePNJController_Tick
+  - name: (
+  - name: )
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.ComerciantePNJController.#ctor*
+  commentId: Overload:MareImperium.ComerciantePNJController.#ctor
+  href: MareImperium.ComerciantePNJController.html#ComerciantePNJController__ctor_FlotaRuntimeData_FlotaManager_
+  name: ComerciantePNJController
+  nameWithType: ComerciantePNJController.ComerciantePNJController
+  fullName: ComerciantePNJController.ComerciantePNJController
+  nameWithType.vb: ComerciantePNJController.New
+  fullName.vb: ComerciantePNJController.New
+  name.vb: New
+- uid: MareImperium.FlotaRuntimeData
+  commentId: T:MareImperium.FlotaRuntimeData
+  href: FlotaRuntimeData.html
+  name: FlotaRuntimeData
+  nameWithType: FlotaRuntimeData
+  fullName: FlotaRuntimeData
+- uid: MareImperium.FlotaManager
+  commentId: T:MareImperium.FlotaManager
+  href: FlotaManager.html
+  name: FlotaManager
+  nameWithType: FlotaManager
+  fullName: FlotaManager
+- uid: FlotaManager.TickTodosLosControladores
+  commentId: M:FlotaManager.TickTodosLosControladores
+  href: MareImperium.FlotaManager.html#FlotaManager_TickTodosLosControladores
+  name: TickTodosLosControladores()
+  nameWithType: FlotaManager.TickTodosLosControladores()
+  fullName: FlotaManager.TickTodosLosControladores()
+  spec.csharp:
+  - uid: MareImperium.FlotaManager.TickTodosLosControladores
+    name: TickTodosLosControladores
+    href: MareImperium.FlotaManager.html#FlotaManager_TickTodosLosControladores
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: MareImperium.FlotaManager.TickTodosLosControladores
+    name: TickTodosLosControladores
+    href: MareImperium.FlotaManager.html#FlotaManager_TickTodosLosControladores
+  - name: (
+  - name: )
+- uid: MareImperium.ComerciantePNJController.Tick*
+  commentId: Overload:MareImperium.ComerciantePNJController.Tick
+  href: MareImperium.ComerciantePNJController.html#ComerciantePNJController_Tick
+  name: Tick
+  nameWithType: ComerciantePNJController.Tick
+  fullName: ComerciantePNJController.Tick
+- uid: MareImperium.ComerciantePNJController.IniciarViaje*
+  commentId: Overload:MareImperium.ComerciantePNJController.IniciarViaje
+  href: MareImperium.ComerciantePNJController.html#ComerciantePNJController_IniciarViaje_System_Int32_System_Collections_Generic_Dictionary_System_Int32_System_Double__System_Int32_
+  name: IniciarViaje
+  nameWithType: ComerciantePNJController.IniciarViaje
+  fullName: ComerciantePNJController.IniciarViaje
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Collections.Generic.Dictionary{System.Int32,System.Double}
+  commentId: T:System.Collections.Generic.Dictionary{System.Int32,System.Double}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<int, double>
+  nameWithType: Dictionary<int, double>
+  fullName: System.Collections.Generic.Dictionary<int, double>
+  nameWithType.vb: Dictionary(Of Integer, Double)
+  fullName.vb: System.Collections.Generic.Dictionary(Of Integer, Double)
+  name.vb: Dictionary(Of Integer, Double)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Double
+    name: Double
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.double
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic

@@ -1,0 +1,576 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CapitanDAO
+  commentId: T:MareImperium.CapitanDAO
+  id: CapitanDAO
+  parent: MareImperium
+  children:
+  - MareImperium.CapitanDAO.#ctor(DatabaseManager)
+  - MareImperium.CapitanDAO.CargarTodosLosCapitanes
+  - MareImperium.CapitanDAO.EliminarTodosLosCapitanes
+  - MareImperium.CapitanDAO.GuardarCapitan(CapitanData,System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: CapitanDAO
+  nameWithType: CapitanDAO
+  fullName: CapitanDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CapitanDAO
+    path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+    startLine: 35
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla Capitan. Persiste y restaura los capitanes contratados
+
+    por el jugador, incluyendo sus habilidades y el barco al que están asignados.
+
+    Ejecuta migraciones automáticas al construirse para añadir columnas ausentes en
+
+    bases de datos creadas antes de esta versión.
+  example: []
+  syntax:
+    content: public class CapitanDAO
+    content.vb: Public Class CapitanDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CapitanDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.CapitanDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.CapitanDAO
+  langs:
+  - csharp
+  - vb
+  name: CapitanDAO(DatabaseManager)
+  nameWithType: CapitanDAO.CapitanDAO(DatabaseManager)
+  fullName: CapitanDAO.CapitanDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+    startLine: 43
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO y migra las columnas necesarias si no existen.
+  example: []
+  syntax:
+    content: public CapitanDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.CapitanDAO.#ctor*
+  nameWithType.vb: CapitanDAO.New(DatabaseManager)
+  fullName.vb: CapitanDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.CapitanDAO.GuardarCapitan(CapitanData,System.Int32)
+  commentId: M:MareImperium.CapitanDAO.GuardarCapitan(CapitanData,System.Int32)
+  id: GuardarCapitan(CapitanData,System.Int32)
+  parent: MareImperium.CapitanDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarCapitan(CapitanData, int)
+  nameWithType: CapitanDAO.GuardarCapitan(CapitanData, int)
+  fullName: CapitanDAO.GuardarCapitan(CapitanData, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarCapitan
+    path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+    startLine: 55
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Inserta o sobreescribe un capitán en la tabla Capitan con sus habilidades y barco asignado.
+  example: []
+  syntax:
+    content: public void GuardarCapitan(CapitanData capitan, int idBarcoAsignado)
+    parameters:
+    - id: capitan
+      type: MareImperium.CapitanData
+      description: Datos del capitán a persistir.
+    - id: idBarcoAsignado
+      type: System.Int32
+      description: Identificador del barco asignado, o -1 si libre.
+    content.vb: Public Sub GuardarCapitan(capitan As CapitanData, idBarcoAsignado As Integer)
+  overload: MareImperium.CapitanDAO.GuardarCapitan*
+  nameWithType.vb: CapitanDAO.GuardarCapitan(CapitanData, Integer)
+  fullName.vb: CapitanDAO.GuardarCapitan(CapitanData, Integer)
+  name.vb: GuardarCapitan(CapitanData, Integer)
+- uid: MareImperium.CapitanDAO.CargarTodosLosCapitanes
+  commentId: M:MareImperium.CapitanDAO.CargarTodosLosCapitanes
+  id: CargarTodosLosCapitanes
+  parent: MareImperium.CapitanDAO
+  langs:
+  - csharp
+  - vb
+  name: CargarTodosLosCapitanes()
+  nameWithType: CapitanDAO.CargarTodosLosCapitanes()
+  fullName: CapitanDAO.CargarTodosLosCapitanes()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargarTodosLosCapitanes
+    path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+    startLine: 87
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todos los capitanes almacenados en la tabla Capitan.
+  example: []
+  syntax:
+    content: public List<CapitanDto> CargarTodosLosCapitanes()
+    return:
+      type: System.Collections.Generic.List{CapitanDto}
+      description: Lista de <xref href="CapitanDto" data-throw-if-not-resolved="false"></xref>. Vacía si no hay capitanes guardados.
+    content.vb: Public Function CargarTodosLosCapitanes() As List(Of CapitanDto)
+  overload: MareImperium.CapitanDAO.CargarTodosLosCapitanes*
+- uid: MareImperium.CapitanDAO.EliminarTodosLosCapitanes
+  commentId: M:MareImperium.CapitanDAO.EliminarTodosLosCapitanes
+  id: EliminarTodosLosCapitanes
+  parent: MareImperium.CapitanDAO
+  langs:
+  - csharp
+  - vb
+  name: EliminarTodosLosCapitanes()
+  nameWithType: CapitanDAO.EliminarTodosLosCapitanes()
+  fullName: CapitanDAO.EliminarTodosLosCapitanes()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EliminarTodosLosCapitanes
+    path: TFG/Assets/Scripts/Database/CapitanDAO.cs
+    startLine: 127
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Borra todos los capitanes de la tabla. Se llama antes de reinsertarlos al guardar.
+  example: []
+  syntax:
+    content: public void EliminarTodosLosCapitanes()
+    content.vb: Public Sub EliminarTodosLosCapitanes()
+  overload: MareImperium.CapitanDAO.EliminarTodosLosCapitanes*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CapitanDAO.#ctor*
+  commentId: Overload:MareImperium.CapitanDAO.#ctor
+  href: MareImperium.CapitanDAO.html#CapitanDAO__ctor_DatabaseManager_
+  name: CapitanDAO
+  nameWithType: CapitanDAO.CapitanDAO
+  fullName: CapitanDAO.CapitanDAO
+  nameWithType.vb: CapitanDAO.New
+  fullName.vb: CapitanDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: MareImperium.CapitanDAO.GuardarCapitan*
+  commentId: Overload:MareImperium.CapitanDAO.GuardarCapitan
+  href: MareImperium.CapitanDAO.html#CapitanDAO_GuardarCapitan_CapitanData_System_Int32_
+  name: GuardarCapitan
+  nameWithType: CapitanDAO.GuardarCapitan
+  fullName: CapitanDAO.GuardarCapitan
+- uid: MareImperium.CapitanData
+  commentId: T:MareImperium.CapitanData
+  href: CapitanData.html
+  name: CapitanData
+  nameWithType: CapitanData
+  fullName: CapitanData
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: CapitanDto
+  commentId: T:CapitanDto
+  href: CapitanDto.html
+  name: CapitanDto
+  nameWithType: CapitanDto
+  fullName: CapitanDto
+- uid: MareImperium.CapitanDAO.CargarTodosLosCapitanes*
+  commentId: Overload:MareImperium.CapitanDAO.CargarTodosLosCapitanes
+  href: MareImperium.CapitanDAO.html#CapitanDAO_CargarTodosLosCapitanes
+  name: CargarTodosLosCapitanes
+  nameWithType: CapitanDAO.CargarTodosLosCapitanes
+  fullName: CapitanDAO.CargarTodosLosCapitanes
+- uid: System.Collections.Generic.List{CapitanDto}
+  commentId: T:System.Collections.Generic.List{CapitanDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<CapitanDto>
+  nameWithType: List<CapitanDto>
+  fullName: System.Collections.Generic.List<CapitanDto>
+  nameWithType.vb: List(Of CapitanDto)
+  fullName.vb: System.Collections.Generic.List(Of CapitanDto)
+  name.vb: List(Of CapitanDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.CapitanDto
+    name: CapitanDto
+    href: CapitanDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.CapitanDto
+    name: CapitanDto
+    href: CapitanDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.CapitanDAO.EliminarTodosLosCapitanes*
+  commentId: Overload:MareImperium.CapitanDAO.EliminarTodosLosCapitanes
+  href: MareImperium.CapitanDAO.html#CapitanDAO_EliminarTodosLosCapitanes
+  name: EliminarTodosLosCapitanes
+  nameWithType: CapitanDAO.EliminarTodosLosCapitanes
+  fullName: CapitanDAO.EliminarTodosLosCapitanes

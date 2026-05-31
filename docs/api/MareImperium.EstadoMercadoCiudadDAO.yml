@@ -1,0 +1,782 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.EstadoMercadoCiudadDAO
+  commentId: T:MareImperium.EstadoMercadoCiudadDAO
+  id: EstadoMercadoCiudadDAO
+  parent: MareImperium
+  children:
+  - MareImperium.EstadoMercadoCiudadDAO.#ctor(DatabaseManager)
+  - MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado(System.Int32)
+  - MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Decimal)
+  - MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado(System.Int32,System.Collections.Generic.IReadOnlyList{EntradaMercado})
+  - MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+  langs:
+  - csharp
+  - vb
+  name: EstadoMercadoCiudadDAO
+  nameWithType: EstadoMercadoCiudadDAO
+  fullName: EstadoMercadoCiudadDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstadoMercadoCiudadDAO
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 35
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla EstadoMercadoCiudad. Es la tabla más importante del módulo
+
+    de guardado: almacena el estado económico completo de cada bien en cada ciudad.
+
+    Sin este DAO el estado del mercado se pierde al cerrar el juego.
+  example: []
+  syntax:
+    content: public class EstadoMercadoCiudadDAO
+    content.vb: Public Class EstadoMercadoCiudadDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.EstadoMercadoCiudadDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.EstadoMercadoCiudadDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.EstadoMercadoCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: EstadoMercadoCiudadDAO(DatabaseManager)
+  nameWithType: EstadoMercadoCiudadDAO.EstadoMercadoCiudadDAO(DatabaseManager)
+  fullName: EstadoMercadoCiudadDAO.EstadoMercadoCiudadDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 43
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public EstadoMercadoCiudadDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.EstadoMercadoCiudadDAO.#ctor*
+  nameWithType.vb: EstadoMercadoCiudadDAO.New(DatabaseManager)
+  fullName.vb: EstadoMercadoCiudadDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Decimal)
+  commentId: M:MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Decimal)
+  id: GuardarEstadoMercado(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Decimal)
+  parent: MareImperium.EstadoMercadoCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarEstadoMercado(int, int, int, int, int, decimal)
+  nameWithType: EstadoMercadoCiudadDAO.GuardarEstadoMercado(int, int, int, int, int, decimal)
+  fullName: EstadoMercadoCiudadDAO.GuardarEstadoMercado(int, int, int, int, int, decimal)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarEstadoMercado
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 58
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Escribe (o sobreescribe) el estado de un bien concreto en el mercado de una ciudad.
+
+    Usa INSERT OR REPLACE para que la operación sea idempotente.
+  example: []
+  syntax:
+    content: public void GuardarEstadoMercado(int idCiudad, int idBien, int stock, int produccion, int consumo, decimal precioActual)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien.
+    - id: stock
+      type: System.Int32
+      description: Stock actual del bien en la ciudad.
+    - id: produccion
+      type: System.Int32
+      description: Producción diaria del bien en la ciudad.
+    - id: consumo
+      type: System.Int32
+      description: Consumo diario del bien en la ciudad.
+    - id: precioActual
+      type: System.Decimal
+      description: Precio calculado en tiempo de ejecución.
+    content.vb: Public Sub GuardarEstadoMercado(idCiudad As Integer, idBien As Integer, stock As Integer, produccion As Integer, consumo As Integer, precioActual As Decimal)
+  overload: MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado*
+  nameWithType.vb: EstadoMercadoCiudadDAO.GuardarEstadoMercado(Integer, Integer, Integer, Integer, Integer, Decimal)
+  fullName.vb: EstadoMercadoCiudadDAO.GuardarEstadoMercado(Integer, Integer, Integer, Integer, Integer, Decimal)
+  name.vb: GuardarEstadoMercado(Integer, Integer, Integer, Integer, Integer, Decimal)
+- uid: MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado(System.Int32,System.Collections.Generic.IReadOnlyList{EntradaMercado})
+  commentId: M:MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado(System.Int32,System.Collections.Generic.IReadOnlyList{EntradaMercado})
+  id: GuardarTodoElMercado(System.Int32,System.Collections.Generic.IReadOnlyList{EntradaMercado})
+  parent: MareImperium.EstadoMercadoCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarTodoElMercado(int, IReadOnlyList<EntradaMercado>)
+  nameWithType: EstadoMercadoCiudadDAO.GuardarTodoElMercado(int, IReadOnlyList<EntradaMercado>)
+  fullName: EstadoMercadoCiudadDAO.GuardarTodoElMercado(int, System.Collections.Generic.IReadOnlyList<EntradaMercado>)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarTodoElMercado
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 95
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Guarda el estado completo del mercado de una ciudad iterando la lista de entradas
+
+    procedente de <xref href="GameManager.MercadosPorCiudad" data-throw-if-not-resolved="false"></xref>. Por cada bien busca su id
+
+    en la tabla Bien usando el nombre del <xref href="BienData" data-throw-if-not-resolved="false"></xref> asociado.
+
+    Las entradas cuyo bien no se encuentre en la BD o no tengan <xref href="BienData" data-throw-if-not-resolved="false"></xref> asignado
+
+    se omiten con un aviso en consola.
+  example: []
+  syntax:
+    content: public void GuardarTodoElMercado(int idCiudad, IReadOnlyList<EntradaMercado> entradas)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad cuyo mercado se persiste. Debe ser mayor que 0.
+    - id: entradas
+      type: System.Collections.Generic.IReadOnlyList{EntradaMercado}
+      description: Lista de entradas del mercado obtenida del estado central de la partida.
+    content.vb: Public Sub GuardarTodoElMercado(idCiudad As Integer, entradas As IReadOnlyList(Of EntradaMercado))
+  overload: MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado*
+  nameWithType.vb: EstadoMercadoCiudadDAO.GuardarTodoElMercado(Integer, IReadOnlyList(Of EntradaMercado))
+  fullName.vb: EstadoMercadoCiudadDAO.GuardarTodoElMercado(Integer, System.Collections.Generic.IReadOnlyList(Of EntradaMercado))
+  name.vb: GuardarTodoElMercado(Integer, IReadOnlyList(Of EntradaMercado))
+- uid: MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado(System.Int32)
+  commentId: M:MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado(System.Int32)
+  id: CargarEstadoMercado(System.Int32)
+  parent: MareImperium.EstadoMercadoCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: CargarEstadoMercado(int)
+  nameWithType: EstadoMercadoCiudadDAO.CargarEstadoMercado(int)
+  fullName: EstadoMercadoCiudadDAO.CargarEstadoMercado(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargarEstadoMercado
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 143
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Carga el estado de mercado de todos los bienes de una ciudad desde la BD.
+  example: []
+  syntax:
+    content: public List<EstadoMercadoDto> CargarEstadoMercado(int idCiudad)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad a cargar.
+    return:
+      type: System.Collections.Generic.List{EstadoMercadoDto}
+      description: >-
+        Lista de <xref href="EstadoMercadoDto" data-throw-if-not-resolved="false"></xref> con una entrada por bien. Vacía si la
+
+        ciudad no tiene datos guardados o si ocurre un error.
+    content.vb: Public Function CargarEstadoMercado(idCiudad As Integer) As List(Of EstadoMercadoDto)
+  overload: MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado*
+  nameWithType.vb: EstadoMercadoCiudadDAO.CargarEstadoMercado(Integer)
+  fullName.vb: EstadoMercadoCiudadDAO.CargarEstadoMercado(Integer)
+  name.vb: CargarEstadoMercado(Integer)
+- uid: MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+  commentId: M:MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+  id: ObtenerIdsCiudadesConMercado
+  parent: MareImperium.EstadoMercadoCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerIdsCiudadesConMercado()
+  nameWithType: EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado()
+  fullName: EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerIdsCiudadesConMercado
+    path: TFG/Assets/Scripts/Database/EstadoMercadoCiudadDAO.cs
+    startLine: 190
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Devuelve los identificadores de todas las ciudades que tienen al menos una fila
+
+    en la tabla EstadoMercadoCiudad. Lo usa <xref href="LoadManager" data-throw-if-not-resolved="false"></xref> para iterar
+
+    todos los mercados guardados sin depender de ningún sistema en escena.
+
+    Nunca devuelve <code>null</code>; devuelve lista vacía si la tabla está vacía.
+  example: []
+  syntax:
+    content: public List<int> ObtenerIdsCiudadesConMercado()
+    return:
+      type: System.Collections.Generic.List{System.Int32}
+      description: Lista de <code>id_ciudad</code> distintos ordenados de forma ascendente.
+    content.vb: Public Function ObtenerIdsCiudadesConMercado() As List(Of Integer)
+  overload: MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.EstadoMercadoCiudadDAO.#ctor*
+  commentId: Overload:MareImperium.EstadoMercadoCiudadDAO.#ctor
+  href: MareImperium.EstadoMercadoCiudadDAO.html#EstadoMercadoCiudadDAO__ctor_DatabaseManager_
+  name: EstadoMercadoCiudadDAO
+  nameWithType: EstadoMercadoCiudadDAO.EstadoMercadoCiudadDAO
+  fullName: EstadoMercadoCiudadDAO.EstadoMercadoCiudadDAO
+  nameWithType.vb: EstadoMercadoCiudadDAO.New
+  fullName.vb: EstadoMercadoCiudadDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado*
+  commentId: Overload:MareImperium.EstadoMercadoCiudadDAO.GuardarEstadoMercado
+  href: MareImperium.EstadoMercadoCiudadDAO.html#EstadoMercadoCiudadDAO_GuardarEstadoMercado_System_Int32_System_Int32_System_Int32_System_Int32_System_Int32_System_Decimal_
+  name: GuardarEstadoMercado
+  nameWithType: EstadoMercadoCiudadDAO.GuardarEstadoMercado
+  fullName: EstadoMercadoCiudadDAO.GuardarEstadoMercado
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Decimal
+  commentId: T:System.Decimal
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.decimal
+  name: decimal
+  nameWithType: decimal
+  fullName: decimal
+  nameWithType.vb: Decimal
+  fullName.vb: Decimal
+  name.vb: Decimal
+- uid: GameManager.MercadosPorCiudad
+  commentId: P:GameManager.MercadosPorCiudad
+  href: MareImperium.GameManager.html#GameManager_MercadosPorCiudad
+  name: MercadosPorCiudad
+  nameWithType: GameManager.MercadosPorCiudad
+  fullName: GameManager.MercadosPorCiudad
+- uid: BienData
+  commentId: T:BienData
+  href: BienData.html
+  name: BienData
+  nameWithType: BienData
+  fullName: BienData
+- uid: MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado*
+  commentId: Overload:MareImperium.EstadoMercadoCiudadDAO.GuardarTodoElMercado
+  href: MareImperium.EstadoMercadoCiudadDAO.html#EstadoMercadoCiudadDAO_GuardarTodoElMercado_System_Int32_System_Collections_Generic_IReadOnlyList_EntradaMercado__
+  name: GuardarTodoElMercado
+  nameWithType: EstadoMercadoCiudadDAO.GuardarTodoElMercado
+  fullName: EstadoMercadoCiudadDAO.GuardarTodoElMercado
+- uid: System.Collections.Generic.IReadOnlyList{EntradaMercado}
+  commentId: T:System.Collections.Generic.IReadOnlyList{EntradaMercado}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<EntradaMercado>
+  nameWithType: IReadOnlyList<EntradaMercado>
+  fullName: System.Collections.Generic.IReadOnlyList<EntradaMercado>
+  nameWithType.vb: IReadOnlyList(Of EntradaMercado)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of EntradaMercado)
+  name.vb: IReadOnlyList(Of EntradaMercado)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: MareImperium.EntradaMercado
+    name: EntradaMercado
+    href: EntradaMercado.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.EntradaMercado
+    name: EntradaMercado
+    href: EntradaMercado.html
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: EstadoMercadoDto
+  commentId: T:EstadoMercadoDto
+  href: EstadoMercadoDto.html
+  name: EstadoMercadoDto
+  nameWithType: EstadoMercadoDto
+  fullName: EstadoMercadoDto
+- uid: MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado*
+  commentId: Overload:MareImperium.EstadoMercadoCiudadDAO.CargarEstadoMercado
+  href: MareImperium.EstadoMercadoCiudadDAO.html#EstadoMercadoCiudadDAO_CargarEstadoMercado_System_Int32_
+  name: CargarEstadoMercado
+  nameWithType: EstadoMercadoCiudadDAO.CargarEstadoMercado
+  fullName: EstadoMercadoCiudadDAO.CargarEstadoMercado
+- uid: System.Collections.Generic.List{EstadoMercadoDto}
+  commentId: T:System.Collections.Generic.List{EstadoMercadoDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<EstadoMercadoDto>
+  nameWithType: List<EstadoMercadoDto>
+  fullName: System.Collections.Generic.List<EstadoMercadoDto>
+  nameWithType.vb: List(Of EstadoMercadoDto)
+  fullName.vb: System.Collections.Generic.List(Of EstadoMercadoDto)
+  name.vb: List(Of EstadoMercadoDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.EstadoMercadoDto
+    name: EstadoMercadoDto
+    href: EstadoMercadoDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.EstadoMercadoDto
+    name: EstadoMercadoDto
+    href: EstadoMercadoDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: LoadManager
+  commentId: T:LoadManager
+  href: LoadManager.html
+  name: LoadManager
+  nameWithType: LoadManager
+  fullName: LoadManager
+- uid: MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado*
+  commentId: Overload:MareImperium.EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+  href: MareImperium.EstadoMercadoCiudadDAO.html#EstadoMercadoCiudadDAO_ObtenerIdsCiudadesConMercado
+  name: ObtenerIdsCiudadesConMercado
+  nameWithType: EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+  fullName: EstadoMercadoCiudadDAO.ObtenerIdsCiudadesConMercado
+- uid: System.Collections.Generic.List{System.Int32}
+  commentId: T:System.Collections.Generic.List{System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<int>
+  nameWithType: List<int>
+  fullName: System.Collections.Generic.List<int>
+  nameWithType.vb: List(Of Integer)
+  fullName.vb: System.Collections.Generic.List(Of Integer)
+  name.vb: List(Of Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )

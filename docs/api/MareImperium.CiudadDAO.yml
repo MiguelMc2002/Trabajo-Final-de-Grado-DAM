@@ -1,0 +1,628 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.CiudadDAO
+  commentId: T:MareImperium.CiudadDAO
+  id: CiudadDAO
+  parent: MareImperium
+  children:
+  - MareImperium.CiudadDAO.#ctor(DatabaseManager)
+  - MareImperium.CiudadDAO.InsertarCiudad(System.Int32,System.String,System.Int32,System.Int32)
+  - MareImperium.CiudadDAO.InsertarCiudadesIniciales
+  - MareImperium.CiudadDAO.MigrarColumnasCasilla
+  - MareImperium.CiudadDAO.ObtenerTodasLasCiudades
+  langs:
+  - csharp
+  - vb
+  name: CiudadDAO
+  nameWithType: CiudadDAO
+  fullName: CiudadDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CiudadDAO
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 25
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla Ciudad. Permite insertar las ciudades al crear
+
+    una partida nueva y leerlas al cargar, para reconstruir el estado del mundo.
+  example: []
+  syntax:
+    content: public class CiudadDAO
+    content.vb: Public Class CiudadDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.CiudadDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.CiudadDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.CiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: CiudadDAO(DatabaseManager)
+  nameWithType: CiudadDAO.CiudadDAO(DatabaseManager)
+  fullName: CiudadDAO.CiudadDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 33
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public CiudadDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.CiudadDAO.#ctor*
+  nameWithType.vb: CiudadDAO.New(DatabaseManager)
+  fullName.vb: CiudadDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.CiudadDAO.InsertarCiudad(System.Int32,System.String,System.Int32,System.Int32)
+  commentId: M:MareImperium.CiudadDAO.InsertarCiudad(System.Int32,System.String,System.Int32,System.Int32)
+  id: InsertarCiudad(System.Int32,System.String,System.Int32,System.Int32)
+  parent: MareImperium.CiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: InsertarCiudad(int, string, int, int)
+  nameWithType: CiudadDAO.InsertarCiudad(int, string, int, int)
+  fullName: CiudadDAO.InsertarCiudad(int, string, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InsertarCiudad
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 44
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inserta una ciudad en la tabla Ciudad. Usa INSERT OR IGNORE para que la
+
+    operación sea idempotente: si la ciudad ya existe no lanza error.
+  example: []
+  syntax:
+    content: public void InsertarCiudad(int idCiudad, string nombre, int casillaX, int casillaY)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador fijo de la ciudad.
+    - id: nombre
+      type: System.String
+      description: Nombre de la ciudad.
+    - id: casillaX
+      type: System.Int32
+    - id: casillaY
+      type: System.Int32
+    content.vb: Public Sub InsertarCiudad(idCiudad As Integer, nombre As String, casillaX As Integer, casillaY As Integer)
+  overload: MareImperium.CiudadDAO.InsertarCiudad*
+  nameWithType.vb: CiudadDAO.InsertarCiudad(Integer, String, Integer, Integer)
+  fullName.vb: CiudadDAO.InsertarCiudad(Integer, String, Integer, Integer)
+  name.vb: InsertarCiudad(Integer, String, Integer, Integer)
+- uid: MareImperium.CiudadDAO.InsertarCiudadesIniciales
+  commentId: M:MareImperium.CiudadDAO.InsertarCiudadesIniciales
+  id: InsertarCiudadesIniciales
+  parent: MareImperium.CiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: InsertarCiudadesIniciales()
+  nameWithType: CiudadDAO.InsertarCiudadesIniciales()
+  fullName: CiudadDAO.InsertarCiudadesIniciales()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: InsertarCiudadesIniciales
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 70
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Inserta las 6 ciudades canónicas del juego con sus IDs fijos.
+
+    La operación es segura de llamar varias veces gracias a INSERT OR IGNORE.
+  example: []
+  syntax:
+    content: public void InsertarCiudadesIniciales()
+    content.vb: Public Sub InsertarCiudadesIniciales()
+  overload: MareImperium.CiudadDAO.InsertarCiudadesIniciales*
+- uid: MareImperium.CiudadDAO.ObtenerTodasLasCiudades
+  commentId: M:MareImperium.CiudadDAO.ObtenerTodasLasCiudades
+  id: ObtenerTodasLasCiudades
+  parent: MareImperium.CiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: ObtenerTodasLasCiudades()
+  nameWithType: CiudadDAO.ObtenerTodasLasCiudades()
+  fullName: CiudadDAO.ObtenerTodasLasCiudades()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ObtenerTodasLasCiudades
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 87
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todas las ciudades almacenadas en la tabla Ciudad.
+  example: []
+  syntax:
+    content: public List<CiudadDto> ObtenerTodasLasCiudades()
+    return:
+      type: System.Collections.Generic.List{CiudadDto}
+      description: >-
+        Lista de <xref href="CiudadDto" data-throw-if-not-resolved="false"></xref> con todas las ciudades. Vacía si la tabla
+
+        no contiene filas o si ocurre un error.
+    content.vb: Public Function ObtenerTodasLasCiudades() As List(Of CiudadDto)
+  overload: MareImperium.CiudadDAO.ObtenerTodasLasCiudades*
+- uid: MareImperium.CiudadDAO.MigrarColumnasCasilla
+  commentId: M:MareImperium.CiudadDAO.MigrarColumnasCasilla
+  id: MigrarColumnasCasilla
+  parent: MareImperium.CiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: MigrarColumnasCasilla()
+  nameWithType: CiudadDAO.MigrarColumnasCasilla()
+  fullName: CiudadDAO.MigrarColumnasCasilla()
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: MigrarColumnasCasilla
+    path: TFG/Assets/Scripts/Database/CiudadDAO.cs
+    startLine: 125
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Migración: añade las columnas casilla_x y casilla_y a la tabla Ciudad si no existen.
+
+    Seguro de llamar varias veces — usa try/catch por columna.
+  example: []
+  syntax:
+    content: public void MigrarColumnasCasilla()
+    content.vb: Public Sub MigrarColumnasCasilla()
+  overload: MareImperium.CiudadDAO.MigrarColumnasCasilla*
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.CiudadDAO.#ctor*
+  commentId: Overload:MareImperium.CiudadDAO.#ctor
+  href: MareImperium.CiudadDAO.html#CiudadDAO__ctor_DatabaseManager_
+  name: CiudadDAO
+  nameWithType: CiudadDAO.CiudadDAO
+  fullName: CiudadDAO.CiudadDAO
+  nameWithType.vb: CiudadDAO.New
+  fullName.vb: CiudadDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: MareImperium.CiudadDAO.InsertarCiudad*
+  commentId: Overload:MareImperium.CiudadDAO.InsertarCiudad
+  href: MareImperium.CiudadDAO.html#CiudadDAO_InsertarCiudad_System_Int32_System_String_System_Int32_System_Int32_
+  name: InsertarCiudad
+  nameWithType: CiudadDAO.InsertarCiudad
+  fullName: CiudadDAO.InsertarCiudad
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.CiudadDAO.InsertarCiudadesIniciales*
+  commentId: Overload:MareImperium.CiudadDAO.InsertarCiudadesIniciales
+  href: MareImperium.CiudadDAO.html#CiudadDAO_InsertarCiudadesIniciales
+  name: InsertarCiudadesIniciales
+  nameWithType: CiudadDAO.InsertarCiudadesIniciales
+  fullName: CiudadDAO.InsertarCiudadesIniciales
+- uid: CiudadDto
+  commentId: T:CiudadDto
+  href: CiudadDto.html
+  name: CiudadDto
+  nameWithType: CiudadDto
+  fullName: CiudadDto
+- uid: MareImperium.CiudadDAO.ObtenerTodasLasCiudades*
+  commentId: Overload:MareImperium.CiudadDAO.ObtenerTodasLasCiudades
+  href: MareImperium.CiudadDAO.html#CiudadDAO_ObtenerTodasLasCiudades
+  name: ObtenerTodasLasCiudades
+  nameWithType: CiudadDAO.ObtenerTodasLasCiudades
+  fullName: CiudadDAO.ObtenerTodasLasCiudades
+- uid: System.Collections.Generic.List{CiudadDto}
+  commentId: T:System.Collections.Generic.List{CiudadDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<CiudadDto>
+  nameWithType: List<CiudadDto>
+  fullName: System.Collections.Generic.List<CiudadDto>
+  nameWithType.vb: List(Of CiudadDto)
+  fullName.vb: System.Collections.Generic.List(Of CiudadDto)
+  name.vb: List(Of CiudadDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.CiudadDto
+    name: CiudadDto
+    href: CiudadDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.CiudadDto
+    name: CiudadDto
+    href: CiudadDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.CiudadDAO.MigrarColumnasCasilla*
+  commentId: Overload:MareImperium.CiudadDAO.MigrarColumnasCasilla
+  href: MareImperium.CiudadDAO.html#CiudadDAO_MigrarColumnasCasilla
+  name: MigrarColumnasCasilla
+  nameWithType: CiudadDAO.MigrarColumnasCasilla
+  fullName: CiudadDAO.MigrarColumnasCasilla

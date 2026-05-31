@@ -1,0 +1,796 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.AlmacenCiudadDAO
+  commentId: T:MareImperium.AlmacenCiudadDAO
+  id: AlmacenCiudadDAO
+  parent: MareImperium
+  children:
+  - MareImperium.AlmacenCiudadDAO.#ctor(DatabaseManager)
+  - MareImperium.AlmacenCiudadDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  - MareImperium.AlmacenCiudadDAO.GetCantidad(System.Int32,System.Int32)
+  - MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad(System.Int32)
+  - MareImperium.AlmacenCiudadDAO.Incrementar(System.Int32,System.Int32,System.Int32)
+  - MareImperium.AlmacenCiudadDAO.LimpiarCiudad(System.Int32)
+  - MareImperium.AlmacenCiudadDAO.SetCantidad(System.Int32,System.Int32,System.Int32)
+  langs:
+  - csharp
+  - vb
+  name: AlmacenCiudadDAO
+  nameWithType: AlmacenCiudadDAO
+  fullName: AlmacenCiudadDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: AlmacenCiudadDAO
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 10
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla AlmacenCiudadJugador. Registra qué bienes y en qué
+
+    cantidad ha dejado el jugador almacenados en cada ciudad, de forma que persistan
+
+    entre sesiones sin ocupar espacio en la bodega del barco.
+  example: []
+  syntax:
+    content: public class AlmacenCiudadDAO
+    content.vb: Public Class AlmacenCiudadDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.AlmacenCiudadDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.AlmacenCiudadDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: AlmacenCiudadDAO(DatabaseManager)
+  nameWithType: AlmacenCiudadDAO.AlmacenCiudadDAO(DatabaseManager)
+  fullName: AlmacenCiudadDAO.AlmacenCiudadDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 21
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public AlmacenCiudadDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.AlmacenCiudadDAO.#ctor*
+  nameWithType.vb: AlmacenCiudadDAO.New(DatabaseManager)
+  fullName.vb: AlmacenCiudadDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.AlmacenCiudadDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  commentId: M:MareImperium.AlmacenCiudadDAO.#ctor(Mono.Data.Sqlite.SqliteConnection)
+  id: '#ctor(Mono.Data.Sqlite.SqliteConnection)'
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: AlmacenCiudadDAO(SqliteConnection)
+  nameWithType: AlmacenCiudadDAO.AlmacenCiudadDAO(SqliteConnection)
+  fullName: AlmacenCiudadDAO.AlmacenCiudadDAO(Mono.Data.Sqlite.SqliteConnection)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 31
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Constructor secundario para tests automatizados.
+
+    Permite instanciar el DAO con una conexión SQLite directa sin depender de DatabaseManager.
+  example: []
+  syntax:
+    content: public AlmacenCiudadDAO(SqliteConnection conexion)
+    parameters:
+    - id: conexion
+      type: Mono.Data.Sqlite.SqliteConnection
+      description: Conexión SQLite ya abierta.
+    content.vb: Public Sub New(conexion As SqliteConnection)
+  overload: MareImperium.AlmacenCiudadDAO.#ctor*
+  nameWithType.vb: AlmacenCiudadDAO.New(SqliteConnection)
+  fullName.vb: AlmacenCiudadDAO.New(Mono.Data.Sqlite.SqliteConnection)
+  name.vb: New(SqliteConnection)
+- uid: MareImperium.AlmacenCiudadDAO.GetCantidad(System.Int32,System.Int32)
+  commentId: M:MareImperium.AlmacenCiudadDAO.GetCantidad(System.Int32,System.Int32)
+  id: GetCantidad(System.Int32,System.Int32)
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: GetCantidad(int, int)
+  nameWithType: AlmacenCiudadDAO.GetCantidad(int, int)
+  fullName: AlmacenCiudadDAO.GetCantidad(int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GetCantidad
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 44
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Devuelve las unidades almacenadas del bien indicado en la ciudad.
+
+    Retorna 0 si no existe la fila.
+  example: []
+  syntax:
+    content: public int GetCantidad(int idCiudad, int idBien)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien.
+    return:
+      type: System.Int32
+      description: Cantidad almacenada, o 0 si no hay registro.
+    content.vb: Public Function GetCantidad(idCiudad As Integer, idBien As Integer) As Integer
+  overload: MareImperium.AlmacenCiudadDAO.GetCantidad*
+  nameWithType.vb: AlmacenCiudadDAO.GetCantidad(Integer, Integer)
+  fullName.vb: AlmacenCiudadDAO.GetCantidad(Integer, Integer)
+  name.vb: GetCantidad(Integer, Integer)
+- uid: MareImperium.AlmacenCiudadDAO.SetCantidad(System.Int32,System.Int32,System.Int32)
+  commentId: M:MareImperium.AlmacenCiudadDAO.SetCantidad(System.Int32,System.Int32,System.Int32)
+  id: SetCantidad(System.Int32,System.Int32,System.Int32)
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: SetCantidad(int, int, int)
+  nameWithType: AlmacenCiudadDAO.SetCantidad(int, int, int)
+  fullName: AlmacenCiudadDAO.SetCantidad(int, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: SetCantidad
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 76
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Establece la cantidad exacta de un bien en el almacén de una ciudad.
+
+    Usa INSERT OR REPLACE para crear la fila si no existía o actualizarla si ya existía.
+  example: []
+  syntax:
+    content: public void SetCantidad(int idCiudad, int idBien, int cantidad)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien.
+    - id: cantidad
+      type: System.Int32
+      description: Cantidad a almacenar. Debe ser mayor o igual a 0.
+    content.vb: Public Sub SetCantidad(idCiudad As Integer, idBien As Integer, cantidad As Integer)
+  overload: MareImperium.AlmacenCiudadDAO.SetCantidad*
+  nameWithType.vb: AlmacenCiudadDAO.SetCantidad(Integer, Integer, Integer)
+  fullName.vb: AlmacenCiudadDAO.SetCantidad(Integer, Integer, Integer)
+  name.vb: SetCantidad(Integer, Integer, Integer)
+- uid: MareImperium.AlmacenCiudadDAO.Incrementar(System.Int32,System.Int32,System.Int32)
+  commentId: M:MareImperium.AlmacenCiudadDAO.Incrementar(System.Int32,System.Int32,System.Int32)
+  id: Incrementar(System.Int32,System.Int32,System.Int32)
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: Incrementar(int, int, int)
+  nameWithType: AlmacenCiudadDAO.Incrementar(int, int, int)
+  fullName: AlmacenCiudadDAO.Incrementar(int, int, int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: Incrementar
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 110
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Suma <code class="paramref">delta</code> a la cantidad actual del bien en la ciudad.
+
+    El delta puede ser negativo para restar unidades.
+
+    Lanza <xref href="System.InvalidOperationException" data-throw-if-not-resolved="false"></xref> si el resultado sería menor que 0.
+  example: []
+  syntax:
+    content: public void Incrementar(int idCiudad, int idBien, int delta)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad.
+    - id: idBien
+      type: System.Int32
+      description: Identificador del bien.
+    - id: delta
+      type: System.Int32
+      description: Unidades a añadir (positivo) o retirar (negativo).
+    content.vb: Public Sub Incrementar(idCiudad As Integer, idBien As Integer, delta As Integer)
+  overload: MareImperium.AlmacenCiudadDAO.Incrementar*
+  exceptions:
+  - type: System.InvalidOperationException
+    commentId: T:System.InvalidOperationException
+    description: Si la cantidad resultante sería negativa (el jugador no tiene suficiente stock).
+  nameWithType.vb: AlmacenCiudadDAO.Incrementar(Integer, Integer, Integer)
+  fullName.vb: AlmacenCiudadDAO.Incrementar(Integer, Integer, Integer)
+  name.vb: Incrementar(Integer, Integer, Integer)
+- uid: MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad(System.Int32)
+  commentId: M:MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad(System.Int32)
+  id: GetTodosPorCiudad(System.Int32)
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: GetTodosPorCiudad(int)
+  nameWithType: AlmacenCiudadDAO.GetTodosPorCiudad(int)
+  fullName: AlmacenCiudadDAO.GetTodosPorCiudad(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GetTodosPorCiudad
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 129
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todos los bienes con cantidad mayor que 0 almacenados en la ciudad.
+  example: []
+  syntax:
+    content: public Dictionary<int, int> GetTodosPorCiudad(int idCiudad)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad.
+    return:
+      type: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+      description: Diccionario con <code>id_bien → cantidad</code>. Vacío si no hay stock; nunca devuelve <code>null</code>.
+    content.vb: Public Function GetTodosPorCiudad(idCiudad As Integer) As Dictionary(Of Integer, Integer)
+  overload: MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad*
+  nameWithType.vb: AlmacenCiudadDAO.GetTodosPorCiudad(Integer)
+  fullName.vb: AlmacenCiudadDAO.GetTodosPorCiudad(Integer)
+  name.vb: GetTodosPorCiudad(Integer)
+- uid: MareImperium.AlmacenCiudadDAO.LimpiarCiudad(System.Int32)
+  commentId: M:MareImperium.AlmacenCiudadDAO.LimpiarCiudad(System.Int32)
+  id: LimpiarCiudad(System.Int32)
+  parent: MareImperium.AlmacenCiudadDAO
+  langs:
+  - csharp
+  - vb
+  name: LimpiarCiudad(int)
+  nameWithType: AlmacenCiudadDAO.LimpiarCiudad(int)
+  fullName: AlmacenCiudadDAO.LimpiarCiudad(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: LimpiarCiudad
+    path: TFG/Assets/Scripts/Database/AlmacenCiudadDAO.cs
+    startLine: 167
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Elimina todas las filas del almacén correspondientes a la ciudad indicada.
+
+    Se usa al abandonar una ciudad o al resetear su estado comercial.
+  example: []
+  syntax:
+    content: public void LimpiarCiudad(int idCiudad)
+    parameters:
+    - id: idCiudad
+      type: System.Int32
+      description: Identificador de la ciudad cuyo almacén se vacía.
+    content.vb: Public Sub LimpiarCiudad(idCiudad As Integer)
+  overload: MareImperium.AlmacenCiudadDAO.LimpiarCiudad*
+  nameWithType.vb: AlmacenCiudadDAO.LimpiarCiudad(Integer)
+  fullName.vb: AlmacenCiudadDAO.LimpiarCiudad(Integer)
+  name.vb: LimpiarCiudad(Integer)
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.AlmacenCiudadDAO.#ctor*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.#ctor
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO__ctor_DatabaseManager_
+  name: AlmacenCiudadDAO
+  nameWithType: AlmacenCiudadDAO.AlmacenCiudadDAO
+  fullName: AlmacenCiudadDAO.AlmacenCiudadDAO
+  nameWithType.vb: AlmacenCiudadDAO.New
+  fullName.vb: AlmacenCiudadDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: Mono.Data.Sqlite.SqliteConnection
+  commentId: T:Mono.Data.Sqlite.SqliteConnection
+  parent: Mono.Data.Sqlite
+  isExternal: true
+  name: SqliteConnection
+  nameWithType: SqliteConnection
+  fullName: Mono.Data.Sqlite.SqliteConnection
+- uid: Mono.Data.Sqlite
+  commentId: N:Mono.Data.Sqlite
+  isExternal: true
+  name: Mono.Data.Sqlite
+  nameWithType: Mono.Data.Sqlite
+  fullName: Mono.Data.Sqlite
+  spec.csharp:
+  - uid: Mono
+    name: Mono
+    isExternal: true
+  - name: .
+  - uid: Mono.Data
+    name: Data
+    isExternal: true
+  - name: .
+  - uid: Mono.Data.Sqlite
+    name: Sqlite
+    isExternal: true
+  spec.vb:
+  - uid: Mono
+    name: Mono
+    isExternal: true
+  - name: .
+  - uid: Mono.Data
+    name: Data
+    isExternal: true
+  - name: .
+  - uid: Mono.Data.Sqlite
+    name: Sqlite
+    isExternal: true
+- uid: MareImperium.AlmacenCiudadDAO.GetCantidad*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.GetCantidad
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO_GetCantidad_System_Int32_System_Int32_
+  name: GetCantidad
+  nameWithType: AlmacenCiudadDAO.GetCantidad
+  fullName: AlmacenCiudadDAO.GetCantidad
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.AlmacenCiudadDAO.SetCantidad*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.SetCantidad
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO_SetCantidad_System_Int32_System_Int32_System_Int32_
+  name: SetCantidad
+  nameWithType: AlmacenCiudadDAO.SetCantidad
+  fullName: AlmacenCiudadDAO.SetCantidad
+- uid: System.InvalidOperationException
+  commentId: T:System.InvalidOperationException
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.invalidoperationexception
+  name: InvalidOperationException
+  nameWithType: InvalidOperationException
+  fullName: System.InvalidOperationException
+- uid: MareImperium.AlmacenCiudadDAO.Incrementar*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.Incrementar
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO_Incrementar_System_Int32_System_Int32_System_Int32_
+  name: Incrementar
+  nameWithType: AlmacenCiudadDAO.Incrementar
+  fullName: AlmacenCiudadDAO.Incrementar
+- uid: MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.GetTodosPorCiudad
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO_GetTodosPorCiudad_System_Int32_
+  name: GetTodosPorCiudad
+  nameWithType: AlmacenCiudadDAO.GetTodosPorCiudad
+  fullName: AlmacenCiudadDAO.GetTodosPorCiudad
+- uid: System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  commentId: T:System.Collections.Generic.Dictionary{System.Int32,System.Int32}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.Dictionary`2
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<int, int>
+  nameWithType: Dictionary<int, int>
+  fullName: System.Collections.Generic.Dictionary<int, int>
+  nameWithType.vb: Dictionary(Of Integer, Integer)
+  fullName.vb: System.Collections.Generic.Dictionary(Of Integer, Integer)
+  name.vb: Dictionary(Of Integer, Integer)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: int
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: ','
+  - name: " "
+  - uid: System.Int32
+    name: Integer
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.int32
+  - name: )
+- uid: System.Collections.Generic.Dictionary`2
+  commentId: T:System.Collections.Generic.Dictionary`2
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  name: Dictionary<TKey, TValue>
+  nameWithType: Dictionary<TKey, TValue>
+  fullName: System.Collections.Generic.Dictionary<TKey, TValue>
+  nameWithType.vb: Dictionary(Of TKey, TValue)
+  fullName.vb: System.Collections.Generic.Dictionary(Of TKey, TValue)
+  name.vb: Dictionary(Of TKey, TValue)
+  spec.csharp:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: <
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.Dictionary`2
+    name: Dictionary
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TKey
+  - name: ','
+  - name: " "
+  - name: TValue
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: MareImperium.AlmacenCiudadDAO.LimpiarCiudad*
+  commentId: Overload:MareImperium.AlmacenCiudadDAO.LimpiarCiudad
+  href: MareImperium.AlmacenCiudadDAO.html#AlmacenCiudadDAO_LimpiarCiudad_System_Int32_
+  name: LimpiarCiudad
+  nameWithType: AlmacenCiudadDAO.LimpiarCiudad
+  fullName: AlmacenCiudadDAO.LimpiarCiudad

@@ -1,0 +1,610 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.ModuloBarcoDAO
+  commentId: T:MareImperium.ModuloBarcoDAO
+  id: ModuloBarcoDAO
+  parent: MareImperium
+  children:
+  - MareImperium.ModuloBarcoDAO.#ctor(DatabaseManager)
+  - MareImperium.ModuloBarcoDAO.CargarModulosDeBarco(System.Int32)
+  - MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco(System.Int32,System.Collections.Generic.IReadOnlyList{ModuloBarcoData})
+  langs:
+  - csharp
+  - vb
+  name: ModuloBarcoDAO
+  nameWithType: ModuloBarcoDAO
+  fullName: ModuloBarcoDAO
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: ModuloBarcoDAO
+    path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+    startLine: 31
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    DAO que gestiona la tabla ModuloBarco. Persiste y restaura los módulos instalados
+
+    en cada barco del jugador, borrando y reinsertando la lista completa en cada guardado
+
+    para garantizar consistencia sin rastros de módulos desinstalados.
+  example: []
+  syntax:
+    content: public class ModuloBarcoDAO
+    content.vb: Public Class ModuloBarcoDAO
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.ModuloBarcoDAO.#ctor(DatabaseManager)
+  commentId: M:MareImperium.ModuloBarcoDAO.#ctor(DatabaseManager)
+  id: '#ctor(DatabaseManager)'
+  parent: MareImperium.ModuloBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: ModuloBarcoDAO(DatabaseManager)
+  nameWithType: ModuloBarcoDAO.ModuloBarcoDAO(DatabaseManager)
+  fullName: ModuloBarcoDAO.ModuloBarcoDAO(DatabaseManager)
+  type: Constructor
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: .ctor
+    path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+    startLine: 39
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Crea una nueva instancia del DAO vinculada al gestor de base de datos activo.
+  example: []
+  syntax:
+    content: public ModuloBarcoDAO(DatabaseManager dbManager)
+    parameters:
+    - id: dbManager
+      type: MareImperium.DatabaseManager
+      description: Gestor que expone la conexión SQLite de la partida.
+    content.vb: Public Sub New(dbManager As DatabaseManager)
+  overload: MareImperium.ModuloBarcoDAO.#ctor*
+  nameWithType.vb: ModuloBarcoDAO.New(DatabaseManager)
+  fullName.vb: ModuloBarcoDAO.New(DatabaseManager)
+  name.vb: New(DatabaseManager)
+- uid: MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco(System.Int32,System.Collections.Generic.IReadOnlyList{ModuloBarcoData})
+  commentId: M:MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco(System.Int32,System.Collections.Generic.IReadOnlyList{ModuloBarcoData})
+  id: GuardarModulosDeBarco(System.Int32,System.Collections.Generic.IReadOnlyList{ModuloBarcoData})
+  parent: MareImperium.ModuloBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: GuardarModulosDeBarco(int, IReadOnlyList<ModuloBarcoData>)
+  nameWithType: ModuloBarcoDAO.GuardarModulosDeBarco(int, IReadOnlyList<ModuloBarcoData>)
+  fullName: ModuloBarcoDAO.GuardarModulosDeBarco(int, System.Collections.Generic.IReadOnlyList<ModuloBarcoData>)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: GuardarModulosDeBarco
+    path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+    startLine: 50
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Borra todos los módulos del barco indicado y los reinserta a partir de la lista actual.
+
+    El identificador de cada módulo se genera como <code>idBarco * 100 + índice</code>.
+  example: []
+  syntax:
+    content: public void GuardarModulosDeBarco(int idBarco, IReadOnlyList<ModuloBarcoData> modulos)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco cuyos módulos se persisten.
+    - id: modulos
+      type: System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+      description: Lista de <xref href="ModuloBarcoData" data-throw-if-not-resolved="false"></xref> actualmente instalados.
+    content.vb: Public Sub GuardarModulosDeBarco(idBarco As Integer, modulos As IReadOnlyList(Of ModuloBarcoData))
+  overload: MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco*
+  nameWithType.vb: ModuloBarcoDAO.GuardarModulosDeBarco(Integer, IReadOnlyList(Of ModuloBarcoData))
+  fullName.vb: ModuloBarcoDAO.GuardarModulosDeBarco(Integer, System.Collections.Generic.IReadOnlyList(Of ModuloBarcoData))
+  name.vb: GuardarModulosDeBarco(Integer, IReadOnlyList(Of ModuloBarcoData))
+- uid: MareImperium.ModuloBarcoDAO.CargarModulosDeBarco(System.Int32)
+  commentId: M:MareImperium.ModuloBarcoDAO.CargarModulosDeBarco(System.Int32)
+  id: CargarModulosDeBarco(System.Int32)
+  parent: MareImperium.ModuloBarcoDAO
+  langs:
+  - csharp
+  - vb
+  name: CargarModulosDeBarco(int)
+  nameWithType: ModuloBarcoDAO.CargarModulosDeBarco(int)
+  fullName: ModuloBarcoDAO.CargarModulosDeBarco(int)
+  type: Method
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: CargarModulosDeBarco
+    path: TFG/Assets/Scripts/Database/ModuloBarcoDAO.cs
+    startLine: 97
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: Devuelve todos los módulos persistidos para el barco indicado.
+  example: []
+  syntax:
+    content: public List<ModuloDto> CargarModulosDeBarco(int idBarco)
+    parameters:
+    - id: idBarco
+      type: System.Int32
+      description: Identificador del barco cuyos módulos se quieren obtener.
+    return:
+      type: System.Collections.Generic.List{ModuloDto}
+      description: Lista de <xref href="ModuloDto" data-throw-if-not-resolved="false"></xref>. Vacía si el barco no tiene módulos guardados.
+    content.vb: Public Function CargarModulosDeBarco(idBarco As Integer) As List(Of ModuloDto)
+  overload: MareImperium.ModuloBarcoDAO.CargarModulosDeBarco*
+  nameWithType.vb: ModuloBarcoDAO.CargarModulosDeBarco(Integer)
+  fullName.vb: ModuloBarcoDAO.CargarModulosDeBarco(Integer)
+  name.vb: CargarModulosDeBarco(Integer)
+references:
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.ModuloBarcoDAO.#ctor*
+  commentId: Overload:MareImperium.ModuloBarcoDAO.#ctor
+  href: MareImperium.ModuloBarcoDAO.html#ModuloBarcoDAO__ctor_DatabaseManager_
+  name: ModuloBarcoDAO
+  nameWithType: ModuloBarcoDAO.ModuloBarcoDAO
+  fullName: ModuloBarcoDAO.ModuloBarcoDAO
+  nameWithType.vb: ModuloBarcoDAO.New
+  fullName.vb: ModuloBarcoDAO.New
+  name.vb: New
+- uid: MareImperium.DatabaseManager
+  commentId: T:MareImperium.DatabaseManager
+  href: DatabaseManager.html
+  name: DatabaseManager
+  nameWithType: DatabaseManager
+  fullName: DatabaseManager
+- uid: ModuloBarcoData
+  commentId: T:ModuloBarcoData
+  href: ModuloBarcoData.html
+  name: ModuloBarcoData
+  nameWithType: ModuloBarcoData
+  fullName: ModuloBarcoData
+- uid: MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco*
+  commentId: Overload:MareImperium.ModuloBarcoDAO.GuardarModulosDeBarco
+  href: MareImperium.ModuloBarcoDAO.html#ModuloBarcoDAO_GuardarModulosDeBarco_System_Int32_System_Collections_Generic_IReadOnlyList_ModuloBarcoData__
+  name: GuardarModulosDeBarco
+  nameWithType: ModuloBarcoDAO.GuardarModulosDeBarco
+  fullName: ModuloBarcoDAO.GuardarModulosDeBarco
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+  commentId: T:System.Collections.Generic.IReadOnlyList{ModuloBarcoData}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.IReadOnlyList`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<ModuloBarcoData>
+  nameWithType: IReadOnlyList<ModuloBarcoData>
+  fullName: System.Collections.Generic.IReadOnlyList<ModuloBarcoData>
+  nameWithType.vb: IReadOnlyList(Of ModuloBarcoData)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of ModuloBarcoData)
+  name.vb: IReadOnlyList(Of ModuloBarcoData)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - uid: MareImperium.ModuloBarcoData
+    name: ModuloBarcoData
+    href: ModuloBarcoData.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.ModuloBarcoData
+    name: ModuloBarcoData
+    href: ModuloBarcoData.html
+  - name: )
+- uid: System.Collections.Generic.IReadOnlyList`1
+  commentId: T:System.Collections.Generic.IReadOnlyList`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  name: IReadOnlyList<T>
+  nameWithType: IReadOnlyList<T>
+  fullName: System.Collections.Generic.IReadOnlyList<T>
+  nameWithType.vb: IReadOnlyList(Of T)
+  fullName.vb: System.Collections.Generic.IReadOnlyList(Of T)
+  name.vb: IReadOnlyList(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.IReadOnlyList`1
+    name: IReadOnlyList
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )
+- uid: System.Collections.Generic
+  commentId: N:System.Collections.Generic
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Collections.Generic
+  nameWithType: System.Collections.Generic
+  fullName: System.Collections.Generic
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Collections
+    name: Collections
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections
+  - name: .
+  - uid: System.Collections.Generic
+    name: Generic
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic
+- uid: ModuloDto
+  commentId: T:ModuloDto
+  href: ModuloDto.html
+  name: ModuloDto
+  nameWithType: ModuloDto
+  fullName: ModuloDto
+- uid: MareImperium.ModuloBarcoDAO.CargarModulosDeBarco*
+  commentId: Overload:MareImperium.ModuloBarcoDAO.CargarModulosDeBarco
+  href: MareImperium.ModuloBarcoDAO.html#ModuloBarcoDAO_CargarModulosDeBarco_System_Int32_
+  name: CargarModulosDeBarco
+  nameWithType: ModuloBarcoDAO.CargarModulosDeBarco
+  fullName: ModuloBarcoDAO.CargarModulosDeBarco
+- uid: System.Collections.Generic.List{ModuloDto}
+  commentId: T:System.Collections.Generic.List{ModuloDto}
+  parent: System.Collections.Generic
+  definition: System.Collections.Generic.List`1
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<ModuloDto>
+  nameWithType: List<ModuloDto>
+  fullName: System.Collections.Generic.List<ModuloDto>
+  nameWithType.vb: List(Of ModuloDto)
+  fullName.vb: System.Collections.Generic.List(Of ModuloDto)
+  name.vb: List(Of ModuloDto)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - uid: MareImperium.ModuloDto
+    name: ModuloDto
+    href: ModuloDto.html
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: MareImperium.ModuloDto
+    name: ModuloDto
+    href: ModuloDto.html
+  - name: )
+- uid: System.Collections.Generic.List`1
+  commentId: T:System.Collections.Generic.List`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  name: List<T>
+  nameWithType: List<T>
+  fullName: System.Collections.Generic.List<T>
+  nameWithType.vb: List(Of T)
+  fullName.vb: System.Collections.Generic.List(Of T)
+  name.vb: List(Of T)
+  spec.csharp:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: <
+  - name: T
+  - name: '>'
+  spec.vb:
+  - uid: System.Collections.Generic.List`1
+    name: List
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: T
+  - name: )

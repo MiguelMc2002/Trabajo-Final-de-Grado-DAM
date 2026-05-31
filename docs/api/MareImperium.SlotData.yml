@@ -1,0 +1,544 @@
+### YamlMime:ManagedReference
+items:
+- uid: MareImperium.SlotData
+  commentId: T:MareImperium.SlotData
+  id: SlotData
+  parent: MareImperium
+  children:
+  - MareImperium.SlotData.DiasJugados
+  - MareImperium.SlotData.EstaOcupado
+  - MareImperium.SlotData.FechaGuardado
+  - MareImperium.SlotData.NombrePartida
+  - MareImperium.SlotData.NumeroSlot
+  langs:
+  - csharp
+  - vb
+  name: SlotData
+  nameWithType: SlotData
+  fullName: SlotData
+  type: Class
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: SlotData
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 6
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Metadatos de un slot de guardado. Representa lo que se muestra en la pantalla
+
+    de selección de partida: si el slot tiene datos, cuándo se guardaron y cuánto
+
+    tiempo de juego acumula. No es un MonoBehaviour; se instancia desde
+
+    <xref href="PantallaSlotsUI" data-throw-if-not-resolved="false"></xref> al escanear los archivos de partida.
+  example: []
+  syntax:
+    content: public class SlotData
+    content.vb: Public Class SlotData
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: MareImperium.SlotData.NumeroSlot
+  commentId: P:MareImperium.SlotData.NumeroSlot
+  id: NumeroSlot
+  parent: MareImperium.SlotData
+  langs:
+  - csharp
+  - vb
+  name: NumeroSlot
+  nameWithType: SlotData.NumeroSlot
+  fullName: SlotData.NumeroSlot
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NumeroSlot
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 12
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Número de slot (1 a 5). Determina el nombre del archivo en disco:
+
+    <code>slot_N.db</code> dentro de <code>Application.persistentDataPath</code>.
+  example: []
+  syntax:
+    content: public int NumeroSlot { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property NumeroSlot As Integer
+  overload: MareImperium.SlotData.NumeroSlot*
+- uid: MareImperium.SlotData.EstaOcupado
+  commentId: P:MareImperium.SlotData.EstaOcupado
+  id: EstaOcupado
+  parent: MareImperium.SlotData
+  langs:
+  - csharp
+  - vb
+  name: EstaOcupado
+  nameWithType: SlotData.EstaOcupado
+  fullName: SlotData.EstaOcupado
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: EstaOcupado
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 18
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Indica si el archivo <code>slot_N.db</code> existe en disco y contiene una partida guardada.
+
+    Un slot vacío muestra solo el botón Guardar; uno ocupado muestra los tres botones.
+  example: []
+  syntax:
+    content: public bool EstaOcupado { get; set; }
+    parameters: []
+    return:
+      type: System.Boolean
+    content.vb: Public Property EstaOcupado As Boolean
+  overload: MareImperium.SlotData.EstaOcupado*
+- uid: MareImperium.SlotData.NombrePartida
+  commentId: P:MareImperium.SlotData.NombrePartida
+  id: NombrePartida
+  parent: MareImperium.SlotData
+  langs:
+  - csharp
+  - vb
+  name: NombrePartida
+  nameWithType: SlotData.NombrePartida
+  fullName: SlotData.NombrePartida
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: NombrePartida
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 24
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Nombre visible del slot en la interfaz.
+
+    Por defecto se asigna <code>"Partida N"</code> donde N es <xref href="SlotData.NumeroSlot" data-throw-if-not-resolved="false"></xref>.
+  example: []
+  syntax:
+    content: public string NombrePartida { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property NombrePartida As String
+  overload: MareImperium.SlotData.NombrePartida*
+- uid: MareImperium.SlotData.FechaGuardado
+  commentId: P:MareImperium.SlotData.FechaGuardado
+  id: FechaGuardado
+  parent: MareImperium.SlotData
+  langs:
+  - csharp
+  - vb
+  name: FechaGuardado
+  nameWithType: SlotData.FechaGuardado
+  fullName: SlotData.FechaGuardado
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: FechaGuardado
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 30
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Fecha y hora del sistema en que se realizó el último guardado, formateada como
+
+    <code>"dd/MM/yyyy HH:mm"</code>. Vacío si el slot no está ocupado.
+  example: []
+  syntax:
+    content: public string FechaGuardado { get; set; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: Public Property FechaGuardado As String
+  overload: MareImperium.SlotData.FechaGuardado*
+- uid: MareImperium.SlotData.DiasJugados
+  commentId: P:MareImperium.SlotData.DiasJugados
+  id: DiasJugados
+  parent: MareImperium.SlotData
+  langs:
+  - csharp
+  - vb
+  name: DiasJugados
+  nameWithType: SlotData.DiasJugados
+  fullName: SlotData.DiasJugados
+  type: Property
+  source:
+    remote:
+      path: TFG/Assets/Scripts/Database/SlotData.cs
+      branch: Post-Freeze
+      repo: https://github.com/MiguelMc2002/Trabajo-Final-de-Grado-DAM.git
+    id: DiasJugados
+    path: TFG/Assets/Scripts/Database/SlotData.cs
+    startLine: 37
+  assemblies:
+  - MareImperium.Docs
+  namespace: MareImperium
+  summary: >-
+    Número de días de juego transcurridos en la partida guardada, leído desde
+
+    la tabla <code>estadoJuego</code> via <xref href="EstadoJuegoDAO" data-throw-if-not-resolved="false"></xref>. Cero si el slot
+
+    no está ocupado.
+  example: []
+  syntax:
+    content: public int DiasJugados { get; set; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: Public Property DiasJugados As Integer
+  overload: MareImperium.SlotData.DiasJugados*
+references:
+- uid: PantallaSlotsUI
+  commentId: T:PantallaSlotsUI
+  href: PantallaSlotsUI.html
+  name: PantallaSlotsUI
+  nameWithType: PantallaSlotsUI
+  fullName: PantallaSlotsUI
+- uid: MareImperium
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: MareImperium.SlotData.NumeroSlot*
+  commentId: Overload:MareImperium.SlotData.NumeroSlot
+  href: MareImperium.SlotData.html#SlotData_NumeroSlot
+  name: NumeroSlot
+  nameWithType: SlotData.NumeroSlot
+  fullName: SlotData.NumeroSlot
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: MareImperium.SlotData.EstaOcupado*
+  commentId: Overload:MareImperium.SlotData.EstaOcupado
+  href: MareImperium.SlotData.html#SlotData_EstaOcupado
+  name: EstaOcupado
+  nameWithType: SlotData.EstaOcupado
+  fullName: SlotData.EstaOcupado
+- uid: System.Boolean
+  commentId: T:System.Boolean
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.boolean
+  name: bool
+  nameWithType: bool
+  fullName: bool
+  nameWithType.vb: Boolean
+  fullName.vb: Boolean
+  name.vb: Boolean
+- uid: SlotData.NumeroSlot
+  commentId: P:SlotData.NumeroSlot
+  href: MareImperium.SlotData.html#SlotData_NumeroSlot
+  name: NumeroSlot
+  nameWithType: SlotData.NumeroSlot
+  fullName: SlotData.NumeroSlot
+- uid: MareImperium.SlotData.NombrePartida*
+  commentId: Overload:MareImperium.SlotData.NombrePartida
+  href: MareImperium.SlotData.html#SlotData_NombrePartida
+  name: NombrePartida
+  nameWithType: SlotData.NombrePartida
+  fullName: SlotData.NombrePartida
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: MareImperium.SlotData.FechaGuardado*
+  commentId: Overload:MareImperium.SlotData.FechaGuardado
+  href: MareImperium.SlotData.html#SlotData_FechaGuardado
+  name: FechaGuardado
+  nameWithType: SlotData.FechaGuardado
+  fullName: SlotData.FechaGuardado
+- uid: EstadoJuegoDAO
+  commentId: T:EstadoJuegoDAO
+  href: EstadoJuegoDAO.html
+  name: EstadoJuegoDAO
+  nameWithType: EstadoJuegoDAO
+  fullName: EstadoJuegoDAO
+- uid: MareImperium.SlotData.DiasJugados*
+  commentId: Overload:MareImperium.SlotData.DiasJugados
+  href: MareImperium.SlotData.html#SlotData_DiasJugados
+  name: DiasJugados
+  nameWithType: SlotData.DiasJugados
+  fullName: SlotData.DiasJugados
